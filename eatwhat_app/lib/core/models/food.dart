@@ -15,6 +15,9 @@ class Food {
   final double? price;
   final String? restaurant;
   final bool isFavorite;
+  final String? preparationTime;  // 制作时间
+  final String? difficulty;       // 难度等级：简单、中等、困难
+  final List<String>? tags;       // 标签：如"下饭菜"、"经典川菜"等
 
   Food({
     String? id,
@@ -32,6 +35,9 @@ class Food {
     this.price,
     this.restaurant,
     this.isFavorite = false,
+    this.preparationTime,
+    this.difficulty,
+    this.tags,
   }) : id = id ?? DateTime.now().millisecondsSinceEpoch.toString();
 
   /// 复制食物并修改部分属性
@@ -51,6 +57,9 @@ class Food {
     double? price,
     String? restaurant,
     bool? isFavorite,
+    String? preparationTime,
+    String? difficulty,
+    List<String>? tags,
   }) {
     return Food(
       id: id ?? this.id,
@@ -68,6 +77,9 @@ class Food {
       price: price ?? this.price,
       restaurant: restaurant ?? this.restaurant,
       isFavorite: isFavorite ?? this.isFavorite,
+      preparationTime: preparationTime ?? this.preparationTime,
+      difficulty: difficulty ?? this.difficulty,
+      tags: tags ?? this.tags,
     );
   }
 
@@ -89,6 +101,9 @@ class Food {
       'price': price,
       'restaurant': restaurant,
       'isFavorite': isFavorite,
+      'preparationTime': preparationTime,
+      'difficulty': difficulty,
+      'tags': tags,
     };
   }
 
@@ -114,6 +129,11 @@ class Food {
       price: json['price']?.toDouble(),
       restaurant: json['restaurant'],
       isFavorite: json['isFavorite'] ?? false,
+      preparationTime: json['preparationTime'],
+      difficulty: json['difficulty'],
+      tags: json['tags'] != null 
+          ? List<String>.from(json['tags']) 
+          : null,
     );
   }
 
