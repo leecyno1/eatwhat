@@ -1,0 +1,179 @@
+import 'dart:async';
+import 'package:flutter/material.dart';
+import '../../../core/models/bubble.dart';
+import '../../../core/models/food.dart';
+import '../../../core/models/user_preference.dart';
+import '../../../core/models/bubble_factory.dart';
+import '../../../core/physics/bubble_physics.dart';
+import '../../../core/services/recommendation_engine.dart';
+
+/// 气泡控制器
+class BubbleController extends ChangeNotifier {
+  // 气泡相关
+  List<Bubble> _bubbles = [];
+  List<Bubble> _selectedBubbles = [];
+  BubblePhysics? _physics;
+  Timer? _physicsTimer;
+  
+  // 推荐相关
+  List<Food> _recommendations = [];
+  bool _isGeneratingRecommendations = false;
+  
+  // 用户偏好
+  UserPreference _userPreference = UserPreference(userId: 'default_user');
+  
+  // 状态
+  bool _isInitialized = false;
+  Size _screenSize = Size.zero;
+
+  // Getters
+  List<Bubble> get bubbles => _bubbles;
+  List<Bubble> get selectedBubbles => _selectedBubbles;
+  List<Food> get recommendations => _recommendations;
+  bool get isGeneratingRecommendations => _isGeneratingRecommendations;
+  UserPreference get userPreference => _userPreference;
+  bool get isInitialized => _isInitialized;
+  int get selectedCount => _selectedBubbles.length;
+
+  /// 初始化控制器
+  void initialize(Size screenSize) {
+    if (_isInitialized) return;
+    
+    _screenSize = screenSize;
+    _physics = BubblePhysics(screenSize: screenSize);
+    
+    // 创建默认气泡
+    _bubbles = BubbleFactory.createDefaultBubbles();
+    
+    // 随机分布气泡
+    _physics!.randomDistributeBubbles(_bubbles);
+    
+    // 启动物理引擎
+    _startPhysicsEngine();
+    
+    _isInitialized = true;
+    notifyListeners();
+  }
+
+  /// 启动物理引擎
+  void _startPhysicsEngine() {
+    _physicsTimer?.cancel();
+    _physicsTimer = Timer.periodic(const Duration(milliseconds: 16), (timer) {
+      if (_physics != null && _bubbles.isNotEmpty) {
+        _physics!.updateBubbles(_bubbles, 0.016);
+        notifyListeners();
+      }
+    });
+  }
+
+  /// 停止物理引擎
+  void _stopPhysicsEngine() {
+    _physicsTimer?.cancel();
+    _physicsTimer = null;
+  }
+
+  /// 选择气泡
+  void selectBubble(Bubble bubble) {
+    if (bubble.isSelected) return;
+    
+    bubble.isSelected = true;
+    _selectedBubbles.add(bubble);
+    
+    // 更新用户偏好
+    _updateUserPreference(bubble, BubbleGesture.tap);
+    
+    notifyListeners();
+  }
+
+  /// 取消选择气泡
+  void deselectBubble(Bubble bubble) {
+    if (!bubble.isSelected) return;
+    
+    bubble.isSelected = false;
+    _selectedBubbles.remove(bubble);
+    
+    notifyListeners();
+  }
+
+  /// 切换气泡选择状态
+  void toggleBubble(Bubble bubble) {
+    if (bubble.isSelected) {
+      deselectBubble(bubble);
+    } else {
+      selectBubble(bubble);
+    }
+  }
+
+  /// 处理气泡手势
+  void handleBubbleGesture(Bubble bubble, BubbleGesture gesture) {
+    switch (gesture) {
+      case BubbleGesture.tap:
+        toggleBubble(bubble);
+        break;
+      case BubbleGesture.swipeLeft:
+        _handleSwipeLeft(bubble);
+        break;
+      case BubbleGesture.swipeRight:
+        _handleSwipeRight(bubble);
+        break;
+      case BubbleGesture.longPress:
+        _handleLongPress(bubble);
+        break;
+    }
+    
+    _updateUserPreference(bubble, gesture);
+  }
+
+  /// 处理左滑（不喜欢）
+  void _handleSwipeLeft(Bubble bubble) {
+    // 添加到不喜欢列表
+    _userPreference = _userPreference.copyWith(
+      dislikedBubbles: [..._userPreference.dislikedBubbles, bubble.name],
+    );
+    
+    // 隐藏气泡
+    bubble.isVisible = false;
+    bubble.opacity = 0.0;
+    
+    // 从选中列表中移除
+    if (bubble.isSelected) {
+      deselectBubble(bubble);
+    }
+  }
+
+  /// 处理右滑（喜欢）
+  void _handleSwipeRight(Bubble bubble) {
+    // 添加到喜欢列表
+    _userPreference = _userPreference.copyWith(
+      likedBubbles: [..._userPreference.likedBubbles, bubble.name],
+    );
+    
+    // 自动选择
+    if (!bubble.isSelected) {
+      selectBubble(bubble);
+    }
+  }
+
+  /// 处理长按
+  void _handleLongPress(Bubble bubble) {
+    // 显示气泡详情或执行特殊操作
+    // 这里可以添加震动反馈等
+  }
+
+  /// 更新用户偏好
+  void _updateUserPreference(Bubble bubble, BubbleGesture gesture) {
+    double score = 0.0;
+    
+    switch (gesture) {
+      case BubbleGesture.tap:
+        score = bubble.isSelected ? 1.0 : -0.5;
+        break;
+      case BubbleGesture.swipeRight:
+        score = 2.0;
+        break;
+      case BubbleGesture.swipeLeft:
+        score = -2.0;
+        break;
+      case BubbleGesture.longPress:
+        score = 0.5;
+        break;
