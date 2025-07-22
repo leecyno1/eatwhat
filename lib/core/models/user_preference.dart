@@ -1,12 +1,13 @@
 import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
-import 'bubble.dart';
 
 part 'user_preference.g.dart';
 
 /// 用户偏好模型
+/// 
+/// 使用Hive进行本地存储
 @HiveType(typeId: 4)
-class UserPreference {
+class UserPreference extends HiveObject {
   @HiveField(0)
   final String id;
   
@@ -32,10 +33,16 @@ class UserPreference {
   final Map<String, double> bubbleWeights;
   
   @HiveField(8)
-  final List<String> favoriteFood;
+  final List<String> favoriteFoods;
   
   @HiveField(9)
-  final List<String> dislikedFood;
+  final List<String> dislikedFoods;
+
+  @HiveField(10)
+  final Map<String, double> cuisinePreferences;
+
+  @HiveField(11)
+  final Map<String, double> tastePreferences;
 
   UserPreference({
     String? id,
@@ -46,8 +53,10 @@ class UserPreference {
     Map<String, int>? bubbleInteractionCount,
     DateTime? lastUpdated,
     Map<String, double>? bubbleWeights,
-    List<String>? favoriteFood,
-    List<String>? dislikedFood,
+    List<String>? favoriteFoods,
+    List<String>? dislikedFoods,
+    Map<String, double>? cuisinePreferences,
+    Map<String, double>? tastePreferences,
   }) : id = id ?? const Uuid().v4(),
        likedBubbles = likedBubbles ?? [],
        dislikedBubbles = dislikedBubbles ?? [],
@@ -55,126 +64,10 @@ class UserPreference {
        bubbleInteractionCount = bubbleInteractionCount ?? {},
        lastUpdated = lastUpdated ?? DateTime.now(),
        bubbleWeights = bubbleWeights ?? {},
-       favoriteFood = favoriteFood ?? [],
-       dislikedFood = dislikedFood ?? [];
-
-  /// 更新气泡偏好
-  UserPreference updateBubblePreference(
-    String bubbleName,
-    BubbleGesture gesture,
-  ) {
-    final newLiked = List<String>.from(likedBubbles);
-    final newDisliked = List<String>.from(dislikedBubbles);
-    final newIgnored = List<String>.from(ignoredBubbles);
-    final newInteractionCount = Map<String, int>.from(bubbleInteractionCount);
-    final newWeights = Map<String, double>.from(bubbleWeights);
-
-    // 更新交互次数
-    newInteractionCount[bubbleName] = (newInteractionCount[bubbleName] ?? 0) + 1;
-
-    // 根据手势更新偏好
-    switch (gesture) {
-      case BubbleGesture.swipeUp:
-        if (!newLiked.contains(bubbleName)) {
-          newLiked.add(bubbleName);
-        }
-        newDisliked.remove(bubbleName);
-        newIgnored.remove(bubbleName);
-        newWeights[bubbleName] = (newWeights[bubbleName] ?? 0.5) + 0.2;
-        break;
-      case BubbleGesture.swipeDown:
-        if (!newDisliked.contains(bubbleName)) {
-          newDisliked.add(bubbleName);
-        }
-        newLiked.remove(bubbleName);
-        newIgnored.remove(bubbleName);
-        newWeights[bubbleName] = (newWeights[bubbleName] ?? 0.5) - 0.3;
-        break;
-      case BubbleGesture.swipeLeft:
-        if (!newIgnored.contains(bubbleName)) {
-          newIgnored.add(bubbleName);
-        }
-        newWeights[bubbleName] = (newWeights[bubbleName] ?? 0.5) - 0.1;
-        break;
-      case BubbleGesture.tap:
-        newWeights[bubbleName] = (newWeights[bubbleName] ?? 0.5) + 0.1;
-        break;
-      default:
-        break;
-    }
-
-    // 确保权重在合理范围内
-    newWeights[bubbleName] = (newWeights[bubbleName] ?? 0.5).clamp(0.0, 1.0);
-
-    return UserPreference(
-      id: id,
-      userId: userId,
-      likedBubbles: newLiked,
-      dislikedBubbles: newDisliked,
-      ignoredBubbles: newIgnored,
-      bubbleInteractionCount: newInteractionCount,
-      lastUpdated: DateTime.now(),
-      bubbleWeights: newWeights,
-      favoriteFood: favoriteFood,
-      dislikedFood: dislikedFood,
-    );
-  }
-
-  /// 更新食物偏好
-  UserPreference updateFoodPreference(String foodId, bool isLiked) {
-    final newFavorite = List<String>.from(favoriteFood);
-    final newDisliked = List<String>.from(dislikedFood);
-
-    if (isLiked) {
-      if (!newFavorite.contains(foodId)) {
-        newFavorite.add(foodId);
-      }
-      newDisliked.remove(foodId);
-    } else {
-      if (!newDisliked.contains(foodId)) {
-        newDisliked.add(foodId);
-      }
-      newFavorite.remove(foodId);
-    }
-
-    return copyWith(
-      favoriteFood: newFavorite,
-      dislikedFood: newDisliked,
-      lastUpdated: DateTime.now(),
-    );
-  }
-
-  /// 获取气泡权重
-  double getBubbleWeight(String bubbleName) {
-    return bubbleWeights[bubbleName] ?? 0.5;
-  }
-
-  /// 获取气泡偏好类型
-  BubblePreferenceType getBubblePreferenceType(String bubbleName) {
-    if (likedBubbles.contains(bubbleName)) {
-      return BubblePreferenceType.liked;
-    } else if (dislikedBubbles.contains(bubbleName)) {
-      return BubblePreferenceType.disliked;
-    } else if (ignoredBubbles.contains(bubbleName)) {
-      return BubblePreferenceType.ignored;
-    } else {
-      return BubblePreferenceType.neutral;
-    }
-  }
-
-  /// 获取推荐分数调整值
-  double getRecommendationBonus(List<String> bubbleNames) {
-    double bonus = 0.0;
-    for (final bubbleName in bubbleNames) {
-      final weight = getBubbleWeight(bubbleName);
-      if (likedBubbles.contains(bubbleName)) {
-        bonus += weight * 0.3;
-      } else if (dislikedBubbles.contains(bubbleName)) {
-        bonus -= weight * 0.5;
-      }
-    }
-    return bonus.clamp(-1.0, 1.0);
-  }
+       favoriteFoods = favoriteFoods ?? [],
+       dislikedFoods = dislikedFoods ?? [],
+       cuisinePreferences = cuisinePreferences ?? {},
+       tastePreferences = tastePreferences ?? {};
 
   /// 复制并修改属性
   UserPreference copyWith({
@@ -186,8 +79,10 @@ class UserPreference {
     Map<String, int>? bubbleInteractionCount,
     DateTime? lastUpdated,
     Map<String, double>? bubbleWeights,
-    List<String>? favoriteFood,
-    List<String>? dislikedFood,
+    List<String>? favoriteFoods,
+    List<String>? dislikedFoods,
+    Map<String, double>? cuisinePreferences,
+    Map<String, double>? tastePreferences,
   }) {
     return UserPreference(
       id: id ?? this.id,
@@ -198,117 +93,191 @@ class UserPreference {
       bubbleInteractionCount: bubbleInteractionCount ?? this.bubbleInteractionCount,
       lastUpdated: lastUpdated ?? this.lastUpdated,
       bubbleWeights: bubbleWeights ?? this.bubbleWeights,
-      favoriteFood: favoriteFood ?? this.favoriteFood,
-      dislikedFood: dislikedFood ?? this.dislikedFood,
+      favoriteFoods: favoriteFoods ?? this.favoriteFoods,
+      dislikedFoods: dislikedFoods ?? this.dislikedFoods,
+      cuisinePreferences: cuisinePreferences ?? this.cuisinePreferences,
+      tastePreferences: tastePreferences ?? this.tastePreferences,
     );
   }
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is UserPreference && runtimeType == other.runtimeType && id == other.id;
+  /// 转换为JSON (用于API, 而非Hive)
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'userId': userId,
+      'likedBubbles': likedBubbles,
+      'dislikedBubbles': dislikedBubbles,
+      'ignoredBubbles': ignoredBubbles,
+      'bubbleInteractionCount': bubbleInteractionCount,
+      'lastUpdated': lastUpdated.toIso8601String(),
+      'bubbleWeights': bubbleWeights,
+      'favoriteFoods': favoriteFoods,
+      'dislikedFoods': dislikedFoods,
+      'cuisinePreferences': cuisinePreferences,
+      'tastePreferences': tastePreferences,
+    };
+  }
 
-  @override
-  int get hashCode => id.hashCode;
+  /// 从JSON创建 (用于API, 而非Hive)
+  factory UserPreference.fromJson(Map<String, dynamic> json) {
+    return UserPreference(
+      id: json['id'],
+      userId: json['userId'],
+      likedBubbles: List<String>.from(json['likedBubbles'] ?? []),
+      dislikedBubbles: List<String>.from(json['dislikedBubbles'] ?? []),
+      ignoredBubbles: List<String>.from(json['ignoredBubbles'] ?? []),
+      bubbleInteractionCount: Map<String, int>.from(json['bubbleInteractionCount'] ?? {}),
+      lastUpdated: DateTime.parse(json['lastUpdated'] ?? DateTime.now().toIso8601String()),
+      bubbleWeights: Map<String, double>.from(json['bubbleWeights'] ?? {}),
+      favoriteFoods: List<String>.from(json['favoriteFoods'] ?? []),
+      dislikedFoods: List<String>.from(json['dislikedFoods'] ?? []),
+      cuisinePreferences: Map<String, double>.from(json['cuisinePreferences'] ?? {}),
+      tastePreferences: Map<String, double>.from(json['tastePreferences'] ?? {}),
+    );
+  }
+
+  /// 更新气泡偏好
+  UserPreference updateBubblePreference(String bubbleName, double score) {
+    final newPreferences = Map<String, double>.from(bubbleWeights);
+    final currentScore = newPreferences[bubbleName] ?? 0.0;
+    newPreferences[bubbleName] = (currentScore + score).clamp(-10.0, 10.0);
+
+    final newInteractions = Map<String, int>.from(bubbleInteractionCount);
+    newInteractions[bubbleName] = (newInteractions[bubbleName] ?? 0) + 1;
+
+    return copyWith(
+      bubbleWeights: newPreferences,
+      bubbleInteractionCount: newInteractions,
+      lastUpdated: DateTime.now(),
+    );
+  }
+
+  /// 添加收藏食物
+  UserPreference addFavoriteFood(String foodId) {
+    if (favoriteFoods.contains(foodId)) return this;
+
+    final newFavorites = List<String>.from(favoriteFoods)..add(foodId);
+    final newDislikes = List<String>.from(dislikedFoods)..remove(foodId);
+
+    return copyWith(
+      favoriteFoods: newFavorites,
+      dislikedFoods: newDislikes,
+      lastUpdated: DateTime.now(),
+    );
+  }
+
+  /// 添加不喜欢的食物
+  UserPreference addDislikedFood(String foodId) {
+    if (dislikedFoods.contains(foodId)) return this;
+
+    final newDislikes = List<String>.from(dislikedFoods)..add(foodId);
+    final newFavorites = List<String>.from(favoriteFoods)..remove(foodId);
+
+    return copyWith(
+      dislikedFoods: newDislikes,
+      favoriteFoods: newFavorites,
+      lastUpdated: DateTime.now(),
+    );
+  }
+
+  /// 移除收藏食物
+  UserPreference removeFavoriteFood(String foodId) {
+    if (!favoriteFoods.contains(foodId)) return this;
+
+    final newFavorites = List<String>.from(favoriteFoods)..remove(foodId);
+
+    return copyWith(
+      favoriteFoods: newFavorites,
+      lastUpdated: DateTime.now(),
+    );
+  }
+
+  /// 移除不喜欢的食物
+  UserPreference removeDislikedFood(String foodId) {
+    if (!dislikedFoods.contains(foodId)) return this;
+
+    final newDislikes = List<String>.from(dislikedFoods)..remove(foodId);
+
+    return copyWith(
+      dislikedFoods: newDislikes,
+      lastUpdated: DateTime.now(),
+    );
+  }
+
+  /// 获取气泡偏好分数
+  double getBubblePreference(String bubbleName) {
+    return bubbleWeights[bubbleName] ?? 0.0;
+  }
+
+  /// 获取气泡交互次数
+  int getBubbleInteractionCount(String bubbleName) {
+    return bubbleInteractionCount[bubbleName] ?? 0;
+  }
+
+  /// 更新菜系偏好
+  UserPreference updateCuisinePreference(String cuisine, double score) {
+    final newPreferences = Map<String, double>.from(cuisinePreferences);
+    newPreferences[cuisine] = score.clamp(-10.0, 10.0);
+
+    return copyWith(
+      cuisinePreferences: newPreferences,
+      lastUpdated: DateTime.now(),
+    );
+  }
+
+  /// 更新口味偏好
+  UserPreference updateTastePreference(String taste, double score) {
+    final newPreferences = Map<String, double>.from(tastePreferences);
+    newPreferences[taste] = score.clamp(-10.0, 10.0);
+
+    return copyWith(
+      tastePreferences: newPreferences,
+      lastUpdated: DateTime.now(),
+    );
+  }
+
+  /// 获取喜爱的菜系列表
+  List<String> get favoriteCuisines {
+    return cuisinePreferences.entries
+        .where((entry) => entry.value > 0)
+        .map((entry) => entry.key)
+        .toList();
+  }
+
+  /// 获取喜爱的口味列表
+  List<String> get likedTastes {
+    return tastePreferences.entries
+        .where((entry) => entry.value > 0)
+        .map((entry) => entry.key)
+        .toList();
+  }
+
+  /// 获取不喜欢的口味列表
+  List<String> get dislikedTastes {
+    return tastePreferences.entries
+        .where((entry) => entry.value < 0)
+        .map((entry) => entry.key)
+        .toList();
+  }
+
+  /// 创建默认用户偏好
+  static UserPreference defaultPreference() {
+    return UserPreference(
+      userId: 'default_user',
+      likedBubbles: [],
+      dislikedBubbles: [],
+      ignoredBubbles: [],
+      bubbleInteractionCount: {},
+      bubbleWeights: {},
+      favoriteFoods: [],
+      dislikedFoods: [],
+      cuisinePreferences: {},
+      tastePreferences: {},
+    );
+  }
 
   @override
   String toString() {
-    return 'UserPreference{userId: $userId, likedBubbles: ${likedBubbles.length}, dislikedBubbles: ${dislikedBubbles.length}}';
+    return 'UserPreference(userId: $userId, favorites: ${favoriteFoods.length}, dislikes: ${dislikedFoods.length})';
   }
 }
-
-/// 气泡偏好类型
-enum BubblePreferenceType {
-  liked,
-  disliked,
-  ignored,
-  neutral,
-}
-
-/// 用户会话模型
-@HiveType(typeId: 5)
-class UserSession {
-  @HiveField(0)
-  final String id;
-  
-  @HiveField(1)
-  final String userId;
-  
-  @HiveField(2)
-  final DateTime startTime;
-  
-  @HiveField(3)
-  final DateTime? endTime;
-  
-  @HiveField(4)
-  final List<BubbleInteraction> interactions;
-  
-  @HiveField(5)
-  final List<String> recommendedFoods;
-  
-  @HiveField(6)
-  final String? selectedFood;
-
-  UserSession({
-    String? id,
-    required this.userId,
-    DateTime? startTime,
-    this.endTime,
-    List<BubbleInteraction>? interactions,
-    List<String>? recommendedFoods,
-    this.selectedFood,
-  }) : id = id ?? const Uuid().v4(),
-       startTime = startTime ?? DateTime.now(),
-       interactions = interactions ?? [],
-       recommendedFoods = recommendedFoods ?? [];
-
-  /// 添加交互记录
-  UserSession addInteraction(BubbleInteraction interaction) {
-    final newInteractions = List<BubbleInteraction>.from(interactions);
-    newInteractions.add(interaction);
-    
-    return copyWith(interactions: newInteractions);
-  }
-
-  /// 设置推荐结果
-  UserSession setRecommendations(List<String> foodIds) {
-    return copyWith(recommendedFoods: foodIds);
-  }
-
-  /// 选择食物
-  UserSession selectFood(String foodId) {
-    return copyWith(
-      selectedFood: foodId,
-      endTime: DateTime.now(),
-    );
-  }
-
-  /// 复制并修改属性
-  UserSession copyWith({
-    String? id,
-    String? userId,
-    DateTime? startTime,
-    DateTime? endTime,
-    List<BubbleInteraction>? interactions,
-    List<String>? recommendedFoods,
-    String? selectedFood,
-  }) {
-    return UserSession(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      startTime: startTime ?? this.startTime,
-      endTime: endTime ?? this.endTime,
-      interactions: interactions ?? this.interactions,
-      recommendedFoods: recommendedFoods ?? this.recommendedFoods,
-      selectedFood: selectedFood ?? this.selectedFood,
-    );
-  }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is UserSession && runtimeType == other.runtimeType && id == other.id;
-
-  @override
-  int get hashCode => id.hashCode;
-} 

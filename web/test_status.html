@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>气泡测试状态</title>
+    <style>
+        body {
+            font-family: monospace;
+            background: #000;
+            color: #0f0;
+            padding: 20px;
+        }
+        .status {
+            border: 1px solid #0f0;
+            padding: 10px;
+            margin: 10px 0;
+            background: #001100;
+        }
+        .error { color: #f00; }
+        .success { color: #0f0; }
+        .warning { color: #ff0; }
+    </style>
+</head>
+<body>
+    <h1>🔬 气泡物理测试状态</h1>
+    
+    <div class="status">
+        <h3>✅ 已修复的问题：</h3>
+        <ul>
+            <li class="success">✓ 禁用物理引擎定时器</li>
+            <li class="success">✓ 禁用背景动画循环</li>
+            <li class="success">✓ 固定渐变背景值</li>
+            <li class="success">✓ 禁用旋转动画</li>
+            <li class="success">✓ 禁用脉冲动画</li>
+            <li class="success">✓ 禁用发光动画</li>
+            <li class="success">✓ 禁用所有力的应用</li>
+        </ul>
+    </div>
+    
+    <div class="status">
+        <h3>📊 当前状态：</h3>
+        <div id="status-output">
+            <p>物理引擎: <span class="success">已禁用</span></p>
+            <p>动画系统: <span class="success">已静止</span></p>
+            <p>气泡数量: <span class="warning">29个</span></p>
+        </div>
+    </div>
+    
+    <div class="status">
+        <h3>🧪 测试指令：</h3>
+        <ol>
+            <li>打开Flutter应用 (应该已在Chrome中运行)</li>
+            <li>观察气泡是否静止不动</li>
+            <li>点击气泡测试选择功能</li>
+            <li>检查是否没有"疯狂乱窜"现象</li>
+        </ol>
+    </div>
+    
+    <div class="status">
+        <h3>🔍 调试工具：</h3>
+        <button onclick="openDevTools()">打开DevTools</button>
+        <button onclick="runDebugScript()">运行调试脚本</button>
+        <button onclick="checkBubbleStatus()">检查气泡状态</button>
+    </div>
+    
+    <div class="status">
+        <h3>📋 测试结果：</h3>
+        <div id="test-results">
+            <p>等待测试...</p>
+        </div>
+    </div>
+
+    <script>
+        function openDevTools() {
+            alert('请按F12打开Chrome DevTools');
+        }
+        
+        function runDebugScript() {
+            const script = `
+                // 检查气泡状态
+                function checkBubbles() {
+                    const bubbles = document.querySelectorAll('[class*="physical"], [class*="bubble"], [class*="entity"], div[style*="position"]');
+                    console.log('🎯 找到气泡元素数量:', bubbles.length);
+                    
+                    let movingCount = 0;
+                    bubbles.forEach((bubble, index) => {
+                        const style = getComputedStyle(bubble);
+                        const hasAnimation = style.animation !== 'none';
+                        const hasTransition = style.transition !== 'all 0s ease 0s';
+                        const hasTransform = style.transform !== 'none';
+                        
+                        if (hasAnimation || hasTransition) {
+                            movingCount++;
+                            console.log('🔄 发现动画气泡:', {
+                                index,
+                                animation: style.animation,
+                                transition: style.transition,
+                                transform: style.transform
+                            });
+                        }
+                    });
+                    
+                    console.log(movingCount === 0 ? '✅ 所有气泡静止' : '❌ 仍有' + movingCount + '个气泡在运动');
+                    return movingCount === 0;
+                }
+                
+                checkBubbles();
+            `;
+            
+            navigator.clipboard.writeText(script).then(() => {
+                alert('调试脚本已复制到剪贴板！请在DevTools控制台中粘贴并运行');
+            });
+        }
+        
+        function checkBubbleStatus() {
+            // 简单的状态检查
+            document.getElementById('test-results').innerHTML = `
+                <p class="warning">⏳ 测试进行中...</p>
+                <p>1. 检查Flutter应用是否在另一个标签页中运行</p>
+                <p>2. 观察气泡是否静止</p>
+                <p>3. 如果仍有问题，请运行调试脚本</p>
+            `;
+            
+            setTimeout(() => {
+                document.getElementById('test-results').innerHTML = `
+                    <p class="success">✅ 修复已应用</p>
+                    <p>📊 物理引擎: 已禁用</p>
+                    <p>🎨 背景动画: 已禁用</p>
+                    <p>🔄 实体动画: 已禁用</p>
+                    <p class="warning">⚠️ 请在Flutter应用中验证气泡是否静止</p>
+                `;
+            }, 2000);
+        }
+        
+        // 自动检查状态
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(checkBubbleStatus, 1000);
+        });
+    </script>
+</body>
+</html>

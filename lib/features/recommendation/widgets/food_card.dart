@@ -1,238 +1,352 @@
 import 'package:flutter/material.dart';
 import '../../../core/models/food.dart';
 
-/// 食物推荐卡片
-class FoodCard extends StatelessWidget {
+/// 食物推荐卡片组件
+class FoodCard extends StatefulWidget {
   final Food food;
   final VoidCallback? onTap;
-  final bool isCompact;
+  final VoidCallback? onFavorite;
+  final bool showFavoriteButton;
 
   const FoodCard({
     super.key,
     required this.food,
     this.onTap,
-    this.isCompact = false,
+    this.onFavorite,
+    this.showFavoriteButton = true,
   });
 
   @override
+  State<FoodCard> createState() => _FoodCardState();
+}
+
+class _FoodCardState extends State<FoodCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+
+    _fadeAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.8,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 4,
-      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
-        child: Container(
-          padding: const EdgeInsets.all(16),
-          child: isCompact ? _buildCompactLayout() : _buildFullLayout(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCompactLayout() {
-    return Row(
-      children: [
-        _buildFoodImage(60),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                food.name,
-                style: const TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                food.cuisineType,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey[600],
-                ),
-              ),
-              const SizedBox(height: 4),
-              _buildRatingRow(),
-            ],
+    return AnimatedBuilder(
+      animation: _animationController,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: Opacity(
+            opacity: _fadeAnimation.value,
+            child: _buildCard(),
           ),
-        ),
-        _buildCaloriesBadge(),
-      ],
+        );
+      },
     );
   }
 
-  Widget _buildFullLayout() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            _buildFoodImage(80),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    food.name,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    food.cuisineType,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  _buildRatingRow(),
-                ],
-              ),
+  Widget _buildCard() {
+    return GestureDetector(
+      onTapDown: (_) => _animationController.forward(),
+      onTapUp: (_) => _animationController.reverse(),
+      onTapCancel: () => _animationController.reverse(),
+      onTap: widget.onTap,
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
             ),
-            _buildCaloriesBadge(),
           ],
         ),
-        if (food.description != null) ...[
-          const SizedBox(height: 12),
-          Text(
-            food.description!,
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey[700],
-            ),
-          ),
-        ],
-        const SizedBox(height: 12),
-        _buildTagsRow(),
-        if (food.nutritionFacts?.isNotEmpty == true) ...[
-          const SizedBox(height: 12),
-          _buildNutritionRow(),
-        ],
-      ],
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 图片区域
+            _buildImageSection(),
+
+            // 内容区域
+            _buildContentSection(),
+          ],
+        ),
+      ),
     );
   }
 
-  Widget _buildFoodImage(double size) {
+  /// 构建图片区域
+  Widget _buildImageSection() {
     return Container(
-      width: size,
-      height: size,
+      height: 160,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
         gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
           colors: [
             Colors.orange.shade200,
             Colors.orange.shade400,
           ],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
         ),
       ),
-      child: food.imageUrl != null
-          ? ClipRRect(
-              borderRadius: BorderRadius.circular(12),
+      child: Stack(
+        children: [
+          // 背景图片或占位符
+          if (widget.food.imageUrl != null)
+            ClipRRect(
+              borderRadius:
+                  const BorderRadius.vertical(top: Radius.circular(16)),
               child: Image.network(
-                food.imageUrl!,
+                widget.food.imageUrl!,
+                width: double.infinity,
+                height: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) => _buildFoodIcon(size),
+                errorBuilder: (context, error, stackTrace) =>
+                    _buildImagePlaceholder(),
               ),
             )
-          : _buildFoodIcon(size),
+          else
+            _buildImagePlaceholder(),
+
+          // 收藏按钮
+          if (widget.showFavoriteButton)
+            Positioned(
+              top: 12,
+              right: 12,
+              child: _buildFavoriteButton(),
+            ),
+
+          // 评分标签
+          Positioned(
+            bottom: 12,
+            left: 12,
+            child: _buildRatingBadge(),
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildFoodIcon(double size) {
-    return Center(
-      child: Icon(
-        Icons.restaurant,
-        size: size * 0.4,
+  /// 构建图片占位符
+  Widget _buildImagePlaceholder() {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      decoration: BoxDecoration(
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.orange.shade200,
+            Colors.orange.shade400,
+          ],
+        ),
+      ),
+      child: const Icon(
+        Icons.restaurant_menu,
+        size: 48,
         color: Colors.white,
       ),
     );
   }
 
-  Widget _buildRatingRow() {
-    return Row(
-      children: [
-        ...List.generate(5, (index) {
-          return Icon(
-            index < food.rating.floor()
-                ? Icons.star
-                : (index < food.rating ? Icons.star_half : Icons.star_border),
-            size: 16,
-            color: Colors.amber,
-          );
-        }),
-        const SizedBox(width: 4),
-        Text(
-          '${food.rating.toStringAsFixed(1)} (${food.ratingCount})',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
+  /// 构建收藏按钮
+  Widget _buildFavoriteButton() {
+    return GestureDetector(
+      onTap: widget.onFavorite,
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: 0.9),
+          shape: BoxShape.circle,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
         ),
-      ],
+        child: Icon(
+          widget.food.isFavorite ? Icons.favorite : Icons.favorite_border,
+          color: widget.food.isFavorite ? Colors.red : Colors.grey.shade600,
+          size: 20,
+        ),
+      ),
     );
   }
 
-  Widget _buildCaloriesBadge() {
-    if (food.calories == null) return const SizedBox.shrink();
-    
+  /// 构建评分标签
+  Widget _buildRatingBadge() {
+    if (widget.food.rating <= 0) return const SizedBox.shrink();
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: _getCalorieColor(),
+        color: Colors.black.withValues(alpha: 0.7),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Text(
-        '${food.calories} 卡',
-        style: const TextStyle(
-          fontSize: 12,
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Icon(
+            Icons.star,
+            color: Colors.amber,
+            size: 16,
+          ),
+          const SizedBox(width: 4),
+          Text(
+            widget.food.rating.toStringAsFixed(1),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          if (widget.food.ratingCount > 0) ...[
+            const SizedBox(width: 4),
+            Text(
+              '(${widget.food.ratingCount})',
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.8),
+                fontSize: 10,
+              ),
+            ),
+          ],
+        ],
       ),
     );
   }
 
-  Color _getCalorieColor() {
-    if (food.calories == null) return Colors.grey;
-    if (food.calories! < 200) return Colors.green;
-    if (food.calories! < 400) return Colors.orange;
-    return Colors.red;
+  /// 构建内容区域
+  Widget _buildContentSection() {
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 食物名称和价格
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Text(
+                  widget.food.name,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              if (widget.food.price != null) ...[
+                const SizedBox(width: 8),
+                Text(
+                  '¥${widget.food.price!.toStringAsFixed(0)}',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        color: Colors.orange.shade600,
+                        fontWeight: FontWeight.bold,
+                      ),
+                ),
+              ],
+            ],
+          ),
+
+          const SizedBox(height: 8),
+
+          // 描述
+          if (widget.food.description != null) ...[
+            Text(
+              widget.food.description!,
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: Colors.grey.shade600,
+                    height: 1.4,
+                  ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 12),
+          ],
+
+          // 标签信息
+          _buildTags(),
+
+          const SizedBox(height: 12),
+
+          // 底部信息
+          _buildBottomInfo(),
+        ],
+      ),
+    );
   }
 
-  Widget _buildTagsRow() {
-    final allTags = [
-      ...food.tasteAttributes,
-      ...food.ingredients.take(3),
-      if (food.scenarios?.isNotEmpty == true) ...food.scenarios!.take(2),
-    ];
+  /// 构建标签
+  Widget _buildTags() {
+    final tags = <String>[];
+
+    // 添加菜系
+    tags.add(widget.food.cuisineType);
+
+    // 添加主要口味特点（最多2个）
+    if (widget.food.tasteAttributes.isNotEmpty) {
+      tags.addAll(widget.food.tasteAttributes.take(2));
+    }
+
+    if (tags.isEmpty) return const SizedBox.shrink();
 
     return Wrap(
       spacing: 6,
       runSpacing: 4,
-      children: allTags.take(6).map((tag) {
+      children: tags.map((tag) {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
-            color: Colors.grey[200],
+            color: Colors.orange.shade50,
             borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: Colors.orange.shade200,
+              width: 0.5,
+            ),
           ),
           child: Text(
             tag,
             style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey[700],
+              fontSize: 11,
+              color: Colors.orange.shade700,
+              fontWeight: FontWeight.w500,
             ),
           ),
         );
@@ -240,39 +354,58 @@ class FoodCard extends StatelessWidget {
     );
   }
 
-  Widget _buildNutritionRow() {
-    if (food.nutritionFacts?.isEmpty != false) return const SizedBox.shrink();
+  /// 构建底部信息
+  Widget _buildBottomInfo() {
+    final infoItems = <Widget>[];
 
-    return Wrap(
-      spacing: 8,
-      children: food.nutritionFacts!.entries.take(3).map((entry) {
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: Colors.green[100],
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                Icons.eco,
-                size: 12,
-                color: Colors.green[700],
-              ),
-              const SizedBox(width: 4),
-              Text(
-                entry.key,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.green[700],
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
+    // 热量信息
+    if (widget.food.calories != null) {
+      infoItems.add(_buildInfoItem(
+        Icons.local_fire_department,
+        '${widget.food.calories} 卡',
+        Colors.red.shade400,
+      ));
+    }
+
+    // 餐厅信息
+    if (widget.food.restaurant != null) {
+      infoItems.add(_buildInfoItem(
+        Icons.store,
+        widget.food.restaurant!,
+        Colors.blue.shade400,
+      ));
+    }
+
+    if (infoItems.isEmpty) return const SizedBox.shrink();
+
+    return Row(
+      children: [
+        for (int i = 0; i < infoItems.length; i++) ...[
+          if (i > 0) const SizedBox(width: 16),
+          Expanded(child: infoItems[i]),
+        ],
+      ],
     );
   }
-} 
+
+  /// 构建信息项
+  Widget _buildInfoItem(IconData icon, String text, Color color) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const Icon(Icons.star),
+        const SizedBox(width: 4),
+        Expanded(
+          child: Text(
+            text,
+            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.grey.shade600,
+                ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ],
+    );
+  }
+}

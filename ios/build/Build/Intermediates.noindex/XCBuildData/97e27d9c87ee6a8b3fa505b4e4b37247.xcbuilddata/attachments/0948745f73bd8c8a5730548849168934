@@ -1,0 +1,23 @@
+{
+  "version": 0,
+  "use-external-names": false,
+  "case-sensitive": false,
+  "roots": [{
+    "type": "directory",
+    "name": "/Users/lichengyin/Desktop/Projects/eatwhat/ios/build/Build/Products/Debug-iphonesimulator/sensors_plus/sensors_plus.framework/Modules",
+    "contents": [{
+      "type": "file",
+      "name": "module.modulemap",
+      "external-contents": "/Users/lichengyin/Desktop/Projects/eatwhat/ios/build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/sensors_plus.build/unextended-module.modulemap",
+    }]
+    },
+    {
+    "type": "directory",
+    "name": "/Users/lichengyin/Desktop/Projects/eatwhat/ios/build/Build/Products/Debug-iphonesimulator/sensors_plus/sensors_plus.framework/Headers",
+    "contents": [{
+      "type": "file",
+      "name": "sensors_plus-Swift.h",
+      "external-contents": "/Users/lichengyin/Desktop/Projects/eatwhat/ios/build/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/sensors_plus.build/unextended-interface-header.h",
+    }]
+  }]
+}

@@ -1,278 +1,153 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:uuid/uuid.dart';
 
-part 'bubble.g.dart';
-
 /// 气泡类型枚举
-@HiveType(typeId: 0)
 enum BubbleType {
-  @HiveField(0)
-  taste,        // 口味
-  @HiveField(1)
-  cuisine,      // 菜系
-  @HiveField(2)
-  ingredient,   // 食材
-  @HiveField(3)
-  nutrition,    // 营养
-  @HiveField(4)
-  calorie,      // 热量
-  @HiveField(5)
-  scenario,     // 情境
-  @HiveField(6)
-  temperature,  // 温度
-  @HiveField(7)
-  spiciness,    // 辣度
+  taste, // 口味
+  cuisine, // 菜系
+  ingredient, // 食材
+  scenario, // 情境
+  nutrition, // 营养
 }
 
-/// 气泡数据模型
-@HiveType(typeId: 1)
-class Bubble {
-  @HiveField(0)
-  final String id;
-  
-  @HiveField(1)
-  final BubbleType type;
-  
-  @HiveField(2)
-  final String name;
-  
-  @HiveField(3)
-  final String? icon;
-  
-  @HiveField(4)
-  final Color color;
-  
-  @HiveField(5)
-  final double size;
-  
-  @HiveField(6)
-  final String? description;
-  
-  @HiveField(7)
-  final Map<String, dynamic>? metadata;
+/// 气泡手势枚举
+enum BubbleGesture {
+  tap, // 点击
+  swipeUp, // 上滑
+  swipeDown, // 下滑
+  swipeLeft, // 左滑
+  swipeRight, // 右滑
+  longPress, // 长按
+  dragStart, // 开始拖拽
+  dragUpdate, // 拖拽中
+  dragEnd, // 结束拖拽
+}
 
-  // 运行时属性（不持久化）
+/// 气泡模型
+class Bubble {
+  final String id;
+  final BubbleType type;
+  final String name;
+  final String? icon;
+  final String? description;
+  final Color color;
+  double size;
+  double currentDisplaySize; // 用于碰撞检测的实际显示大小
   Offset position;
   Offset velocity;
-  double opacity;
-  bool isSelected;
-  bool isAnimating;
   double weight;
+  bool isSelected;
+  bool isVisible;
+  double opacity;
+  int clickCount; // 新增点击次数字段
+  bool isBeingDragged; // 新增拖拽状态字段
 
   Bubble({
     String? id,
     required this.type,
     required this.name,
     this.icon,
-    required this.color,
-    this.size = 300.0,
     this.description,
-    this.metadata,
+    required this.color,
+    this.size = 50.0,
     this.position = Offset.zero,
     this.velocity = Offset.zero,
-    this.opacity = 1.0,
-    this.isSelected = false,
-    this.isAnimating = false,
     this.weight = 1.0,
-  }) : id = id ?? const Uuid().v4();
+    this.isSelected = false,
+    this.isVisible = true,
+    this.opacity = 1.0,
+    double? currentDisplaySize, // 添加为可选命名参数
+    this.clickCount = 0, // 初始化点击次数为0
+    this.isBeingDragged = false, // 初始化拖拽状态为false
+  })  : id = id ?? const Uuid().v4(),
+        currentDisplaySize = currentDisplaySize ?? size; // 初始化
 
-  /// 复制气泡并修改属性
+  /// 复制气泡并修改部分属性
   Bubble copyWith({
     String? id,
     BubbleType? type,
     String? name,
     String? icon,
+    String? description,
     Color? color,
     double? size,
-    String? description,
-    Map<String, dynamic>? metadata,
     Offset? position,
     Offset? velocity,
-    double? opacity,
-    bool? isSelected,
-    bool? isAnimating,
     double? weight,
+    bool? isSelected,
+    bool? isVisible,
+    double? opacity,
+    double? currentDisplaySize,
+    int? clickCount,
+    bool? isBeingDragged,
   }) {
     return Bubble(
       id: id ?? this.id,
       type: type ?? this.type,
       name: name ?? this.name,
       icon: icon ?? this.icon,
+      description: description ?? this.description,
       color: color ?? this.color,
       size: size ?? this.size,
-      description: description ?? this.description,
-      metadata: metadata ?? this.metadata,
       position: position ?? this.position,
       velocity: velocity ?? this.velocity,
-      opacity: opacity ?? this.opacity,
-      isSelected: isSelected ?? this.isSelected,
-      isAnimating: isAnimating ?? this.isAnimating,
       weight: weight ?? this.weight,
+      isSelected: isSelected ?? this.isSelected,
+      isVisible: isVisible ?? this.isVisible,
+      opacity: opacity ?? this.opacity,
+      currentDisplaySize: currentDisplaySize ?? this.currentDisplaySize,
+      clickCount: clickCount ?? this.clickCount,
+      isBeingDragged: isBeingDragged ?? this.isBeingDragged,
+    );
+  }
+
+  /// 转换为JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'type': type.index,
+      'name': name,
+      'icon': icon,
+      'description': description,
+      'color': color.value, // TODO: Replace with color.value when Flutter team provides proper alternative
+      'size': size,
+      'weight': weight,
+      'isSelected': isSelected,
+      'isVisible': isVisible,
+      'opacity': opacity,
+      'clickCount': clickCount, // 添加到toJson
+    };
+  }
+
+  /// 从JSON创建气泡
+  factory Bubble.fromJson(Map<String, dynamic> json) {
+    return Bubble(
+      id: json['id'],
+      type: BubbleType.values[json['type']],
+      name: json['name'],
+      icon: json['icon'],
+      description: json['description'],
+      color: Color(json['color']),
+      size: json['size']?.toDouble() ?? 50.0,
+      weight: json['weight']?.toDouble() ?? 1.0,
+      isSelected: json['isSelected'] ?? false,
+      isVisible: json['isVisible'] ?? true,
+      opacity: json['opacity']?.toDouble() ?? 1.0,
+      clickCount: json['clickCount'] ?? 0, // 从fromJson恢复
     );
   }
 
   @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Bubble && runtimeType == other.runtimeType && id == other.id;
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is Bubble && other.id == id;
+  }
 
   @override
   int get hashCode => id.hashCode;
 
   @override
   String toString() {
-    return 'Bubble{id: $id, type: $type, name: $name, position: $position}';
+    return 'Bubble(id: $id, name: $name, type: $type, isSelected: $isSelected)';
   }
-  
-  /// 获取气泡的emoji和text
-  String get emoji => icon ?? '🔮';
-  String get text => name;
 }
-
-/// 气泡手势类型
-enum BubbleGesture {
-  swipeUp,      // 上滑（喜欢）
-  swipeDown,    // 下滑（不喜欢）
-  swipeLeft,    // 左滑（忽略）
-  swipeRight,   // 右滑（收藏）
-  tap,          // 点击（选择/取消选择）
-  longPress,    // 长按（查看详情）
-}
-
-/// 气泡交互结果
-class BubbleInteraction {
-  final Bubble bubble;
-  final BubbleGesture gesture;
-  final DateTime timestamp;
-  final Offset gesturePosition;
-  final double gestureVelocity;
-
-  BubbleInteraction({
-    required this.bubble,
-    required this.gesture,
-    required this.timestamp,
-    required this.gesturePosition,
-    required this.gestureVelocity,
-  });
-}
-
-/// 气泡工厂类
-class BubbleFactory {
-  static const Map<BubbleType, Color> _typeColors = {
-    BubbleType.taste: Colors.orange,
-    BubbleType.cuisine: Colors.red,
-    BubbleType.ingredient: Colors.green,
-    BubbleType.nutrition: Colors.blue,
-    BubbleType.calorie: Colors.purple,
-    BubbleType.scenario: Colors.teal,
-    BubbleType.temperature: Colors.cyan,
-    BubbleType.spiciness: Colors.deepOrange,
-  };
-
-  static const Map<BubbleType, String> _typeNames = {
-    BubbleType.taste: '口味',
-    BubbleType.cuisine: '菜系',
-    BubbleType.ingredient: '食材',
-    BubbleType.nutrition: '营养',
-    BubbleType.calorie: '热量',
-    BubbleType.scenario: '情境',
-    BubbleType.temperature: '温度',
-    BubbleType.spiciness: '辣度',
-  };
-
-  /// 创建预定义的气泡
-  static List<Bubble> createDefaultBubbles() {
-    return [
-      // 口味类
-      Bubble(
-        type: BubbleType.taste,
-        name: '甜',
-        color: _typeColors[BubbleType.taste]!,
-        icon: '🍯',
-      ),
-      Bubble(
-        type: BubbleType.taste,
-        name: '酸',
-        color: _typeColors[BubbleType.taste]!,
-        icon: '🍋',
-      ),
-      Bubble(
-        type: BubbleType.taste,
-        name: '咸',
-        color: _typeColors[BubbleType.taste]!,
-        icon: '🧂',
-      ),
-      
-      // 菜系类
-      Bubble(
-        type: BubbleType.cuisine,
-        name: '川菜',
-        color: _typeColors[BubbleType.cuisine]!,
-        icon: '🌶️',
-      ),
-      Bubble(
-        type: BubbleType.cuisine,
-        name: '粤菜',
-        color: _typeColors[BubbleType.cuisine]!,
-        icon: '🥟',
-      ),
-      Bubble(
-        type: BubbleType.cuisine,
-        name: '日料',
-        color: _typeColors[BubbleType.cuisine]!,
-        icon: '🍣',
-      ),
-      
-      // 食材类
-      Bubble(
-        type: BubbleType.ingredient,
-        name: '肉类',
-        color: _typeColors[BubbleType.ingredient]!,
-        icon: '🥩',
-      ),
-      Bubble(
-        type: BubbleType.ingredient,
-        name: '蔬菜',
-        color: _typeColors[BubbleType.ingredient]!,
-        icon: '🥬',
-      ),
-      Bubble(
-        type: BubbleType.ingredient,
-        name: '海鲜',
-        color: _typeColors[BubbleType.ingredient]!,
-        icon: '🦐',
-      ),
-      
-      // 情境类
-      Bubble(
-        type: BubbleType.scenario,
-        name: '早餐',
-        color: _typeColors[BubbleType.scenario]!,
-        icon: '🌅',
-      ),
-      Bubble(
-        type: BubbleType.scenario,
-        name: '午餐',
-        color: _typeColors[BubbleType.scenario]!,
-        icon: '☀️',
-      ),
-      Bubble(
-        type: BubbleType.scenario,
-        name: '晚餐',
-        color: _typeColors[BubbleType.scenario]!,
-        icon: '🌙',
-      ),
-    ];
-  }
-
-  /// 根据类型获取颜色
-  static Color getColorByType(BubbleType type) {
-    return _typeColors[type] ?? Colors.grey;
-  }
-
-  /// 根据类型获取名称
-  static String getNameByType(BubbleType type) {
-    return _typeNames[type] ?? '未知';
-  }
-} 

@@ -1,178 +1,366 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
 import 'bubble.dart';
 
-/// 气泡工厂类
+/// 气泡工厂类，用于创建预定义的气泡
 class BubbleFactory {
-  static final Random _random = Random();
-
   /// 创建默认气泡集合
   static List<Bubble> createDefaultBubbles() {
-    final bubbles = <Bubble>[];
-    
-    // 口味气泡
-    bubbles.addAll(_createTasteBubbles());
-    
-    // 菜系气泡
-    bubbles.addAll(_createCuisineBubbles());
-    
-    // 食材气泡
-    bubbles.addAll(_createIngredientBubbles());
-    
-    // 情境气泡
-    bubbles.addAll(_createScenarioBubbles());
-    
-    // 营养气泡
-    bubbles.addAll(_createNutritionBubbles());
-    
-    // 随机化位置和速度
-    _randomizePositions(bubbles);
-    
-    return bubbles;
-  }
-
-  /// 创建口味气泡
-  static List<Bubble> _createTasteBubbles() {
-    final tastes = [
-      {'name': '甜', 'icon': '🍯', 'color': Colors.pink},
-      {'name': '酸', 'icon': '🍋', 'color': Colors.yellow},
-      {'name': '辣', 'icon': '🌶️', 'color': Colors.red},
-      {'name': '咸', 'icon': '🧂', 'color': Colors.grey},
-      {'name': '鲜', 'icon': '🦐', 'color': Colors.orange},
-      {'name': '香', 'icon': '🌿', 'color': Colors.green},
+    return [
+      // 口味类气泡
+      ...createTasteBubbles(),
+      // 菜系类气泡
+      ...createCuisineBubbles(),
+      // 食材类气泡
+      ...createIngredientBubbles(),
+      // 情境类气泡
+      ...createScenarioBubbles(),
+      // 营养类气泡
+      ...createNutritionBubbles(),
     ];
-
-    return tastes.map((taste) => Bubble(
-      type: BubbleType.taste,
-      name: taste['name'] as String,
-      icon: taste['icon'] as String,
-      color: taste['color'] as Color,
-      size: 40 + _random.nextDouble() * 20,
-    )).toList();
   }
 
-  /// 创建菜系气泡
-  static List<Bubble> _createCuisineBubbles() {
-    final cuisines = [
-      {'name': '川菜', 'icon': '🌶️', 'color': Colors.red},
-      {'name': '粤菜', 'icon': '🦆', 'color': Colors.brown},
-      {'name': '湘菜', 'icon': '🥘', 'color': Colors.deepOrange},
-      {'name': '鲁菜', 'icon': '🐟', 'color': Colors.blue},
-      {'name': '苏菜', 'icon': '🦀', 'color': Colors.teal},
-      {'name': '浙菜', 'icon': '🍤', 'color': Colors.cyan},
-      {'name': '闽菜', 'icon': '🐠', 'color': Colors.indigo},
-      {'name': '徽菜', 'icon': '🍖', 'color': Colors.purple},
-      {'name': '日料', 'icon': '🍣', 'color': Colors.pink},
-      {'name': '韩料', 'icon': '🥢', 'color': Colors.amber},
-      {'name': '西餐', 'icon': '🍝', 'color': Colors.lime},
-      {'name': '泰菜', 'icon': '🍜', 'color': Colors.lightGreen},
+  /// 创建口味类气泡
+  static List<Bubble> createTasteBubbles() {
+    return [
+      Bubble(
+        type: BubbleType.taste,
+        name: '甜',
+        icon: '🍯',
+        description: '甜味食物',
+        color: Colors.pink.shade300,
+        size: 60.0,
+      ),
+      Bubble(
+        type: BubbleType.taste,
+        name: '酸',
+        icon: '🍋',
+        description: '酸味食物',
+        color: Colors.yellow.shade400,
+        size: 55.0,
+      ),
+      Bubble(
+        type: BubbleType.taste,
+        name: '辣',
+        icon: '🌶️',
+        description: '辣味食物',
+        color: Colors.red.shade400,
+        size: 65.0,
+      ),
+      Bubble(
+        type: BubbleType.taste,
+        name: '咸',
+        icon: '🧂',
+        description: '咸味食物',
+        color: Colors.grey.shade400,
+        size: 50.0,
+      ),
+      Bubble(
+        type: BubbleType.taste,
+        name: '鲜',
+        icon: '🦐',
+        description: '鲜味食物',
+        color: Colors.blue.shade300,
+        size: 58.0,
+      ),
     ];
-
-    return cuisines.map((cuisine) => Bubble(
-      type: BubbleType.cuisine,
-      name: cuisine['name'] as String,
-      icon: cuisine['icon'] as String,
-      color: cuisine['color'] as Color,
-      size: 45 + _random.nextDouble() * 25,
-    )).toList();
   }
 
-  /// 创建食材气泡
-  static List<Bubble> _createIngredientBubbles() {
-    final ingredients = [
-      {'name': '牛肉', 'icon': '🥩', 'color': Colors.red[700]!},
-      {'name': '猪肉', 'icon': '🐷', 'color': Colors.pink[300]!},
-      {'name': '鸡肉', 'icon': '🐔', 'color': Colors.orange[200]!},
-      {'name': '鱼肉', 'icon': '🐟', 'color': Colors.blue[300]!},
-      {'name': '虾', 'icon': '🦐', 'color': Colors.orange[400]!},
-      {'name': '蟹', 'icon': '🦀', 'color': Colors.red[400]!},
-      {'name': '蔬菜', 'icon': '🥬', 'color': Colors.green[400]!},
-      {'name': '豆腐', 'icon': '🧈', 'color': Colors.grey[200]!},
-      {'name': '蛋类', 'icon': '🥚', 'color': Colors.yellow[200]!},
-      {'name': '面条', 'icon': '🍜', 'color': Colors.brown[200]!},
-      {'name': '米饭', 'icon': '🍚', 'color': Colors.grey[100]!},
+  /// 创建菜系类气泡
+  static List<Bubble> createCuisineBubbles() {
+    return [
+      Bubble(
+        type: BubbleType.cuisine,
+        name: '川菜',
+        icon: '🌶️',
+        description: '四川菜系',
+        color: Colors.red.shade500,
+        size: 70.0,
+      ),
+      Bubble(
+        type: BubbleType.cuisine,
+        name: '粤菜',
+        icon: '🦆',
+        description: '广东菜系',
+        color: Colors.orange.shade400,
+        size: 68.0,
+      ),
+      Bubble(
+        type: BubbleType.cuisine,
+        name: '湘菜',
+        icon: '🌶️',
+        description: '湖南菜系',
+        color: Colors.deepOrange.shade400,
+        size: 65.0,
+      ),
+      Bubble(
+        type: BubbleType.cuisine,
+        name: '鲁菜',
+        icon: '🥟',
+        description: '山东菜系',
+        color: Colors.brown.shade400,
+        size: 62.0,
+      ),
+      Bubble(
+        type: BubbleType.cuisine,
+        name: '苏菜',
+        icon: '🦀',
+        description: '江苏菜系',
+        color: Colors.green.shade400,
+        size: 60.0,
+      ),
+      Bubble(
+        type: BubbleType.cuisine,
+        name: '浙菜',
+        icon: '🐟',
+        description: '浙江菜系',
+        color: Colors.teal.shade400,
+        size: 58.0,
+      ),
+      Bubble(
+        type: BubbleType.cuisine,
+        name: '闽菜',
+        icon: '🦪',
+        description: '福建菜系',
+        color: Colors.cyan.shade400,
+        size: 56.0,
+      ),
+      Bubble(
+        type: BubbleType.cuisine,
+        name: '徽菜',
+        icon: '🐷',
+        description: '安徽菜系',
+        color: Colors.indigo.shade400,
+        size: 54.0,
+      ),
     ];
-
-    return ingredients.map((ingredient) => Bubble(
-      type: BubbleType.ingredient,
-      name: ingredient['name'] as String,
-      icon: ingredient['icon'] as String,
-      color: ingredient['color'] as Color,
-      size: 35 + _random.nextDouble() * 20,
-    )).toList();
   }
 
-  /// 创建情境气泡
-  static List<Bubble> _createScenarioBubbles() {
-    final scenarios = [
-      {'name': '早餐', 'icon': '🌅', 'color': Colors.orange[300]!},
-      {'name': '午餐', 'icon': '☀️', 'color': Colors.yellow[600]!},
-      {'name': '晚餐', 'icon': '🌙', 'color': Colors.indigo[400]!},
-      {'name': '夜宵', 'icon': '🌃', 'color': Colors.purple[400]!},
-      {'name': '聚餐', 'icon': '👥', 'color': Colors.green[400]!},
-      {'name': '约会', 'icon': '💕', 'color': Colors.pink[400]!},
-      {'name': '工作餐', 'icon': '💼', 'color': Colors.grey[600]!},
-      {'name': '家庭餐', 'icon': '🏠', 'color': Colors.brown[400]!},
-      {'name': '快餐', 'icon': '⚡', 'color': Colors.red[500]!},
-      {'name': '精致餐', 'icon': '✨', 'color': Colors.amber[400]!},
+  /// 创建食材类气泡
+  static List<Bubble> createIngredientBubbles() {
+    return [
+      Bubble(
+        type: BubbleType.ingredient,
+        name: '猪肉',
+        icon: '🐷',
+        description: '猪肉类食材',
+        color: Colors.pink.shade400,
+        size: 55.0,
+      ),
+      Bubble(
+        type: BubbleType.ingredient,
+        name: '牛肉',
+        icon: '🐄',
+        description: '牛肉类食材',
+        color: Colors.brown.shade500,
+        size: 58.0,
+      ),
+      Bubble(
+        type: BubbleType.ingredient,
+        name: '鸡肉',
+        icon: '🐔',
+        description: '鸡肉类食材',
+        color: Colors.orange.shade300,
+        size: 52.0,
+      ),
+      Bubble(
+        type: BubbleType.ingredient,
+        name: '鱼',
+        icon: '🐟',
+        description: '鱼类食材',
+        color: Colors.blue.shade400,
+        size: 50.0,
+      ),
+      Bubble(
+        type: BubbleType.ingredient,
+        name: '虾',
+        icon: '🦐',
+        description: '虾类食材',
+        color: Colors.red.shade300,
+        size: 48.0,
+      ),
+      Bubble(
+        type: BubbleType.ingredient,
+        name: '蔬菜',
+        icon: '🥬',
+        description: '蔬菜类食材',
+        color: Colors.green.shade500,
+        size: 60.0,
+      ),
+      Bubble(
+        type: BubbleType.ingredient,
+        name: '豆腐',
+        icon: '🧈',
+        description: '豆制品',
+        color: Colors.grey.shade300,
+        size: 45.0,
+      ),
+      Bubble(
+        type: BubbleType.ingredient,
+        name: '蛋',
+        icon: '🥚',
+        description: '蛋类食材',
+        color: Colors.yellow.shade300,
+        size: 47.0,
+      ),
     ];
-
-    return scenarios.map((scenario) => Bubble(
-      type: BubbleType.scenario,
-      name: scenario['name'] as String,
-      icon: scenario['icon'] as String,
-      color: scenario['color'] as Color,
-      size: 40 + _random.nextDouble() * 25,
-    )).toList();
   }
 
-  /// 创建营养气泡
-  static List<Bubble> _createNutritionBubbles() {
-    final nutrition = [
-      {'name': '高蛋白', 'icon': '💪', 'color': Colors.red[600]!},
-      {'name': '低脂肪', 'icon': '🏃', 'color': Colors.green[600]!},
-      {'name': '高纤维', 'icon': '🌾', 'color': Colors.brown[400]!},
-      {'name': '维生素', 'icon': '🍊', 'color': Colors.orange[500]!},
-      {'name': '低热量', 'icon': '📉', 'color': Colors.blue[500]!},
-      {'name': '补钙', 'icon': '🦴', 'color': Colors.grey[300]!},
-      {'name': '补铁', 'icon': '🩸', 'color': Colors.red[800]!},
+  /// 创建情境类气泡
+  static List<Bubble> createScenarioBubbles() {
+    return [
+      Bubble(
+        type: BubbleType.scenario,
+        name: '早餐',
+        icon: '🌅',
+        description: '早餐时间',
+        color: Colors.amber.shade300,
+        size: 65.0,
+      ),
+      Bubble(
+        type: BubbleType.scenario,
+        name: '午餐',
+        icon: '☀️',
+        description: '午餐时间',
+        color: Colors.orange.shade400,
+        size: 70.0,
+      ),
+      Bubble(
+        type: BubbleType.scenario,
+        name: '晚餐',
+        icon: '🌙',
+        description: '晚餐时间',
+        color: Colors.purple.shade400,
+        size: 68.0,
+      ),
+      Bubble(
+        type: BubbleType.scenario,
+        name: '夜宵',
+        icon: '🌃',
+        description: '夜宵时间',
+        color: Colors.indigo.shade500,
+        size: 60.0,
+      ),
+      Bubble(
+        type: BubbleType.scenario,
+        name: '聚餐',
+        icon: '👥',
+        description: '聚餐场合',
+        color: Colors.green.shade400,
+        size: 62.0,
+      ),
+      Bubble(
+        type: BubbleType.scenario,
+        name: '快餐',
+        icon: '⚡',
+        description: '快速用餐',
+        color: Colors.red.shade400,
+        size: 55.0,
+      ),
+      Bubble(
+        type: BubbleType.scenario,
+        name: '外卖',
+        icon: '🛵',
+        description: '外卖订餐',
+        color: Colors.blue.shade400,
+        size: 58.0,
+      ),
+      Bubble(
+        type: BubbleType.scenario,
+        name: '下厨',
+        icon: '👨‍🍳',
+        description: '自己做饭',
+        color: Colors.teal.shade400,
+        size: 53.0,
+      ),
     ];
-
-    return nutrition.map((nut) => Bubble(
-      type: BubbleType.nutrition,
-      name: nut['name'] as String,
-      icon: nut['icon'] as String,
-      color: nut['color'] as Color,
-      size: 35 + _random.nextDouble() * 20,
-    )).toList();
   }
 
-  /// 随机化气泡位置和速度
-  static void _randomizePositions(List<Bubble> bubbles) {
-    for (final bubble in bubbles) {
-      bubble.position = Offset(
-        _random.nextDouble() * 300,
-        _random.nextDouble() * 600,
-      );
-      
-      bubble.velocity = Offset(
-        (_random.nextDouble() - 0.5) * 2,
-        (_random.nextDouble() - 0.5) * 2,
-      );
+  /// 创建营养类气泡
+  static List<Bubble> createNutritionBubbles() {
+    return [
+      Bubble(
+        type: BubbleType.nutrition,
+        name: '高蛋白',
+        icon: '💪',
+        description: '高蛋白食物',
+        color: Colors.red.shade500,
+        size: 60.0,
+      ),
+      Bubble(
+        type: BubbleType.nutrition,
+        name: '低脂',
+        icon: '🥗',
+        description: '低脂肪食物',
+        color: Colors.green.shade500,
+        size: 58.0,
+      ),
+      Bubble(
+        type: BubbleType.nutrition,
+        name: '高纤维',
+        icon: '🌾',
+        description: '高纤维食物',
+        color: Colors.brown.shade400,
+        size: 55.0,
+      ),
+      Bubble(
+        type: BubbleType.nutrition,
+        name: '维生素',
+        icon: '🍊',
+        description: '富含维生素',
+        color: Colors.orange.shade400,
+        size: 52.0,
+      ),
+      Bubble(
+        type: BubbleType.nutrition,
+        name: '低糖',
+        icon: '🚫',
+        description: '低糖食物',
+        color: Colors.grey.shade500,
+        size: 50.0,
+      ),
+      Bubble(
+        type: BubbleType.nutrition,
+        name: '补钙',
+        icon: '🦴',
+        description: '补钙食物',
+        color: Colors.white,
+        size: 48.0,
+      ),
+    ];
+  }
+
+  /// 根据类型创建气泡
+  static List<Bubble> createBubblesByType(BubbleType type) {
+    switch (type) {
+      case BubbleType.taste:
+        return createTasteBubbles();
+      case BubbleType.cuisine:
+        return createCuisineBubbles();
+      case BubbleType.ingredient:
+        return createIngredientBubbles();
+      case BubbleType.scenario:
+        return createScenarioBubbles();
+      case BubbleType.nutrition:
+        return createNutritionBubbles();
     }
   }
 
-  /// 根据用户偏好创建个性化气泡
-  static List<Bubble> createPersonalizedBubbles(Map<String, double> preferences) {
-    final bubbles = createDefaultBubbles();
-    
-    // 根据偏好调整气泡大小和权重
-    for (final bubble in bubbles) {
-      final preference = preferences[bubble.name] ?? 0.5;
-      bubble.size = bubble.size * (0.5 + preference);
-      bubble.weight = preference;
-    }
-    
-    return bubbles;
+  /// 创建自定义气泡
+  static Bubble createCustomBubble({
+    required BubbleType type,
+    required String name,
+    String? icon,
+    String? description,
+    Color? color,
+    double? size,
+  }) {
+    return Bubble(
+      type: type,
+      name: name,
+      icon: icon,
+      description: description,
+      color: color ?? Colors.blue.shade400,
+      size: size ?? 50.0,
+    );
   }
-} 
+}

@@ -1,0 +1,18 @@
+{
+  "" : {
+    "diagnostics" : "/Users/lichengyin/Desktop/Projects/eatwhat/ios/build/Build/Intermediates.noindex/Pods.build/Debug-iphoneos/rive_common.build/Objects-normal/arm64/rive_common-master.dia",
+    "emit-module-dependencies" : "/Users/lichengyin/Desktop/Projects/eatwhat/ios/build/Build/Intermediates.noindex/Pods.build/Debug-iphoneos/rive_common.build/Objects-normal/arm64/rive_common-master-emit-module.d",
+    "emit-module-diagnostics" : "/Users/lichengyin/Desktop/Projects/eatwhat/ios/build/Build/Intermediates.noindex/Pods.build/Debug-iphoneos/rive_common.build/Objects-normal/arm64/rive_common-master-emit-module.dia",
+    "swift-dependencies" : "/Users/lichengyin/Desktop/Projects/eatwhat/ios/build/Build/Intermediates.noindex/Pods.build/Debug-iphoneos/rive_common.build/Objects-normal/arm64/rive_common-master.swiftdeps"
+  },
+  "/Users/lichengyin/.pub-cache/hosted/pub.dev/rive_common-0.4.15/ios/Classes/RivePlugin.swift" : {
+    "const-values" : "/Users/lichengyin/Desktop/Projects/eatwhat/ios/build/Build/Intermediates.noindex/Pods.build/Debug-iphoneos/rive_common.build/Objects-normal/arm64/RivePlugin.swiftconstvalues",
+    "dependencies" : "/Users/lichengyin/Desktop/Projects/eatwhat/ios/build/Build/Intermediates.noindex/Pods.build/Debug-iphoneos/rive_common.build/Objects-normal/arm64/RivePlugin.d",
+    "diagnostics" : "/Users/lichengyin/Desktop/Projects/eatwhat/ios/build/Build/Intermediates.noindex/Pods.build/Debug-iphoneos/rive_common.build/Objects-normal/arm64/RivePlugin.dia",
+    "index-unit-output-path" : "/Pods.build/Debug-iphoneos/rive_common.build/Objects-normal/arm64/RivePlugin.o",
+    "llvm-bc" : "/Users/lichengyin/Desktop/Projects/eatwhat/ios/build/Build/Intermediates.noindex/Pods.build/Debug-iphoneos/rive_common.build/Objects-normal/arm64/RivePlugin.bc",
+    "object" : "/Users/lichengyin/Desktop/Projects/eatwhat/ios/build/Build/Intermediates.noindex/Pods.build/Debug-iphoneos/rive_common.build/Objects-normal/arm64/RivePlugin.o",
+    "swift-dependencies" : "/Users/lichengyin/Desktop/Projects/eatwhat/ios/build/Build/Intermediates.noindex/Pods.build/Debug-iphoneos/rive_common.build/Objects-normal/arm64/RivePlugin.swiftdeps",
+    "swiftmodule" : "/Users/lichengyin/Desktop/Projects/eatwhat/ios/build/Build/Intermediates.noindex/Pods.build/Debug-iphoneos/rive_common.build/Objects-normal/arm64/RivePlugin~partial.swiftmodule"
+  }
+}

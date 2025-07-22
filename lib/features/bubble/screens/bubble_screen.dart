@@ -1,11 +1,10 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../../../core/models/bubble.dart';
-import '../../../core/utils/bubble_physics.dart';
-import '../widgets/bubble_widget.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../controllers/bubble_controller.dart';
 import '../../recommendation/screens/recommendation_screen.dart';
+import '../../../shared/widgets/modern_bubble_widget.dart';
+import '../../../shared/widgets/modern_loading_animation.dart';
 
 /// 气泡主界面
 class BubbleScreen extends StatefulWidget {
@@ -17,61 +16,37 @@ class BubbleScreen extends StatefulWidget {
 
 class _BubbleScreenState extends State<BubbleScreen>
     with TickerProviderStateMixin {
-  late BubblePhysics _physics;
-  late Timer _physicsTimer;
   late AnimationController _backgroundController;
   late Animation<Color?> _backgroundAnimation;
+  bool _useEnhancedBubbles = true; // 控制是否使用增强气泡
 
   @override
   void initState() {
     super.initState();
-    
+
+    // 初始化背景动画
     _backgroundController = AnimationController(
       duration: const Duration(seconds: 10),
       vsync: this,
     );
 
     _backgroundAnimation = ColorTween(
-      begin: const Color(0xFF1A1A2E),
-      end: const Color(0xFF16213E),
+      begin: const Color(0xFFFFF3E0), // 主色调 - 暖黄
+      end: const Color(0xFFE3F2FD), // 辅助色 - 淡蓝
     ).animate(_backgroundController);
 
     _backgroundController.repeat(reverse: true);
 
-    // 在下一帧初始化物理引擎
+    // 延迟初始化控制器，等待布局完成
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _initializePhysics();
-      _startPhysicsLoop();
+      final controller = context.read<BubbleController>();
+      final size = MediaQuery.of(context).size;
+      controller.initialize(screenSize: size);
     });
-  }
-
-  void _initializePhysics() {
-    final size = MediaQuery.of(context).size;
-    _physics = BubblePhysics(screenSize: size);
-    
-    // 初始化气泡位置
-    final controller = context.read<BubbleController>();
-    _physics.randomDistributeBubbles(controller.bubbles);
-  }
-
-  void _startPhysicsLoop() {
-    _physicsTimer = Timer.periodic(
-      const Duration(milliseconds: 16), // 60 FPS
-      (timer) {
-        final controller = context.read<BubbleController>();
-        _physics.updateBubbles(controller.bubbles, 0.016);
-        
-        // 触发重建
-        if (mounted) {
-          setState(() {});
-        }
-      },
-    );
   }
 
   @override
   void dispose() {
-    _physicsTimer.cancel();
     _backgroundController.dispose();
     super.dispose();
   }
@@ -84,12 +59,14 @@ class _BubbleScreenState extends State<BubbleScreen>
         builder: (context, child) {
           return Container(
             decoration: BoxDecoration(
-              gradient: RadialGradient(
-                center: Alignment.topLeft,
-                radius: 1.5,
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
                 colors: [
-                  _backgroundAnimation.value ?? const Color(0xFF1A1A2E),
-                  const Color(0xFF0F0F23),
+                  _backgroundAnimation.value ??
+                      const Color(0xFFFFF3E0), // 主色调 - 暖黄
+                  Colors.white, // 中性色
+                  const Color(0xFFE3F2FD), // 辅助色 - 淡蓝
                 ],
               ),
             ),
@@ -110,178 +87,67 @@ class _BubbleScreenState extends State<BubbleScreen>
     );
   }
 
+  /// 构建头部
   Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      child: Column(
-        children: [
-          const Text(
-            '《吃什么》',
-            style: TextStyle(
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              shadows: [
-                Shadow(
-                  color: Colors.black26,
-                  offset: Offset(2, 2),
-                  blurRadius: 4,
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            '滑动气泡表达你的喜好',
-            style: TextStyle(
-              fontSize: 16,
-              color: Colors.white.withOpacity(0.8),
-            ),
-          ),
-          const SizedBox(height: 16),
-          _buildGestureGuide(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGestureGuide() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.1),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: Colors.white.withOpacity(0.2),
-          width: 1,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          _buildGestureItem('👍', '上滑', '喜欢', Colors.green),
-          const SizedBox(width: 16),
-          _buildGestureItem('👎', '下滑', '不喜欢', Colors.red),
-          const SizedBox(width: 16),
-          _buildGestureItem('👈', '左滑', '忽略', Colors.grey),
-          const SizedBox(width: 16),
-          _buildGestureItem('👆', '点击', '选择', Colors.blue),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGestureItem(String emoji, String gesture, String meaning, Color color) {
-    return Column(
-      children: [
-        Text(emoji, style: const TextStyle(fontSize: 16)),
-        const SizedBox(height: 2),
-        Text(
-          gesture,
-          style: TextStyle(
-            fontSize: 10,
-            color: color,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Text(
-          meaning,
-          style: TextStyle(
-            fontSize: 8,
-            color: Colors.white.withOpacity(0.6),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildBubbleArea() {
-    return Consumer<BubbleController>(
-      builder: (context, controller, child) {
-        return Stack(
-          children: [
-            // 背景粒子效果
-            _buildBackgroundParticles(),
-            
-            // 气泡
-            ...controller.bubbles.map((bubble) => BubbleWidget(
-              key: ValueKey(bubble.id),
-              bubble: bubble,
-              onGesture: _handleBubbleGesture,
-            )),
-            
-            // 选中气泡的连线效果
-            if (controller.selectedBubbles.isNotEmpty)
-              _buildConnectionLines(controller.selectedBubbles),
-          ],
-        );
-      },
-    );
-  }
-
-  Widget _buildBackgroundParticles() {
-    return CustomPaint(
-      painter: _BackgroundParticlesPainter(),
-      size: Size.infinite,
-    );
-  }
-
-  Widget _buildConnectionLines(List<Bubble> selectedBubbles) {
-    return CustomPaint(
-      painter: _ConnectionLinesPainter(selectedBubbles),
-      size: Size.infinite,
-    );
-  }
-
-  Widget _buildBottomControls() {
     return Consumer<BubbleController>(
       builder: (context, controller, child) {
         return Container(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              // 选中的气泡数量显示
-              if (controller.selectedBubbles.isNotEmpty)
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Text(
-                    '已选择 ${controller.selectedBubbles.length} 个偏好',
-                    style: const TextStyle(
-                      color: Colors.white,
+              Text(
+                '吃什么',
+                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                       fontWeight: FontWeight.bold,
+                      color: const Color(0xFFFF8A65), // 主色调 - 暖橙
                     ),
-                  ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                controller.selectedCount > 0
+                    ? '已选择 ${controller.selectedCount} 个口味'
+                    : '点击气泡选择你的口味偏好',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Colors.grey.shade600,
+                    ),
+              ),
+              if (controller.selectedCount > 0) ...[
+                const SizedBox(height: 8),
+                Text(
+                  '左滑不喜欢，右滑喜欢，点击选择',
+                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                        color: Colors.grey.shade500,
+                      ),
                 ),
-              
+              ],
               const SizedBox(height: 16),
-              
-              // 控制按钮
+              // 液态玻璃效果切换按钮
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  _buildControlButton(
-                    icon: Icons.refresh,
-                    label: '重新分布',
-                    onPressed: () => _redistributeBubbles(),
+                  Text(
+                    '液态玻璃效果:',
+                    style: Theme.of(context).textTheme.bodySmall,
                   ),
-                  _buildControlButton(
-                    icon: Icons.clear_all,
-                    label: '清除选择',
-                    onPressed: controller.selectedBubbles.isNotEmpty
-                        ? () => controller.resetSelection()
-                        : null,
+                  const SizedBox(width: 8),
+                  Switch.adaptive(
+                    value: _useEnhancedBubbles,
+                    onChanged: (value) {
+                      setState(() {
+                        _useEnhancedBubbles = value;
+                      });
+                    },
+                    activeColor: const Color(0xFFFF8A65),
                   ),
-                  _buildControlButton(
-                    icon: Icons.restaurant,
-                    label: '推荐美食',
-                    onPressed: controller.selectedBubbles.isNotEmpty
-                        ? () => _generateRecommendations()
-                        : null,
-                    isPrimary: true,
+                  const SizedBox(width: 8),
+                  Text(
+                    _useEnhancedBubbles ? '开启' : '关闭',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: _useEnhancedBubbles
+                              ? const Color(0xFFFF8A65)
+                              : Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
                   ),
                 ],
               ),
@@ -292,177 +158,168 @@ class _BubbleScreenState extends State<BubbleScreen>
     );
   }
 
-  Widget _buildControlButton({
-    required IconData icon,
-    required String label,
-    required VoidCallback? onPressed,
-    bool isPrimary = false,
-  }) {
-    return ElevatedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon, size: 18),
-      label: Text(label),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isPrimary 
-            ? Colors.orange 
-            : Colors.white.withValues(alpha: 0.1),
-        foregroundColor: isPrimary ? Colors.white : Colors.white70,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(25),
-        ),
-        elevation: isPrimary ? 8 : 2,
-      ),
-    );
-  }
-
-  void _handleBubbleGesture(
-    Bubble bubble,
-    BubbleGesture gesture,
-    Offset position,
-    double velocity,
-  ) {
-    final controller = context.read<BubbleController>();
-    
-    switch (gesture) {
-      case BubbleGesture.tap:
-        controller.toggleBubbleSelection(bubble);
-        break;
-      case BubbleGesture.swipeUp:
-        controller.likeBubble(bubble);
-        _addExplosionEffect(position);
-        break;
-      case BubbleGesture.swipeDown:
-        controller.dislikeBubble(bubble);
-        _addExplosionEffect(position);
-        break;
-      case BubbleGesture.swipeLeft:
-        controller.ignoreBubble(bubble);
-        break;
-      case BubbleGesture.longPress:
-        _showBubbleDetails(bubble);
-        break;
-      default:
-        break;
-    }
-  }
-
-  void _addExplosionEffect(Offset position) {
-    final controller = context.read<BubbleController>();
-    controller.repelBubblesFromPosition(position, 5.0);
-  }
-
-  void _redistributeBubbles() {
-    final controller = context.read<BubbleController>();
-    controller.resetAllBubbles();
-  }
-
-  void _generateRecommendations() {
-    final controller = context.read<BubbleController>();
-    controller.generateRecommendations();
-    
-    // 导航到推荐页面
-    Navigator.pushNamed(context, '/recommendations');
-  }
-
-  void _showBubbleDetails(Bubble bubble) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(bubble.name),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('类型: ${BubbleFactory.getNameByType(bubble.type)}'),
-            if (bubble.description != null)
-              Text('描述: ${bubble.description}'),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('关闭'),
-          ),
-        ],
-      ),
-      floatingActionButton: Consumer<BubbleController>(
-        builder: (context, controller, child) {
-          if (controller.selectedBubbles.isEmpty) {
-            return const SizedBox.shrink();
-          }
-          
-          return FloatingActionButton.extended(
-            onPressed: () async {
-              await controller.generateRecommendations();
-              if (context.mounted) {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => const RecommendationScreen(),
-                  ),
-                );
-              }
-            },
-            backgroundColor: Colors.orange,
-            icon: const Icon(Icons.restaurant_menu, color: Colors.white),
-            label: Text(
-              '获取推荐 (${controller.selectedBubbles.length})',
-              style: const TextStyle(color: Colors.white),
+  /// 构建气泡区域
+  Widget _buildBubbleArea() {
+    return Consumer<BubbleController>(
+      builder: (context, controller, child) {
+        if (!controller.isInitialized) {
+          return const Center(
+            child: ModernLoadingAnimation(
+              type: LoadingAnimationType.bubbles,
+              color: Colors.orange,
+              message: '气泡加载中...'
             ),
           );
-        },
-      ),
+        }
+
+        return GestureDetector(
+          onTapDown: (details) {
+            controller.repelBubblesFromPosition(
+              details.localPosition,
+              50.0,
+            );
+          },
+          child: SizedBox(
+            width: double.infinity,
+            height: double.infinity,
+            child: Stack(
+              children: controller.bubbles.map((bubble) {
+                return Positioned(
+                  left: bubble.position.dx - bubble.size / 2,
+                  top: bubble.position.dy - bubble.size / 2,
+                  child: AnimatedOpacity(
+                    opacity: bubble.opacity,
+                    duration: const Duration(milliseconds: 300),
+                    child: GestureDetector(
+                      onTap: () {
+                        HapticFeedback.selectionClick();
+                        controller.toggleBubble(bubble);
+                      },
+                      child: ModernBubbleWidget(
+                        bubble: bubble,
+                        isSelected: controller.isBubbleSelected(bubble),
+                        isHighlighted: false,
+                        onTap: () {
+                          HapticFeedback.selectionClick();
+                          controller.toggleBubble(bubble);
+                        },
+                        onLongPress: (name) {
+                          // 可扩展：显示气泡详情
+                        },
+                        onSwipeUp: (name) {
+                          controller.likeBubbleByName(name);
+                        },
+                        onSwipeDown: (name) {
+                          controller.dislikeBubbleByName(name);
+                        },
+                        onSwipeLeft: (name) {
+                          controller.ignoreBubbleByName(name);
+                        },
+                        onSwipeRight: (name) {
+                          controller.confirmBubbleByName(name);
+                        },
+                      ),
+                    ),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
     );
   }
-}
 
-/// 背景粒子绘制器
-class _BackgroundParticlesPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.white.withOpacity(0.1)
-      ..style = PaintingStyle.fill;
+  /// 构建底部控制区域
+  Widget _buildBottomControls() {
+    return Consumer<BubbleController>(
+      builder: (context, controller, child) {
+        return Container(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 选中的气泡预览
+              if (controller.selectedCount > 0) ...[
+                SizedBox(
+                  height: 60,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: controller.selectedBubbles.length,
+                    itemBuilder: (context, index) {
+                      final bubble = controller.selectedBubbles[index];
+                      return Container(
+                        margin: const EdgeInsets.only(right: 8),
+                        child: Chip(
+                          label: Text(bubble.name),
+                          backgroundColor: bubble.color.withValues(alpha: 0.3),
+                          deleteIcon: const Icon(Icons.close, size: 16),
+                          onDeleted: () => controller.deselectBubble(bubble),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(height: 16),
+              ],
 
-    // 绘制一些背景粒子
-    for (int i = 0; i < 20; i++) {
-      final x = (i * 37) % size.width;
-      final y = (i * 73) % size.height;
-      canvas.drawCircle(Offset(x, y), 2, paint);
-    }
-  }
+              // 操作按钮
+              Row(
+                children: [
+                  // 重置按钮
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: controller.selectedCount > 0
+                          ? controller.resetSelection
+                          : controller.resetAllBubbles,
+                      icon: const Icon(Icons.refresh),
+                      label: Text(
+                          controller.selectedCount > 0 ? '重置选择' : '重置气泡'),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
 
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-/// 连接线绘制器
-class _ConnectionLinesPainter extends CustomPainter {
-  final List<Bubble> selectedBubbles;
-
-  _ConnectionLinesPainter(this.selectedBubbles);
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (selectedBubbles.length < 2) return;
-
-    final paint = Paint()
-      ..color = Colors.white.withOpacity(0.3)
-      ..strokeWidth = 2
-      ..style = PaintingStyle.stroke;
-
-    // 绘制选中气泡之间的连线
-    for (int i = 0; i < selectedBubbles.length - 1; i++) {
-      for (int j = i + 1; j < selectedBubbles.length; j++) {
-        canvas.drawLine(
-          selectedBubbles[i].position,
-          selectedBubbles[j].position,
-          paint,
+                  // 生成推荐按钮
+                  Expanded(
+                    flex: 2,
+                    child: LoadingButton(
+                      text: '生成推荐',
+                      loadingText: '生成中...',
+                      isLoading: controller.isGeneratingRecommendations,
+                      onPressed: controller.selectedCount > 0 &&
+                              !controller.isGeneratingRecommendations
+                          ? () => _generateRecommendations(controller)
+                          : null,
+                      backgroundColor: Colors.orange,
+                      textColor: Colors.white,
+                      loadingType: LoadingAnimationType.bubbles,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         );
-      }
-    }
+      },
+    );
   }
 
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
-} 
+  /// 生成推荐并跳转到推荐页面
+  Future<void> _generateRecommendations(BubbleController controller) async {
+    await controller.generateRecommendations();
+
+    if (mounted && controller.recommendations.isNotEmpty) {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const RecommendationScreen(),
+        ),
+      );
+    } else if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('暂时没有找到合适的推荐，请尝试选择不同的口味组合'),
+        ),
+      );
+    }
+  }
+}

@@ -1,0 +1,4 @@
+
+module sensors_plus.__Swift {
+  exclude header "sensors_plus-Swift.h"
+}
