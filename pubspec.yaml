@@ -111,11 +111,8 @@ dependencies:
   # 高性能列表
   flutter_staggered_grid_view: ^0.7.0
 
-  # 向量化计算支持
-  ml_linalg: ^13.14.0
-  
-  # 数学运算优化
-  ml_algo: ^16.10.0
+  # 向量化计算支持 (使用兼容版本)
+  ml_linalg: ^13.12.6
 
 dev_dependencies:
   flutter_test:
