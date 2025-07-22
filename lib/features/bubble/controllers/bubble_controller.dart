@@ -5,7 +5,7 @@ import '../../../core/models/food.dart';
 import '../../../core/models/user_preference.dart';
 import '../../../core/services/storage_service.dart';
 import '../../../core/physics/improved_bubble_physics.dart';
-import '../../../core/services/simple_food_database.dart';
+import '../../../core/services/unified_food_data_service.dart';
 import '../../../core/utils/performance_optimizer.dart';
 
 /// 优化后的气泡控制器 - 减少不必要的重绘和内存使用
@@ -193,53 +193,43 @@ class BubbleController extends DebouncedNotifier {
     StorageService.saveUserPreference(_userPreference);
   }
 
-  /// 生成推荐 - 使用GitHub美食数据库
+  /// 生成推荐 - 使用统一食物数据服务
   Future<void> generateRecommendations() async {
     _isGeneratingRecommendations = true;
     notifyListeners();
 
     try {
-      debugPrint('开始生成美食推荐...');
+      debugPrint('🚀 开始生成美食推荐 - 使用统一数据服务...');
       
-      // 获取用户选择的偏好
-      final preferences = _selectedBubbles.map((bubble) => bubble.name).toList();
-      final tastes = _selectedBubbles
-          .where((bubble) => bubble.type == BubbleType.taste)
-          .map((bubble) => bubble.name)
-          .toList();
-      final cuisines = _selectedBubbles
-          .where((bubble) => bubble.type == BubbleType.cuisine)
-          .map((bubble) => bubble.name)
-          .toList();
-      
-      debugPrint('用户偏好: $preferences');
-      debugPrint('口味偏好: $tastes');
-      debugPrint('菜系偏好: $cuisines');
-      
-      // 使用美食数据库获取推荐
-      final database = SimpleFoodDatabase();
-      final recommendations = await database.getRecommendations(
-        preferences: preferences,
-        tastes: tastes.isNotEmpty ? tastes : null,
+      // 使用统一食物数据服务获取推荐
+      final unifiedService = UnifiedFoodDataService();
+      final recommendations = await unifiedService.getRecommendations(
+        _selectedBubbles,
+        _userPreference,
         limit: 8,
       );
       
       _recommendedFoods.clear();
       _recommendedFoods.addAll(recommendations);
       
-      // 如果没有找到匹配的美食，提供一些默认推荐
-      if (_recommendedFoods.isEmpty) {
-        debugPrint('未找到匹配的美食，提供默认推荐');
-        final defaultRecommendations = await database.getAllFoods();
-        _recommendedFoods.addAll(defaultRecommendations.take(5));
+      debugPrint('✅ 生成了 ${_recommendedFoods.length} 个美食推荐');
+      
+      // 如果推荐结果不足，获取个性化推荐补充
+      if (_recommendedFoods.length < 3) {
+        debugPrint('📈 推荐结果不足，获取个性化推荐...');
+        final personalizedRecommendations = await unifiedService.getPersonalizedRecommendations(
+          _userPreference,
+          limit: 8 - _recommendedFoods.length,
+        );
+        _recommendedFoods.addAll(personalizedRecommendations);
       }
       
-      debugPrint('生成了 ${_recommendedFoods.length} 个美食推荐');
+      debugPrint('🎯 最终推荐结果: ${_recommendedFoods.length} 个');
       
     } catch (e, s) {
-      debugPrint('生成推荐时出错: $e\n$s');
+      debugPrint('❌ 生成推荐时出错: $e\n$s');
       
-      // 如果网络错误，使用本地备用数据
+      // 如果出错，使用备用推荐
       _recommendedFoods.clear();
       await _generateFallbackRecommendations();
       
@@ -287,7 +277,18 @@ class BubbleController extends DebouncedNotifier {
   }
 
   /// 切换食物收藏状态
-  void toggleFoodFavorite(String foodId) {
+  Future<void> toggleFoodFavorite(String foodId) async {
+    // 使用统一服务处理收藏逻辑
+    final unifiedService = UnifiedFoodDataService();
+    await unifiedService.toggleFoodFavorite(foodId);
+    
+    // 记录用户行为
+    await unifiedService.recordUserAction(
+      foodId, 
+      UserActionType.favorite,
+    );
+    
+    // 更新本地显示状态
     final index = _recommendedFoods.indexWhere((food) => food.id == foodId);
     if (index != -1) {
       final food = _recommendedFoods[index];
