@@ -3,8 +3,12 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  connectivity_plus
+  flutter_secure_storage_windows
   permission_handler_windows
   rive_common
+  sentry_flutter
+  speech_to_text_windows
   url_launcher_windows
 )
 

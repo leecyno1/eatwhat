@@ -36,83 +36,110 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
-  
-  # 状态管理
+
+  # 状态管理 - 准备迁移到Riverpod
   provider: ^6.1.2
-  
-  # 动画和游戏引擎
+  flutter_riverpod: ^2.6.1
+
+  # 动画和游戏引擎 - 已更新
   flame: ^1.30.0
-  
-  # 数据存储
+
+  # 数据存储 - 已更新到最新版本
   hive: ^2.2.3
   hive_flutter: ^1.1.0
   path_provider: ^2.1.5
-  
-  # 网络请求
-  dio: ^5.4.0
+
+  # 网络请求 - 优化版本
+  dio: ^5.4.3
   dio_cache_interceptor: ^4.0.3
+  dio_smart_retry: ^6.0.0  # 新增：网络请求重试
   stash_hive: ^5.2.0
   stash: ^5.2.0
-  
+
   # 工具库
-  uuid: ^4.2.1
-  
+  uuid: ^4.4.2
+
   # 数学计算
   vector_math: ^2.1.4
-  
-  # 图片处理
-  cached_network_image: ^3.3.1
-  
-  # 权限管理
-  permission_handler: ^12.0.1
 
-  # URL Scheme 跳转
-  url_launcher: ^6.1.11
+  # 图表
+  fl_chart: ^0.69.0
 
-  # 新增依赖
+  # 图片处理 - 已更新
+  cached_network_image: ^3.4.1
+
+  # 权限管理 - 已更新
+  permission_handler: ^11.3.1
+
+  # URL Scheme 跳转 - 已更新
+  url_launcher: ^6.3.1
+
+  # 基础依赖 - 已更新版本
   shared_preferences: ^2.3.2
-  crypto: ^3.0.5
+  crypto: ^3.0.6
   http: ^1.4.0
   location: ^8.0.1
-  
+  flutter_secure_storage: ^9.2.2
+
+  # 网络状态管理 - 新增
+  connectivity_plus: ^6.1.0
+
   # AI推荐增强
   flutter_dotenv: ^5.1.0
-  
-  # 动画效果优化
+
+  # 动画效果优化 - 已更新
   flutter_animate: ^4.5.0
-  lottie: ^3.1.0
-  
-  # 现代化UI库
+  lottie: ^3.2.0
+
+  # 现代化UI库 - 已更新版本
   glassmorphism: ^3.0.0
   flutter_neumorphic: ^3.2.0
   flutter_staggered_animations: ^1.1.1
   shimmer: ^3.0.0
   card_swiper: ^3.0.1
-  
-  # iPhone适配和高级UI
+
+  # iPhone适配和高级UI - 已更新
   flutter_screenutil: ^5.9.3
   auto_size_text: ^3.0.0
-  
-  # 手势和物理引擎增强
+  flutter_native_splash: ^2.4.1  # 新增：启动优化
+
+  # 手势和物理引擎增强 - 已更新
   sensors_plus: ^6.1.1
-  
-  # 高级图形和效果
-  flutter_svg: ^2.0.10+1
-  
-  # 现代化导航
-  go_router: ^14.2.7
-  
-  # 高级动画
+
+  # 高级图形和效果 - 已更新
+  flutter_svg: ^2.0.16
+
+  # 现代化导航 - 已更新
+  go_router: ^14.6.1
+
+  # SQLite数据库
+  sqflite: ^2.4.1
+  path: ^1.9.1
+
+  # 高级动画 - 使用兼容版本
   rive: ^0.13.7
-  
-  # 现代化设计组件
-  flutter_slidable: ^3.0.1
-  
-  # 高性能列表
+
+  # 现代化设计组件 - 已更新
+  flutter_slidable: ^3.1.1
+
+  # 高性能列表 - 已更新
   flutter_staggered_grid_view: ^0.7.0
 
   # 向量化计算支持 (使用兼容版本)
   ml_linalg: ^13.12.6
+  html: ^0.15.6
+
+  # 错误监控和分析 - 核心监控依赖
+  sentry_flutter: ^8.9.0  # 崩溃监控
+
+  # 依赖注入 - 为架构升级准备
+  get_it: ^8.0.2
+  injectable: ^2.4.4
+  freezed_annotation: ^2.4.4
+  flame_forge2d: ^0.19.2+2
+  google_fonts: ^6.3.2
+  vibration: ^3.1.4
+  speech_to_text: ^7.3.0
 
 dev_dependencies:
   flutter_test:
@@ -124,19 +151,26 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^6.0.0
-  
-  # 代码生成
+
+  # 代码生成 - 已更新到最新版本
   hive_generator: ^2.0.1
   build_runner: ^2.5.4
-  
-  # 现代化依赖 - Phase 1
+
+  # 现代化依赖 - Phase 1 - 已更新版本
   json_serializable: ^6.7.1
   freezed: ^2.4.7
-  
-  # 测试增强
+
+  # 测试增强 - 已更新版本
   mockito: ^5.4.4
+  sqflite_common_ffi: ^2.3.4+4
   integration_test:
     sdk: flutter
+
+  # 依赖注入代码生成
+  injectable_generator: ^2.6.2
+
+  # 代码分析增强
+  very_good_analysis: ^6.0.0  # 更严格的代码分析规则
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -163,6 +197,8 @@ flutter:
   # 资源文件
   assets:
     - assets/images/
+    - assets/images/card_game/
+    - assets/images/prebuilt_dishes/
     - assets/icons/
     - assets/data/
-    - .env
+    - assets/data/howtocook_complete_recipes.db

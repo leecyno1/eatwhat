@@ -1,0 +1,4267 @@
+{
+  "items": [
+    {
+      "recipeId": "aquatic/小龙虾/小龙虾.md",
+      "name": "小龙虾",
+      "aliases": [
+        "小龙虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/小龙虾/成品.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/aquatic/小龙虾/小龙虾.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "aquatic/干煎阿根廷红虾/干煎阿根廷红虾.md",
+      "name": "干煎阿根廷红虾",
+      "aliases": [
+        "干煎阿根廷红虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/干煎阿根廷红虾/干煎阿根廷红虾.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/aquatic/干煎阿根廷红虾/干煎阿根廷红虾.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "aquatic/油焖大虾/油焖大虾.md",
+      "name": "油焖大虾",
+      "aliases": [
+        "油焖大虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/油焖大虾/油焖大虾.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/aquatic/油焖大虾/油焖大虾.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "aquatic/混合烤鱼/烤鱼.md",
+      "name": "烤鱼",
+      "aliases": [
+        "烤鱼",
+        "混合烤鱼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/烤鱼/烤鱼.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/aquatic/混合烤鱼/烤鱼.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "aquatic/清蒸鲈鱼/清蒸鲈鱼.md",
+      "name": "清蒸鲈鱼",
+      "aliases": [
+        "清蒸鲈鱼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/清蒸鲈鱼/改刀.jpg",
+        "assets/images/howtocook_gallery/清蒸鲈鱼/摆盘.jpg",
+        "assets/images/howtocook_gallery/清蒸鲈鱼/清蒸鲈鱼.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/aquatic/清蒸鲈鱼/清蒸鲈鱼.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "aquatic/白灼虾/白灼虾.md",
+      "name": "白灼虾",
+      "aliases": [
+        "白灼虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/白灼虾/白灼虾.webp"
+      ],
+      "markdownPath": "HowToCook/dishes/aquatic/白灼虾/白灼虾.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "aquatic/糖醋鲤鱼/糖醋鲤鱼.md",
+      "name": "糖醋鲤鱼",
+      "aliases": [
+        "糖醋鲤鱼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/糖醋鲤鱼/腌制.jpg",
+        "assets/images/howtocook_gallery/糖醋鲤鱼/成品.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/aquatic/糖醋鲤鱼/糖醋鲤鱼.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "aquatic/芥末黄油罗氏虾/芥末黄油罗氏虾.md",
+      "name": "芥末黄油罗氏虾",
+      "aliases": [
+        "芥末黄油罗氏虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/芥末黄油罗氏虾/芥末黄油罗氏虾.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/aquatic/芥末黄油罗氏虾/芥末黄油罗氏虾.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "aquatic/葱烧海参/葱烧海参.md",
+      "name": "葱烧海参",
+      "aliases": [
+        "葱烧海参"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/葱烧海参/葱烧海参.jpeg",
+        "assets/images/howtocook_gallery/葱烧海参/海参.jpeg",
+        "assets/images/howtocook_gallery/葱烧海参/酱汁.jpeg",
+        "assets/images/howtocook_gallery/葱烧海参/葱白.jpeg",
+        "assets/images/howtocook_gallery/葱烧海参/葱烧海参.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/aquatic/葱烧海参/葱烧海参.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "aquatic/蒜蓉虾/蒜蓉虾.md",
+      "name": "蒜蓉虾",
+      "aliases": [
+        "蒜蓉虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/蒜蓉虾/1.jpeg",
+        "assets/images/howtocook_gallery/蒜蓉虾/2.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/aquatic/蒜蓉虾/蒜蓉虾.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "aquatic/蒜香黄油虾/蒜香黄油虾.md",
+      "name": "蒜香黄油虾",
+      "aliases": [
+        "蒜香黄油虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/蒜香黄油虾/1.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/aquatic/蒜香黄油虾/蒜香黄油虾.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "aquatic/蛏抱蛋/蛏抱蛋.md",
+      "name": "蛏抱蛋",
+      "aliases": [
+        "蛏抱蛋"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/蛏抱蛋/1.jpeg",
+        "assets/images/howtocook_gallery/蛏抱蛋/2.jpeg",
+        "assets/images/howtocook_gallery/蛏抱蛋/3.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/aquatic/蛏抱蛋/蛏抱蛋.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "aquatic/香煎翘嘴鱼/香煎翘嘴鱼.md",
+      "name": "香煎翘嘴鱼",
+      "aliases": [
+        "香煎翘嘴鱼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/香煎翘嘴鱼/香煎翘嘴鱼.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/aquatic/香煎翘嘴鱼/香煎翘嘴鱼.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "aquatic/鲤鱼炖白菜/鲤鱼炖白菜.md",
+      "name": "鲤鱼炖白菜",
+      "aliases": [
+        "鲤鱼炖白菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/鲤鱼炖白菜/鲤鱼炖白菜.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/aquatic/鲤鱼炖白菜/鲤鱼炖白菜.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "aquatic/鳊鱼炖豆腐/鳊鱼炖豆腐.md",
+      "name": "鳊鱼炖豆腐",
+      "aliases": [
+        "鳊鱼炖豆腐"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/鳊鱼炖豆腐/鳊鱼炖豆腐.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/aquatic/鳊鱼炖豆腐/鳊鱼炖豆腐.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "aquatic/黄油煎虾/黄油煎虾.md",
+      "name": "黄油煎虾",
+      "aliases": [
+        "黄油煎虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/黄油煎虾/黄油煎虾.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/aquatic/黄油煎虾/黄油煎虾.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "breakfast/苏格兰蛋/苏格兰蛋.md",
+      "name": "苏格兰蛋",
+      "aliases": [
+        "苏格兰蛋"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/苏格兰蛋/egg1.png",
+        "assets/images/howtocook_gallery/苏格兰蛋/egg2.png",
+        "assets/images/howtocook_gallery/苏格兰蛋/egg3.png"
+      ],
+      "markdownPath": "HowToCook/dishes/breakfast/苏格兰蛋/苏格兰蛋.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "condiment/油泼辣子/油泼辣子.md",
+      "name": "油泼辣子",
+      "aliases": [
+        "油泼辣子"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/油泼辣子/口水鸡+油泼辣子.jpg",
+        "assets/images/howtocook_gallery/油泼辣子/油泼辣子.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/condiment/油泼辣子/油泼辣子.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "condiment/草莓酱/草莓酱.md",
+      "name": "草莓酱",
+      "aliases": [
+        "草莓酱"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/草莓酱/洗好的草莓.jpeg",
+        "assets/images/howtocook_gallery/草莓酱/混合好的草莓.jpeg",
+        "assets/images/howtocook_gallery/草莓酱/熬煮的草莓.jpeg",
+        "assets/images/howtocook_gallery/草莓酱/做好的草莓酱.png"
+      ],
+      "markdownPath": "HowToCook/dishes/condiment/草莓酱/草莓酱.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "condiment/蔗糖糖浆/蔗糖糖浆.md",
+      "name": "蔗糖糖浆",
+      "aliases": [
+        "蔗糖糖浆"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/蔗糖糖浆/bottle.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/condiment/蔗糖糖浆/蔗糖糖浆.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "dessert/反沙芋头/反沙芋头.md",
+      "name": "反沙芋头",
+      "aliases": [
+        "反沙芋头"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/反沙芋头/反沙芋头成品.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/dessert/反沙芋头/反沙芋头.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "dessert/咖啡椰奶冻/咖啡椰奶冻.md",
+      "name": "咖啡椰奶冻",
+      "aliases": [
+        "咖啡椰奶冻"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/咖啡椰奶冻/咖啡椰奶冻.png"
+      ],
+      "markdownPath": "HowToCook/dishes/dessert/咖啡椰奶冻/咖啡椰奶冻.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "dessert/戚风蛋糕/戚风蛋糕.md",
+      "name": "戚风蛋糕",
+      "aliases": [
+        "戚风蛋糕"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/戚风蛋糕/IMG_1516.jpg",
+        "assets/images/howtocook_gallery/戚风蛋糕/DSC08606.jpg",
+        "assets/images/howtocook_gallery/戚风蛋糕/DSC08608.jpg",
+        "assets/images/howtocook_gallery/戚风蛋糕/DSC08612.jpg",
+        "assets/images/howtocook_gallery/戚风蛋糕/IMG_0269.jpg",
+        "assets/images/howtocook_gallery/戚风蛋糕/DSC08618.jpg",
+        "assets/images/howtocook_gallery/戚风蛋糕/DSC08621.jpg",
+        "assets/images/howtocook_gallery/戚风蛋糕/DSC08627.jpg",
+        "assets/images/howtocook_gallery/戚风蛋糕/DSC08716.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/dessert/戚风蛋糕/戚风蛋糕.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "dessert/提拉米苏/提拉米苏.md",
+      "name": "提拉米苏",
+      "aliases": [
+        "提拉米苏"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/提拉米苏/提拉米苏成品.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/dessert/提拉米苏/提拉米苏.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "dessert/无厨师机蜂蜜面包/无厨师机蜂蜜面包.md",
+      "name": "无厨师机蜂蜜面包",
+      "aliases": [
+        "无厨师机蜂蜜面包"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/无厨师机蜂蜜面包/无厨师机蜂蜜面包.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/dessert/无厨师机蜂蜜面包/无厨师机蜂蜜面包.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "dessert/炸鲜奶/炸鲜奶.md",
+      "name": "炸鲜奶",
+      "aliases": [
+        "炸鲜奶"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/炸鲜奶/炸鲜奶.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/dessert/炸鲜奶/炸鲜奶.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "dessert/烤箱版巴斯克芝士蛋糕/烤箱版巴斯克芝士蛋糕.md",
+      "name": "烤箱版巴斯克芝士蛋糕",
+      "aliases": [
+        "烤箱版巴斯克芝士蛋糕"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/烤箱版巴斯克芝士蛋糕/烤箱版巴斯克芝士蛋糕.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/dessert/烤箱版巴斯克芝士蛋糕/烤箱版巴斯克芝士蛋糕.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "dessert/烤蛋挞/烤蛋挞.md",
+      "name": "烤蛋挞",
+      "aliases": [
+        "烤蛋挞"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/烤蛋挞/烤蛋挞.png"
+      ],
+      "markdownPath": "HowToCook/dishes/dessert/烤蛋挞/烤蛋挞.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "dessert/玛格丽特饼干/玛格丽特饼干.md",
+      "name": "玛格丽特饼干",
+      "aliases": [
+        "玛格丽特饼干"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/玛格丽特饼干/玛格丽特饼干.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/dessert/玛格丽特饼干/玛格丽特饼干.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "dessert/芋泥雪媚娘/芋泥雪媚娘.md",
+      "name": "芋泥雪媚娘",
+      "aliases": [
+        "芋泥雪媚娘"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/芋泥雪媚娘/芋泥雪媚娘成品.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/dessert/芋泥雪媚娘/芋泥雪媚娘.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "dessert/英式司康/英式司康.md",
+      "name": "英式司康",
+      "aliases": [
+        "英式司康"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/英式司康/英式司康.png"
+      ],
+      "markdownPath": "HowToCook/dishes/dessert/英式司康/英式司康.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "dessert/酸奶意式奶冻/酸奶意式奶冻.md",
+      "name": "酸奶意式奶冻",
+      "aliases": [
+        "酸奶意式奶冻"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/酸奶意式奶冻/酸奶意式奶冻.png"
+      ],
+      "markdownPath": "HowToCook/dishes/dessert/酸奶意式奶冻/酸奶意式奶冻.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "dessert/雪花酥/雪花酥.md",
+      "name": "雪花酥",
+      "aliases": [
+        "雪花酥"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/雪花酥/雪花酥成品.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/dessert/雪花酥/雪花酥.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "dessert/龟苓膏/龟苓膏.md",
+      "name": "龟苓膏",
+      "aliases": [
+        "龟苓膏"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/龟苓膏/龟苓膏成品.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/dessert/龟苓膏/龟苓膏.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "drink/奇异果菠菜特调/奇异果菠菜特调.md",
+      "name": "奇异果菠菜特调",
+      "aliases": [
+        "奇异果菠菜特调"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/奇异果菠菜特调/kiwi-example.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/drink/奇异果菠菜特调/奇异果菠菜特调.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "drink/柠檬水/柠檬水.md",
+      "name": "柠檬水",
+      "aliases": [
+        "柠檬水"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/柠檬水/柠檬水.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/drink/柠檬水/柠檬水.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "drink/泰国手标红茶/泰国手标红茶.md",
+      "name": "泰国手标红茶",
+      "aliases": [
+        "泰国手标红茶"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/泰国手标红茶/泰国手标红茶.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/drink/泰国手标红茶/泰国手标红茶.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "drink/海边落日/海边落日.md",
+      "name": "海边落日",
+      "aliases": [
+        "海边落日"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/海边落日/海边落日.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/drink/海边落日/海边落日.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "drink/百香果橙子特调/百香果橙子特调.md",
+      "name": "百香果橙子特调",
+      "aliases": [
+        "百香果橙子特调"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/百香果橙子特调/tea-version.jpg",
+        "assets/images/howtocook_gallery/百香果橙子特调/soda-version.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/drink/百香果橙子特调/百香果橙子特调.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "drink/砂糖椰子冰沙/砂糖椰子冰沙.md",
+      "name": "砂糖椰子冰沙",
+      "aliases": [
+        "砂糖椰子冰沙"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/砂糖椰子冰沙/砂糖椰子冰沙-1.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/drink/砂糖椰子冰沙/砂糖椰子冰沙.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "drink/耙耙柑茶/耙耙柑茶.md",
+      "name": "耙耙柑茶",
+      "aliases": [
+        "耙耙柑茶"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/耙耙柑茶/citrus-tea.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/drink/耙耙柑茶/耙耙柑茶.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "drink/菠萝咖啡特调/菠萝咖啡特调.md",
+      "name": "菠萝咖啡特调",
+      "aliases": [
+        "菠萝咖啡特调"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/菠萝咖啡特调/菠萝咖啡特调.png"
+      ],
+      "markdownPath": "HowToCook/dishes/drink/菠萝咖啡特调/菠萝咖啡特调.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "drink/酒酿醪糟/酒酿醪糟.md",
+      "name": "酒酿醪糟",
+      "aliases": [
+        "酒酿醪糟"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/酒酿醪糟/酒酿醪糟.jpeg",
+        "assets/images/howtocook_gallery/酒酿醪糟/酒酿米糕.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/drink/酒酿醪糟/酒酿醪糟.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "drink/酸梅汤/酸梅汤.md",
+      "name": "酸梅汤",
+      "aliases": [
+        "酸梅汤"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/酸梅汤/sour_plum_soup.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/drink/酸梅汤/酸梅汤.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "drink/金汤力/金汤力.md",
+      "name": "金汤力",
+      "aliases": [
+        "金汤力"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/金汤力/gin-tonic.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/drink/金汤力/金汤力.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "drink/金菲士/金菲士.md",
+      "name": "金菲士",
+      "aliases": [
+        "金菲士"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/金菲士/gin-fizz.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/drink/金菲士/金菲士.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/农家一碗香/农家一碗香.md",
+      "name": "农家一碗香",
+      "aliases": [
+        "农家一碗香"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/农家一碗香/农家一碗香成品.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/农家一碗香/农家一碗香.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/冬瓜酿肉/冬瓜酿肉.md",
+      "name": "冬瓜酿肉",
+      "aliases": [
+        "冬瓜酿肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/冬瓜酿肉/冬瓜酿肉成品.jpg",
+        "assets/images/howtocook_gallery/冬瓜酿肉/冬瓜形状.jpg",
+        "assets/images/howtocook_gallery/冬瓜酿肉/腌制好的冬瓜.jpg",
+        "assets/images/howtocook_gallery/冬瓜酿肉/卷肉.jpg",
+        "assets/images/howtocook_gallery/冬瓜酿肉/摆盘.jpg",
+        "assets/images/howtocook_gallery/冬瓜酿肉/打鸡蛋.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/冬瓜酿肉/冬瓜酿肉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/凉拌鸡丝/凉拌鸡丝.md",
+      "name": "凉拌鸡丝",
+      "aliases": [
+        "凉拌鸡丝"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/凉拌鸡丝/凉拌鸡丝.jpg",
+        "assets/images/howtocook_gallery/凉拌鸡丝/凉拌鸡丝_焯水.jpg",
+        "assets/images/howtocook_gallery/凉拌鸡丝/凉拌鸡丝_撕.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/凉拌鸡丝/凉拌鸡丝.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/卤菜/卤菜.md",
+      "name": "卤菜",
+      "aliases": [
+        "卤菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/卤菜/卤牛肉.jpeg",
+        "assets/images/howtocook_gallery/卤菜/牛肉面.jpeg",
+        "assets/images/howtocook_gallery/卤菜/卤水.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/卤菜/卤菜.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/口水鸡/口水鸡.md",
+      "name": "口水鸡",
+      "aliases": [
+        "口水鸡"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/口水鸡/口水鸡.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/口水鸡/口水鸡.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/台式卤肉饭/台式卤肉饭.md",
+      "name": "台式卤肉饭",
+      "aliases": [
+        "台式卤肉饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/台式卤肉饭/1.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/台式卤肉饭/台式卤肉饭.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/咖喱肥牛/咖喱肥牛.md",
+      "name": "咖喱肥牛",
+      "aliases": [
+        "咖喱肥牛"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/咖喱肥牛/咖喱肥牛.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/咖喱肥牛/咖喱肥牛.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/啤酒鸭/啤酒鸭.md",
+      "name": "啤酒鸭",
+      "aliases": [
+        "啤酒鸭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/啤酒鸭/啤酒鸭.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/啤酒鸭/啤酒鸭.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/回锅肉/回锅肉.md",
+      "name": "回锅肉",
+      "aliases": [
+        "回锅肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/回锅肉/1.jpeg",
+        "assets/images/howtocook_gallery/回锅肉/2.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/回锅肉/回锅肉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/土豆炖排骨/土豆炖排骨.md",
+      "name": "土豆炖排骨",
+      "aliases": [
+        "土豆炖排骨"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/土豆炖排骨/排骨1.jpg",
+        "assets/images/howtocook_gallery/土豆炖排骨/排骨2.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/土豆炖排骨/土豆炖排骨.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/奶酪培根通心粉/奶酪培根通心粉.md",
+      "name": "奶酪培根通心粉",
+      "aliases": [
+        "奶酪培根通心粉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/奶酪培根通心粉/oven.jpg",
+        "assets/images/howtocook_gallery/奶酪培根通心粉/onepot.png"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/奶酪培根通心粉/奶酪培根通心粉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/姜炒鸡/姜炒鸡.md",
+      "name": "姜炒鸡",
+      "aliases": [
+        "姜炒鸡"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/姜炒鸡/姜炒鸡.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/姜炒鸡/姜炒鸡.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/宫保鸡丁/宫保鸡丁.md",
+      "name": "宫保鸡丁",
+      "aliases": [
+        "宫保鸡丁"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/宫保鸡丁/宫保鸡丁.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/宫保鸡丁/宫保鸡丁.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/小炒鸡肝/小炒鸡肝.md",
+      "name": "小炒鸡肝",
+      "aliases": [
+        "小炒鸡肝"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/小炒鸡肝/成品.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/小炒鸡肝/小炒鸡肝.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/小炒黄牛肉/小炒黄牛肉.md",
+      "name": "小炒黄牛肉",
+      "aliases": [
+        "小炒黄牛肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/小炒黄牛肉/小炒黄牛肉.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/小炒黄牛肉/小炒黄牛肉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/尖叫牛蛙/尖叫牛蛙.md",
+      "name": "尖叫牛蛙",
+      "aliases": [
+        "尖叫牛蛙"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/尖叫牛蛙/尖叫牛蛙.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/尖叫牛蛙/尖叫牛蛙.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/巴基斯坦牛肉咖喱/巴基斯坦牛肉咖喱.md",
+      "name": "巴基斯坦牛肉咖喱",
+      "aliases": [
+        "巴基斯坦牛肉咖喱"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/巴基斯坦牛肉咖喱/巴基斯坦牛肉咖喱.png",
+        "assets/images/howtocook_gallery/巴基斯坦牛肉咖喱/番茄蓉.png",
+        "assets/images/howtocook_gallery/巴基斯坦牛肉咖喱/牛肉.png",
+        "assets/images/howtocook_gallery/巴基斯坦牛肉咖喱/油.png",
+        "assets/images/howtocook_gallery/巴基斯坦牛肉咖喱/倒入番茄蓉.png",
+        "assets/images/howtocook_gallery/巴基斯坦牛肉咖喱/红.png",
+        "assets/images/howtocook_gallery/巴基斯坦牛肉咖喱/巴基斯坦牛肉咖喱.png"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/巴基斯坦牛肉咖喱/巴基斯坦牛肉咖喱.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/干煸仔鸡/干煸仔鸡.md",
+      "name": "干煸仔鸡",
+      "aliases": [
+        "干煸仔鸡"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/干煸仔鸡/干煸仔鸡成品.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/干煸仔鸡/干煸仔鸡.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/广式萝卜牛腩/广式萝卜牛腩.md",
+      "name": "广式萝卜牛腩",
+      "aliases": [
+        "广式萝卜牛腩"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/广式萝卜牛腩/广式萝卜牛腩.webp"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/广式萝卜牛腩/广式萝卜牛腩.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/徽派红烧肉/徽派红烧肉.md",
+      "name": "徽派红烧肉",
+      "aliases": [
+        "徽派红烧肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/徽派红烧肉/1.jpeg",
+        "assets/images/howtocook_gallery/徽派红烧肉/2.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/徽派红烧肉/徽派红烧肉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/新疆大盘鸡/新疆大盘鸡.md",
+      "name": "新疆大盘鸡",
+      "aliases": [
+        "新疆大盘鸡"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/新疆大盘鸡/大盘鸡.jpeg",
+        "assets/images/howtocook_gallery/新疆大盘鸡/大盘鸡皮带面.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/新疆大盘鸡/新疆大盘鸡.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/无骨鸡爪/无骨鸡爪.md",
+      "name": "无骨鸡爪",
+      "aliases": [
+        "无骨鸡爪"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/无骨鸡爪/无骨鸡爪.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/无骨鸡爪/无骨鸡爪.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/柱候牛腩/柱候牛腩.md",
+      "name": "柱候牛腩",
+      "aliases": [
+        "柱候牛腩"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/柱候牛腩/柱候牛腩.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/柱候牛腩配米饭.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/牛腩部位.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/碗1.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/碗2.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/碗3.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/碗4.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/碗5.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/碗6.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/碗7.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/牛腩焯水.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/牛腩切块.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/牛腩此时可开始炖煮.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/牛腩入锅.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/土豆切片.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/过滤汤汁.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/柱候牛腩/柱候牛腩.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/梅菜扣肉/梅菜扣肉.md",
+      "name": "梅菜扣肉",
+      "aliases": [
+        "梅菜扣肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/梅菜扣肉/1.jpeg",
+        "assets/images/howtocook_gallery/梅菜扣肉/2.jpeg",
+        "assets/images/howtocook_gallery/梅菜扣肉/3.jpeg",
+        "assets/images/howtocook_gallery/梅菜扣肉/4.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/梅菜扣肉/梅菜扣肉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/水煮牛肉/水煮牛肉.md",
+      "name": "水煮牛肉",
+      "aliases": [
+        "水煮牛肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/水煮牛肉/sznr1.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr2.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr3.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr4.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr5.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr6.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr7.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr8.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr9.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr10.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr11.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr12.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/水煮牛肉/水煮牛肉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/清蒸鳜鱼/清蒸鳜鱼.md",
+      "name": "清蒸鳜鱼",
+      "aliases": [
+        "清蒸鳜鱼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/清蒸鳜鱼/清蒸鳜鱼成品图.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/清蒸鳜鱼/清蒸鳜鱼.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/湖南家常红烧肉/湖南家常红烧肉.md",
+      "name": "湖南家常红烧肉",
+      "aliases": [
+        "湖南家常红烧肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/湖南家常红烧肉/湖南家常红烧肉.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/湖南家常红烧肉/湖南家常红烧肉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/湘祁米夫鸭/湘祁米夫鸭.md",
+      "name": "湘祁米夫鸭",
+      "aliases": [
+        "湘祁米夫鸭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/湘祁米夫鸭/湘祁米夫鸭.jpg",
+        "assets/images/howtocook_gallery/湘祁米夫鸭/step①：准备米粉.jpg",
+        "assets/images/howtocook_gallery/湘祁米夫鸭/step②：煸炒鸭子.jpg",
+        "assets/images/howtocook_gallery/湘祁米夫鸭/step③：米粉裹鸭.jpg",
+        "assets/images/howtocook_gallery/湘祁米夫鸭/step④：高压锅蒸煮.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/湘祁米夫鸭/湘祁米夫鸭.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/牛排/牛排.md",
+      "name": "牛排",
+      "aliases": [
+        "牛排"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/牛排/牛排.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/牛排/牛排.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/猪皮冻/猪皮冻.md",
+      "name": "猪皮冻",
+      "aliases": [
+        "猪皮冻"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/猪皮冻/猪皮冻.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/猪皮冻/猪皮冻.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/瘦肉土豆片/瘦肉土豆片.md",
+      "name": "瘦肉土豆片",
+      "aliases": [
+        "瘦肉土豆片"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/瘦肉土豆片/瘦肉土豆片.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/瘦肉土豆片/瘦肉土豆片.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/糖醋排骨/糖醋排骨.md",
+      "name": "糖醋排骨",
+      "aliases": [
+        "糖醋排骨"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/糖醋排骨/1.jpeg",
+        "assets/images/howtocook_gallery/糖醋排骨/2.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/糖醋排骨/糖醋排骨.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/红烧猪蹄/红烧猪蹄.md",
+      "name": "红烧猪蹄",
+      "aliases": [
+        "红烧猪蹄"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/红烧猪蹄/红烧猪蹄.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/红烧猪蹄/红烧猪蹄.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/红烧肉/简易红烧肉.md",
+      "name": "简易红烧肉",
+      "aliases": [
+        "简易红烧肉",
+        "红烧肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/简易红烧肉/000.jpg",
+        "assets/images/howtocook_gallery/简易红烧肉/001.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/红烧肉/简易红烧肉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/羊排焖面/羊排焖面.md",
+      "name": "羊排焖面",
+      "aliases": [
+        "羊排焖面"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/羊排焖面/羊排焖面.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/羊排焖面/羊排焖面.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/老妈蹄花/老妈蹄花.md",
+      "name": "老妈蹄花",
+      "aliases": [
+        "老妈蹄花"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/老妈蹄花/result3.jpg",
+        "assets/images/howtocook_gallery/老妈蹄花/result1.jpg",
+        "assets/images/howtocook_gallery/老妈蹄花/result2.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/老妈蹄花/老妈蹄花.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/芥末罗氏虾/芥末罗氏虾.md",
+      "name": "芥末罗氏虾",
+      "aliases": [
+        "芥末罗氏虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/芥末罗氏虾/芥末罗氏虾成品.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/芥末罗氏虾/芥末罗氏虾.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/茭白炒肉/茭白炒肉.md",
+      "name": "茭白炒肉",
+      "aliases": [
+        "茭白炒肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/茭白炒肉/1.jpeg",
+        "assets/images/howtocook_gallery/茭白炒肉/2.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/茭白炒肉/茭白炒肉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/荔枝肉/荔枝肉.md",
+      "name": "荔枝肉",
+      "aliases": [
+        "荔枝肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/荔枝肉/1.jpeg",
+        "assets/images/howtocook_gallery/荔枝肉/2.jpeg",
+        "assets/images/howtocook_gallery/荔枝肉/3.jpeg",
+        "assets/images/howtocook_gallery/荔枝肉/4.jpeg",
+        "assets/images/howtocook_gallery/荔枝肉/5.jpeg",
+        "assets/images/howtocook_gallery/荔枝肉/6.jpeg",
+        "assets/images/howtocook_gallery/荔枝肉/7.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/荔枝肉/荔枝肉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/荷兰豆炒腊肠/荷兰豆炒腊肠.md",
+      "name": "荷兰豆炒腊肠",
+      "aliases": [
+        "荷兰豆炒腊肠"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/荷兰豆炒腊肠/1.png",
+        "assets/images/howtocook_gallery/荷兰豆炒腊肠/2.png"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/荷兰豆炒腊肠/荷兰豆炒腊肠.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/西红柿土豆炖牛肉/西红柿土豆炖牛肉.md",
+      "name": "西红柿土豆炖牛肉",
+      "aliases": [
+        "西红柿土豆炖牛肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/西红柿土豆炖牛肉/abaaba_1.png"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/西红柿土豆炖牛肉/西红柿土豆炖牛肉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/豆豉鲮鱼油麦菜/豆豉鲮鱼油麦菜.md",
+      "name": "豆豉鲮鱼油麦菜",
+      "aliases": [
+        "豆豉鲮鱼油麦菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/豆豉鲮鱼油麦菜/豆豉鲮鱼油麦菜成品.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/豆豉鲮鱼油麦菜/豆豉鲮鱼油麦菜.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/豉汁蒸白鱔/豉汁蒸白鱔.md",
+      "name": "豉汁蒸白鱔",
+      "aliases": [
+        "豉汁蒸白鱔"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/豉汁蒸白鱔/豉汁蒸白鱔.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/豉汁蒸白鱔/豉汁蒸白鱔.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/贵州辣子鸡/贵州辣子鸡.md",
+      "name": "贵州辣子鸡",
+      "aliases": [
+        "贵州辣子鸡"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/贵州辣子鸡/贵州辣子鸡.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/贵州辣子鸡/贵州辣子鸡.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/酱排骨/酱排骨.md",
+      "name": "酱排骨",
+      "aliases": [
+        "酱排骨"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/酱排骨/1.jpeg",
+        "assets/images/howtocook_gallery/酱排骨/2.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/酱排骨/酱排骨.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/酱牛肉/酱牛肉.md",
+      "name": "酱牛肉",
+      "aliases": [
+        "酱牛肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/酱牛肉/酱牛肉.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/酱牛肉/酱牛肉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/醉排骨/醉排骨.md",
+      "name": "醉排骨",
+      "aliases": [
+        "醉排骨"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/醉排骨/1.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/醉排骨/醉排骨.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/香干芹菜炒肉/香干芹菜炒肉.md",
+      "name": "香干芹菜炒肉",
+      "aliases": [
+        "香干芹菜炒肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/香干芹菜炒肉/香干芹菜炒肉.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/香干芹菜炒肉/香干芹菜炒肉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/香煎五花肉/香煎五花肉.md",
+      "name": "香煎五花肉",
+      "aliases": [
+        "香煎五花肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/香煎五花肉/香煎五花肉.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/香煎五花肉/香煎五花肉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/香菇滑鸡/香菇滑鸡.md",
+      "name": "香菇滑鸡",
+      "aliases": [
+        "香菇滑鸡"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/香菇滑鸡/香菇滑鸡.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/香菇滑鸡/香菇滑鸡.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/香辣鸡爪煲/香辣鸡爪煲.md",
+      "name": "香辣鸡爪煲",
+      "aliases": [
+        "香辣鸡爪煲"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/香辣鸡爪煲/result2.jpg",
+        "assets/images/howtocook_gallery/香辣鸡爪煲/result1.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/香辣鸡爪煲/香辣鸡爪煲.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/鱼香茄子/鱼香茄子.md",
+      "name": "鱼香茄子",
+      "aliases": [
+        "鱼香茄子"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/鱼香茄子/yxqz1.jpg",
+        "assets/images/howtocook_gallery/鱼香茄子/yxqz2.jpg",
+        "assets/images/howtocook_gallery/鱼香茄子/yxqz3.jpg",
+        "assets/images/howtocook_gallery/鱼香茄子/yxqz4.jpg",
+        "assets/images/howtocook_gallery/鱼香茄子/yxqz5.jpg",
+        "assets/images/howtocook_gallery/鱼香茄子/yxqz6.jpg",
+        "assets/images/howtocook_gallery/鱼香茄子/yxqz7.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/鱼香茄子/鱼香茄子.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/麻婆豆腐/麻婆豆腐.md",
+      "name": "麻婆豆腐",
+      "aliases": [
+        "麻婆豆腐"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/麻婆豆腐/1.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/麻婆豆腐/麻婆豆腐.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/黑椒牛柳/黑椒牛柳.md",
+      "name": "黑椒牛柳",
+      "aliases": [
+        "黑椒牛柳"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/黑椒牛柳/黑椒牛柳.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/黑椒牛柳/黑椒牛柳.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "meat_dish/黔式腊肠娃娃菜/黔式腊肠娃娃菜.md",
+      "name": "黔式腊肠娃娃菜",
+      "aliases": [
+        "黔式腊肠娃娃菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/黔式腊肠娃娃菜/黔式腊肠娃娃菜.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/meat_dish/黔式腊肠娃娃菜/黔式腊肠娃娃菜.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "semi-finished/懒人蛋挞/懒人蛋挞.md",
+      "name": "懒人蛋挞",
+      "aliases": [
+        "懒人蛋挞"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/懒人蛋挞/懒人蛋挞.png"
+      ],
+      "markdownPath": "HowToCook/dishes/semi-finished/懒人蛋挞/懒人蛋挞.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "semi-finished/炸薯条/炸薯条.md",
+      "name": "炸薯条",
+      "aliases": [
+        "炸薯条"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/炸薯条/炸薯条.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/semi-finished/炸薯条/炸薯条.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "semi-finished/空气炸锅羊排/空气炸锅羊排.md",
+      "name": "空气炸锅羊排",
+      "aliases": [
+        "空气炸锅羊排"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/空气炸锅羊排/羊排.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/semi-finished/空气炸锅羊排/空气炸锅羊排.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "semi-finished/空气炸锅鸡翅中/空气炸锅鸡翅中.md",
+      "name": "空气炸锅鸡翅中",
+      "aliases": [
+        "空气炸锅鸡翅中"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/空气炸锅鸡翅中/鸡翅中_0.jpg",
+        "assets/images/howtocook_gallery/空气炸锅鸡翅中/鸡翅中_1.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/semi-finished/空气炸锅鸡翅中/空气炸锅鸡翅中.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "semi-finished/速冻汤圆/速冻汤圆.md",
+      "name": "速冻汤圆",
+      "aliases": [
+        "速冻汤圆"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/速冻汤圆/速冻汤圆.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/semi-finished/速冻汤圆/速冻汤圆.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "soup/勾芡香菇汤/勾芡香菇汤.md",
+      "name": "勾芡香菇汤",
+      "aliases": [
+        "勾芡香菇汤"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/勾芡香菇汤/1.jpeg",
+        "assets/images/howtocook_gallery/勾芡香菇汤/2.jpeg",
+        "assets/images/howtocook_gallery/勾芡香菇汤/3.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/soup/勾芡香菇汤/勾芡香菇汤.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "soup/昂刺鱼豆腐汤/昂刺鱼豆腐汤.md",
+      "name": "昂刺鱼豆腐汤",
+      "aliases": [
+        "昂刺鱼豆腐汤"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/昂刺鱼豆腐汤/沙光鱼豆腐汤.jpg",
+        "assets/images/howtocook_gallery/昂刺鱼豆腐汤/昂刺鱼豆腐汤01.jpg",
+        "assets/images/howtocook_gallery/昂刺鱼豆腐汤/昂刺鱼豆腐汤02.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/soup/昂刺鱼豆腐汤/昂刺鱼豆腐汤.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "soup/朱雀汤/朱雀汤.md",
+      "name": "朱雀汤",
+      "aliases": [
+        "朱雀汤"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/朱雀汤/朱雀汤.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/soup/朱雀汤/朱雀汤.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "soup/玉米排骨汤/玉米排骨汤.md",
+      "name": "玉米排骨汤",
+      "aliases": [
+        "玉米排骨汤"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/玉米排骨汤/玉米排骨汤.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/soup/玉米排骨汤/玉米排骨汤.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "soup/羊肉汤/羊肉汤.md",
+      "name": "羊肉汤",
+      "aliases": [
+        "羊肉汤"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/羊肉汤/羊肉汤.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/soup/羊肉汤/羊肉汤.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "soup/菌菇炖乳鸽/菌菇炖乳鸽.md",
+      "name": "菌菇炖乳鸽",
+      "aliases": [
+        "菌菇炖乳鸽"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/菌菇炖乳鸽/菌菇炖乳鸽.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/soup/菌菇炖乳鸽/菌菇炖乳鸽.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "soup/银耳莲子粥/银耳莲子粥.md",
+      "name": "银耳莲子粥",
+      "aliases": [
+        "银耳莲子粥"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/银耳莲子粥/银耳莲子粥.png"
+      ],
+      "markdownPath": "HowToCook/dishes/soup/银耳莲子粥/银耳莲子粥.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "soup/陈皮排骨汤/陈皮排骨汤.md",
+      "name": "陈皮排骨汤",
+      "aliases": [
+        "陈皮排骨汤"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/陈皮排骨汤/陈皮排骨汤.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/soup/陈皮排骨汤/陈皮排骨汤.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/凉粉/凉粉.md",
+      "name": "凉粉",
+      "aliases": [
+        "凉粉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/凉粉/lf1.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf2.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf3.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf4.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf5.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf6.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf7.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf8.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf9.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf10.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf11.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/凉粉/凉粉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/基础牛奶面包/基础牛奶面包.md",
+      "name": "基础牛奶面包",
+      "aliases": [
+        "基础牛奶面包"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/基础牛奶面包/1-1成品.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/2-1设备简介1.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/2-2设备简介2.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/4-1酵头1.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/4-2酵头2.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/4-3酵头3.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/4-4此时的面团.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/4-5转移到容器内.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/4-6成品面包.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/5-1成品.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/基础牛奶面包/基础牛奶面包.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/微波炉腊肠煲仔饭/微波炉腊肠煲仔饭.md",
+      "name": "微波炉腊肠煲仔饭",
+      "aliases": [
+        "微波炉腊肠煲仔饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/微波炉腊肠煲仔饭/微波炉腊肠煲仔饭.png"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/微波炉腊肠煲仔饭/微波炉腊肠煲仔饭.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/意式肉酱面/意式肉酱面.md",
+      "name": "意式肉酱面",
+      "aliases": [
+        "意式肉酱面"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/意式肉酱面/final.jpg",
+        "assets/images/howtocook_gallery/意式肉酱面/spaghetti.jpg",
+        "assets/images/howtocook_gallery/意式肉酱面/sauce.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/意式肉酱面/意式肉酱面.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/扬州炒饭/扬州炒饭.md",
+      "name": "扬州炒饭",
+      "aliases": [
+        "扬州炒饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/扬州炒饭/veg.png"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/扬州炒饭/扬州炒饭.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/披萨饼皮/披萨饼皮.md",
+      "name": "披萨饼皮",
+      "aliases": [
+        "披萨饼皮"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/披萨饼皮/001.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/披萨饼皮/披萨饼皮.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/日式咖喱饭/日式咖喱饭.md",
+      "name": "日式咖喱饭",
+      "aliases": [
+        "日式咖喱饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/日式咖喱饭/成品.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/日式咖喱饭/日式咖喱饭.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/日式肥牛丼饭/日式肥牛丼饭.md",
+      "name": "日式肥牛丼饭",
+      "aliases": [
+        "日式肥牛丼饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/日式肥牛丼饭/成品.png"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/日式肥牛丼饭/日式肥牛丼饭.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/河南蒸面条/河南蒸面条.md",
+      "name": "河南蒸面条",
+      "aliases": [
+        "河南蒸面条"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/河南蒸面条/河南蒸面条.png"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/河南蒸面条/河南蒸面条.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/火腿饭团/火腿饭团.md",
+      "name": "火腿饭团",
+      "aliases": [
+        "火腿饭团"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/火腿饭团/饭团.png"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/火腿饭团/火腿饭团.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/炒凉粉/炒凉粉.md",
+      "name": "炒凉粉",
+      "aliases": [
+        "炒凉粉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/炒凉粉/chaoliangfen.jpg",
+        "assets/images/howtocook_gallery/炒凉粉/chaoliangfen.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/炒凉粉/炒凉粉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/炒意大利面/炒意大利面.md",
+      "name": "炒意大利面",
+      "aliases": [
+        "炒意大利面"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/炒意大利面/a.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/炒意大利面/炒意大利面.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/烙饼/烙饼.md",
+      "name": "烙饼",
+      "aliases": [
+        "烙饼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/烙饼/成品.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/烙饼/烙饼.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/烧饼/芝麻烧饼.md",
+      "name": "芝麻烧饼",
+      "aliases": [
+        "芝麻烧饼",
+        "烧饼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/芝麻烧饼/芝麻烧饼.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/烧饼/芝麻烧饼.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/电饭煲三文鱼炊饭/电饭煲三文鱼炊饭.md",
+      "name": "电饭煲三文鱼炊饭",
+      "aliases": [
+        "电饭煲三文鱼炊饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/电饭煲三文鱼炊饭/电饭煲三文鱼炊饭.webp"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/电饭煲三文鱼炊饭/电饭煲三文鱼炊饭.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/空气炸锅照烧鸡饭/空气炸锅照烧鸡饭.md",
+      "name": "空气炸锅照烧鸡饭",
+      "aliases": [
+        "空气炸锅照烧鸡饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/空气炸锅照烧鸡饭/空气炸锅照烧鸡饭.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/空气炸锅照烧鸡饭/空气炸锅照烧鸡饭.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/米饭/煮锅蒸米饭.md",
+      "name": "煮锅蒸米饭",
+      "aliases": [
+        "煮锅蒸米饭",
+        "米饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/煮锅蒸米饭/rice_regularPot.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/米饭/煮锅蒸米饭.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/老友猪肉粉/老友猪肉粉.md",
+      "name": "老友猪肉粉",
+      "aliases": [
+        "老友猪肉粉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/老友猪肉粉/老友猪肉粉.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/老友猪肉粉/老友猪肉粉.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/茄子肉煎饼/茄子肉煎饼.md",
+      "name": "茄子肉煎饼",
+      "aliases": [
+        "茄子肉煎饼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/茄子肉煎饼/茄子肉煎饼.jpg",
+        "assets/images/howtocook_gallery/茄子肉煎饼/1茄片肉片.jpg",
+        "assets/images/howtocook_gallery/茄子肉煎饼/2米粉250g.jpg",
+        "assets/images/howtocook_gallery/茄子肉煎饼/3米粉面粉鸡蛋.jpg",
+        "assets/images/howtocook_gallery/茄子肉煎饼/4混合.jpg",
+        "assets/images/howtocook_gallery/茄子肉煎饼/5起锅烧油.jpg",
+        "assets/images/howtocook_gallery/茄子肉煎饼/6开始煎.jpg",
+        "assets/images/howtocook_gallery/茄子肉煎饼/7撒盐准备起锅.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/茄子肉煎饼/茄子肉煎饼.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/西红柿鸡蛋挂面/西红柿鸡蛋挂面.md",
+      "name": "西红柿鸡蛋挂面",
+      "aliases": [
+        "西红柿鸡蛋挂面"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/西红柿鸡蛋挂面/food.jpg",
+        "assets/images/howtocook_gallery/西红柿鸡蛋挂面/pretreatFood.jpg",
+        "assets/images/howtocook_gallery/西红柿鸡蛋挂面/fryEgg.jpg",
+        "assets/images/howtocook_gallery/西红柿鸡蛋挂面/tomato.jpg",
+        "assets/images/howtocook_gallery/西红柿鸡蛋挂面/tomatoNoodle.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/西红柿鸡蛋挂面/西红柿鸡蛋挂面.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/酱拌荞麦面/酱拌荞麦面.md",
+      "name": "酱拌荞麦面",
+      "aliases": [
+        "酱拌荞麦面"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/酱拌荞麦面/1.jpeg",
+        "assets/images/howtocook_gallery/酱拌荞麦面/2.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/酱拌荞麦面/酱拌荞麦面.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/陕西油泼面/陕西油泼面.md",
+      "name": "陕西油泼面",
+      "aliases": [
+        "陕西油泼面"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/陕西油泼面/chemian.png",
+        "assets/images/howtocook_gallery/陕西油泼面/成品.png"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/陕西油泼面/陕西油泼面.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/韩式拌饭/韩式拌饭.md",
+      "name": "韩式拌饭",
+      "aliases": [
+        "韩式拌饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/韩式拌饭/韩式拌饭.png"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/韩式拌饭/韩式拌饭.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "staple/鲣鱼海苔玉米饭/鲣鱼海苔玉米饭.md",
+      "name": "鲣鱼海苔玉米饭",
+      "aliases": [
+        "鲣鱼海苔玉米饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/鲣鱼海苔玉米饭/米饭.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/staple/鲣鱼海苔玉米饭/鲣鱼海苔玉米饭.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "template/示例菜/示例菜.md",
+      "name": "示例菜",
+      "aliases": [
+        "示例菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/示例菜/示例菜.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/template/示例菜/示例菜.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/上汤娃娃菜/上汤娃娃菜.md",
+      "name": "上汤娃娃菜",
+      "aliases": [
+        "上汤娃娃菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/上汤娃娃菜/上汤娃娃菜.png"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/上汤娃娃菜/上汤娃娃菜.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/凉拌木耳/凉拌木耳.md",
+      "name": "凉拌木耳",
+      "aliases": [
+        "凉拌木耳"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/凉拌木耳/1.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/2.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/3.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/4.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/5.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/6.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/7.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/8.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/9.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/10.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/凉拌木耳/凉拌木耳.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/凉拌莴笋/凉拌莴笋.md",
+      "name": "凉拌莴笋",
+      "aliases": [
+        "凉拌莴笋"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/凉拌莴笋/1.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/凉拌莴笋/凉拌莴笋.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/包菜炒鸡蛋粉丝/包菜炒鸡蛋粉丝.md",
+      "name": "包菜炒鸡蛋粉丝",
+      "aliases": [
+        "包菜炒鸡蛋粉丝"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/包菜炒鸡蛋粉丝/1.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/包菜炒鸡蛋粉丝/包菜炒鸡蛋粉丝.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/小炒藕丁/小炒藕丁.md",
+      "name": "小炒藕丁",
+      "aliases": [
+        "小炒藕丁"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/小炒藕丁/小炒藕丁.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/小炒藕丁/小炒藕丁.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/干锅花菜/干锅花菜.md",
+      "name": "干锅花菜",
+      "aliases": [
+        "干锅花菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/干锅花菜/干锅花菜.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/干锅花菜/干锅花菜.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/手撕包菜/手撕包菜.md",
+      "name": "手撕包菜",
+      "aliases": [
+        "手撕包菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/手撕包菜/1.jpeg",
+        "assets/images/howtocook_gallery/手撕包菜/2.jpeg",
+        "assets/images/howtocook_gallery/手撕包菜/3.jpeg",
+        "assets/images/howtocook_gallery/手撕包菜/4.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/手撕包菜/手撕包菜.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/拔丝土豆/拔丝土豆.md",
+      "name": "拔丝土豆",
+      "aliases": [
+        "拔丝土豆"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/拔丝土豆/1.jpeg",
+        "assets/images/howtocook_gallery/拔丝土豆/2.jpeg",
+        "assets/images/howtocook_gallery/拔丝土豆/3.jpeg",
+        "assets/images/howtocook_gallery/拔丝土豆/4.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/拔丝土豆/拔丝土豆.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/椒盐玉米/椒盐玉米.md",
+      "name": "椒盐玉米",
+      "aliases": [
+        "椒盐玉米"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/椒盐玉米/椒盐玉米.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/椒盐玉米/椒盐玉米.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/榄菜肉末四季豆/榄菜肉末四季豆.md",
+      "name": "榄菜肉末四季豆",
+      "aliases": [
+        "榄菜肉末四季豆"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/榄菜肉末四季豆/榄菜肉末四季豆.JPG"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/榄菜肉末四季豆/榄菜肉末四季豆.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/洋葱炒鸡蛋/洋葱炒鸡蛋.md",
+      "name": "洋葱炒鸡蛋",
+      "aliases": [
+        "洋葱炒鸡蛋"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/洋葱炒鸡蛋/1.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/洋葱炒鸡蛋/洋葱炒鸡蛋.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/炒滑蛋/炒滑蛋.md",
+      "name": "炒滑蛋",
+      "aliases": [
+        "炒滑蛋"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/炒滑蛋/炒滑蛋.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/炒滑蛋/炒滑蛋.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/烤茄子/烤茄子.md",
+      "name": "烤茄子",
+      "aliases": [
+        "烤茄子"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/烤茄子/烤茄子.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/烤茄子/烤茄子.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/白灼菜心/白灼菜心.md",
+      "name": "白灼菜心",
+      "aliases": [
+        "白灼菜心"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/白灼菜心/白灼菜心.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/白灼菜心/白灼菜心.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/糖拌西红柿/糖拌西红柿.md",
+      "name": "糖拌西红柿",
+      "aliases": [
+        "糖拌西红柿"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/糖拌西红柿/火山飘雪.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/糖拌西红柿/糖拌西红柿.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/红烧冬瓜/红烧冬瓜.md",
+      "name": "红烧冬瓜",
+      "aliases": [
+        "红烧冬瓜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/红烧冬瓜/1.jpeg",
+        "assets/images/howtocook_gallery/红烧冬瓜/2.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/红烧冬瓜/红烧冬瓜.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/芹菜拌茶树菇/芹菜拌茶树菇.md",
+      "name": "芹菜拌茶树菇",
+      "aliases": [
+        "芹菜拌茶树菇"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/芹菜拌茶树菇/芹菜拌茶树菇.jpg",
+        "assets/images/howtocook_gallery/芹菜拌茶树菇/闽星茶树菇.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/芹菜拌茶树菇/芹菜拌茶树菇.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/莴笋叶煎饼/莴笋叶煎饼.md",
+      "name": "莴笋叶煎饼",
+      "aliases": [
+        "莴笋叶煎饼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/莴笋叶煎饼/1.jpeg",
+        "assets/images/howtocook_gallery/莴笋叶煎饼/2.jpeg",
+        "assets/images/howtocook_gallery/莴笋叶煎饼/3.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/莴笋叶煎饼/莴笋叶煎饼.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/菠菜炒鸡蛋/菠菜炒鸡蛋.md",
+      "name": "菠菜炒鸡蛋",
+      "aliases": [
+        "菠菜炒鸡蛋"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/菠菜炒鸡蛋/菠菜炒鸡蛋.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/菠菜炒鸡蛋/菠菜炒鸡蛋.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/蒜蓉空心菜/蒜蓉空心菜.md",
+      "name": "蒜蓉空心菜",
+      "aliases": [
+        "蒜蓉空心菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/蒜蓉空心菜/1.JPG"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/蒜蓉空心菜/蒜蓉空心菜.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/虎皮青椒/虎皮青椒.md",
+      "name": "虎皮青椒",
+      "aliases": [
+        "虎皮青椒"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/虎皮青椒/虎皮青椒.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/虎皮青椒/虎皮青椒.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/蚝油三鲜菇/蚝油三鲜菇.md",
+      "name": "蚝油三鲜菇",
+      "aliases": [
+        "蚝油三鲜菇"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/蚝油三鲜菇/1.jpeg",
+        "assets/images/howtocook_gallery/蚝油三鲜菇/2.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/蚝油三鲜菇/蚝油三鲜菇.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/西红柿豆腐汤羹/西红柿豆腐汤羹.md",
+      "name": "西红柿豆腐汤羹",
+      "aliases": [
+        "西红柿豆腐汤羹"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/西红柿豆腐汤羹/1.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/西红柿豆腐汤羹/西红柿豆腐汤羹.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/西葫芦炒鸡蛋/西葫芦炒鸡蛋.md",
+      "name": "西葫芦炒鸡蛋",
+      "aliases": [
+        "西葫芦炒鸡蛋"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/西葫芦炒鸡蛋/西葫芦炒鸡蛋.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/西葫芦炒鸡蛋/西葫芦炒鸡蛋.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/话梅煮毛豆/话梅煮毛豆.md",
+      "name": "话梅煮毛豆",
+      "aliases": [
+        "话梅煮毛豆"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/话梅煮毛豆/1.jpeg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/话梅煮毛豆/话梅煮毛豆.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/鸡蛋羹/微波炉鸡蛋羹.md",
+      "name": "微波炉鸡蛋羹",
+      "aliases": [
+        "微波炉鸡蛋羹",
+        "鸡蛋羹"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/微波炉鸡蛋羹/微波炉鸡蛋羹.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/鸡蛋羹/微波炉鸡蛋羹.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "vegetable_dish/鸡蛋羹/鸡蛋羹.md",
+      "name": "鸡蛋羹",
+      "aliases": [
+        "鸡蛋羹"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/鸡蛋羹/鸡蛋羹.jpg"
+      ],
+      "markdownPath": "HowToCook/dishes/vegetable_dish/鸡蛋羹/鸡蛋羹.md",
+      "sourceProject": "HowToCook"
+    },
+    {
+      "recipeId": "aquatic/小龙虾/小龙虾.md",
+      "name": "小龙虾",
+      "aliases": [
+        "小龙虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/小龙虾/成品.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/aquatic/小龙虾/小龙虾.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "aquatic/干煎阿根廷红虾/干煎阿根廷红虾.md",
+      "name": "干煎阿根廷红虾",
+      "aliases": [
+        "干煎阿根廷红虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/干煎阿根廷红虾/干煎阿根廷红虾.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/aquatic/干煎阿根廷红虾/干煎阿根廷红虾.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "aquatic/油焖大虾/油焖大虾.md",
+      "name": "油焖大虾",
+      "aliases": [
+        "油焖大虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/油焖大虾/油焖大虾.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/aquatic/油焖大虾/油焖大虾.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "aquatic/混合烤鱼/烤鱼.md",
+      "name": "烤鱼",
+      "aliases": [
+        "烤鱼",
+        "混合烤鱼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/烤鱼/烤鱼.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/aquatic/混合烤鱼/烤鱼.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "aquatic/清蒸鲈鱼/清蒸鲈鱼.md",
+      "name": "清蒸鲈鱼",
+      "aliases": [
+        "清蒸鲈鱼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/清蒸鲈鱼/改刀.jpg",
+        "assets/images/howtocook_gallery/清蒸鲈鱼/摆盘.jpg",
+        "assets/images/howtocook_gallery/清蒸鲈鱼/清蒸鲈鱼.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/aquatic/清蒸鲈鱼/清蒸鲈鱼.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "aquatic/白灼虾/白灼虾.md",
+      "name": "白灼虾",
+      "aliases": [
+        "白灼虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/白灼虾/白灼虾.webp"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/aquatic/白灼虾/白灼虾.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "aquatic/糖醋鲤鱼/糖醋鲤鱼.md",
+      "name": "糖醋鲤鱼",
+      "aliases": [
+        "糖醋鲤鱼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/糖醋鲤鱼/腌制.jpg",
+        "assets/images/howtocook_gallery/糖醋鲤鱼/成品.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/aquatic/糖醋鲤鱼/糖醋鲤鱼.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "aquatic/芥末黄油罗氏虾/芥末黄油罗氏虾.md",
+      "name": "芥末黄油罗氏虾",
+      "aliases": [
+        "芥末黄油罗氏虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/芥末黄油罗氏虾/芥末黄油罗氏虾.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/aquatic/芥末黄油罗氏虾/芥末黄油罗氏虾.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "aquatic/葱烧海参/葱烧海参.md",
+      "name": "葱烧海参",
+      "aliases": [
+        "葱烧海参"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/葱烧海参/葱烧海参.jpeg",
+        "assets/images/howtocook_gallery/葱烧海参/海参.jpeg",
+        "assets/images/howtocook_gallery/葱烧海参/酱汁.jpeg",
+        "assets/images/howtocook_gallery/葱烧海参/葱白.jpeg",
+        "assets/images/howtocook_gallery/葱烧海参/葱烧海参.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/aquatic/葱烧海参/葱烧海参.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "aquatic/蒜蓉虾/蒜蓉虾.md",
+      "name": "蒜蓉虾",
+      "aliases": [
+        "蒜蓉虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/蒜蓉虾/1.jpeg",
+        "assets/images/howtocook_gallery/蒜蓉虾/2.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/aquatic/蒜蓉虾/蒜蓉虾.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "aquatic/蒜香黄油虾/蒜香黄油虾.md",
+      "name": "蒜香黄油虾",
+      "aliases": [
+        "蒜香黄油虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/蒜香黄油虾/1.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/aquatic/蒜香黄油虾/蒜香黄油虾.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "aquatic/蛏抱蛋/蛏抱蛋.md",
+      "name": "蛏抱蛋",
+      "aliases": [
+        "蛏抱蛋"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/蛏抱蛋/1.jpeg",
+        "assets/images/howtocook_gallery/蛏抱蛋/2.jpeg",
+        "assets/images/howtocook_gallery/蛏抱蛋/3.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/aquatic/蛏抱蛋/蛏抱蛋.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "aquatic/香煎翘嘴鱼/香煎翘嘴鱼.md",
+      "name": "香煎翘嘴鱼",
+      "aliases": [
+        "香煎翘嘴鱼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/香煎翘嘴鱼/香煎翘嘴鱼.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/aquatic/香煎翘嘴鱼/香煎翘嘴鱼.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "aquatic/鲤鱼炖白菜/鲤鱼炖白菜.md",
+      "name": "鲤鱼炖白菜",
+      "aliases": [
+        "鲤鱼炖白菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/鲤鱼炖白菜/鲤鱼炖白菜.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/aquatic/鲤鱼炖白菜/鲤鱼炖白菜.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "aquatic/鳊鱼炖豆腐/鳊鱼炖豆腐.md",
+      "name": "鳊鱼炖豆腐",
+      "aliases": [
+        "鳊鱼炖豆腐"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/鳊鱼炖豆腐/鳊鱼炖豆腐.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/aquatic/鳊鱼炖豆腐/鳊鱼炖豆腐.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "aquatic/黄油煎虾/黄油煎虾.md",
+      "name": "黄油煎虾",
+      "aliases": [
+        "黄油煎虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/黄油煎虾/黄油煎虾.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/aquatic/黄油煎虾/黄油煎虾.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "breakfast/苏格兰蛋/苏格兰蛋.md",
+      "name": "苏格兰蛋",
+      "aliases": [
+        "苏格兰蛋"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/苏格兰蛋/egg1.png",
+        "assets/images/howtocook_gallery/苏格兰蛋/egg2.png",
+        "assets/images/howtocook_gallery/苏格兰蛋/egg3.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/breakfast/苏格兰蛋/苏格兰蛋.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "condiment/油泼辣子/油泼辣子.md",
+      "name": "油泼辣子",
+      "aliases": [
+        "油泼辣子"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/油泼辣子/口水鸡+油泼辣子.jpg",
+        "assets/images/howtocook_gallery/油泼辣子/油泼辣子.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/condiment/油泼辣子/油泼辣子.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "condiment/草莓酱/草莓酱.md",
+      "name": "草莓酱",
+      "aliases": [
+        "草莓酱"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/草莓酱/洗好的草莓.jpeg",
+        "assets/images/howtocook_gallery/草莓酱/混合好的草莓.jpeg",
+        "assets/images/howtocook_gallery/草莓酱/熬煮的草莓.jpeg",
+        "assets/images/howtocook_gallery/草莓酱/做好的草莓酱.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/condiment/草莓酱/草莓酱.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "condiment/蔗糖糖浆/蔗糖糖浆.md",
+      "name": "蔗糖糖浆",
+      "aliases": [
+        "蔗糖糖浆"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/蔗糖糖浆/bottle.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/condiment/蔗糖糖浆/蔗糖糖浆.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "dessert/反沙芋头/反沙芋头.md",
+      "name": "反沙芋头",
+      "aliases": [
+        "反沙芋头"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/反沙芋头/反沙芋头成品.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/dessert/反沙芋头/反沙芋头.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "dessert/咖啡椰奶冻/咖啡椰奶冻.md",
+      "name": "咖啡椰奶冻",
+      "aliases": [
+        "咖啡椰奶冻"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/咖啡椰奶冻/咖啡椰奶冻.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/dessert/咖啡椰奶冻/咖啡椰奶冻.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "dessert/戚风蛋糕/戚风蛋糕.md",
+      "name": "戚风蛋糕",
+      "aliases": [
+        "戚风蛋糕"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/戚风蛋糕/IMG_1516.jpg",
+        "assets/images/howtocook_gallery/戚风蛋糕/DSC08606.jpg",
+        "assets/images/howtocook_gallery/戚风蛋糕/DSC08608.jpg",
+        "assets/images/howtocook_gallery/戚风蛋糕/DSC08612.jpg",
+        "assets/images/howtocook_gallery/戚风蛋糕/IMG_0269.jpg",
+        "assets/images/howtocook_gallery/戚风蛋糕/DSC08618.jpg",
+        "assets/images/howtocook_gallery/戚风蛋糕/DSC08621.jpg",
+        "assets/images/howtocook_gallery/戚风蛋糕/DSC08627.jpg",
+        "assets/images/howtocook_gallery/戚风蛋糕/DSC08716.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/dessert/戚风蛋糕/戚风蛋糕.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "dessert/提拉米苏/提拉米苏.md",
+      "name": "提拉米苏",
+      "aliases": [
+        "提拉米苏"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/提拉米苏/提拉米苏成品.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/dessert/提拉米苏/提拉米苏.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "dessert/炸鲜奶/炸鲜奶.md",
+      "name": "炸鲜奶",
+      "aliases": [
+        "炸鲜奶"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/炸鲜奶/炸鲜奶.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/dessert/炸鲜奶/炸鲜奶.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "dessert/烤蛋挞/烤蛋挞.md",
+      "name": "烤蛋挞",
+      "aliases": [
+        "烤蛋挞"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/烤蛋挞/烤蛋挞.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/dessert/烤蛋挞/烤蛋挞.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "dessert/玛格丽特饼干/玛格丽特饼干.md",
+      "name": "玛格丽特饼干",
+      "aliases": [
+        "玛格丽特饼干"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/玛格丽特饼干/玛格丽特饼干.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/dessert/玛格丽特饼干/玛格丽特饼干.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "dessert/芋泥雪媚娘/芋泥雪媚娘.md",
+      "name": "芋泥雪媚娘",
+      "aliases": [
+        "芋泥雪媚娘"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/芋泥雪媚娘/芋泥雪媚娘成品.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/dessert/芋泥雪媚娘/芋泥雪媚娘.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "dessert/英式司康/英式司康.md",
+      "name": "英式司康",
+      "aliases": [
+        "英式司康"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/英式司康/英式司康.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/dessert/英式司康/英式司康.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "dessert/酸奶意式奶冻/酸奶意式奶冻.md",
+      "name": "酸奶意式奶冻",
+      "aliases": [
+        "酸奶意式奶冻"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/酸奶意式奶冻/酸奶意式奶冻.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/dessert/酸奶意式奶冻/酸奶意式奶冻.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "dessert/雪花酥/雪花酥.md",
+      "name": "雪花酥",
+      "aliases": [
+        "雪花酥"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/雪花酥/雪花酥成品.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/dessert/雪花酥/雪花酥.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "dessert/龟苓膏/龟苓膏.md",
+      "name": "龟苓膏",
+      "aliases": [
+        "龟苓膏"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/龟苓膏/龟苓膏成品.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/dessert/龟苓膏/龟苓膏.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "drink/奇异果菠菜特调/奇异果菠菜特调.md",
+      "name": "奇异果菠菜特调",
+      "aliases": [
+        "奇异果菠菜特调"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/奇异果菠菜特调/kiwi-example.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/drink/奇异果菠菜特调/奇异果菠菜特调.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "drink/柠檬水/柠檬水.md",
+      "name": "柠檬水",
+      "aliases": [
+        "柠檬水"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/柠檬水/柠檬水.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/drink/柠檬水/柠檬水.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "drink/泰国手标红茶/泰国手标红茶.md",
+      "name": "泰国手标红茶",
+      "aliases": [
+        "泰国手标红茶"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/泰国手标红茶/泰国手标红茶.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/drink/泰国手标红茶/泰国手标红茶.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "drink/海边落日/海边落日.md",
+      "name": "海边落日",
+      "aliases": [
+        "海边落日"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/海边落日/海边落日.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/drink/海边落日/海边落日.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "drink/百香果橙子特调/百香果橙子特调.md",
+      "name": "百香果橙子特调",
+      "aliases": [
+        "百香果橙子特调"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/百香果橙子特调/tea-version.jpg",
+        "assets/images/howtocook_gallery/百香果橙子特调/soda-version.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/drink/百香果橙子特调/百香果橙子特调.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "drink/砂糖椰子冰沙/砂糖椰子冰沙.md",
+      "name": "砂糖椰子冰沙",
+      "aliases": [
+        "砂糖椰子冰沙"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/砂糖椰子冰沙/砂糖椰子冰沙-1.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/drink/砂糖椰子冰沙/砂糖椰子冰沙.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "drink/耙耙柑茶/耙耙柑茶.md",
+      "name": "耙耙柑茶",
+      "aliases": [
+        "耙耙柑茶"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/耙耙柑茶/citrus-tea.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/drink/耙耙柑茶/耙耙柑茶.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "drink/菠萝咖啡特调/菠萝咖啡特调.md",
+      "name": "菠萝咖啡特调",
+      "aliases": [
+        "菠萝咖啡特调"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/菠萝咖啡特调/菠萝咖啡特调.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/drink/菠萝咖啡特调/菠萝咖啡特调.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "drink/酸梅汤/酸梅汤.md",
+      "name": "酸梅汤",
+      "aliases": [
+        "酸梅汤"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/酸梅汤/sour_plum_soup.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/drink/酸梅汤/酸梅汤.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "drink/金汤力/金汤力.md",
+      "name": "金汤力",
+      "aliases": [
+        "金汤力"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/金汤力/gin-tonic.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/drink/金汤力/金汤力.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "drink/金菲士/金菲士.md",
+      "name": "金菲士",
+      "aliases": [
+        "金菲士"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/金菲士/gin-fizz.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/drink/金菲士/金菲士.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/农家一碗香/农家一碗香.md",
+      "name": "农家一碗香",
+      "aliases": [
+        "农家一碗香"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/农家一碗香/农家一碗香成品.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/农家一碗香/农家一碗香.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/冬瓜酿肉/冬瓜酿肉.md",
+      "name": "冬瓜酿肉",
+      "aliases": [
+        "冬瓜酿肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/冬瓜酿肉/冬瓜酿肉成品.jpg",
+        "assets/images/howtocook_gallery/冬瓜酿肉/冬瓜形状.jpg",
+        "assets/images/howtocook_gallery/冬瓜酿肉/腌制好的冬瓜.jpg",
+        "assets/images/howtocook_gallery/冬瓜酿肉/卷肉.jpg",
+        "assets/images/howtocook_gallery/冬瓜酿肉/摆盘.jpg",
+        "assets/images/howtocook_gallery/冬瓜酿肉/打鸡蛋.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/冬瓜酿肉/冬瓜酿肉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/凉拌鸡丝/凉拌鸡丝.md",
+      "name": "凉拌鸡丝",
+      "aliases": [
+        "凉拌鸡丝"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/凉拌鸡丝/凉拌鸡丝.jpg",
+        "assets/images/howtocook_gallery/凉拌鸡丝/凉拌鸡丝_焯水.jpg",
+        "assets/images/howtocook_gallery/凉拌鸡丝/凉拌鸡丝_撕.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/凉拌鸡丝/凉拌鸡丝.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/卤菜/卤菜.md",
+      "name": "卤菜",
+      "aliases": [
+        "卤菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/卤菜/卤牛肉.jpeg",
+        "assets/images/howtocook_gallery/卤菜/牛肉面.jpeg",
+        "assets/images/howtocook_gallery/卤菜/卤水.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/卤菜/卤菜.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/口水鸡/口水鸡.md",
+      "name": "口水鸡",
+      "aliases": [
+        "口水鸡"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/口水鸡/口水鸡.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/口水鸡/口水鸡.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/台式卤肉饭/台式卤肉饭.md",
+      "name": "台式卤肉饭",
+      "aliases": [
+        "台式卤肉饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/台式卤肉饭/1.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/台式卤肉饭/台式卤肉饭.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/咖喱肥牛/咖喱肥牛.md",
+      "name": "咖喱肥牛",
+      "aliases": [
+        "咖喱肥牛"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/咖喱肥牛/咖喱肥牛.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/咖喱肥牛/咖喱肥牛.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/啤酒鸭/啤酒鸭.md",
+      "name": "啤酒鸭",
+      "aliases": [
+        "啤酒鸭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/啤酒鸭/啤酒鸭.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/啤酒鸭/啤酒鸭.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/回锅肉/回锅肉.md",
+      "name": "回锅肉",
+      "aliases": [
+        "回锅肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/回锅肉/1.jpeg",
+        "assets/images/howtocook_gallery/回锅肉/2.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/回锅肉/回锅肉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/土豆炖排骨/土豆炖排骨.md",
+      "name": "土豆炖排骨",
+      "aliases": [
+        "土豆炖排骨"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/土豆炖排骨/排骨1.jpg",
+        "assets/images/howtocook_gallery/土豆炖排骨/排骨2.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/土豆炖排骨/土豆炖排骨.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/奶酪培根通心粉/奶酪培根通心粉.md",
+      "name": "奶酪培根通心粉",
+      "aliases": [
+        "奶酪培根通心粉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/奶酪培根通心粉/oven.jpg",
+        "assets/images/howtocook_gallery/奶酪培根通心粉/onepot.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/奶酪培根通心粉/奶酪培根通心粉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/姜炒鸡/姜炒鸡.md",
+      "name": "姜炒鸡",
+      "aliases": [
+        "姜炒鸡"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/姜炒鸡/姜炒鸡.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/姜炒鸡/姜炒鸡.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/宫保鸡丁/宫保鸡丁.md",
+      "name": "宫保鸡丁",
+      "aliases": [
+        "宫保鸡丁"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/宫保鸡丁/宫保鸡丁.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/宫保鸡丁/宫保鸡丁.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/小炒鸡肝/小炒鸡肝.md",
+      "name": "小炒鸡肝",
+      "aliases": [
+        "小炒鸡肝"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/小炒鸡肝/成品.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/小炒鸡肝/小炒鸡肝.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/小炒黄牛肉/小炒黄牛肉.md",
+      "name": "小炒黄牛肉",
+      "aliases": [
+        "小炒黄牛肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/小炒黄牛肉/小炒黄牛肉.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/小炒黄牛肉/小炒黄牛肉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/尖叫牛蛙/尖叫牛蛙.md",
+      "name": "尖叫牛蛙",
+      "aliases": [
+        "尖叫牛蛙"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/尖叫牛蛙/尖叫牛蛙.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/尖叫牛蛙/尖叫牛蛙.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/巴基斯坦牛肉咖喱/巴基斯坦牛肉咖喱.md",
+      "name": "巴基斯坦牛肉咖喱",
+      "aliases": [
+        "巴基斯坦牛肉咖喱"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/巴基斯坦牛肉咖喱/巴基斯坦牛肉咖喱.png",
+        "assets/images/howtocook_gallery/巴基斯坦牛肉咖喱/番茄蓉.png",
+        "assets/images/howtocook_gallery/巴基斯坦牛肉咖喱/牛肉.png",
+        "assets/images/howtocook_gallery/巴基斯坦牛肉咖喱/油.png",
+        "assets/images/howtocook_gallery/巴基斯坦牛肉咖喱/倒入番茄蓉.png",
+        "assets/images/howtocook_gallery/巴基斯坦牛肉咖喱/红.png",
+        "assets/images/howtocook_gallery/巴基斯坦牛肉咖喱/巴基斯坦牛肉咖喱.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/巴基斯坦牛肉咖喱/巴基斯坦牛肉咖喱.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/干煸仔鸡/干煸仔鸡.md",
+      "name": "干煸仔鸡",
+      "aliases": [
+        "干煸仔鸡"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/干煸仔鸡/干煸仔鸡成品.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/干煸仔鸡/干煸仔鸡.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/广式萝卜牛腩/广式萝卜牛腩.md",
+      "name": "广式萝卜牛腩",
+      "aliases": [
+        "广式萝卜牛腩"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/广式萝卜牛腩/广式萝卜牛腩.webp"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/广式萝卜牛腩/广式萝卜牛腩.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/徽派红烧肉/徽派红烧肉.md",
+      "name": "徽派红烧肉",
+      "aliases": [
+        "徽派红烧肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/徽派红烧肉/1.jpeg",
+        "assets/images/howtocook_gallery/徽派红烧肉/2.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/徽派红烧肉/徽派红烧肉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/新疆大盘鸡/新疆大盘鸡.md",
+      "name": "新疆大盘鸡",
+      "aliases": [
+        "新疆大盘鸡"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/新疆大盘鸡/大盘鸡.jpeg",
+        "assets/images/howtocook_gallery/新疆大盘鸡/大盘鸡皮带面.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/新疆大盘鸡/新疆大盘鸡.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/无骨鸡爪/无骨鸡爪.md",
+      "name": "无骨鸡爪",
+      "aliases": [
+        "无骨鸡爪"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/无骨鸡爪/无骨鸡爪.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/无骨鸡爪/无骨鸡爪.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/柱候牛腩/柱候牛腩.md",
+      "name": "柱候牛腩",
+      "aliases": [
+        "柱候牛腩"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/柱候牛腩/柱候牛腩.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/柱候牛腩配米饭.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/牛腩部位.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/碗1.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/碗2.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/碗3.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/碗4.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/碗5.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/碗6.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/碗7.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/牛腩焯水.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/牛腩切块.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/牛腩此时可开始炖煮.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/牛腩入锅.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/土豆切片.jpeg",
+        "assets/images/howtocook_gallery/柱候牛腩/过滤汤汁.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/柱候牛腩/柱候牛腩.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/梅菜扣肉/梅菜扣肉.md",
+      "name": "梅菜扣肉",
+      "aliases": [
+        "梅菜扣肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/梅菜扣肉/1.jpeg",
+        "assets/images/howtocook_gallery/梅菜扣肉/2.jpeg",
+        "assets/images/howtocook_gallery/梅菜扣肉/3.jpeg",
+        "assets/images/howtocook_gallery/梅菜扣肉/4.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/梅菜扣肉/梅菜扣肉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/水煮牛肉/水煮牛肉.md",
+      "name": "水煮牛肉",
+      "aliases": [
+        "水煮牛肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/水煮牛肉/sznr1.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr2.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr3.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr4.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr5.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr6.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr7.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr8.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr9.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr10.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr11.jpg",
+        "assets/images/howtocook_gallery/水煮牛肉/sznr12.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/水煮牛肉/水煮牛肉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/清蒸鳜鱼/清蒸鳜鱼.md",
+      "name": "清蒸鳜鱼",
+      "aliases": [
+        "清蒸鳜鱼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/清蒸鳜鱼/清蒸鳜鱼成品图.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/清蒸鳜鱼/清蒸鳜鱼.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/湖南家常红烧肉/湖南家常红烧肉.md",
+      "name": "湖南家常红烧肉",
+      "aliases": [
+        "湖南家常红烧肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/湖南家常红烧肉/湖南家常红烧肉.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/湖南家常红烧肉/湖南家常红烧肉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/湘祁米夫鸭/湘祁米夫鸭.md",
+      "name": "湘祁米夫鸭",
+      "aliases": [
+        "湘祁米夫鸭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/湘祁米夫鸭/湘祁米夫鸭.jpg",
+        "assets/images/howtocook_gallery/湘祁米夫鸭/step①：准备米粉.jpg",
+        "assets/images/howtocook_gallery/湘祁米夫鸭/step②：煸炒鸭子.jpg",
+        "assets/images/howtocook_gallery/湘祁米夫鸭/step③：米粉裹鸭.jpg",
+        "assets/images/howtocook_gallery/湘祁米夫鸭/step④：高压锅蒸煮.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/湘祁米夫鸭/湘祁米夫鸭.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/牛排/牛排.md",
+      "name": "牛排",
+      "aliases": [
+        "牛排"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/牛排/牛排.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/牛排/牛排.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/猪皮冻/猪皮冻.md",
+      "name": "猪皮冻",
+      "aliases": [
+        "猪皮冻"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/猪皮冻/猪皮冻.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/猪皮冻/猪皮冻.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/瘦肉土豆片/瘦肉土豆片.md",
+      "name": "瘦肉土豆片",
+      "aliases": [
+        "瘦肉土豆片"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/瘦肉土豆片/瘦肉土豆片.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/瘦肉土豆片/瘦肉土豆片.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/糖醋排骨/糖醋排骨.md",
+      "name": "糖醋排骨",
+      "aliases": [
+        "糖醋排骨"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/糖醋排骨/1.jpeg",
+        "assets/images/howtocook_gallery/糖醋排骨/2.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/糖醋排骨/糖醋排骨.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/红烧猪蹄/红烧猪蹄.md",
+      "name": "红烧猪蹄",
+      "aliases": [
+        "红烧猪蹄"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/红烧猪蹄/红烧猪蹄.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/红烧猪蹄/红烧猪蹄.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/红烧肉/简易红烧肉.md",
+      "name": "简易红烧肉",
+      "aliases": [
+        "简易红烧肉",
+        "红烧肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/简易红烧肉/000.jpg",
+        "assets/images/howtocook_gallery/简易红烧肉/001.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/红烧肉/简易红烧肉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/羊排焖面/羊排焖面.md",
+      "name": "羊排焖面",
+      "aliases": [
+        "羊排焖面"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/羊排焖面/羊排焖面.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/羊排焖面/羊排焖面.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/老妈蹄花/老妈蹄花.md",
+      "name": "老妈蹄花",
+      "aliases": [
+        "老妈蹄花"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/老妈蹄花/result3.jpg",
+        "assets/images/howtocook_gallery/老妈蹄花/result1.jpg",
+        "assets/images/howtocook_gallery/老妈蹄花/result2.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/老妈蹄花/老妈蹄花.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/芥末罗氏虾/芥末罗氏虾.md",
+      "name": "芥末罗氏虾",
+      "aliases": [
+        "芥末罗氏虾"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/芥末罗氏虾/芥末罗氏虾成品.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/芥末罗氏虾/芥末罗氏虾.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/荔枝肉/荔枝肉.md",
+      "name": "荔枝肉",
+      "aliases": [
+        "荔枝肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/荔枝肉/1.jpeg",
+        "assets/images/howtocook_gallery/荔枝肉/2.jpeg",
+        "assets/images/howtocook_gallery/荔枝肉/3.jpeg",
+        "assets/images/howtocook_gallery/荔枝肉/4.jpeg",
+        "assets/images/howtocook_gallery/荔枝肉/5.jpeg",
+        "assets/images/howtocook_gallery/荔枝肉/6.jpeg",
+        "assets/images/howtocook_gallery/荔枝肉/7.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/荔枝肉/荔枝肉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/荷兰豆炒腊肠/荷兰豆炒腊肠.md",
+      "name": "荷兰豆炒腊肠",
+      "aliases": [
+        "荷兰豆炒腊肠"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/荷兰豆炒腊肠/1.png",
+        "assets/images/howtocook_gallery/荷兰豆炒腊肠/2.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/荷兰豆炒腊肠/荷兰豆炒腊肠.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/西红柿土豆炖牛肉/西红柿土豆炖牛肉.md",
+      "name": "西红柿土豆炖牛肉",
+      "aliases": [
+        "西红柿土豆炖牛肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/西红柿土豆炖牛肉/abaaba_1.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/西红柿土豆炖牛肉/西红柿土豆炖牛肉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/豆豉鲮鱼油麦菜/豆豉鲮鱼油麦菜.md",
+      "name": "豆豉鲮鱼油麦菜",
+      "aliases": [
+        "豆豉鲮鱼油麦菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/豆豉鲮鱼油麦菜/豆豉鲮鱼油麦菜成品.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/豆豉鲮鱼油麦菜/豆豉鲮鱼油麦菜.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/豉汁蒸白鱔/豉汁蒸白鱔食谱.md",
+      "name": "豉汁蒸白鱔食谱",
+      "aliases": [
+        "豉汁蒸白鱔食谱",
+        "豉汁蒸白鱔"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/豉汁蒸白鱔食谱/豉汁蒸白鱔.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/豉汁蒸白鱔/豉汁蒸白鱔食谱.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/贵州辣子鸡/贵州辣子鸡.md",
+      "name": "贵州辣子鸡",
+      "aliases": [
+        "贵州辣子鸡"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/贵州辣子鸡/贵州辣子鸡.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/贵州辣子鸡/贵州辣子鸡.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/酱排骨/酱排骨.md",
+      "name": "酱排骨",
+      "aliases": [
+        "酱排骨"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/酱排骨/1.jpeg",
+        "assets/images/howtocook_gallery/酱排骨/2.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/酱排骨/酱排骨.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/酱牛肉/酱牛肉.md",
+      "name": "酱牛肉",
+      "aliases": [
+        "酱牛肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/酱牛肉/酱牛肉.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/酱牛肉/酱牛肉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/醉排骨/醉排骨.md",
+      "name": "醉排骨",
+      "aliases": [
+        "醉排骨"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/醉排骨/1.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/醉排骨/醉排骨.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/香干芹菜炒肉/香干芹菜炒肉.md",
+      "name": "香干芹菜炒肉",
+      "aliases": [
+        "香干芹菜炒肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/香干芹菜炒肉/香干芹菜炒肉.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/香干芹菜炒肉/香干芹菜炒肉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/香煎五花肉/香煎五花肉.md",
+      "name": "香煎五花肉",
+      "aliases": [
+        "香煎五花肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/香煎五花肉/香煎五花肉.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/香煎五花肉/香煎五花肉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/香菇滑鸡/香菇滑鸡.md",
+      "name": "香菇滑鸡",
+      "aliases": [
+        "香菇滑鸡"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/香菇滑鸡/香菇滑鸡.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/香菇滑鸡/香菇滑鸡.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/香辣鸡爪煲/香辣鸡爪煲.md",
+      "name": "香辣鸡爪煲",
+      "aliases": [
+        "香辣鸡爪煲"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/香辣鸡爪煲/result2.jpg",
+        "assets/images/howtocook_gallery/香辣鸡爪煲/result1.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/香辣鸡爪煲/香辣鸡爪煲.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/鱼香茄子/鱼香茄子.md",
+      "name": "鱼香茄子",
+      "aliases": [
+        "鱼香茄子"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/鱼香茄子/yxqz1.jpg",
+        "assets/images/howtocook_gallery/鱼香茄子/yxqz2.jpg",
+        "assets/images/howtocook_gallery/鱼香茄子/yxqz3.jpg",
+        "assets/images/howtocook_gallery/鱼香茄子/yxqz4.jpg",
+        "assets/images/howtocook_gallery/鱼香茄子/yxqz5.jpg",
+        "assets/images/howtocook_gallery/鱼香茄子/yxqz6.jpg",
+        "assets/images/howtocook_gallery/鱼香茄子/yxqz7.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/鱼香茄子/鱼香茄子.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/麻婆豆腐/麻婆豆腐.md",
+      "name": "麻婆豆腐",
+      "aliases": [
+        "麻婆豆腐"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/麻婆豆腐/1.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/麻婆豆腐/麻婆豆腐.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/黑椒牛柳/黑椒牛柳.md",
+      "name": "黑椒牛柳",
+      "aliases": [
+        "黑椒牛柳"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/黑椒牛柳/黑椒牛柳.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/黑椒牛柳/黑椒牛柳.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "meat_dish/黔式腊肠娃娃菜/黔式腊肠娃娃菜.md",
+      "name": "黔式腊肠娃娃菜",
+      "aliases": [
+        "黔式腊肠娃娃菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/黔式腊肠娃娃菜/黔式腊肠娃娃菜.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/meat_dish/黔式腊肠娃娃菜/黔式腊肠娃娃菜.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "semi-finished/懒人蛋挞/懒人蛋挞.md",
+      "name": "懒人蛋挞",
+      "aliases": [
+        "懒人蛋挞"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/懒人蛋挞/懒人蛋挞.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/semi-finished/懒人蛋挞/懒人蛋挞.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "semi-finished/炸薯条/炸薯条.md",
+      "name": "炸薯条",
+      "aliases": [
+        "炸薯条"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/炸薯条/炸薯条.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/semi-finished/炸薯条/炸薯条.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "semi-finished/空气炸锅羊排/空气炸锅羊排.md",
+      "name": "空气炸锅羊排",
+      "aliases": [
+        "空气炸锅羊排"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/空气炸锅羊排/羊排.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/semi-finished/空气炸锅羊排/空气炸锅羊排.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "semi-finished/空气炸锅鸡翅中/空气炸锅鸡翅中.md",
+      "name": "空气炸锅鸡翅中",
+      "aliases": [
+        "空气炸锅鸡翅中"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/空气炸锅鸡翅中/鸡翅中_0.jpg",
+        "assets/images/howtocook_gallery/空气炸锅鸡翅中/鸡翅中_1.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/semi-finished/空气炸锅鸡翅中/空气炸锅鸡翅中.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "semi-finished/速冻汤圆/速冻汤圆.md",
+      "name": "速冻汤圆",
+      "aliases": [
+        "速冻汤圆"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/速冻汤圆/速冻汤圆.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/semi-finished/速冻汤圆/速冻汤圆.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "soup/勾芡香菇汤/勾芡香菇汤.md",
+      "name": "勾芡香菇汤",
+      "aliases": [
+        "勾芡香菇汤"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/勾芡香菇汤/1.jpeg",
+        "assets/images/howtocook_gallery/勾芡香菇汤/2.jpeg",
+        "assets/images/howtocook_gallery/勾芡香菇汤/3.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/soup/勾芡香菇汤/勾芡香菇汤.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "soup/昂刺鱼豆腐汤/昂刺鱼豆腐汤.md",
+      "name": "昂刺鱼豆腐汤",
+      "aliases": [
+        "昂刺鱼豆腐汤"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/昂刺鱼豆腐汤/沙光鱼豆腐汤.jpg",
+        "assets/images/howtocook_gallery/昂刺鱼豆腐汤/昂刺鱼豆腐汤01.jpg",
+        "assets/images/howtocook_gallery/昂刺鱼豆腐汤/昂刺鱼豆腐汤02.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/soup/昂刺鱼豆腐汤/昂刺鱼豆腐汤.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "soup/朱雀汤/朱雀汤.md",
+      "name": "朱雀汤",
+      "aliases": [
+        "朱雀汤"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/朱雀汤/朱雀汤.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/soup/朱雀汤/朱雀汤.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "soup/玉米排骨汤/玉米排骨汤.md",
+      "name": "玉米排骨汤",
+      "aliases": [
+        "玉米排骨汤"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/玉米排骨汤/玉米排骨汤.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/soup/玉米排骨汤/玉米排骨汤.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "soup/羊肉汤/羊肉汤.md",
+      "name": "羊肉汤",
+      "aliases": [
+        "羊肉汤"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/羊肉汤/羊肉汤.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/soup/羊肉汤/羊肉汤.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "soup/菌菇炖乳鸽/菌菇炖乳鸽.md",
+      "name": "菌菇炖乳鸽",
+      "aliases": [
+        "菌菇炖乳鸽"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/菌菇炖乳鸽/菌菇炖乳鸽.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/soup/菌菇炖乳鸽/菌菇炖乳鸽.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "soup/银耳莲子粥/银耳莲子粥.md",
+      "name": "银耳莲子粥",
+      "aliases": [
+        "银耳莲子粥"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/银耳莲子粥/银耳莲子粥.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/soup/银耳莲子粥/银耳莲子粥.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "soup/陈皮排骨汤/陈皮排骨汤.md",
+      "name": "陈皮排骨汤",
+      "aliases": [
+        "陈皮排骨汤"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/陈皮排骨汤/陈皮排骨汤.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/soup/陈皮排骨汤/陈皮排骨汤.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/凉粉/凉粉.md",
+      "name": "凉粉",
+      "aliases": [
+        "凉粉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/凉粉/lf1.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf2.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf3.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf4.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf5.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf6.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf7.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf8.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf9.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf10.jpg",
+        "assets/images/howtocook_gallery/凉粉/lf11.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/凉粉/凉粉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/基础牛奶面包/基础牛奶面包.md",
+      "name": "基础牛奶面包",
+      "aliases": [
+        "基础牛奶面包"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/基础牛奶面包/1-1成品.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/2-1设备简介1.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/2-2设备简介2.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/4-1酵头1.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/4-2酵头2.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/4-3酵头3.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/4-4此时的面团.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/4-5转移到容器内.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/4-6成品面包.jpg",
+        "assets/images/howtocook_gallery/基础牛奶面包/5-1成品.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/基础牛奶面包/基础牛奶面包.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/微波炉腊肠煲仔饭/微波炉腊肠煲仔饭.md",
+      "name": "微波炉腊肠煲仔饭",
+      "aliases": [
+        "微波炉腊肠煲仔饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/微波炉腊肠煲仔饭/微波炉腊肠煲仔饭.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/微波炉腊肠煲仔饭/微波炉腊肠煲仔饭.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/意式肉酱面/意式肉酱面.md",
+      "name": "意式肉酱面",
+      "aliases": [
+        "意式肉酱面"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/意式肉酱面/final.jpg",
+        "assets/images/howtocook_gallery/意式肉酱面/spaghetti.jpg",
+        "assets/images/howtocook_gallery/意式肉酱面/sauce.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/意式肉酱面/意式肉酱面.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/扬州炒饭/扬州炒饭.md",
+      "name": "扬州炒饭",
+      "aliases": [
+        "扬州炒饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/扬州炒饭/veg.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/扬州炒饭/扬州炒饭.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/披萨饼皮/披萨饼皮.md",
+      "name": "披萨饼皮",
+      "aliases": [
+        "披萨饼皮"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/披萨饼皮/001.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/披萨饼皮/披萨饼皮.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/日式咖喱饭/日式咖喱饭.md",
+      "name": "日式咖喱饭",
+      "aliases": [
+        "日式咖喱饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/日式咖喱饭/成品.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/日式咖喱饭/日式咖喱饭.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/日式肥牛丼饭/日式肥牛丼饭.md",
+      "name": "日式肥牛丼饭",
+      "aliases": [
+        "日式肥牛丼饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/日式肥牛丼饭/成品.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/日式肥牛丼饭/日式肥牛丼饭.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/河南蒸面条/河南蒸面条.md",
+      "name": "河南蒸面条",
+      "aliases": [
+        "河南蒸面条"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/河南蒸面条/河南蒸面条.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/河南蒸面条/河南蒸面条.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/火腿饭团/火腿饭团.md",
+      "name": "火腿饭团",
+      "aliases": [
+        "火腿饭团"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/火腿饭团/饭团.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/火腿饭团/火腿饭团.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/炒凉粉/炒凉粉.md",
+      "name": "炒凉粉",
+      "aliases": [
+        "炒凉粉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/炒凉粉/chaoliangfen.jpg",
+        "assets/images/howtocook_gallery/炒凉粉/chaoliangfen.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/炒凉粉/炒凉粉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/炒意大利面/炒意大利面.md",
+      "name": "炒意大利面",
+      "aliases": [
+        "炒意大利面"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/炒意大利面/a.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/炒意大利面/炒意大利面.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/烙饼/烙饼.md",
+      "name": "烙饼",
+      "aliases": [
+        "烙饼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/烙饼/成品.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/烙饼/烙饼.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/烧饼/芝麻烧饼.md",
+      "name": "芝麻烧饼",
+      "aliases": [
+        "芝麻烧饼",
+        "烧饼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/芝麻烧饼/芝麻烧饼.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/烧饼/芝麻烧饼.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/电饭煲三文鱼炊饭/电饭煲三文鱼炊饭.md",
+      "name": "电饭煲三文鱼炊饭",
+      "aliases": [
+        "电饭煲三文鱼炊饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/电饭煲三文鱼炊饭/电饭煲三文鱼炊饭.webp"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/电饭煲三文鱼炊饭/电饭煲三文鱼炊饭.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/空气炸锅照烧鸡饭/空气炸锅照烧鸡饭.md",
+      "name": "空气炸锅照烧鸡饭",
+      "aliases": [
+        "空气炸锅照烧鸡饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/空气炸锅照烧鸡饭/空气炸锅照烧鸡饭.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/空气炸锅照烧鸡饭/空气炸锅照烧鸡饭.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/米饭/煮锅蒸米饭.md",
+      "name": "煮锅蒸米饭",
+      "aliases": [
+        "煮锅蒸米饭",
+        "米饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/煮锅蒸米饭/rice_regularPot.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/米饭/煮锅蒸米饭.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/老友猪肉粉/老友猪肉粉.md",
+      "name": "老友猪肉粉",
+      "aliases": [
+        "老友猪肉粉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/老友猪肉粉/老友猪肉粉.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/老友猪肉粉/老友猪肉粉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/茄子肉煎饼/茄子肉煎饼.md",
+      "name": "茄子肉煎饼",
+      "aliases": [
+        "茄子肉煎饼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/茄子肉煎饼/茄子肉煎饼.jpg",
+        "assets/images/howtocook_gallery/茄子肉煎饼/1茄片肉片.jpg",
+        "assets/images/howtocook_gallery/茄子肉煎饼/2米粉250g.jpg",
+        "assets/images/howtocook_gallery/茄子肉煎饼/3米粉面粉鸡蛋.jpg",
+        "assets/images/howtocook_gallery/茄子肉煎饼/4混合.jpg",
+        "assets/images/howtocook_gallery/茄子肉煎饼/5起锅烧油.jpg",
+        "assets/images/howtocook_gallery/茄子肉煎饼/6开始煎.jpg",
+        "assets/images/howtocook_gallery/茄子肉煎饼/7撒盐准备起锅.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/茄子肉煎饼/茄子肉煎饼.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/西红柿鸡蛋挂面/西红柿鸡蛋挂面.md",
+      "name": "西红柿鸡蛋挂面",
+      "aliases": [
+        "西红柿鸡蛋挂面"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/西红柿鸡蛋挂面/food.jpg",
+        "assets/images/howtocook_gallery/西红柿鸡蛋挂面/pretreatFood.jpg",
+        "assets/images/howtocook_gallery/西红柿鸡蛋挂面/fryEgg.jpg",
+        "assets/images/howtocook_gallery/西红柿鸡蛋挂面/tomato.jpg",
+        "assets/images/howtocook_gallery/西红柿鸡蛋挂面/tomatoNoodle.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/西红柿鸡蛋挂面/西红柿鸡蛋挂面.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/酱拌荞麦面/酱拌荞麦面.md",
+      "name": "酱拌荞麦面",
+      "aliases": [
+        "酱拌荞麦面"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/酱拌荞麦面/1.jpeg",
+        "assets/images/howtocook_gallery/酱拌荞麦面/2.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/酱拌荞麦面/酱拌荞麦面.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/韩式拌饭/韩式拌饭.md",
+      "name": "韩式拌饭",
+      "aliases": [
+        "韩式拌饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/韩式拌饭/韩式拌饭.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/韩式拌饭/韩式拌饭.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "staple/鲣鱼海苔玉米饭/鲣鱼海苔玉米饭.md",
+      "name": "鲣鱼海苔玉米饭",
+      "aliases": [
+        "鲣鱼海苔玉米饭"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/鲣鱼海苔玉米饭/米饭.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/staple/鲣鱼海苔玉米饭/鲣鱼海苔玉米饭.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "template/示例菜/示例菜.md",
+      "name": "示例菜",
+      "aliases": [
+        "示例菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/示例菜/示例菜.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/template/示例菜/示例菜.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/上汤娃娃菜/上汤娃娃菜.md",
+      "name": "上汤娃娃菜",
+      "aliases": [
+        "上汤娃娃菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/上汤娃娃菜/上汤娃娃菜.png"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/上汤娃娃菜/上汤娃娃菜.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/凉拌木耳/凉拌木耳.md",
+      "name": "凉拌木耳",
+      "aliases": [
+        "凉拌木耳"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/凉拌木耳/1.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/2.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/3.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/4.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/5.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/6.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/7.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/8.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/9.jpg",
+        "assets/images/howtocook_gallery/凉拌木耳/10.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/凉拌木耳/凉拌木耳.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/凉拌莴笋/凉拌莴笋.md",
+      "name": "凉拌莴笋",
+      "aliases": [
+        "凉拌莴笋"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/凉拌莴笋/1.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/凉拌莴笋/凉拌莴笋.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/包菜炒鸡蛋粉丝/包菜炒鸡蛋粉丝.md",
+      "name": "包菜炒鸡蛋粉丝",
+      "aliases": [
+        "包菜炒鸡蛋粉丝"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/包菜炒鸡蛋粉丝/1.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/包菜炒鸡蛋粉丝/包菜炒鸡蛋粉丝.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/小炒藕丁/小炒藕丁.md",
+      "name": "小炒藕丁",
+      "aliases": [
+        "小炒藕丁"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/小炒藕丁/小炒藕丁.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/小炒藕丁/小炒藕丁.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/干锅花菜/干锅花菜.md",
+      "name": "干锅花菜",
+      "aliases": [
+        "干锅花菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/干锅花菜/干锅花菜.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/干锅花菜/干锅花菜.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/手撕包菜/手撕包菜.md",
+      "name": "手撕包菜",
+      "aliases": [
+        "手撕包菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/手撕包菜/1.jpeg",
+        "assets/images/howtocook_gallery/手撕包菜/2.jpeg",
+        "assets/images/howtocook_gallery/手撕包菜/3.jpeg",
+        "assets/images/howtocook_gallery/手撕包菜/4.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/手撕包菜/手撕包菜.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/拔丝土豆/拔丝土豆.md",
+      "name": "拔丝土豆",
+      "aliases": [
+        "拔丝土豆"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/拔丝土豆/1.jpeg",
+        "assets/images/howtocook_gallery/拔丝土豆/2.jpeg",
+        "assets/images/howtocook_gallery/拔丝土豆/3.jpeg",
+        "assets/images/howtocook_gallery/拔丝土豆/4.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/拔丝土豆/拔丝土豆.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/椒盐玉米/椒盐玉米.md",
+      "name": "椒盐玉米",
+      "aliases": [
+        "椒盐玉米"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/椒盐玉米/椒盐玉米.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/椒盐玉米/椒盐玉米.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/榄菜肉末四季豆/榄菜肉末四季豆.md",
+      "name": "榄菜肉末四季豆",
+      "aliases": [
+        "榄菜肉末四季豆"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/榄菜肉末四季豆/榄菜肉末四季豆.JPG"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/榄菜肉末四季豆/榄菜肉末四季豆.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/洋葱炒鸡蛋/洋葱炒鸡蛋.md",
+      "name": "洋葱炒鸡蛋",
+      "aliases": [
+        "洋葱炒鸡蛋"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/洋葱炒鸡蛋/1.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/洋葱炒鸡蛋/洋葱炒鸡蛋.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/炒滑蛋/炒滑蛋.md",
+      "name": "炒滑蛋",
+      "aliases": [
+        "炒滑蛋"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/炒滑蛋/炒滑蛋.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/炒滑蛋/炒滑蛋.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/烤茄子/烤茄子.md",
+      "name": "烤茄子",
+      "aliases": [
+        "烤茄子"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/烤茄子/烤茄子.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/烤茄子/烤茄子.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/白灼菜心/白灼菜心.md",
+      "name": "白灼菜心",
+      "aliases": [
+        "白灼菜心"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/白灼菜心/白灼菜心.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/白灼菜心/白灼菜心.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/糖拌西红柿/糖拌西红柿.md",
+      "name": "糖拌西红柿",
+      "aliases": [
+        "糖拌西红柿"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/糖拌西红柿/火山飘雪.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/糖拌西红柿/糖拌西红柿.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/红烧冬瓜/红烧冬瓜.md",
+      "name": "红烧冬瓜",
+      "aliases": [
+        "红烧冬瓜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/红烧冬瓜/1.jpeg",
+        "assets/images/howtocook_gallery/红烧冬瓜/2.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/红烧冬瓜/红烧冬瓜.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/芹菜拌茶树菇/芹菜拌茶树菇.md",
+      "name": "芹菜拌茶树菇",
+      "aliases": [
+        "芹菜拌茶树菇"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/芹菜拌茶树菇/芹菜拌茶树菇.jpg",
+        "assets/images/howtocook_gallery/芹菜拌茶树菇/闽星茶树菇.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/芹菜拌茶树菇/芹菜拌茶树菇.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/茭白炒肉/茭白炒肉.md",
+      "name": "茭白炒肉",
+      "aliases": [
+        "茭白炒肉"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/茭白炒肉/1.jpeg",
+        "assets/images/howtocook_gallery/茭白炒肉/2.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/茭白炒肉/茭白炒肉.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/莴笋叶煎饼/莴笋叶煎饼.md",
+      "name": "莴笋叶煎饼",
+      "aliases": [
+        "莴笋叶煎饼"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/莴笋叶煎饼/1.jpeg",
+        "assets/images/howtocook_gallery/莴笋叶煎饼/2.jpeg",
+        "assets/images/howtocook_gallery/莴笋叶煎饼/3.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/莴笋叶煎饼/莴笋叶煎饼.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/菠菜炒鸡蛋/菠菜炒鸡蛋.md",
+      "name": "菠菜炒鸡蛋",
+      "aliases": [
+        "菠菜炒鸡蛋"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/菠菜炒鸡蛋/菠菜炒鸡蛋.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/菠菜炒鸡蛋/菠菜炒鸡蛋.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/蒜蓉空心菜/蒜蓉空心菜.md",
+      "name": "蒜蓉空心菜",
+      "aliases": [
+        "蒜蓉空心菜"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/蒜蓉空心菜/1.JPG"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/蒜蓉空心菜/蒜蓉空心菜.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/虎皮青椒/虎皮青椒.md",
+      "name": "虎皮青椒",
+      "aliases": [
+        "虎皮青椒"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/虎皮青椒/虎皮青椒.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/虎皮青椒/虎皮青椒.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/蚝油三鲜菇/蚝油三鲜菇.md",
+      "name": "蚝油三鲜菇",
+      "aliases": [
+        "蚝油三鲜菇"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/蚝油三鲜菇/1.jpeg",
+        "assets/images/howtocook_gallery/蚝油三鲜菇/2.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/蚝油三鲜菇/蚝油三鲜菇.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/西红柿豆腐汤羹/西红柿豆腐汤羹.md",
+      "name": "西红柿豆腐汤羹",
+      "aliases": [
+        "西红柿豆腐汤羹"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/西红柿豆腐汤羹/1.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/西红柿豆腐汤羹/西红柿豆腐汤羹.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/西葫芦炒鸡蛋/西葫芦炒鸡蛋.md",
+      "name": "西葫芦炒鸡蛋",
+      "aliases": [
+        "西葫芦炒鸡蛋"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/西葫芦炒鸡蛋/西葫芦炒鸡蛋.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/西葫芦炒鸡蛋/西葫芦炒鸡蛋.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/话梅煮毛豆/话梅煮毛豆.md",
+      "name": "话梅煮毛豆",
+      "aliases": [
+        "话梅煮毛豆"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/话梅煮毛豆/1.jpeg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/话梅煮毛豆/话梅煮毛豆.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/鸡蛋羹/微波炉鸡蛋羹.md",
+      "name": "微波炉鸡蛋羹",
+      "aliases": [
+        "微波炉鸡蛋羹",
+        "鸡蛋羹"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/微波炉鸡蛋羹/微波炉鸡蛋羹.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/鸡蛋羹/微波炉鸡蛋羹.md",
+      "sourceProject": "HowToCook-1.5.0"
+    },
+    {
+      "recipeId": "vegetable_dish/鸡蛋羹/鸡蛋羹.md",
+      "name": "鸡蛋羹",
+      "aliases": [
+        "鸡蛋羹"
+      ],
+      "assetImageUrls": [
+        "assets/images/howtocook_gallery/鸡蛋羹/鸡蛋羹.jpg"
+      ],
+      "markdownPath": "HowToCook-1.5.0/dishes/vegetable_dish/鸡蛋羹/鸡蛋羹.md",
+      "sourceProject": "HowToCook-1.5.0"
+    }
+  ]
+}

@@ -1,0 +1,4255 @@
+{
+  "items": [
+    {
+      "dishId": "1",
+      "dishName": "麻婆豆腐",
+      "aliases": [
+        "麻婆豆腐"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-1-howtocook-ai-review_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-1-howtocook-ai-review_768.png",
+      "styleTag": "howtocook_ai_food_photo_review",
+      "updatedAt": "2026-06-27T00:00:00Z",
+      "sourceType": "howtocook_ai_optimized_review",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/麻婆豆腐/1.jpeg",
+      "sourceRecipeName": "麻婆豆腐"
+    },
+    {
+      "dishId": "2",
+      "dishName": "干锅花菜",
+      "aliases": [
+        "干锅花菜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-2-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-2-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:04:57Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/干锅花菜/干锅花菜.jpg",
+      "sourceRecipeName": "干锅花菜"
+    },
+    {
+      "dishId": "3",
+      "dishName": "小龙虾",
+      "aliases": [
+        "红烧肉",
+        "简易红烧肉",
+        "小龙虾"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-3-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-3-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:05:44Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/小龙虾/成品.jpg",
+      "sourceRecipeName": "小龙虾"
+    },
+    {
+      "dishId": "4",
+      "dishName": "干煎阿根廷红虾",
+      "aliases": [
+        "回锅肉",
+        "干煎阿根廷红虾"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-4-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-4-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:06:09Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/干煎阿根廷红虾/干煎阿根廷红虾.jpg",
+      "sourceRecipeName": "干煎阿根廷红虾"
+    },
+    {
+      "dishId": "5",
+      "dishName": "青椒肉丝",
+      "aliases": [
+        "青椒肉丝"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-5-dish_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-5-dish_768.jpg",
+      "styleTag": "dish",
+      "updatedAt": "2026-04-07T01:06:32Z",
+      "sourceType": "legacy_prebuilt_asset",
+      "sourceProject": "eatwhat_assets",
+      "sourcePath": "assets/images/prebuilt_dishes/dish-5-dish_1280.jpg",
+      "sourceRecipeName": "青椒肉丝"
+    },
+    {
+      "dishId": "6",
+      "dishName": "宫保鸡丁",
+      "aliases": [
+        "宫保鸡丁"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-6-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-6-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:07:18Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/宫保鸡丁/宫保鸡丁.jpg",
+      "sourceRecipeName": "宫保鸡丁"
+    },
+    {
+      "dishId": "7",
+      "dishName": "油焖大虾",
+      "aliases": [
+        "糖醋里脊",
+        "油焖大虾"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-7-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-7-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:07:02Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/油焖大虾/油焖大虾.jpg",
+      "sourceRecipeName": "油焖大虾"
+    },
+    {
+      "dishId": "8",
+      "dishName": "烤鱼",
+      "aliases": [
+        "可乐鸡翅",
+        "烤鱼",
+        "混合烤鱼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-8-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-8-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:04:30Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/混合烤鱼/烤鱼.jpg",
+      "sourceRecipeName": "烤鱼"
+    },
+    {
+      "dishId": "9",
+      "dishName": "大自然馈赠：原味沙拉",
+      "aliases": [
+        "大自然馈赠：原味沙拉",
+        "大自然馈赠原味沙拉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-9-dish_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-9-dish_768.jpg",
+      "styleTag": "fresh_cold_plate",
+      "updatedAt": "2026-04-07T01:07:42Z",
+      "sourceType": "legacy_prebuilt_asset",
+      "sourceProject": "eatwhat_assets",
+      "sourcePath": "assets/images/prebuilt_dishes/dish-9-dish_1280.jpg",
+      "sourceRecipeName": "大自然馈赠：原味沙拉"
+    },
+    {
+      "dishId": "10",
+      "dishName": "清蒸鲈鱼",
+      "aliases": [
+        "可乐鸡翅",
+        "清蒸鲈鱼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-10-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-10-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:04:30Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/清蒸鲈鱼/改刀.jpg",
+      "sourceRecipeName": "清蒸鲈鱼"
+    },
+    {
+      "dishId": "11",
+      "dishName": "白灼虾",
+      "aliases": [
+        "简易红烧肉",
+        "红烧肉",
+        "白灼虾"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-11-howtocook-real_1280.webp",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-11-howtocook-real_768.webp",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/白灼虾/白灼虾.webp",
+      "sourceRecipeName": "白灼虾"
+    },
+    {
+      "dishId": "12",
+      "dishName": "糖醋鲤鱼",
+      "aliases": [
+        "宫保鸡丁",
+        "小龙虾",
+        "糖醋鲤鱼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-12-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-12-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/糖醋鲤鱼/腌制.jpg",
+      "sourceRecipeName": "糖醋鲤鱼"
+    },
+    {
+      "dishId": "13",
+      "dishName": "干煎阿根廷红虾",
+      "aliases": [
+        "糖醋排骨",
+        "干煎阿根廷红虾"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-13-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-13-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:07:59Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/干煎阿根廷红虾/干煎阿根廷红虾.jpg",
+      "sourceRecipeName": "干煎阿根廷红虾"
+    },
+    {
+      "dishId": "14",
+      "dishName": "麻婆豆腐",
+      "aliases": [
+        "麻婆豆腐"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-14-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-14-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/麻婆豆腐/1.jpeg",
+      "sourceRecipeName": "麻婆豆腐"
+    },
+    {
+      "dishId": "15",
+      "dishName": "鱼香肉丝",
+      "aliases": [
+        "鱼香肉丝"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-15-dish_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-15-dish_768.jpg",
+      "styleTag": "dish",
+      "updatedAt": "2026-04-07T01:08:15Z",
+      "sourceType": "legacy_prebuilt_asset",
+      "sourceProject": "eatwhat_assets",
+      "sourcePath": "assets/images/prebuilt_dishes/dish-15-dish_1280.jpg",
+      "sourceRecipeName": "鱼香肉丝"
+    },
+    {
+      "dishId": "16",
+      "dishName": "油焖大虾",
+      "aliases": [
+        "回锅肉",
+        "酱排骨",
+        "油焖大虾"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-16-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-16-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/油焖大虾/油焖大虾.jpg",
+      "sourceRecipeName": "油焖大虾"
+    },
+    {
+      "dishId": "17",
+      "dishName": "芥末黄油罗氏虾",
+      "aliases": [
+        "水煮牛肉",
+        "烤鱼",
+        "混合烤鱼",
+        "芥末黄油罗氏虾"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-17-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-17-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:08:41Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/芥末黄油罗氏虾/芥末黄油罗氏虾.jpg",
+      "sourceRecipeName": "芥末黄油罗氏虾"
+    },
+    {
+      "dishId": "18",
+      "dishName": "新疆大盘鸡",
+      "aliases": [
+        "新疆大盘鸡"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-18-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-18-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:09:04Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/新疆大盘鸡/大盘鸡.jpeg",
+      "sourceRecipeName": "新疆大盘鸡"
+    },
+    {
+      "dishId": "19",
+      "dishName": "葱烧海参",
+      "aliases": [
+        "黄焖鸡",
+        "清蒸鲈鱼",
+        "葱烧海参"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-19-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-19-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-08T10:10:20Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/葱烧海参/葱烧海参.jpeg",
+      "sourceRecipeName": "葱烧海参"
+    },
+    {
+      "dishId": "20",
+      "dishName": "蒜蓉虾",
+      "aliases": [
+        "麻辣土豆丝",
+        "白灼虾",
+        "蒜蓉虾"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-20-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-20-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-08T10:10:50Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/蒜蓉虾/1.jpeg",
+      "sourceRecipeName": "蒜蓉虾"
+    },
+    {
+      "dishId": "21",
+      "dishName": "蒜香黄油虾",
+      "aliases": [
+        "干煸豆角",
+        "卤菜",
+        "糖醋鲤鱼",
+        "蒜香黄油虾"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-21-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-21-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-08T10:11:13Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/蒜香黄油虾/1.jpg",
+      "sourceRecipeName": "蒜香黄油虾"
+    },
+    {
+      "dishId": "22",
+      "dishName": "蛏抱蛋",
+      "aliases": [
+        "蒜蓉西兰花",
+        "蛏抱蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-22-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-22-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:12:26Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/蛏抱蛋/1.jpeg",
+      "sourceRecipeName": "蛏抱蛋"
+    },
+    {
+      "dishId": "23",
+      "dishName": "地三鲜",
+      "aliases": [
+        "地三鲜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-23-dish_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-23-dish_768.jpg",
+      "styleTag": "dish",
+      "updatedAt": "2026-04-07T01:12:47Z",
+      "sourceType": "legacy_prebuilt_asset",
+      "sourceProject": "eatwhat_assets",
+      "sourcePath": "assets/images/prebuilt_dishes/dish-23-dish_1280.jpg",
+      "sourceRecipeName": "地三鲜"
+    },
+    {
+      "dishId": "24",
+      "dishName": "香煎翘嘴鱼",
+      "aliases": [
+        "清炒小白菜",
+        "香煎翘嘴鱼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-24-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-24-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:13:09Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/香煎翘嘴鱼/香煎翘嘴鱼.jpeg",
+      "sourceRecipeName": "香煎翘嘴鱼"
+    },
+    {
+      "dishId": "25",
+      "dishName": "鲤鱼炖白菜",
+      "aliases": [
+        "红烧猪蹄",
+        "鲤鱼炖白菜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-25-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-25-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/鲤鱼炖白菜/鲤鱼炖白菜.jpeg",
+      "sourceRecipeName": "鲤鱼炖白菜"
+    },
+    {
+      "dishId": "26",
+      "dishName": "鳊鱼炖豆腐",
+      "aliases": [
+        "鱼香肉丝",
+        "芥末黄油罗氏虾",
+        "鳊鱼炖豆腐"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-26-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-26-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:08:15Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/鳊鱼炖豆腐/鳊鱼炖豆腐.jpg",
+      "sourceRecipeName": "鳊鱼炖豆腐"
+    },
+    {
+      "dishId": "27",
+      "dishName": "黄油煎虾",
+      "aliases": [
+        "煎蛋",
+        "蛏抱蛋",
+        "黄油煎虾"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-27-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-27-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:14:14Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/黄油煎虾/黄油煎虾.jpg",
+      "sourceRecipeName": "黄油煎虾"
+    },
+    {
+      "dishId": "28",
+      "dishName": "葱烧海参",
+      "aliases": [
+        "小笼包",
+        "葱烧海参"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-28-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-28-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-08T10:12:02Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/葱烧海参/葱烧海参.jpeg",
+      "sourceRecipeName": "葱烧海参"
+    },
+    {
+      "dishId": "29",
+      "dishName": "蒜蓉虾",
+      "aliases": [
+        "豆浆",
+        "蒜蓉虾"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-29-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-29-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-08T10:12:40Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/蒜蓉虾/1.jpeg",
+      "sourceRecipeName": "蒜蓉虾"
+    },
+    {
+      "dishId": "30",
+      "dishName": "蒜香黄油虾",
+      "aliases": [
+        "油条",
+        "红烧冬瓜",
+        "蒜香黄油虾"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-30-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-30-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-08T10:13:08Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/蒜香黄油虾/1.jpg",
+      "sourceRecipeName": "蒜香黄油虾"
+    },
+    {
+      "dishId": "31",
+      "dishName": "蛏抱蛋",
+      "aliases": [
+        "蛋炒饭",
+        "扬州炒饭",
+        "蛏抱蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-31-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-31-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-08T10:13:28Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/蛏抱蛋/1.jpeg",
+      "sourceRecipeName": "蛏抱蛋"
+    },
+    {
+      "dishId": "32",
+      "dishName": "炸酱面",
+      "aliases": [
+        "炸酱面"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-32-dish_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-32-dish_768.jpg",
+      "styleTag": "braised_home_style",
+      "updatedAt": "2026-04-08T10:13:49Z",
+      "sourceType": "legacy_prebuilt_asset",
+      "sourceProject": "eatwhat_assets",
+      "sourcePath": "assets/images/prebuilt_dishes/dish-32-dish_1280.jpg",
+      "sourceRecipeName": "炸酱面"
+    },
+    {
+      "dishId": "33",
+      "dishName": "香煎翘嘴鱼",
+      "aliases": [
+        "小笼包",
+        "香煎翘嘴鱼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-33-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-33-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-08T10:12:02Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/香煎翘嘴鱼/香煎翘嘴鱼.jpeg",
+      "sourceRecipeName": "香煎翘嘴鱼"
+    },
+    {
+      "dishId": "34",
+      "dishName": "鲤鱼炖白菜",
+      "aliases": [
+        "鲤鱼炖白菜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-34-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-34-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/鲤鱼炖白菜/鲤鱼炖白菜.jpeg",
+      "sourceRecipeName": "鲤鱼炖白菜"
+    },
+    {
+      "dishId": "35",
+      "dishName": "鳊鱼炖豆腐",
+      "aliases": [
+        "鳊鱼炖豆腐"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-35-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-35-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/鳊鱼炖豆腐/鳊鱼炖豆腐.jpg",
+      "sourceRecipeName": "鳊鱼炖豆腐"
+    },
+    {
+      "dishId": "36",
+      "dishName": "黄油煎虾",
+      "aliases": [
+        "黄油煎虾"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-36-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-36-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/黄油煎虾/黄油煎虾.jpg",
+      "sourceRecipeName": "黄油煎虾"
+    },
+    {
+      "dishId": "37",
+      "dishName": "台式卤肉饭",
+      "aliases": [
+        "台式卤肉饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-37-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-37-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/台式卤肉饭/1.jpg",
+      "sourceRecipeName": "台式卤肉饭"
+    },
+    {
+      "dishId": "38",
+      "dishName": "煮锅蒸米饭",
+      "aliases": [
+        "煮锅蒸米饭",
+        "米饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-38-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-38-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/米饭/rice_regularPot.jpeg",
+      "sourceRecipeName": "煮锅蒸米饭"
+    },
+    {
+      "dishId": "39",
+      "dishName": "奶酪培根通心粉",
+      "aliases": [
+        "奶酪培根通心粉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-39-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-39-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/奶酪培根通心粉/oven.jpg",
+      "sourceRecipeName": "奶酪培根通心粉"
+    },
+    {
+      "dishId": "40",
+      "dishName": "芹菜拌茶树菇",
+      "aliases": [
+        "芹菜拌茶树菇"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-40-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-40-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/芹菜拌茶树菇/芹菜拌茶树菇.jpg",
+      "sourceRecipeName": "芹菜拌茶树菇"
+    },
+    {
+      "dishId": "41",
+      "dishName": "茭白炒肉",
+      "aliases": [
+        "茭白炒肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-41-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-41-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/茭白炒肉/1.jpeg",
+      "sourceRecipeName": "茭白炒肉"
+    },
+    {
+      "dishId": "42",
+      "dishName": "柱候牛腩",
+      "aliases": [
+        "柱候牛腩"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-42-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-42-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/柱候牛腩/柱候牛腩.jpeg",
+      "sourceRecipeName": "柱候牛腩"
+    },
+    {
+      "dishId": "43",
+      "dishName": "小炒鸡肝",
+      "aliases": [
+        "小炒鸡肝"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-43-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-43-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/小炒鸡肝/成品.jpg",
+      "sourceRecipeName": "小炒鸡肝"
+    },
+    {
+      "dishId": "44",
+      "dishName": "苏格兰蛋",
+      "aliases": [
+        "冬瓜酿肉",
+        "苏格兰蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-44-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-44-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/breakfast/苏格兰蛋/egg1.png",
+      "sourceRecipeName": "苏格兰蛋"
+    },
+    {
+      "dishId": "45",
+      "dishName": "日式肥牛丼饭",
+      "aliases": [
+        "日式肥牛丼饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-45-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-45-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/日式肥牛丼饭/成品.png",
+      "sourceRecipeName": "日式肥牛丼饭"
+    },
+    {
+      "dishId": "47",
+      "dishName": "朱雀汤",
+      "aliases": [
+        "朱雀汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-47-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-47-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/soup/朱雀汤/朱雀汤.jpg",
+      "sourceRecipeName": "朱雀汤"
+    },
+    {
+      "dishId": "48",
+      "dishName": "蔗糖糖浆",
+      "aliases": [
+        "蔗糖糖浆"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-48-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-48-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/condiment/蔗糖糖浆/bottle.jpg",
+      "sourceRecipeName": "蔗糖糖浆"
+    },
+    {
+      "dishId": "51",
+      "dishName": "油泼辣子",
+      "aliases": [
+        "土豆炖排骨",
+        "油泼辣子"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-51-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-51-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/condiment/油泼辣子/口水鸡+油泼辣子.jpg",
+      "sourceRecipeName": "油泼辣子"
+    },
+    {
+      "dishId": "52",
+      "dishName": "老友猪肉粉",
+      "aliases": [
+        "老友猪肉粉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-52-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-52-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/老友猪肉粉/老友猪肉粉.jpg",
+      "sourceRecipeName": "老友猪肉粉"
+    },
+    {
+      "dishId": "53",
+      "dishName": "苏格兰蛋",
+      "aliases": [
+        "洋葱炒鸡蛋",
+        "苏格兰蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-53-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-53-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/breakfast/苏格兰蛋/egg1.png",
+      "sourceRecipeName": "苏格兰蛋"
+    },
+    {
+      "dishId": "54",
+      "dishName": "陈皮排骨汤",
+      "aliases": [
+        "陈皮排骨汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-54-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-54-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/soup/陈皮排骨汤/陈皮排骨汤.jpg",
+      "sourceRecipeName": "陈皮排骨汤"
+    },
+    {
+      "dishId": "55",
+      "dishName": "羊肉汤",
+      "aliases": [
+        "羊肉汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-55-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-55-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/soup/羊肉汤/羊肉汤.jpg",
+      "sourceRecipeName": "羊肉汤"
+    },
+    {
+      "dishId": "56",
+      "dishName": "草莓酱",
+      "aliases": [
+        "柠檬水",
+        "草莓酱"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-56-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-56-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/condiment/草莓酱/洗好的草莓.jpeg",
+      "sourceRecipeName": "草莓酱"
+    },
+    {
+      "dishId": "59",
+      "dishName": "蔗糖糖浆",
+      "aliases": [
+        "蔗糖糖浆"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-59-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-59-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/condiment/蔗糖糖浆/bottle.jpg",
+      "sourceRecipeName": "蔗糖糖浆"
+    },
+    {
+      "dishId": "60",
+      "dishName": "反沙芋头",
+      "aliases": [
+        "油泼辣子",
+        "反沙芋头"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-60-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-60-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/反沙芋头/反沙芋头成品.jpg",
+      "sourceRecipeName": "反沙芋头"
+    },
+    {
+      "dishId": "61",
+      "dishName": "咖啡椰奶冻",
+      "aliases": [
+        "咖啡椰奶冻"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-61-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-61-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/咖啡椰奶冻/咖啡椰奶冻.png",
+      "sourceRecipeName": "咖啡椰奶冻"
+    },
+    {
+      "dishId": "62",
+      "dishName": "烧饼",
+      "aliases": [
+        "芝麻烧饼",
+        "烧饼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-62-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-62-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/烧饼/芝麻烧饼.jpg",
+      "sourceRecipeName": "芝麻烧饼"
+    },
+    {
+      "dishId": "63",
+      "dishName": "戚风蛋糕",
+      "aliases": [
+        "戚风蛋糕"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-63-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-63-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/戚风蛋糕/IMG_1516.jpg",
+      "sourceRecipeName": "戚风蛋糕"
+    },
+    {
+      "dishId": "64",
+      "dishName": "提拉米苏",
+      "aliases": [
+        "提拉米苏"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-64-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-64-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/提拉米苏/提拉米苏成品.jpg",
+      "sourceRecipeName": "提拉米苏"
+    },
+    {
+      "dishId": "65",
+      "dishName": "无厨师机蜂蜜面包",
+      "aliases": [
+        "草莓酱",
+        "无厨师机蜂蜜面包",
+        "蜂蜜面包"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-65-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-65-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/无厨师机蜂蜜面包/无厨师机蜂蜜面包.jpg",
+      "sourceRecipeName": "无厨师机蜂蜜面包"
+    },
+    {
+      "dishId": "66",
+      "dishName": "炸鲜奶",
+      "aliases": [
+        "炸鲜奶"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-66-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-66-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/炸鲜奶/炸鲜奶.jpg",
+      "sourceRecipeName": "炸鲜奶"
+    },
+    {
+      "dishId": "67",
+      "dishName": "烤箱版巴斯克芝士蛋糕",
+      "aliases": [
+        "烤箱版巴斯克芝士蛋糕",
+        "巴斯克芝士蛋糕"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-67-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-67-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/烤箱版巴斯克芝士蛋糕/烤箱版巴斯克芝士蛋糕.jpg",
+      "sourceRecipeName": "烤箱版巴斯克芝士蛋糕"
+    },
+    {
+      "dishId": "68",
+      "dishName": "烤蛋挞",
+      "aliases": [
+        "蔗糖糖浆",
+        "烤蛋挞"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-68-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-68-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/烤蛋挞/烤蛋挞.png",
+      "sourceRecipeName": "烤蛋挞"
+    },
+    {
+      "dishId": "69",
+      "dishName": "玛格丽特饼干",
+      "aliases": [
+        "反沙芋头",
+        "玛格丽特饼干"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-69-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-69-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/玛格丽特饼干/玛格丽特饼干.jpg",
+      "sourceRecipeName": "玛格丽特饼干"
+    },
+    {
+      "dishId": "70",
+      "dishName": "咖啡椰奶冻",
+      "aliases": [
+        "龟苓膏",
+        "咖啡椰奶冻"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-70-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-70-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/咖啡椰奶冻/咖啡椰奶冻.png",
+      "sourceRecipeName": "咖啡椰奶冻"
+    },
+    {
+      "dishId": "71",
+      "dishName": "芋泥雪媚娘",
+      "aliases": [
+        "芋泥雪媚娘"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-71-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-71-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/芋泥雪媚娘/芋泥雪媚娘成品.jpg",
+      "sourceRecipeName": "芋泥雪媚娘"
+    },
+    {
+      "dishId": "72",
+      "dishName": "英式司康",
+      "aliases": [
+        "戚风蛋糕",
+        "英式司康"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-72-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-72-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/英式司康/英式司康.png",
+      "sourceRecipeName": "英式司康"
+    },
+    {
+      "dishId": "73",
+      "dishName": "提拉米苏",
+      "aliases": [
+        "提拉米苏"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-73-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-73-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/提拉米苏/提拉米苏成品.jpg",
+      "sourceRecipeName": "提拉米苏"
+    },
+    {
+      "dishId": "74",
+      "dishName": "酸奶意式奶冻",
+      "aliases": [
+        "无厨师机蜂蜜面包",
+        "蜂蜜面包",
+        "酸奶意式奶冻"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-74-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-74-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/酸奶意式奶冻/酸奶意式奶冻.png",
+      "sourceRecipeName": "酸奶意式奶冻"
+    },
+    {
+      "dishId": "75",
+      "dishName": "雪花酥",
+      "aliases": [
+        "口水鸡",
+        "炸鲜奶",
+        "雪花酥"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-75-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-75-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/雪花酥/雪花酥成品.jpg",
+      "sourceRecipeName": "雪花酥"
+    },
+    {
+      "dishId": "76",
+      "dishName": "烤箱版巴斯克芝士蛋糕",
+      "aliases": [
+        "烤箱版巴斯克芝士蛋糕",
+        "巴斯克芝士蛋糕"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-76-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-76-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/烤箱版巴斯克芝士蛋糕/烤箱版巴斯克芝士蛋糕.jpg",
+      "sourceRecipeName": "烤箱版巴斯克芝士蛋糕"
+    },
+    {
+      "dishId": "77",
+      "dishName": "龟苓膏",
+      "aliases": [
+        "烤蛋挞",
+        "龟苓膏"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-77-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-77-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/龟苓膏/龟苓膏成品.jpg",
+      "sourceRecipeName": "龟苓膏"
+    },
+    {
+      "dishId": "78",
+      "dishName": "玛格丽特饼干",
+      "aliases": [
+        "玛格丽特饼干"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-78-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-78-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/玛格丽特饼干/玛格丽特饼干.jpg",
+      "sourceRecipeName": "玛格丽特饼干"
+    },
+    {
+      "dishId": "80",
+      "dishName": "芋泥雪媚娘",
+      "aliases": [
+        "芋泥雪媚娘"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-80-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-80-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/芋泥雪媚娘/芋泥雪媚娘成品.jpg",
+      "sourceRecipeName": "芋泥雪媚娘"
+    },
+    {
+      "dishId": "81",
+      "dishName": "英式司康",
+      "aliases": [
+        "英式司康"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-81-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-81-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/英式司康/英式司康.png",
+      "sourceRecipeName": "英式司康"
+    },
+    {
+      "dishId": "83",
+      "dishName": "奇异果菠菜特调",
+      "aliases": [
+        "酸奶意式奶冻",
+        "奇异果菠菜特调"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-83-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-83-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/奇异果菠菜特调/kiwi-example.jpg",
+      "sourceRecipeName": "奇异果菠菜特调"
+    },
+    {
+      "dishId": "84",
+      "dishName": "雪花酥",
+      "aliases": [
+        "雪花酥"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-84-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-84-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/dessert/雪花酥/雪花酥成品.jpg",
+      "sourceRecipeName": "雪花酥"
+    },
+    {
+      "dishId": "86",
+      "dishName": "柠檬水",
+      "aliases": [
+        "龟苓膏",
+        "柠檬水"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-86-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-86-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/柠檬水/柠檬水.jpg",
+      "sourceRecipeName": "柠檬水"
+    },
+    {
+      "dishId": "87",
+      "dishName": "泰国手标红茶",
+      "aliases": [
+        "泰国手标红茶"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-87-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-87-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/泰国手标红茶/泰国手标红茶.jpg",
+      "sourceRecipeName": "泰国手标红茶"
+    },
+    {
+      "dishId": "88",
+      "dishName": "海边落日",
+      "aliases": [
+        "海边落日"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-88-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-88-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/海边落日/海边落日.jpg",
+      "sourceRecipeName": "海边落日"
+    },
+    {
+      "dishId": "89",
+      "dishName": "百香果橙子特调",
+      "aliases": [
+        "百香果橙子特调"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-89-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-89-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/百香果橙子特调/tea-version.jpg",
+      "sourceRecipeName": "百香果橙子特调"
+    },
+    {
+      "dishId": "90",
+      "dishName": "砂糖椰子冰沙",
+      "aliases": [
+        "砂糖椰子冰沙"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-90-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-90-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/砂糖椰子冰沙/砂糖椰子冰沙-1.jpg",
+      "sourceRecipeName": "砂糖椰子冰沙"
+    },
+    {
+      "dishId": "91",
+      "dishName": "耙耙柑茶",
+      "aliases": [
+        "蒜蓉西兰花",
+        "耙耙柑茶"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-91-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-91-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:12:26Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/耙耙柑茶/citrus-tea.jpg",
+      "sourceRecipeName": "耙耙柑茶"
+    },
+    {
+      "dishId": "92",
+      "dishName": "菠萝咖啡特调",
+      "aliases": [
+        "奇异果菠菜特调",
+        "菠萝咖啡特调"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-92-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-92-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/菠萝咖啡特调/菠萝咖啡特调.png",
+      "sourceRecipeName": "菠萝咖啡特调"
+    },
+    {
+      "dishId": "93",
+      "dishName": "酒酿醪糟",
+      "aliases": [
+        "酒酿醪糟"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-93-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-93-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/酒酿醪糟/酒酿醪糟.jpeg",
+      "sourceRecipeName": "酒酿醪糟"
+    },
+    {
+      "dishId": "94",
+      "dishName": "酸梅汤",
+      "aliases": [
+        "酸梅汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-94-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-94-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/酸梅汤/imges/sour_plum_soup.jpg",
+      "sourceRecipeName": "酸梅汤"
+    },
+    {
+      "dishId": "95",
+      "dishName": "柠檬水",
+      "aliases": [
+        "柠檬水"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-95-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-95-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/柠檬水/柠檬水.jpg",
+      "sourceRecipeName": "柠檬水"
+    },
+    {
+      "dishId": "96",
+      "dishName": "金汤力",
+      "aliases": [
+        "泰国手标红茶",
+        "金汤力"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-96-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-96-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/金汤力/gin-tonic.jpg",
+      "sourceRecipeName": "金汤力"
+    },
+    {
+      "dishId": "97",
+      "dishName": "金菲士",
+      "aliases": [
+        "海边落日",
+        "金菲士"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-97-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-97-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/金菲士/gin-fizz.jpg",
+      "sourceRecipeName": "金菲士"
+    },
+    {
+      "dishId": "98",
+      "dishName": "百香果橙子特调",
+      "aliases": [
+        "提拉米苏",
+        "百香果橙子特调"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-98-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-98-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/百香果橙子特调/tea-version.jpg",
+      "sourceRecipeName": "百香果橙子特调"
+    },
+    {
+      "dishId": "99",
+      "dishName": "砂糖椰子冰沙",
+      "aliases": [
+        "清炒小白菜",
+        "砂糖椰子冰沙"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-99-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-99-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:13:09Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/砂糖椰子冰沙/砂糖椰子冰沙-1.jpg",
+      "sourceRecipeName": "砂糖椰子冰沙"
+    },
+    {
+      "dishId": "100",
+      "dishName": "农家一碗香",
+      "aliases": [
+        "耙耙柑茶",
+        "农家一碗香"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-100-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-100-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/农家一碗香/农家一碗香成品.jpg",
+      "sourceRecipeName": "农家一碗香"
+    },
+    {
+      "dishId": "101",
+      "dishName": "冬瓜酿肉",
+      "aliases": [
+        "菠萝咖啡特调",
+        "冬瓜酿肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-101-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-101-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/冬瓜酿肉/冬瓜酿肉成品.jpg",
+      "sourceRecipeName": "冬瓜酿肉"
+    },
+    {
+      "dishId": "102",
+      "dishName": "酒酿醪糟",
+      "aliases": [
+        "酒酿醪糟"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-102-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-102-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/酒酿醪糟/酒酿醪糟.jpeg",
+      "sourceRecipeName": "酒酿醪糟"
+    },
+    {
+      "dishId": "103",
+      "dishName": "凉拌鸡丝",
+      "aliases": [
+        "酸梅汤",
+        "凉拌鸡丝"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-103-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-103-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/凉拌鸡丝/凉拌鸡丝.jpg",
+      "sourceRecipeName": "凉拌鸡丝"
+    },
+    {
+      "dishId": "104",
+      "dishName": "卤菜",
+      "aliases": [
+        "卤菜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-104-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-104-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/卤菜/卤牛肉.jpeg",
+      "sourceRecipeName": "卤菜"
+    },
+    {
+      "dishId": "105",
+      "dishName": "口水鸡",
+      "aliases": [
+        "金汤力",
+        "口水鸡"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-105-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-105-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/口水鸡/口水鸡.jpg",
+      "sourceRecipeName": "口水鸡"
+    },
+    {
+      "dishId": "106",
+      "dishName": "金菲士",
+      "aliases": [
+        "金菲士"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-106-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-106-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/金菲士/gin-fizz.jpg",
+      "sourceRecipeName": "金菲士"
+    },
+    {
+      "dishId": "107",
+      "dishName": "台式卤肉饭",
+      "aliases": [
+        "台式卤肉饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-107-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-107-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/台式卤肉饭/1.jpg",
+      "sourceRecipeName": "台式卤肉饭"
+    },
+    {
+      "dishId": "109",
+      "dishName": "咖喱肥牛",
+      "aliases": [
+        "农家一碗香",
+        "咖喱肥牛"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-109-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-109-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/咖喱肥牛/咖喱肥牛.jpg",
+      "sourceRecipeName": "咖喱肥牛"
+    },
+    {
+      "dishId": "110",
+      "dishName": "冬瓜酿肉",
+      "aliases": [
+        "冬瓜酿肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-110-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-110-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/冬瓜酿肉/冬瓜酿肉成品.jpg",
+      "sourceRecipeName": "冬瓜酿肉"
+    },
+    {
+      "dishId": "111",
+      "dishName": "啤酒鸭",
+      "aliases": [
+        "啤酒鸭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-111-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-111-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/啤酒鸭/啤酒鸭.jpg",
+      "sourceRecipeName": "啤酒鸭"
+    },
+    {
+      "dishId": "112",
+      "dishName": "回锅肉",
+      "aliases": [
+        "凉拌鸡丝",
+        "回锅肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-112-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-112-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/回锅肉/1.jpeg",
+      "sourceRecipeName": "回锅肉"
+    },
+    {
+      "dishId": "113",
+      "dishName": "土豆炖排骨",
+      "aliases": [
+        "卤菜",
+        "土豆炖排骨"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-113-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-113-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/土豆炖排骨/排骨1.jpg",
+      "sourceRecipeName": "土豆炖排骨"
+    },
+    {
+      "dishId": "114",
+      "dishName": "奶酪培根通心粉",
+      "aliases": [
+        "口水鸡",
+        "奶酪培根通心粉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-114-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-114-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/奶酪培根通心粉/oven.jpg",
+      "sourceRecipeName": "奶酪培根通心粉"
+    },
+    {
+      "dishId": "115",
+      "dishName": "姜炒鸡",
+      "aliases": [
+        "台式卤肉饭",
+        "姜炒鸡"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-115-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-115-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/姜炒鸡/姜炒鸡.jpg",
+      "sourceRecipeName": "姜炒鸡"
+    },
+    {
+      "dishId": "117",
+      "dishName": "咖喱肥牛",
+      "aliases": [
+        "咖喱肥牛"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-117-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-117-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/咖喱肥牛/咖喱肥牛.jpg",
+      "sourceRecipeName": "咖喱肥牛"
+    },
+    {
+      "dishId": "118",
+      "dishName": "宫保鸡丁",
+      "aliases": [
+        "宫保鸡丁"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-118-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-118-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/宫保鸡丁/宫保鸡丁.jpg",
+      "sourceRecipeName": "宫保鸡丁"
+    },
+    {
+      "dishId": "119",
+      "dishName": "啤酒鸭",
+      "aliases": [
+        "鸡蛋羹",
+        "啤酒鸭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-119-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-119-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/啤酒鸭/啤酒鸭.jpg",
+      "sourceRecipeName": "啤酒鸭"
+    },
+    {
+      "dishId": "120",
+      "dishName": "小炒鸡肝",
+      "aliases": [
+        "土豆炖排骨",
+        "小炒鸡肝"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-120-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-120-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/小炒鸡肝/成品.jpg",
+      "sourceRecipeName": "小炒鸡肝"
+    },
+    {
+      "dishId": "121",
+      "dishName": "小炒黄牛肉",
+      "aliases": [
+        "奶酪培根通心粉",
+        "小炒黄牛肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-121-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-121-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/小炒黄牛肉/小炒黄牛肉.jpg",
+      "sourceRecipeName": "小炒黄牛肉"
+    },
+    {
+      "dishId": "122",
+      "dishName": "姜炒鸡",
+      "aliases": [
+        "姜炒鸡"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-122-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-122-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/姜炒鸡/姜炒鸡.jpg",
+      "sourceRecipeName": "姜炒鸡"
+    },
+    {
+      "dishId": "124",
+      "dishName": "尖叫牛蛙",
+      "aliases": [
+        "尖叫牛蛙"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-124-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-124-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/尖叫牛蛙/尖叫牛蛙.jpg",
+      "sourceRecipeName": "尖叫牛蛙"
+    },
+    {
+      "dishId": "126",
+      "dishName": "小炒鸡肝",
+      "aliases": [
+        "小炒鸡肝"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-126-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-126-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/小炒鸡肝/成品.jpg",
+      "sourceRecipeName": "小炒鸡肝"
+    },
+    {
+      "dishId": "127",
+      "dishName": "巴基斯坦牛肉咖喱",
+      "aliases": [
+        "小炒黄牛肉",
+        "巴基斯坦牛肉咖喱"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-127-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-127-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/巴基斯坦牛肉咖喱/巴基斯坦牛肉咖喱.png",
+      "sourceRecipeName": "巴基斯坦牛肉咖喱"
+    },
+    {
+      "dishId": "129",
+      "dishName": "干煸仔鸡",
+      "aliases": [
+        "干煸仔鸡"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-129-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-129-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/干煸仔鸡/干煸仔鸡成品.jpg",
+      "sourceRecipeName": "干煸仔鸡"
+    },
+    {
+      "dishId": "130",
+      "dishName": "广式萝卜牛腩",
+      "aliases": [
+        "玉米排骨汤",
+        "尖叫牛蛙",
+        "广式萝卜牛腩"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-130-howtocook-real_1280.webp",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-130-howtocook-real_768.webp",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/广式萝卜牛腩/广式萝卜牛腩.webp",
+      "sourceRecipeName": "广式萝卜牛腩"
+    },
+    {
+      "dishId": "131",
+      "dishName": "徽派红烧肉",
+      "aliases": [
+        "徽派红烧肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-131-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-131-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/徽派红烧肉/1.jpeg",
+      "sourceRecipeName": "徽派红烧肉"
+    },
+    {
+      "dishId": "133",
+      "dishName": "新疆大盘鸡",
+      "aliases": [
+        "巴基斯坦牛肉咖喱",
+        "新疆大盘鸡"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-133-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-133-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/新疆大盘鸡/大盘鸡.jpeg",
+      "sourceRecipeName": "新疆大盘鸡"
+    },
+    {
+      "dishId": "134",
+      "dishName": "无骨鸡爪",
+      "aliases": [
+        "无骨鸡爪"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-134-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-134-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/无骨鸡爪/无骨鸡爪.jpg",
+      "sourceRecipeName": "无骨鸡爪"
+    },
+    {
+      "dishId": "135",
+      "dishName": "干煸仔鸡",
+      "aliases": [
+        "干煸仔鸡"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-135-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-135-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/干煸仔鸡/干煸仔鸡成品.jpg",
+      "sourceRecipeName": "干煸仔鸡"
+    },
+    {
+      "dishId": "136",
+      "dishName": "广式萝卜牛腩",
+      "aliases": [
+        "广式萝卜牛腩"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-136-howtocook-real_1280.webp",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-136-howtocook-real_768.webp",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/广式萝卜牛腩/广式萝卜牛腩.webp",
+      "sourceRecipeName": "广式萝卜牛腩"
+    },
+    {
+      "dishId": "137",
+      "dishName": "柱候牛腩",
+      "aliases": [
+        "徽派红烧肉",
+        "柱候牛腩"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-137-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-137-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/柱候牛腩/柱候牛腩.jpeg",
+      "sourceRecipeName": "柱候牛腩"
+    },
+    {
+      "dishId": "138",
+      "dishName": "梅菜扣肉",
+      "aliases": [
+        "梅菜扣肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-138-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-138-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/梅菜扣肉/1.jpeg",
+      "sourceRecipeName": "梅菜扣肉"
+    },
+    {
+      "dishId": "139",
+      "dishName": "新疆大盘鸡",
+      "aliases": [
+        "新疆大盘鸡"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-139-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-139-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/新疆大盘鸡/大盘鸡.jpeg",
+      "sourceRecipeName": "新疆大盘鸡"
+    },
+    {
+      "dishId": "140",
+      "dishName": "水煮牛肉",
+      "aliases": [
+        "无骨鸡爪",
+        "水煮牛肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-140-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-140-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/水煮牛肉/sznr1.jpg",
+      "sourceRecipeName": "水煮牛肉"
+    },
+    {
+      "dishId": "143",
+      "dishName": "清蒸鳜鱼",
+      "aliases": [
+        "小笼包",
+        "柱候牛腩",
+        "清蒸鳜鱼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-143-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-143-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-08T10:12:02Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/清蒸鳜鱼/清蒸鳜鱼成品图.jpg",
+      "sourceRecipeName": "清蒸鳜鱼"
+    },
+    {
+      "dishId": "144",
+      "dishName": "湖南家常红烧肉",
+      "aliases": [
+        "梅菜扣肉",
+        "湖南家常红烧肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-144-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-144-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/湖南家常红烧肉/湖南家常红烧肉.jpeg",
+      "sourceRecipeName": "湖南家常红烧肉"
+    },
+    {
+      "dishId": "145",
+      "dishName": "湘祁米夫鸭",
+      "aliases": [
+        "湘祁米夫鸭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-145-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-145-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/湘祁米夫鸭/湘祁米夫鸭.jpg",
+      "sourceRecipeName": "湘祁米夫鸭"
+    },
+    {
+      "dishId": "146",
+      "dishName": "水煮牛肉",
+      "aliases": [
+        "水煮牛肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-146-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-146-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/水煮牛肉/sznr1.jpg",
+      "sourceRecipeName": "水煮牛肉"
+    },
+    {
+      "dishId": "148",
+      "dishName": "牛排",
+      "aliases": [
+        "牛排"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-148-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-148-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/牛排/牛排.jpg",
+      "sourceRecipeName": "牛排"
+    },
+    {
+      "dishId": "149",
+      "dishName": "猪皮冻",
+      "aliases": [
+        "豆浆",
+        "清蒸鳜鱼",
+        "猪皮冻"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-149-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-149-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-08T10:12:40Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/猪皮冻/猪皮冻.jpg",
+      "sourceRecipeName": "猪皮冻"
+    },
+    {
+      "dishId": "150",
+      "dishName": "湖南家常红烧肉",
+      "aliases": [
+        "湖南家常红烧肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-150-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-150-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/湖南家常红烧肉/湖南家常红烧肉.jpeg",
+      "sourceRecipeName": "湖南家常红烧肉"
+    },
+    {
+      "dishId": "151",
+      "dishName": "湘祁米夫鸭",
+      "aliases": [
+        "湘祁米夫鸭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-151-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-151-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/湘祁米夫鸭/湘祁米夫鸭.jpg",
+      "sourceRecipeName": "湘祁米夫鸭"
+    },
+    {
+      "dishId": "153",
+      "dishName": "瘦肉土豆片",
+      "aliases": [
+        "瘦肉土豆片"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-153-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-153-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/瘦肉土豆片/瘦肉土豆片.jpg",
+      "sourceRecipeName": "瘦肉土豆片"
+    },
+    {
+      "dishId": "154",
+      "dishName": "牛排",
+      "aliases": [
+        "牛排"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-154-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-154-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/牛排/牛排.jpg",
+      "sourceRecipeName": "牛排"
+    },
+    {
+      "dishId": "155",
+      "dishName": "猪皮冻",
+      "aliases": [
+        "猪皮冻"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-155-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-155-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/猪皮冻/猪皮冻.jpg",
+      "sourceRecipeName": "猪皮冻"
+    },
+    {
+      "dishId": "156",
+      "dishName": "糖醋排骨",
+      "aliases": [
+        "糖醋排骨"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-156-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-156-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/糖醋排骨/1.jpeg",
+      "sourceRecipeName": "糖醋排骨"
+    },
+    {
+      "dishId": "158",
+      "dishName": "红烧猪蹄",
+      "aliases": [
+        "红烧猪蹄"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-158-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-158-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/红烧猪蹄/红烧猪蹄.jpg",
+      "sourceRecipeName": "红烧猪蹄"
+    },
+    {
+      "dishId": "159",
+      "dishName": "瘦肉土豆片",
+      "aliases": [
+        "瘦肉土豆片"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-159-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-159-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/瘦肉土豆片/瘦肉土豆片.jpg",
+      "sourceRecipeName": "瘦肉土豆片"
+    },
+    {
+      "dishId": "160",
+      "dishName": "简易红烧肉",
+      "aliases": [
+        "简易红烧肉",
+        "红烧肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-160-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-160-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/红烧肉/000.jpg",
+      "sourceRecipeName": "简易红烧肉"
+    },
+    {
+      "dishId": "161",
+      "dishName": "羊排焖面",
+      "aliases": [
+        "戚风蛋糕",
+        "羊排焖面"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-161-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-161-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/羊排焖面/羊排焖面.jpg",
+      "sourceRecipeName": "羊排焖面"
+    },
+    {
+      "dishId": "162",
+      "dishName": "老妈蹄花",
+      "aliases": [
+        "糖醋排骨",
+        "老妈蹄花"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-162-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-162-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/老妈蹄花/result3.jpg",
+      "sourceRecipeName": "老妈蹄花"
+    },
+    {
+      "dishId": "163",
+      "dishName": "红烧猪蹄",
+      "aliases": [
+        "红烧猪蹄"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-163-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-163-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/红烧猪蹄/红烧猪蹄.jpg",
+      "sourceRecipeName": "红烧猪蹄"
+    },
+    {
+      "dishId": "164",
+      "dishName": "蛋挞",
+      "aliases": [
+        "懒人蛋挞",
+        "蛋挞"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-164-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-164-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/semi-finished/懒人蛋挞/懒人蛋挞.png",
+      "sourceRecipeName": "懒人蛋挞"
+    },
+    {
+      "dishId": "165",
+      "dishName": "简易红烧肉",
+      "aliases": [
+        "黑椒牛柳",
+        "简易红烧肉",
+        "红烧肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-165-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-165-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/红烧肉/000.jpg",
+      "sourceRecipeName": "简易红烧肉"
+    },
+    {
+      "dishId": "166",
+      "dishName": "芥末罗氏虾",
+      "aliases": [
+        "羊排焖面",
+        "芥末罗氏虾"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-166-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-166-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/芥末罗氏虾/芥末罗氏虾成品.jpg",
+      "sourceRecipeName": "芥末罗氏虾"
+    },
+    {
+      "dishId": "167",
+      "dishName": "茭白炒肉",
+      "aliases": [
+        "老妈蹄花",
+        "茭白炒肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-167-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-167-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/茭白炒肉/1.jpeg",
+      "sourceRecipeName": "茭白炒肉"
+    },
+    {
+      "dishId": "168",
+      "dishName": "荔枝肉",
+      "aliases": [
+        "荔枝肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-168-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-168-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/荔枝肉/1.jpeg",
+      "sourceRecipeName": "荔枝肉"
+    },
+    {
+      "dishId": "169",
+      "dishName": "荷兰豆炒腊肠",
+      "aliases": [
+        "荷兰豆炒腊肠"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-169-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-169-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/荷兰豆炒腊肠/1.png",
+      "sourceRecipeName": "荷兰豆炒腊肠"
+    },
+    {
+      "dishId": "171",
+      "dishName": "芥末罗氏虾",
+      "aliases": [
+        "白灼虾",
+        "芥末罗氏虾"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-171-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-171-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/芥末罗氏虾/芥末罗氏虾成品.jpg",
+      "sourceRecipeName": "芥末罗氏虾"
+    },
+    {
+      "dishId": "172",
+      "dishName": "茭白炒肉",
+      "aliases": [
+        "茭白炒肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-172-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-172-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/茭白炒肉/1.jpeg",
+      "sourceRecipeName": "茭白炒肉"
+    },
+    {
+      "dishId": "173",
+      "dishName": "荔枝肉",
+      "aliases": [
+        "荔枝肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-173-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-173-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/荔枝肉/1.jpeg",
+      "sourceRecipeName": "荔枝肉"
+    },
+    {
+      "dishId": "174",
+      "dishName": "荷兰豆炒腊肠",
+      "aliases": [
+        "荷兰豆炒腊肠"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-174-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-174-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/荷兰豆炒腊肠/1.png",
+      "sourceRecipeName": "荷兰豆炒腊肠"
+    },
+    {
+      "dishId": "175",
+      "dishName": "西红柿土豆炖牛肉",
+      "aliases": [
+        "西红柿土豆炖牛肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-175-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-175-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/西红柿土豆炖牛肉/abaaba_1.png",
+      "sourceRecipeName": "西红柿土豆炖牛肉"
+    },
+    {
+      "dishId": "177",
+      "dishName": "豆豉鲮鱼油麦菜",
+      "aliases": [
+        "豆豉鲮鱼油麦菜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-177-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-177-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/豆豉鲮鱼油麦菜/豆豉鲮鱼油麦菜成品.jpg",
+      "sourceRecipeName": "豆豉鲮鱼油麦菜"
+    },
+    {
+      "dishId": "179",
+      "dishName": "豉汁蒸白鱔",
+      "aliases": [
+        "豉汁蒸白鱔"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-179-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-179-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/豉汁蒸白鱔/豉汁蒸白鱔.jpeg",
+      "sourceRecipeName": "豉汁蒸白鱔"
+    },
+    {
+      "dishId": "180",
+      "dishName": "贵州辣子鸡",
+      "aliases": [
+        "西红柿土豆炖牛肉",
+        "贵州辣子鸡"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-180-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-180-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/贵州辣子鸡/贵州辣子鸡.jpg",
+      "sourceRecipeName": "贵州辣子鸡"
+    },
+    {
+      "dishId": "182",
+      "dishName": "酱排骨",
+      "aliases": [
+        "豆豉鲮鱼油麦菜",
+        "酱排骨"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-182-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-182-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/酱排骨/1.jpeg",
+      "sourceRecipeName": "酱排骨"
+    },
+    {
+      "dishId": "183",
+      "dishName": "酱牛肉",
+      "aliases": [
+        "酱牛肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-183-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-183-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/酱牛肉/酱牛肉.jpg",
+      "sourceRecipeName": "酱牛肉"
+    },
+    {
+      "dishId": "184",
+      "dishName": "醉排骨",
+      "aliases": [
+        "豉汁蒸白鱔",
+        "醉排骨"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-184-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-184-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/醉排骨/1.jpeg",
+      "sourceRecipeName": "醉排骨"
+    },
+    {
+      "dishId": "185",
+      "dishName": "贵州辣子鸡",
+      "aliases": [
+        "贵州辣子鸡"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-185-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-185-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/贵州辣子鸡/贵州辣子鸡.jpg",
+      "sourceRecipeName": "贵州辣子鸡"
+    },
+    {
+      "dishId": "187",
+      "dishName": "香干芹菜炒肉",
+      "aliases": [
+        "酱排骨",
+        "香干芹菜炒肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-187-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-187-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/香干芹菜炒肉/香干芹菜炒肉.jpg",
+      "sourceRecipeName": "香干芹菜炒肉"
+    },
+    {
+      "dishId": "188",
+      "dishName": "香煎五花肉",
+      "aliases": [
+        "酱牛肉",
+        "香煎五花肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-188-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-188-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/香煎五花肉/香煎五花肉.jpg",
+      "sourceRecipeName": "香煎五花肉"
+    },
+    {
+      "dishId": "189",
+      "dishName": "香菇滑鸡",
+      "aliases": [
+        "醉排骨",
+        "香菇滑鸡"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-189-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-189-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/香菇滑鸡/香菇滑鸡.jpg",
+      "sourceRecipeName": "香菇滑鸡"
+    },
+    {
+      "dishId": "190",
+      "dishName": "香辣鸡爪煲",
+      "aliases": [
+        "香辣鸡爪煲"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-190-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-190-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/香辣鸡爪煲/result2.jpg",
+      "sourceRecipeName": "香辣鸡爪煲"
+    },
+    {
+      "dishId": "191",
+      "dishName": "鱼香肉丝",
+      "aliases": [
+        "鱼香肉丝"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-15-dish_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-15-dish_768.jpg",
+      "styleTag": "dish",
+      "updatedAt": "2026-04-07T01:08:15Z",
+      "sourceType": "legacy_prebuilt_asset",
+      "sourceProject": "eatwhat_assets",
+      "sourcePath": "assets/images/prebuilt_dishes/dish-15-dish_1280.jpg",
+      "sourceRecipeName": "鱼香肉丝"
+    },
+    {
+      "dishId": "192",
+      "dishName": "鱼香茄子",
+      "aliases": [
+        "香干芹菜炒肉",
+        "鱼香茄子"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-192-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-192-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/鱼香茄子/yxqz1.jpg",
+      "sourceRecipeName": "鱼香茄子"
+    },
+    {
+      "dishId": "193",
+      "dishName": "麻婆豆腐",
+      "aliases": [
+        "香煎五花肉",
+        "麻婆豆腐"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-193-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-193-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/麻婆豆腐/1.jpeg",
+      "sourceRecipeName": "麻婆豆腐"
+    },
+    {
+      "dishId": "194",
+      "dishName": "香菇滑鸡",
+      "aliases": [
+        "香菇滑鸡"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-194-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-194-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/香菇滑鸡/香菇滑鸡.jpg",
+      "sourceRecipeName": "香菇滑鸡"
+    },
+    {
+      "dishId": "195",
+      "dishName": "香辣鸡爪煲",
+      "aliases": [
+        "凉拌木耳",
+        "香辣鸡爪煲"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-195-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-195-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/香辣鸡爪煲/result2.jpg",
+      "sourceRecipeName": "香辣鸡爪煲"
+    },
+    {
+      "dishId": "196",
+      "dishName": "油焖大虾",
+      "aliases": [
+        "油焖大虾"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-196-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-196-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/油焖大虾/油焖大虾.jpg",
+      "sourceRecipeName": "油焖大虾"
+    },
+    {
+      "dishId": "197",
+      "dishName": "黑椒牛柳",
+      "aliases": [
+        "鱼香茄子",
+        "黑椒牛柳"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-197-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-197-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/黑椒牛柳/黑椒牛柳.jpg",
+      "sourceRecipeName": "黑椒牛柳"
+    },
+    {
+      "dishId": "198",
+      "dishName": "黔式腊肠娃娃菜",
+      "aliases": [
+        "烙饼",
+        "黔式腊肠娃娃菜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-198-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-198-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/黔式腊肠娃娃菜/黔式腊肠娃娃菜.jpg",
+      "sourceRecipeName": "黔式腊肠娃娃菜"
+    },
+    {
+      "dishId": "201",
+      "dishName": "懒人蛋挞",
+      "aliases": [
+        "黑椒牛柳",
+        "懒人蛋挞",
+        "蛋挞"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-201-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-201-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/semi-finished/懒人蛋挞/懒人蛋挞.png",
+      "sourceRecipeName": "懒人蛋挞"
+    },
+    {
+      "dishId": "202",
+      "dishName": "炸薯条",
+      "aliases": [
+        "黔式腊肠娃娃菜",
+        "炸薯条"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-202-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-202-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/semi-finished/炸薯条/炸薯条.jpg",
+      "sourceRecipeName": "炸薯条"
+    },
+    {
+      "dishId": "204",
+      "dishName": "空气炸锅羊排",
+      "aliases": [
+        "空气炸锅羊排"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-204-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-204-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/semi-finished/空气炸锅羊排/羊排.jpg",
+      "sourceRecipeName": "空气炸锅羊排"
+    },
+    {
+      "dishId": "205",
+      "dishName": "空气炸锅鸡翅中",
+      "aliases": [
+        "懒人蛋挞",
+        "蛋挞",
+        "空气炸锅鸡翅中"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-205-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-205-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/semi-finished/空气炸锅鸡翅中/鸡翅中_0.jpg",
+      "sourceRecipeName": "空气炸锅鸡翅中"
+    },
+    {
+      "dishId": "206",
+      "dishName": "炸薯条",
+      "aliases": [
+        "炸薯条"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-206-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-206-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/semi-finished/炸薯条/炸薯条.jpg",
+      "sourceRecipeName": "炸薯条"
+    },
+    {
+      "dishId": "207",
+      "dishName": "速冻汤圆",
+      "aliases": [
+        "速冻汤圆"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-207-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-207-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/semi-finished/速冻汤圆/速冻汤圆.jpg",
+      "sourceRecipeName": "速冻汤圆"
+    },
+    {
+      "dishId": "208",
+      "dishName": "空气炸锅羊排",
+      "aliases": [
+        "空气炸锅羊排"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-208-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-208-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/semi-finished/空气炸锅羊排/羊排.jpg",
+      "sourceRecipeName": "空气炸锅羊排"
+    },
+    {
+      "dishId": "209",
+      "dishName": "勾芡香菇汤",
+      "aliases": [
+        "空气炸锅鸡翅中",
+        "勾芡香菇汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-209-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-209-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/soup/勾芡香菇汤/1.jpeg",
+      "sourceRecipeName": "勾芡香菇汤"
+    },
+    {
+      "dishId": "211",
+      "dishName": "速冻汤圆",
+      "aliases": [
+        "速冻汤圆"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-211-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-211-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/semi-finished/速冻汤圆/速冻汤圆.jpg",
+      "sourceRecipeName": "速冻汤圆"
+    },
+    {
+      "dishId": "213",
+      "dishName": "昂刺鱼豆腐汤",
+      "aliases": [
+        "勾芡香菇汤",
+        "昂刺鱼豆腐汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-213-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-213-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/soup/昂刺鱼豆腐汤/沙光鱼豆腐汤.jpg",
+      "sourceRecipeName": "昂刺鱼豆腐汤"
+    },
+    {
+      "dishId": "214",
+      "dishName": "朱雀汤",
+      "aliases": [
+        "朱雀汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-214-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-214-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/soup/朱雀汤/朱雀汤.jpg",
+      "sourceRecipeName": "朱雀汤"
+    },
+    {
+      "dishId": "215",
+      "dishName": "玉米排骨汤",
+      "aliases": [
+        "玉米排骨汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-215-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-215-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/soup/玉米排骨汤/玉米排骨汤.jpeg",
+      "sourceRecipeName": "玉米排骨汤"
+    },
+    {
+      "dishId": "217",
+      "dishName": "昂刺鱼豆腐汤",
+      "aliases": [
+        "昂刺鱼豆腐汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-217-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-217-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/soup/昂刺鱼豆腐汤/沙光鱼豆腐汤.jpg",
+      "sourceRecipeName": "昂刺鱼豆腐汤"
+    },
+    {
+      "dishId": "218",
+      "dishName": "朱雀汤",
+      "aliases": [
+        "朱雀汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-218-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-218-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/soup/朱雀汤/朱雀汤.jpg",
+      "sourceRecipeName": "朱雀汤"
+    },
+    {
+      "dishId": "219",
+      "dishName": "玉米排骨汤",
+      "aliases": [
+        "玉米排骨汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-219-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-219-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/soup/玉米排骨汤/玉米排骨汤.jpeg",
+      "sourceRecipeName": "玉米排骨汤"
+    },
+    {
+      "dishId": "222",
+      "dishName": "羊肉汤",
+      "aliases": [
+        "羊肉汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-222-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-222-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/soup/羊肉汤/羊肉汤.jpg",
+      "sourceRecipeName": "羊肉汤"
+    },
+    {
+      "dishId": "224",
+      "dishName": "菌菇炖乳鸽",
+      "aliases": [
+        "菌菇炖乳鸽"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-224-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-224-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/soup/菌菇炖乳鸽/菌菇炖乳鸽.jpg",
+      "sourceRecipeName": "菌菇炖乳鸽"
+    },
+    {
+      "dishId": "226",
+      "dishName": "羊肉汤",
+      "aliases": [
+        "羊肉汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-226-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-226-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/soup/羊肉汤/羊肉汤.jpg",
+      "sourceRecipeName": "羊肉汤"
+    },
+    {
+      "dishId": "227",
+      "dishName": "银耳莲子粥",
+      "aliases": [
+        "银耳莲子粥"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-227-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-227-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/soup/银耳莲子粥/银耳莲子粥.png",
+      "sourceRecipeName": "银耳莲子粥"
+    },
+    {
+      "dishId": "228",
+      "dishName": "陈皮排骨汤",
+      "aliases": [
+        "菌菇炖乳鸽",
+        "陈皮排骨汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-228-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-228-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/soup/陈皮排骨汤/陈皮排骨汤.jpg",
+      "sourceRecipeName": "陈皮排骨汤"
+    },
+    {
+      "dishId": "231",
+      "dishName": "凉粉",
+      "aliases": [
+        "银耳莲子粥",
+        "凉粉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-231-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-231-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/凉粉/lf1.jpg",
+      "sourceRecipeName": "凉粉"
+    },
+    {
+      "dishId": "232",
+      "dishName": "陈皮排骨汤",
+      "aliases": [
+        "陈皮排骨汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-232-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-232-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/soup/陈皮排骨汤/陈皮排骨汤.jpg",
+      "sourceRecipeName": "陈皮排骨汤"
+    },
+    {
+      "dishId": "234",
+      "dishName": "基础牛奶面包",
+      "aliases": [
+        "基础牛奶面包",
+        "牛奶面包"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-234-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-234-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/基础牛奶面包/1-1成品.jpg",
+      "sourceRecipeName": "基础牛奶面包"
+    },
+    {
+      "dishId": "235",
+      "dishName": "微波炉腊肠煲仔饭",
+      "aliases": [
+        "凉粉",
+        "微波炉腊肠煲仔饭",
+        "腊肠煲仔饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-235-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-235-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/微波炉腊肠煲仔饭/微波炉腊肠煲仔饭.png",
+      "sourceRecipeName": "微波炉腊肠煲仔饭"
+    },
+    {
+      "dishId": "236",
+      "dishName": "意式肉酱面",
+      "aliases": [
+        "意式肉酱面"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-236-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-236-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/意式肉酱面/final.jpg",
+      "sourceRecipeName": "意式肉酱面"
+    },
+    {
+      "dishId": "238",
+      "dishName": "扬州炒饭",
+      "aliases": [
+        "基础牛奶面包",
+        "牛奶面包",
+        "扬州炒饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-238-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-238-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/扬州炒饭/veg.png",
+      "sourceRecipeName": "扬州炒饭"
+    },
+    {
+      "dishId": "239",
+      "dishName": "披萨饼皮",
+      "aliases": [
+        "微波炉腊肠煲仔饭",
+        "腊肠煲仔饭",
+        "披萨饼皮"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-239-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-239-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/披萨饼皮/001.jpeg",
+      "sourceRecipeName": "披萨饼皮"
+    },
+    {
+      "dishId": "240",
+      "dishName": "日式咖喱饭",
+      "aliases": [
+        "意式肉酱面",
+        "日式咖喱饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-240-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-240-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/日式咖喱饭/成品.jpg",
+      "sourceRecipeName": "日式咖喱饭"
+    },
+    {
+      "dishId": "241",
+      "dishName": "日式肥牛丼饭",
+      "aliases": [
+        "日式肥牛丼饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-241-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-241-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/日式肥牛丼饭/成品.png",
+      "sourceRecipeName": "日式肥牛丼饭"
+    },
+    {
+      "dishId": "242",
+      "dishName": "扬州炒饭",
+      "aliases": [
+        "扬州炒饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-242-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-242-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/扬州炒饭/veg.png",
+      "sourceRecipeName": "扬州炒饭"
+    },
+    {
+      "dishId": "243",
+      "dishName": "河南蒸面条",
+      "aliases": [
+        "披萨饼皮",
+        "河南蒸面条"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-243-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-243-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/河南蒸面条/河南蒸面条.png",
+      "sourceRecipeName": "河南蒸面条"
+    },
+    {
+      "dishId": "244",
+      "dishName": "火腿饭团",
+      "aliases": [
+        "日式咖喱饭",
+        "火腿饭团"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-244-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-244-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/火腿饭团/饭团.png",
+      "sourceRecipeName": "火腿饭团"
+    },
+    {
+      "dishId": "245",
+      "dishName": "炒凉粉",
+      "aliases": [
+        "日式肥牛丼饭",
+        "炒凉粉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-245-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-245-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/炒凉粉/chaoliangfen.jpg",
+      "sourceRecipeName": "炒凉粉"
+    },
+    {
+      "dishId": "247",
+      "dishName": "炒意大利面",
+      "aliases": [
+        "河南蒸面条",
+        "炒意大利面"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-247-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-247-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/炒意大利面/a.jpg",
+      "sourceRecipeName": "炒意大利面"
+    },
+    {
+      "dishId": "248",
+      "dishName": "火腿饭团",
+      "aliases": [
+        "火腿饭团"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-248-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-248-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/火腿饭团/饭团.png",
+      "sourceRecipeName": "火腿饭团"
+    },
+    {
+      "dishId": "249",
+      "dishName": "炒凉粉",
+      "aliases": [
+        "炒凉粉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-249-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-249-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/炒凉粉/chaoliangfen.jpg",
+      "sourceRecipeName": "炒凉粉"
+    },
+    {
+      "dishId": "251",
+      "dishName": "炒意大利面",
+      "aliases": [
+        "炒意大利面"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-251-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-251-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/炒意大利面/a.jpg",
+      "sourceRecipeName": "炒意大利面"
+    },
+    {
+      "dishId": "252",
+      "dishName": "烙饼",
+      "aliases": [
+        "烙饼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-252-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-252-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/烙饼/成品.jpg",
+      "sourceRecipeName": "烙饼"
+    },
+    {
+      "dishId": "253",
+      "dishName": "芝麻烧饼",
+      "aliases": [
+        "芝麻烧饼",
+        "烧饼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-253-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-253-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/烧饼/芝麻烧饼.jpg",
+      "sourceRecipeName": "芝麻烧饼"
+    },
+    {
+      "dishId": "255",
+      "dishName": "炸酱面",
+      "aliases": [
+        "炸酱面"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-32-dish_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-32-dish_768.jpg",
+      "styleTag": "braised_home_style",
+      "updatedAt": "2026-04-08T10:13:49Z",
+      "sourceType": "legacy_prebuilt_asset",
+      "sourceProject": "eatwhat_assets",
+      "sourcePath": "assets/images/prebuilt_dishes/dish-32-dish_1280.jpg",
+      "sourceRecipeName": "炸酱面"
+    },
+    {
+      "dishId": "256",
+      "dishName": "烙饼",
+      "aliases": [
+        "烙饼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-256-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-256-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/烙饼/成品.jpg",
+      "sourceRecipeName": "烙饼"
+    },
+    {
+      "dishId": "257",
+      "dishName": "芝麻烧饼",
+      "aliases": [
+        "芝麻烧饼",
+        "烧饼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-257-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-257-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/烧饼/芝麻烧饼.jpg",
+      "sourceRecipeName": "芝麻烧饼"
+    },
+    {
+      "dishId": "258",
+      "dishName": "电饭煲三文鱼炊饭",
+      "aliases": [
+        "电饭煲三文鱼炊饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-258-howtocook-real_1280.webp",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-258-howtocook-real_768.webp",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/电饭煲三文鱼炊饭/电饭煲三文鱼炊饭.webp",
+      "sourceRecipeName": "电饭煲三文鱼炊饭"
+    },
+    {
+      "dishId": "259",
+      "dishName": "空气炸锅照烧鸡饭",
+      "aliases": [
+        "空气炸锅照烧鸡饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-259-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-259-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/空气炸锅照烧鸡饭/空气炸锅照烧鸡饭.jpg",
+      "sourceRecipeName": "空气炸锅照烧鸡饭"
+    },
+    {
+      "dishId": "260",
+      "dishName": "煮锅蒸米饭",
+      "aliases": [
+        "煮锅蒸米饭",
+        "米饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-260-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-260-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/米饭/rice_regularPot.jpeg",
+      "sourceRecipeName": "煮锅蒸米饭"
+    },
+    {
+      "dishId": "262",
+      "dishName": "老友猪肉粉",
+      "aliases": [
+        "电饭煲三文鱼炊饭",
+        "老友猪肉粉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-262-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-262-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/老友猪肉粉/老友猪肉粉.jpg",
+      "sourceRecipeName": "老友猪肉粉"
+    },
+    {
+      "dishId": "263",
+      "dishName": "空气炸锅照烧鸡饭",
+      "aliases": [
+        "空气炸锅照烧鸡饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-263-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-263-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/空气炸锅照烧鸡饭/空气炸锅照烧鸡饭.jpg",
+      "sourceRecipeName": "空气炸锅照烧鸡饭"
+    },
+    {
+      "dishId": "264",
+      "dishName": "煮锅蒸米饭",
+      "aliases": [
+        "煮锅蒸米饭",
+        "米饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-264-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-264-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/米饭/rice_regularPot.jpeg",
+      "sourceRecipeName": "煮锅蒸米饭"
+    },
+    {
+      "dishId": "265",
+      "dishName": "茄子肉煎饼",
+      "aliases": [
+        "茄子肉煎饼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-265-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-265-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/茄子肉煎饼/茄子肉煎饼.jpg",
+      "sourceRecipeName": "茄子肉煎饼"
+    },
+    {
+      "dishId": "266",
+      "dishName": "老友猪肉粉",
+      "aliases": [
+        "老友猪肉粉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-266-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-266-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/老友猪肉粉/老友猪肉粉.jpg",
+      "sourceRecipeName": "老友猪肉粉"
+    },
+    {
+      "dishId": "269",
+      "dishName": "茄子肉煎饼",
+      "aliases": [
+        "茄子肉煎饼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-269-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-269-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/茄子肉煎饼/茄子肉煎饼.jpg",
+      "sourceRecipeName": "茄子肉煎饼"
+    },
+    {
+      "dishId": "271",
+      "dishName": "西红柿鸡蛋挂面",
+      "aliases": [
+        "西红柿鸡蛋挂面"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-271-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-271-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/西红柿鸡蛋挂面/food.jpg",
+      "sourceRecipeName": "西红柿鸡蛋挂面"
+    },
+    {
+      "dishId": "273",
+      "dishName": "酱拌荞麦面",
+      "aliases": [
+        "酱拌荞麦面"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-273-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-273-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/酱拌荞麦面/1.jpeg",
+      "sourceRecipeName": "酱拌荞麦面"
+    },
+    {
+      "dishId": "275",
+      "dishName": "西红柿鸡蛋挂面",
+      "aliases": [
+        "西红柿鸡蛋挂面"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-275-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-275-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/西红柿鸡蛋挂面/food.jpg",
+      "sourceRecipeName": "西红柿鸡蛋挂面"
+    },
+    {
+      "dishId": "276",
+      "dishName": "陕西油泼面",
+      "aliases": [
+        "陕西油泼面"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-276-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-276-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/陕西油泼面/chemian.png",
+      "sourceRecipeName": "陕西油泼面"
+    },
+    {
+      "dishId": "277",
+      "dishName": "韩式拌饭",
+      "aliases": [
+        "酱拌荞麦面",
+        "韩式拌饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-277-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-277-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/韩式拌饭/韩式拌饭.png",
+      "sourceRecipeName": "韩式拌饭"
+    },
+    {
+      "dishId": "280",
+      "dishName": "鲣鱼海苔玉米饭",
+      "aliases": [
+        "陕西油泼面",
+        "鲣鱼海苔玉米饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-280-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-280-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/鲣鱼海苔玉米饭/米饭.jpg",
+      "sourceRecipeName": "鲣鱼海苔玉米饭"
+    },
+    {
+      "dishId": "281",
+      "dishName": "韩式拌饭",
+      "aliases": [
+        "韩式拌饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-281-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-281-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/staple/韩式拌饭/韩式拌饭.png",
+      "sourceRecipeName": "韩式拌饭"
+    },
+    {
+      "dishId": "283",
+      "dishName": "上汤娃娃菜",
+      "aliases": [
+        "上汤娃娃菜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-283-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-283-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/上汤娃娃菜/上汤娃娃菜.png",
+      "sourceRecipeName": "上汤娃娃菜"
+    },
+    {
+      "dishId": "284",
+      "dishName": "凉拌木耳",
+      "aliases": [
+        "鲣鱼海苔玉米饭",
+        "凉拌木耳"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-284-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-284-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/凉拌木耳/1.jpg",
+      "sourceRecipeName": "凉拌木耳"
+    },
+    {
+      "dishId": "286",
+      "dishName": "凉拌莴笋",
+      "aliases": [
+        "凉拌莴笋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-286-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-286-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/凉拌莴笋/1.jpeg",
+      "sourceRecipeName": "凉拌莴笋"
+    },
+    {
+      "dishId": "287",
+      "dishName": "上汤娃娃菜",
+      "aliases": [
+        "上汤娃娃菜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-287-howtocook-real_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-287-howtocook-real_768.png",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/上汤娃娃菜/上汤娃娃菜.png",
+      "sourceRecipeName": "上汤娃娃菜"
+    },
+    {
+      "dishId": "288",
+      "dishName": "凉拌木耳",
+      "aliases": [
+        "凉拌木耳"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-288-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-288-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/凉拌木耳/1.jpg",
+      "sourceRecipeName": "凉拌木耳"
+    },
+    {
+      "dishId": "290",
+      "dishName": "包菜炒鸡蛋粉丝",
+      "aliases": [
+        "凉拌莴笋",
+        "包菜炒鸡蛋粉丝"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-290-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-290-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/包菜炒鸡蛋粉丝/1.jpg",
+      "sourceRecipeName": "包菜炒鸡蛋粉丝"
+    },
+    {
+      "dishId": "291",
+      "dishName": "地三鲜",
+      "aliases": [
+        "地三鲜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-23-dish_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-23-dish_768.jpg",
+      "styleTag": "dish",
+      "updatedAt": "2026-04-07T01:12:47Z",
+      "sourceType": "legacy_prebuilt_asset",
+      "sourceProject": "eatwhat_assets",
+      "sourcePath": "assets/images/prebuilt_dishes/dish-23-dish_1280.jpg",
+      "sourceRecipeName": "地三鲜"
+    },
+    {
+      "dishId": "293",
+      "dishName": "小炒藕丁",
+      "aliases": [
+        "小炒藕丁"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-293-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-293-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/小炒藕丁/小炒藕丁.jpg",
+      "sourceRecipeName": "小炒藕丁"
+    },
+    {
+      "dishId": "294",
+      "dishName": "干锅花菜",
+      "aliases": [
+        "包菜炒鸡蛋粉丝",
+        "干锅花菜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-294-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-294-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/干锅花菜/干锅花菜.jpg",
+      "sourceRecipeName": "干锅花菜"
+    },
+    {
+      "dishId": "295",
+      "dishName": "手撕包菜",
+      "aliases": [
+        "地三鲜",
+        "手撕包菜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-295-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-295-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:12:47Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/手撕包菜/1.jpeg",
+      "sourceRecipeName": "手撕包菜"
+    },
+    {
+      "dishId": "296",
+      "dishName": "拔丝土豆",
+      "aliases": [
+        "拔丝土豆"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-296-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-296-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/拔丝土豆/1.jpeg",
+      "sourceRecipeName": "拔丝土豆"
+    },
+    {
+      "dishId": "297",
+      "dishName": "小炒藕丁",
+      "aliases": [
+        "小炒藕丁"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-297-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-297-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/小炒藕丁/小炒藕丁.jpg",
+      "sourceRecipeName": "小炒藕丁"
+    },
+    {
+      "dishId": "298",
+      "dishName": "椒盐玉米",
+      "aliases": [
+        "手撕包菜",
+        "椒盐玉米"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-298-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-298-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/椒盐玉米/椒盐玉米.jpeg",
+      "sourceRecipeName": "椒盐玉米"
+    },
+    {
+      "dishId": "299",
+      "dishName": "榄菜肉末四季豆",
+      "aliases": [
+        "拔丝土豆",
+        "榄菜肉末四季豆"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-299-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-299-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/榄菜肉末四季豆/榄菜肉末四季豆.JPG",
+      "sourceRecipeName": "榄菜肉末四季豆"
+    },
+    {
+      "dishId": "301",
+      "dishName": "椒盐玉米",
+      "aliases": [
+        "椒盐玉米"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-301-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-301-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/椒盐玉米/椒盐玉米.jpeg",
+      "sourceRecipeName": "椒盐玉米"
+    },
+    {
+      "dishId": "302",
+      "dishName": "洋葱炒鸡蛋",
+      "aliases": [
+        "榄菜肉末四季豆",
+        "洋葱炒鸡蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-302-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-302-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/洋葱炒鸡蛋/1.jpeg",
+      "sourceRecipeName": "洋葱炒鸡蛋"
+    },
+    {
+      "dishId": "305",
+      "dishName": "炒滑蛋",
+      "aliases": [
+        "洋葱炒鸡蛋",
+        "炒滑蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-305-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-305-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/炒滑蛋/炒滑蛋.jpg",
+      "sourceRecipeName": "炒滑蛋"
+    },
+    {
+      "dishId": "308",
+      "dishName": "烤茄子",
+      "aliases": [
+        "炒滑蛋",
+        "烤茄子"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-308-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-308-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/烤茄子/烤茄子.jpg",
+      "sourceRecipeName": "烤茄子"
+    },
+    {
+      "dishId": "309",
+      "dishName": "白灼菜心",
+      "aliases": [
+        "白灼菜心"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-309-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-309-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/白灼菜心/白灼菜心.jpg",
+      "sourceRecipeName": "白灼菜心"
+    },
+    {
+      "dishId": "311",
+      "dishName": "糖拌西红柿",
+      "aliases": [
+        "烤茄子",
+        "糖拌西红柿"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-311-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-311-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/糖拌西红柿/火山飘雪.jpg",
+      "sourceRecipeName": "糖拌西红柿"
+    },
+    {
+      "dishId": "312",
+      "dishName": "白灼菜心",
+      "aliases": [
+        "白灼菜心"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-312-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-312-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/白灼菜心/白灼菜心.jpg",
+      "sourceRecipeName": "白灼菜心"
+    },
+    {
+      "dishId": "313",
+      "dishName": "红烧冬瓜",
+      "aliases": [
+        "红烧冬瓜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-313-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-313-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/红烧冬瓜/1.jpeg",
+      "sourceRecipeName": "红烧冬瓜"
+    },
+    {
+      "dishId": "314",
+      "dishName": "糖拌西红柿",
+      "aliases": [
+        "糖拌西红柿"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-314-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-314-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/糖拌西红柿/火山飘雪.jpg",
+      "sourceRecipeName": "糖拌西红柿"
+    },
+    {
+      "dishId": "316",
+      "dishName": "芹菜拌茶树菇",
+      "aliases": [
+        "红烧冬瓜",
+        "芹菜拌茶树菇"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-316-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-316-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/芹菜拌茶树菇/芹菜拌茶树菇.jpg",
+      "sourceRecipeName": "芹菜拌茶树菇"
+    },
+    {
+      "dishId": "318",
+      "dishName": "莴笋叶煎饼",
+      "aliases": [
+        "莴笋叶煎饼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-318-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-318-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/莴笋叶煎饼/1.jpeg",
+      "sourceRecipeName": "莴笋叶煎饼"
+    },
+    {
+      "dishId": "319",
+      "dishName": "菠菜炒鸡蛋",
+      "aliases": [
+        "芹菜拌茶树菇",
+        "菠菜炒鸡蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-319-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-319-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/菠菜炒鸡蛋/菠菜炒鸡蛋.jpg",
+      "sourceRecipeName": "菠菜炒鸡蛋"
+    },
+    {
+      "dishId": "321",
+      "dishName": "蒜蓉空心菜",
+      "aliases": [
+        "莴笋叶煎饼",
+        "蒜蓉空心菜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-321-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-321-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/蒜蓉空心菜/1.JPG",
+      "sourceRecipeName": "蒜蓉空心菜"
+    },
+    {
+      "dishId": "322",
+      "dishName": "菠菜炒鸡蛋",
+      "aliases": [
+        "菠菜炒鸡蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-322-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-322-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/菠菜炒鸡蛋/菠菜炒鸡蛋.jpg",
+      "sourceRecipeName": "菠菜炒鸡蛋"
+    },
+    {
+      "dishId": "324",
+      "dishName": "虎皮青椒",
+      "aliases": [
+        "蒜蓉空心菜",
+        "虎皮青椒"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-324-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-324-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/虎皮青椒/虎皮青椒.jpg",
+      "sourceRecipeName": "虎皮青椒"
+    },
+    {
+      "dishId": "325",
+      "dishName": "蚝油三鲜菇",
+      "aliases": [
+        "蒜蓉西兰花",
+        "蚝油三鲜菇"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-325-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-325-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-07T01:12:26Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/蚝油三鲜菇/1.jpeg",
+      "sourceRecipeName": "蚝油三鲜菇"
+    },
+    {
+      "dishId": "327",
+      "dishName": "虎皮青椒",
+      "aliases": [
+        "虎皮青椒"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-327-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-327-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/虎皮青椒/虎皮青椒.jpg",
+      "sourceRecipeName": "虎皮青椒"
+    },
+    {
+      "dishId": "328",
+      "dishName": "西红柿豆腐汤羹",
+      "aliases": [
+        "蚝油三鲜菇",
+        "西红柿豆腐汤羹"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-328-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-328-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/西红柿豆腐汤羹/1.jpeg",
+      "sourceRecipeName": "西红柿豆腐汤羹"
+    },
+    {
+      "dishId": "329",
+      "dishName": "西葫芦炒鸡蛋",
+      "aliases": [
+        "西葫芦炒鸡蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-329-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-329-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/西葫芦炒鸡蛋/西葫芦炒鸡蛋.jpeg",
+      "sourceRecipeName": "西葫芦炒鸡蛋"
+    },
+    {
+      "dishId": "330",
+      "dishName": "话梅煮毛豆",
+      "aliases": [
+        "话梅煮毛豆"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-330-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-330-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/话梅煮毛豆/1.jpeg",
+      "sourceRecipeName": "话梅煮毛豆"
+    },
+    {
+      "dishId": "331",
+      "dishName": "西红柿豆腐汤羹",
+      "aliases": [
+        "西红柿豆腐汤羹"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-331-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-331-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/西红柿豆腐汤羹/1.jpeg",
+      "sourceRecipeName": "西红柿豆腐汤羹"
+    },
+    {
+      "dishId": "332",
+      "dishName": "西葫芦炒鸡蛋",
+      "aliases": [
+        "西葫芦炒鸡蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-332-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-332-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/西葫芦炒鸡蛋/西葫芦炒鸡蛋.jpeg",
+      "sourceRecipeName": "西葫芦炒鸡蛋"
+    },
+    {
+      "dishId": "333",
+      "dishName": "话梅煮毛豆",
+      "aliases": [
+        "话梅煮毛豆"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-333-howtocook-real_1280.jpeg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-333-howtocook-real_768.jpeg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/话梅煮毛豆/1.jpeg",
+      "sourceRecipeName": "话梅煮毛豆"
+    },
+    {
+      "dishId": "337",
+      "dishName": "微波炉鸡蛋羹",
+      "aliases": [
+        "微波炉鸡蛋羹",
+        "鸡蛋羹"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-337-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-337-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/鸡蛋羹/微波炉鸡蛋羹.jpg",
+      "sourceRecipeName": "微波炉鸡蛋羹"
+    },
+    {
+      "dishId": "339",
+      "dishName": "鸡蛋羹",
+      "aliases": [
+        "鸡蛋羹"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-339-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-339-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/鸡蛋羹/鸡蛋羹.jpg",
+      "sourceRecipeName": "鸡蛋羹"
+    },
+    {
+      "dishId": "340",
+      "dishName": "微波炉鸡蛋羹",
+      "aliases": [
+        "微波炉鸡蛋羹",
+        "鸡蛋羹"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-340-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-340-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/鸡蛋羹/微波炉鸡蛋羹.jpg",
+      "sourceRecipeName": "微波炉鸡蛋羹"
+    },
+    {
+      "dishId": "342",
+      "dishName": "鸡蛋羹",
+      "aliases": [
+        "鸡蛋羹"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-342-howtocook-real_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-342-howtocook-real_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-04-14T00:00:00Z",
+      "sourceType": "howtocook_real_local",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/鸡蛋羹/鸡蛋羹.jpg",
+      "sourceRecipeName": "鸡蛋羹"
+    }
+  ]
+}

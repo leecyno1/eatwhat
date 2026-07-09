@@ -1,0 +1,100 @@
+[
+  {
+    "id": "aquatic",
+    "label": "aquatic",
+    "type": "category",
+    "color": "0xFF4CAF50",
+    "icon": "default"
+  },
+  {
+    "id": "小龙虾",
+    "label": "小龙虾",
+    "type": "category",
+    "color": "0xFF4CAF50",
+    "icon": "default"
+  },
+  {
+    "id": "spicy",
+    "label": "辣",
+    "type": "flavor",
+    "color": "0xFFF44336",
+    "icon": "chili"
+  },
+  {
+    "id": "sweet",
+    "label": "甜",
+    "type": "flavor",
+    "color": "0xFFFF9800",
+    "icon": "candy"
+  },
+  {
+    "id": "sour",
+    "label": "酸",
+    "type": "flavor",
+    "color": "0xFFCDDC39",
+    "icon": "lemon"
+  },
+  {
+    "id": "salty",
+    "label": "咸",
+    "type": "flavor",
+    "color": "0xFF9E9E9E",
+    "icon": "salt"
+  },
+  {
+    "id": "low_carb",
+    "label": "低碳",
+    "type": "nutrition",
+    "color": "0xFF8BC34A",
+    "icon": "leaf"
+  },
+  {
+    "id": "high_protein",
+    "label": "高蛋白",
+    "type": "nutrition",
+    "color": "0xFF2196F3",
+    "icon": "muscle"
+  },
+  {
+    "id": "noodle",
+    "label": "面食",
+    "type": "category",
+    "color": "0xFFFFC107",
+    "icon": "bowl"
+  },
+  {
+    "id": "rice",
+    "label": "米饭",
+    "type": "category",
+    "color": "0xFFFFFFFF",
+    "icon": "rice"
+  },
+  {
+    "id": "chicken",
+    "label": "鸡肉",
+    "type": "ingredient",
+    "color": "0xFFFFE082",
+    "icon": "chicken"
+  },
+  {
+    "id": "beef",
+    "label": "牛肉",
+    "type": "ingredient",
+    "color": "0xFF795548",
+    "icon": "cow"
+  },
+  {
+    "id": "pork",
+    "label": "猪肉",
+    "type": "ingredient",
+    "color": "0xFFF48FB1",
+    "icon": "pig"
+  },
+  {
+    "id": "seafood",
+    "label": "海鲜",
+    "type": "ingredient",
+    "color": "0xFF29B6F6",
+    "icon": "fish"
+  }
+]
