@@ -1,5 +1,0 @@
-
-module rive_common.Swift {
-  header "rive_common-Swift.h"
-  requires objc
-}

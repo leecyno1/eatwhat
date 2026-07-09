@@ -1,4 +1,0 @@
-
-module rive_common.__Swift {
-  exclude header "rive_common-Swift.h"
-}

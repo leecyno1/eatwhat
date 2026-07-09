@@ -10,7 +10,13 @@
 .history
 .svn/
 .swiftpm/
+.codex-artifacts/
+tmp/
 migrate_working_dir/
+
+# Root-level generated data snapshots; keep app assets under assets/data tracked.
+/*.db
+/*_report_*.json
 
 # IntelliJ related
 *.iml
@@ -32,6 +38,7 @@ migrate_working_dir/
 .pub-cache/
 .pub/
 /build/
+**/build/
 
 # Symbolication related
 app.*.symbols
