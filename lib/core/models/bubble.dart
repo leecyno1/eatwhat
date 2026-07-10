@@ -8,6 +8,12 @@ enum BubbleType {
   ingredient, // 食材
   scenario, // 情境
   nutrition, // 营养
+  spicy, // 辣
+  sweet, // 甜
+  sour, // 酸
+  bitter, // 苦
+  salty, // 咸
+  umami, // 鲜
 }
 
 /// 气泡手势枚举
@@ -109,7 +115,7 @@ class Bubble {
       'name': name,
       'icon': icon,
       'description': description,
-      'color': color.value, // TODO: Replace with color.value when Flutter team provides proper alternative
+      'color': color.toString(),
       'size': size,
       'weight': weight,
       'isSelected': isSelected,

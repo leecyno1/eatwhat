@@ -65,7 +65,7 @@ class RouteAnimations {
     Widget child,
   ) {
     const curve = Curves.easeInOutBack;
-    
+
     var tween = Tween(begin: 0.0, end: 1.0).chain(
       CurveTween(curve: curve),
     );
@@ -136,7 +136,7 @@ class RouteAnimations {
             curve: Curves.easeInOutCubic,
           ),
         );
-        
+
         return Transform(
           alignment: Alignment.center,
           transform: Matrix4.identity()

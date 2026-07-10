@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:glassmorphism/glassmorphism.dart';
+import '../../../shared/themes/design_tokens.dart';
+import '../../../shared/widgets/ui/rounded_card.dart';
 
 /// 用户个人资料页面
 class UserProfileScreen extends StatefulWidget {
@@ -10,8 +11,7 @@ class UserProfileScreen extends StatefulWidget {
   State<UserProfileScreen> createState() => _UserProfileScreenState();
 }
 
-class _UserProfileScreenState extends State<UserProfileScreen>
-    with TickerProviderStateMixin {
+class _UserProfileScreenState extends State<UserProfileScreen> with TickerProviderStateMixin {
   late AnimationController _headerController;
   late AnimationController _contentController;
   late Animation<double> _headerAnimation;
@@ -20,17 +20,17 @@ class _UserProfileScreenState extends State<UserProfileScreen>
   @override
   void initState() {
     super.initState();
-    
+
     _headerController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _contentController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-    
+
     _headerAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -38,7 +38,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
       parent: _headerController,
       curve: Curves.easeOutCubic,
     ));
-    
+
     _contentAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -46,7 +46,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
       parent: _contentController,
       curve: Curves.easeOutCubic,
     ));
-    
+
     _headerController.forward();
     Future.delayed(const Duration(milliseconds: 200), () {
       _contentController.forward();
@@ -63,25 +63,21 @@ class _UserProfileScreenState extends State<UserProfileScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
       appBar: _buildAppBar(),
-      body: Container(
-        decoration: _buildBackgroundDecoration(),
-        child: SafeArea(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(20.w),
-            child: Column(
-              children: [
-                SizedBox(height: 20.h),
-                _buildProfileHeader(),
-                SizedBox(height: 30.h),
-                _buildProfileStats(),
-                SizedBox(height: 20.h),
-                _buildSettingsSection(),
-                SizedBox(height: 20.h),
-                _buildActionButtons(),
-              ],
-            ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(20.w),
+          child: Column(
+            children: [
+              SizedBox(height: 8.h),
+              _buildProfileHeader(),
+              SizedBox(height: 20.h),
+              _buildProfileStats(),
+              SizedBox(height: 20.h),
+              _buildSettingsSection(),
+              SizedBox(height: 20.h),
+              _buildActionButtons(),
+            ],
           ),
         ),
       ),
@@ -89,34 +85,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
   }
 
   PreferredSizeWidget _buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.transparent,
-      elevation: 0,
-      leading: IconButton(
-        icon: Container(
-          padding: EdgeInsets.all(8.w),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.2),
-            borderRadius: BorderRadius.circular(12.r),
-          ),
-          child: Icon(
-            Icons.arrow_back_ios_new,
-            color: Colors.white,
-            size: 20.sp,
-          ),
-        ),
-        onPressed: () => Navigator.of(context).pop(),
-      ),
-      title: Text(
-        '个人资料',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 20.sp,
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-      centerTitle: true,
-    );
+    return AppBar(title: const Text('个人资料'));
   }
 
   Widget _buildProfileHeader() {
@@ -131,71 +100,43 @@ class _UserProfileScreenState extends State<UserProfileScreen>
               width: double.infinity,
               padding: EdgeInsets.all(24.w),
               decoration: BoxDecoration(
+                color: DesignTokens.surface,
                 borderRadius: BorderRadius.circular(24.r),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.3),
-                  width: 1,
-                ),
+                boxShadow: DesignTokens.softShadows(),
               ),
-              child: GlassmorphicContainer(
-                width: double.infinity,
-                height: 200.h,
-                borderRadius: 24.r,
-                linearGradient: LinearGradient(
-                  colors: [
-                    Colors.white.withValues(alpha: 0.2),
-                    Colors.white.withValues(alpha: 0.1),
-                  ],
-                ),
-                border: 0,
-                borderGradient: const LinearGradient(
-                  colors: [Colors.transparent, Colors.transparent],
-                ),
-                blur: 20.0,
-                child: Column(
-                  children: [
-                    Container(
-                      width: 80.w,
-                      height: 80.w,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        gradient: LinearGradient(
-                          colors: [
-                            Colors.purple.withValues(alpha: 0.8),
-                            Colors.blue.withValues(alpha: 0.8),
-                          ],
-                        ),
-                        border: Border.all(
-                          color: Colors.white,
-                          width: 3,
-                        ),
+              child: Column(
+                children: [
+                  Container(
+                    width: 80.w,
+                    height: 80.w,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.purple.withValues(alpha: 0.8),
+                          Colors.blue.withValues(alpha: 0.8),
+                        ],
                       ),
-                      child: Icon(
-                        Icons.person,
+                      border: Border.all(
                         color: Colors.white,
-                        size: 40.sp,
+                        width: 3,
                       ),
                     ),
-                    SizedBox(height: 16.h),
-                    Text(
-                      '美食探索者',
+                    child: Icon(
+                      Icons.person,
+                      color: Colors.white,
+                      size: 40.sp,
+                    ),
+                  ),
+                  SizedBox(height: 16.h),
+                  Text('美食探索者',
                       style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(height: 8.h),
-                    Text(
-                      '探索美食的世界，发现生活的美好',
-                      style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.8),
-                        fontSize: 14.sp,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ],
-                ),
+                          color: DesignTokens.ink, fontSize: 20.sp, fontWeight: FontWeight.bold)),
+                  SizedBox(height: 8.h),
+                  Text('探索美食的世界，发现生活的美好',
+                      style: TextStyle(color: DesignTokens.inkMuted, fontSize: 14.sp),
+                      textAlign: TextAlign.center),
+                ],
               ),
             ),
           ),
@@ -228,56 +169,32 @@ class _UserProfileScreenState extends State<UserProfileScreen>
   }
 
   Widget _buildStatCard(String title, String value, IconData icon) {
-    return Container(
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.3),
-          width: 1,
-        ),
-      ),
-      child: GlassmorphicContainer(
-        width: double.infinity,
-        height: 80.h,
-        borderRadius: 16.r,
-        linearGradient: LinearGradient(
-          colors: [
-            Colors.white.withValues(alpha: 0.15),
-            Colors.white.withValues(alpha: 0.05),
-          ],
-        ),
-        border: 0,
-        borderGradient: const LinearGradient(
-          colors: [Colors.transparent, Colors.transparent],
-        ),
-        blur: 15.0,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              color: Colors.white,
-              size: 24.sp,
+    return RoundedCard(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            icon,
+            color: DesignTokens.mint,
+            size: 24.sp,
+          ),
+          SizedBox(height: 8.h),
+          Text(
+            value,
+            style: TextStyle(
+              color: DesignTokens.ink,
+              fontSize: 18.sp,
+              fontWeight: FontWeight.bold,
             ),
-            SizedBox(height: 8.h),
-            Text(
-              value,
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 18.sp,
-                fontWeight: FontWeight.bold,
-              ),
+          ),
+          Text(
+            title,
+            style: TextStyle(
+              color: DesignTokens.inkMuted,
+              fontSize: 12.sp,
             ),
-            Text(
-              title,
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.8),
-                fontSize: 12.sp,
-              ),
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -298,53 +215,25 @@ class _UserProfileScreenState extends State<UserProfileScreen>
           offset: Offset(0, 50 * (1 - _contentAnimation.value)),
           child: Opacity(
             opacity: _contentAnimation.value,
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20.r),
-                border: Border.all(
-                  color: Colors.white.withValues(alpha: 0.3),
-                  width: 1,
-                ),
-              ),
-              child: GlassmorphicContainer(
-                width: double.infinity,
-                height: (settings.length * 60).toDouble(),
-                borderRadius: 20.r,
-                linearGradient: LinearGradient(
-                  colors: [
-                    Colors.white.withValues(alpha: 0.15),
-                    Colors.white.withValues(alpha: 0.05),
-                  ],
-                ),
-                border: 0,
-                borderGradient: const LinearGradient(
-                  colors: [Colors.transparent, Colors.transparent],
-                ),
-                blur: 20.0,
-                child: Column(
-                  children: settings.map((setting) {
-                    return ListTile(
-                      leading: Icon(
-                        setting['icon'] as IconData,
-                        color: Colors.white,
-                        size: 24.sp,
-                      ),
-                      title: Text(
-                        setting['title'] as String,
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16.sp,
-                        ),
-                      ),
-                      trailing: Icon(
-                        Icons.arrow_forward_ios,
-                        color: Colors.white.withValues(alpha: 0.6),
-                        size: 16.sp,
-                      ),
-                      onTap: setting['onTap'] as VoidCallback,
-                    );
-                  }).toList(),
-                ),
+            child: RoundedCard(
+              child: Column(
+                children: settings.map((setting) {
+                  return ListTile(
+                    leading: Icon(
+                      setting['icon'] as IconData,
+                      color: DesignTokens.ink,
+                      size: 24.sp,
+                    ),
+                    title: Text(
+                      setting['title'] as String,
+                      style: TextStyle(
+                          color: DesignTokens.ink, fontSize: 16.sp, fontWeight: FontWeight.w600),
+                    ),
+                    trailing: Icon(Icons.chevron_right_rounded,
+                        color: DesignTokens.inkMuted, size: 18.sp),
+                    onTap: setting['onTap'] as VoidCallback,
+                  );
+                }).toList(),
               ),
             ),
           ),
@@ -416,19 +305,7 @@ class _UserProfileScreenState extends State<UserProfileScreen>
   }
 
   BoxDecoration _buildBackgroundDecoration() {
-    return const BoxDecoration(
-      gradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Color(0xFF667eea),
-          Color(0xFF764ba2),
-          Color(0xFFf093fb),
-          Color(0xFFf5576c),
-        ],
-        stops: [0.0, 0.3, 0.7, 1.0],
-      ),
-    );
+    return const BoxDecoration(color: DesignTokens.cream);
   }
 
   void _logout() {

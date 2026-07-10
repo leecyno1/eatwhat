@@ -3,11 +3,11 @@ import 'dart:math';
 
 /// 物理实体类型
 enum PhysicalEntityType {
-  taste,      // 口味类
-  cuisine,    // 菜系类
+  taste, // 口味类
+  cuisine, // 菜系类
   ingredient, // 食材类
-  scenario,   // 场景类
-  nutrition,  // 营养类
+  scenario, // 场景类
+  nutrition, // 营养类
 }
 
 /// 物理实体模型 - 用于替代气泡，具有真实的物理属性
@@ -16,32 +16,32 @@ class PhysicalEntity {
   final String name;
   final String description;
   final PhysicalEntityType type;
-  final String emoji;        // 实体表情符号
-  final String? icon;        // 可选图标
-  final Color primaryColor;  // 主色调
+  final String emoji; // 实体表情符号
+  final String? icon; // 可选图标
+  final Color primaryColor; // 主色调
   final Color secondaryColor; // 辅助色调
-  
+
   // 物理属性
-  final double mass;         // 质量 (影响碰撞反应)
-  final double radius;       // 半径 (碰撞检测范围)
-  final double width;        // 宽度 (四边形实体)
-  final double height;       // 高度 (四边形实体)
-  final double bounciness;   // 弹性系数 (0-1)
-  final double friction;     // 摩擦系数 (0-1)
-  
+  final double mass; // 质量 (影响碰撞反应)
+  final double radius; // 半径 (碰撞检测范围)
+  final double width; // 宽度 (四边形实体)
+  final double height; // 高度 (四边形实体)
+  final double bounciness; // 弹性系数 (0-1)
+  final double friction; // 摩擦系数 (0-1)
+
   // 运动状态
-  Offset position;           // 当前位置
-  Offset velocity;           // 速度向量
-  Offset acceleration;       // 加速度向量
-  double rotation;           // 旋转角度
-  double angularVelocity;    // 角速度
-  
+  Offset position; // 当前位置
+  Offset velocity; // 速度向量
+  Offset acceleration; // 加速度向量
+  double rotation; // 旋转角度
+  double angularVelocity; // 角速度
+
   // 交互状态
   bool isSelected;
   bool isHighlighted;
   double opacity;
   DateTime lastInteraction;
-  
+
   PhysicalEntity({
     required this.id,
     required this.name,
@@ -128,19 +128,19 @@ class PhysicalEntity {
       velocity.dx + acceleration.dx * deltaTime,
       velocity.dy + acceleration.dy * deltaTime,
     );
-    
+
     // 应用摩擦力
     velocity = Offset(
       velocity.dx * (1.0 - friction),
       velocity.dy * (1.0 - friction),
     );
-    
+
     // 更新位置 (p = p0 + v*t)
     position = Offset(
       position.dx + velocity.dx * deltaTime,
       position.dy + velocity.dy * deltaTime,
     );
-    
+
     // 更新旋转
     angularVelocity *= (1.0 - friction); // 角摩擦
     rotation += angularVelocity * deltaTime;
@@ -159,32 +159,32 @@ class PhysicalEntity {
       // 计算碰撞向量
       final collisionVector = other.position - position;
       final normalizedCollision = collisionVector / distance;
-      
+
       // 分离重叠的实体
       final overlap = (radius + other.radius) - distance;
       final separation = normalizedCollision * (overlap / 2);
       position = position - separation;
       other.position = other.position + separation;
-      
+
       // 计算相对速度
       final relativeVelocity = velocity - other.velocity;
-      final velocityAlongNormal = relativeVelocity.dx * normalizedCollision.dx + 
-                                 relativeVelocity.dy * normalizedCollision.dy;
-      
+      final velocityAlongNormal = relativeVelocity.dx * normalizedCollision.dx +
+          relativeVelocity.dy * normalizedCollision.dy;
+
       // 如果物体正在分离，不需要处理碰撞
       if (velocityAlongNormal > 0) return;
-      
+
       // 计算反弹系数
       final restitution = min(bounciness, other.bounciness);
-      
+
       // 计算碰撞冲量
-      final impulse = -(1 + restitution) * velocityAlongNormal / (1/mass + 1/other.mass);
-      
+      final impulse = -(1 + restitution) * velocityAlongNormal / (1 / mass + 1 / other.mass);
+
       // 应用冲量
       final impulseVector = normalizedCollision * impulse;
       velocity = velocity + impulseVector / mass;
       other.velocity = other.velocity - impulseVector / other.mass;
-      
+
       // 添加一些旋转效果
       angularVelocity += (Random().nextDouble() - 0.5) * 5;
       other.angularVelocity += (Random().nextDouble() - 0.5) * 5;
@@ -199,21 +199,21 @@ class PhysicalEntity {
       velocity = Offset(-velocity.dx * bounciness, velocity.dy);
       angularVelocity = -angularVelocity * 0.8;
     }
-    
+
     // 右边界
     if (position.dx + radius > containerSize.width) {
       position = Offset(containerSize.width - radius, position.dy);
       velocity = Offset(-velocity.dx * bounciness, velocity.dy);
       angularVelocity = -angularVelocity * 0.8;
     }
-    
+
     // 上边界
     if (position.dy - radius < 0) {
       position = Offset(position.dx, radius);
       velocity = Offset(velocity.dx, -velocity.dy * bounciness);
       angularVelocity = -angularVelocity * 0.8;
     }
-    
+
     // 下边界
     if (position.dy + radius > containerSize.height) {
       position = Offset(position.dx, containerSize.height - radius);

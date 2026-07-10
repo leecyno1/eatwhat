@@ -9,17 +9,21 @@ import '../../../shared/widgets/like_dislike_controls.dart';
 // 暂时移除动态主题服务以解决气泡乱窜问题
 // import '../../../core/theme/dynamic_theme_service.dart';
 import '../../../core/models/food.dart';
+import '../../../core/services/recommendation_engine.dart';
+import '../widgets/recommendation_showcase.dart';
 import '../../../core/models/physical_entity.dart';
 
 /// 增强版推荐界面 - 匹配主界面风格
 class EnhancedRecommendationScreen extends StatefulWidget {
-  final List<Food> recommendedFoods;
+  final List<Food> recommendedFoods; // 旧纯 Food 列表兼容
+  final List<ScoredFood>? scoredFoods; // 新增：带分数与拆解
   final List<PhysicalEntity> selectedPreferences;
 
   const EnhancedRecommendationScreen({
     super.key,
     required this.recommendedFoods,
     required this.selectedPreferences,
+    this.scoredFoods,
   });
 
   @override
@@ -32,10 +36,10 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
   late AnimationController _listController;
   late Animation<double> _backgroundAnimation;
   late Animation<double> _listAnimation;
-  
+
   // 动态主题服务 - 暂时禁用
   // late DynamicThemeService _themeService;
-  
+
   // 分页控制
   final PageController _pageController = PageController();
   int _currentPage = 0;
@@ -43,22 +47,22 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
   @override
   void initState() {
     super.initState();
-    
+
     // 初始化动态主题服务 - 暂时禁用
     // _themeService = DynamicThemeService();
-    
+
     // 背景动画控制器（呼吸效果）
     _backgroundController = AnimationController(
       duration: const Duration(seconds: 4),
       vsync: this,
     )..repeat(reverse: true);
-    
+
     // 列表动画控制器
     _listController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    
+
     _backgroundAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -66,7 +70,7 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
       parent: _backgroundController,
       curve: Curves.easeInOut,
     ));
-    
+
     _listAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -74,7 +78,7 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
       parent: _listController,
       curve: Curves.elasticOut,
     ));
-    
+
     // 启动列表动画
     _listController.forward();
   }
@@ -96,7 +100,7 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
                       end: Alignment.bottomRight,
                       colors: [
                         Color(0xFFFFFFF8), // 固定淡色背景
-                        Color(0xFFFFFAE6), 
+                        Color(0xFFFFFAE6),
                         Color(0xFFFFF8DC),
                       ],
                     ),
@@ -106,15 +110,22 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
                       children: [
                         // 顶部区域：标题 + 控制
                         _buildTopSection(),
-                        
+
                         // 偏好标签区域
                         _buildPreferencesSection(),
-                        
-                        // 推荐结果区域
+
+                        // 推荐结果区域 (若有 scoredFoods 则展示 Showcase)
                         Expanded(
-                          child: _buildRecommendationsSection(),
+                          child: widget.scoredFoods != null && widget.scoredFoods!.isNotEmpty
+                              ? Padding(
+                                  padding: const EdgeInsets.only(top: 8.0),
+                                  child: RecommendationShowcase(
+                                    scoredFoods: widget.scoredFoods!,
+                                  ),
+                                )
+                              : _buildRecommendationsSection(),
                         ),
-                        
+
                         // 底部操作区域
                         _buildBottomSection(),
                       ],
@@ -169,18 +180,18 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
               ),
             ],
           ),
-          
+
           const SizedBox(height: 20),
-          
+
           // 动画标题
           SimpleAnimatedTitle(
             title: '为您推荐',
             fontSize: 36,
             textColor: Colors.black87,
           ),
-          
+
           const SizedBox(height: 8),
-          
+
           // 副标题
           Text(
             '基于您的口味偏好精心挑选',
@@ -300,9 +311,7 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
                     ],
                   ),
                 ),
-                child: widget.recommendedFoods.isEmpty
-                    ? _buildEmptyState()
-                    : _buildFoodList(),
+                child: widget.recommendedFoods.isEmpty ? _buildEmptyState() : _buildFoodList(),
               ),
             ),
           ),
@@ -325,14 +334,14 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
         final startIndex = pageIndex * 2;
         final endIndex = (startIndex + 2).clamp(0, widget.recommendedFoods.length);
         final pageItems = widget.recommendedFoods.sublist(startIndex, endIndex);
-        
+
         return Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
             children: pageItems.asMap().entries.map((entry) {
               final itemIndex = entry.key;
               final food = entry.value;
-              
+
               return Expanded(
                 child: AnimatedContainer(
                   duration: Duration(milliseconds: 300 + itemIndex * 100),
@@ -409,9 +418,9 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
                 ),
               ),
             ),
-          
+
           const SizedBox(height: 16),
-          
+
           // 操作按钮
           Row(
             children: [
@@ -424,9 +433,9 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
                   onPressed: () => Navigator.pop(context),
                 ),
               ),
-              
+
               const SizedBox(width: 16),
-              
+
               // 查看详情按钮
               Expanded(
                 flex: 2,
@@ -434,9 +443,8 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
                   text: '查看全部',
                   icon: Icons.list_alt,
                   color: const Color(0xFFFFD700),
-                  onPressed: widget.recommendedFoods.isNotEmpty
-                      ? () => _showAllRecommendations()
-                      : null,
+                  onPressed:
+                      widget.recommendedFoods.isNotEmpty ? () => _showAllRecommendations() : null,
                 ),
               ),
             ],
@@ -454,7 +462,7 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
     VoidCallback? onPressed,
   }) {
     final isEnabled = onPressed != null;
-    
+
     return ElevatedButton.icon(
       onPressed: onPressed,
       icon: Icon(

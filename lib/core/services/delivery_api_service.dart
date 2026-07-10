@@ -9,7 +9,16 @@ import '../models/restaurant.dart';
 class DeliveryApiService {
   static const String _baseUrl = 'https://www.themealdb.com/api/json/v1/1/';
   static const List<String> _chineseCuisines = ['川菜', '粤菜', '湘菜', '鲁菜', '苏菜', '浙菜', '闽菜', '徽菜'];
-  static const List<String> _restaurantTypes = ['中餐厅', '快餐店', '火锅店', '烧烤店', '面馆', '米粉店', '饺子馆', '茶餐厅'];
+  static const List<String> _restaurantTypes = [
+    '中餐厅',
+    '快餐店',
+    '火锅店',
+    '烧烤店',
+    '面馆',
+    '米粉店',
+    '饺子馆',
+    '茶餐厅'
+  ];
 
   /// 根据关键词搜索菜品
   Future<List<FoodItem>> searchFood(String query) async {
@@ -80,23 +89,24 @@ class DeliveryApiService {
     int pageSize = 10,
   }) async {
     debugPrint('正在搜索餐厅: $keyword, 位置: ($latitude, $longitude)');
-    
+
     // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 500));
-    
+
     final random = Random();
     final restaurants = <Restaurant>[];
-    
+
     // 生成模拟餐厅数据
     for (int i = 0; i < pageSize; i++) {
       final restaurantType = _restaurantTypes[random.nextInt(_restaurantTypes.length)];
       final cuisine = _chineseCuisines[random.nextInt(_chineseCuisines.length)];
-      
+
       restaurants.add(Restaurant(
         id: 'restaurant_${random.nextInt(10000)}',
         name: '${_generateRestaurantName()}$restaurantType',
         description: '正宗$cuisine，新鲜食材，快速配送',
-        address: '${_generateAddress()} (距离${(random.nextDouble() * 3 + 0.5).toStringAsFixed(1)}km)',
+        address:
+            '${_generateAddress()} (距离${(random.nextDouble() * 3 + 0.5).toStringAsFixed(1)}km)',
         latitude: latitude + (random.nextDouble() - 0.5) * 0.02,
         longitude: longitude + (random.nextDouble() - 0.5) * 0.02,
         rating: 4.0 + random.nextDouble(),
@@ -109,42 +119,43 @@ class DeliveryApiService {
         tags: _generateRestaurantTags(keyword),
       ));
     }
-    
+
     // 根据关键词过滤
     if (keyword.isNotEmpty) {
-      return restaurants.where((r) => 
-        r.name.contains(keyword) || 
-        r.categories.any((c) => c.contains(keyword)) ||
-        r.tags.any((t) => t.contains(keyword))
-      ).toList();
+      return restaurants
+          .where((r) =>
+              r.name.contains(keyword) ||
+              r.categories.any((c) => c.contains(keyword)) ||
+              r.tags.any((t) => t.contains(keyword)))
+          .toList();
     }
-    
+
     return restaurants;
   }
-  
+
   /// 生成餐厅名称
   String _generateRestaurantName() {
     final prefixes = ['老', '新', '金', '银', '红', '绿', '大', '小', '正宗', '美味'];
     final names = ['川香', '湘味', '粤式', '家常', '特色', '经典', '传统', '创新'];
     final random = Random();
-    
+
     return '${prefixes[random.nextInt(prefixes.length)]}${names[random.nextInt(names.length)]}';
   }
-  
+
   /// 生成地址
   String _generateAddress() {
     final districts = ['朝阳区', '海淀区', '西城区', '东城区', '丰台区', '石景山区'];
     final streets = ['中关村大街', '王府井大街', '西单北大街', '建国门外大街', '复兴路', '长安街'];
     final random = Random();
-    
+
     return '${districts[random.nextInt(districts.length)]}${streets[random.nextInt(streets.length)]}${random.nextInt(999) + 1}号';
   }
-  
+
   /// 生成餐厅标签
   List<String> _generateRestaurantTags(String keyword) {
     final baseTags = ['快速配送', '新鲜食材', '口味正宗', '性价比高'];
     final keywordTags = <String>[];
-    
+
     if (keyword.contains('辣') || keyword.contains('川') || keyword.contains('湘')) {
       keywordTags.addAll(['麻辣', '香辣', '特辣']);
     }
@@ -154,30 +165,30 @@ class DeliveryApiService {
     if (keyword.contains('快餐') || keyword.contains('便当')) {
       keywordTags.addAll(['快餐', '便当', '简餐']);
     }
-    
+
     final allTags = [...baseTags, ...keywordTags];
     final random = Random();
     allTags.shuffle(random);
-    
+
     return allTags.take(3).toList();
   }
 
   /// 获取餐厅菜单 - 模拟实现
   Future<List<FoodItem>> getRestaurantMenu(String restaurantId) async {
     debugPrint('获取餐厅菜单: $restaurantId');
-    
+
     // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 300));
-    
+
     final random = Random();
     final menuItems = <FoodItem>[];
-    
+
     // 根据餐厅ID生成不同类型的菜单
     final menuCategories = _getMenuCategories(restaurantId);
-    
+
     for (final category in menuCategories) {
       final itemsInCategory = 3 + random.nextInt(5); // 每个类别3-7个菜品
-      
+
       for (int i = 0; i < itemsInCategory; i++) {
         menuItems.add(FoodItem(
           id: '${restaurantId}_${category}_$i',
@@ -190,18 +201,18 @@ class DeliveryApiService {
           restaurantId: restaurantId,
           rating: 4.0 + random.nextDouble(),
           isRecommended: random.nextDouble() < 0.3, // 30%概率推荐
-          calories: 200 + random.nextInt(600),
+          calories: (200 + random.nextInt(600)).toDouble(),
           tasteAttributes: _generateDishTags(category),
           salesCount: random.nextInt(500) + 10, // 销量10-510
         ));
       }
     }
-    
+
     // 随机打乱顺序，模拟真实菜单
     menuItems.shuffle(random);
     return menuItems;
   }
-  
+
   /// 获取菜单类别
   List<String> _getMenuCategories(String restaurantId) {
     if (restaurantId.contains('川菜') || restaurantId.contains('湘菜')) {
@@ -216,7 +227,7 @@ class DeliveryApiService {
       return ['热菜', '凉菜', '主食', '汤类'];
     }
   }
-  
+
   /// 生成菜品名称
   String _generateDishName(String category) {
     final dishes = {
@@ -231,12 +242,12 @@ class DeliveryApiService {
       '面条': ['牛肉面', '西红柿鸡蛋面', '炸酱面', '担担面', '酸辣面'],
       '饮品': ['柠檬蜂蜜茶', '原味奶茶', '鲜橙汁', '绿豆汤', '银耳汤'],
     };
-    
+
     final categoryDishes = dishes[category] ?? dishes['热菜']!;
     final random = Random();
     return categoryDishes[random.nextInt(categoryDishes.length)];
   }
-  
+
   /// 生成菜品描述
   String _generateDishDescription(String category) {
     final descriptions = [
@@ -247,11 +258,11 @@ class DeliveryApiService {
       '招牌特色，不容错过',
       '健康美味，老少皆宜',
     ];
-    
+
     final random = Random();
     return descriptions[random.nextInt(descriptions.length)];
   }
-  
+
   /// 生成价格
   double _generatePrice(String category) {
     final priceRanges = {
@@ -266,20 +277,22 @@ class DeliveryApiService {
       '面条': [12.0, 25.0],
       '饮品': [5.0, 15.0],
     };
-    
+
     final range = priceRanges[category] ?? [10.0, 30.0];
     final random = Random();
     return range[0] + random.nextDouble() * (range[1] - range[0]);
   }
-  
+
   /// 生成原价
   double _generateOriginalPrice(String category) {
     final currentPrice = _generatePrice(category);
     final random = Random();
     // 20%概率有优惠
-    return random.nextDouble() < 0.2 ? currentPrice * (1.1 + random.nextDouble() * 0.3) : currentPrice;
+    return random.nextDouble() < 0.2
+        ? currentPrice * (1.1 + random.nextDouble() * 0.3)
+        : currentPrice;
   }
-  
+
   /// 生成菜品标签
   List<String> _generateDishTags(String category) {
     final tagsByCategory = {
@@ -292,8 +305,7 @@ class DeliveryApiService {
       '套餐': ['实惠', '丰富', '超值'],
       '饮品': ['解腻', '清甜', '解渴'],
     };
-    
+
     return tagsByCategory[category] ?? ['美味', '新鲜', '推荐'];
   }
-  
-} 
+}

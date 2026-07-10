@@ -5,6 +5,8 @@ import 'package:glassmorphism/glassmorphism.dart';
 
 import '../../../core/models/food.dart';
 import '../../../core/services/unified_food_data_service.dart';
+import '../../../core/services/user_preference_manager.dart'
+    show UserActionType;
 
 /// 增强食物推荐卡片 - Phase 1 UI优化
 /// 支持玻璃态效果、动画、推荐原因显示等
@@ -105,14 +107,14 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
         children: [
           // 食物图片
           _buildFoodImage(),
-          
+
           const SizedBox(width: 12),
-          
+
           // 食物信息
           Expanded(
             child: _buildFoodInfo(context),
           ),
-          
+
           // 操作按钮
           _buildActionButtons(),
         ],
@@ -138,19 +140,21 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
         ),
         child: ClipRRect(
           borderRadius: BorderRadius.circular(12),
-          child: widget.food.imageUrl != null && widget.food.imageUrl!.isNotEmpty
-              ? CachedNetworkImage(
-                  imageUrl: widget.food.imageUrl!,
-                  fit: BoxFit.cover,
-                  placeholder: (context, url) => Container(
-                    color: Theme.of(context).primaryColor.withOpacity(0.1),
-                    child: const Center(
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    ),
-                  ),
-                  errorWidget: (context, url, error) => _buildPlaceholderImage(),
-                )
-              : _buildPlaceholderImage(),
+          child:
+              widget.food.imageUrl != null && widget.food.imageUrl!.isNotEmpty
+                  ? CachedNetworkImage(
+                      imageUrl: widget.food.imageUrl!,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: Theme.of(context).primaryColor.withOpacity(0.1),
+                        child: const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) =>
+                          _buildPlaceholderImage(),
+                    )
+                  : _buildPlaceholderImage(),
         ),
       ),
     );
@@ -169,7 +173,7 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
 
   Widget _buildFoodInfo(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -187,7 +191,6 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
             ),
-            
             if (!widget.compactMode) ...[
               const SizedBox(height: 4),
               Text(
@@ -199,12 +202,11 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
                 overflow: TextOverflow.ellipsis,
               ),
             ],
-            
             const SizedBox(height: 6),
             _buildTags(context),
           ],
         ),
-        
+
         // 评分和其他信息
         _buildMetadata(context),
       ],
@@ -212,9 +214,10 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
   }
 
   Widget _buildTags(BuildContext context) {
-    final visibleTags = widget.food.tasteAttributes.take(3).toList();
+    final visibleTags =
+        (widget.food.tasteAttributes ?? const <String>[]).take(3).toList();
     if (visibleTags.isEmpty) return const SizedBox.shrink();
-    
+
     return Wrap(
       spacing: 4,
       runSpacing: 2,
@@ -236,10 +239,10 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
       child: Text(
         tag,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-          color: _getTagColor(tag),
-          fontSize: 10,
-          fontWeight: FontWeight.w500,
-        ),
+              color: _getTagColor(tag),
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
+            ),
       ),
     );
   }
@@ -277,11 +280,11 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
         Text(
           '${widget.food.rating.toStringAsFixed(1)}',
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            fontWeight: FontWeight.w500,
-            color: Theme.of(context).colorScheme.onSurface,
-          ),
+                fontWeight: FontWeight.w500,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
         ),
-        
+
         if (!widget.compactMode) ...[
           const SizedBox(width: 8),
           Container(
@@ -294,15 +297,17 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
           ),
           const SizedBox(width: 8),
           Text(
-            widget.food.cuisineType,
+            widget.food.cuisineType ?? '其他',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-            ),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                ),
           ),
         ],
-        
+
         // 推荐原因
-        if (widget.showRecommendationReason && widget.recommendationReason != null) ...[
+        if (widget.showRecommendationReason &&
+            widget.recommendationReason != null) ...[
           const Spacer(),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -313,10 +318,10 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
             child: Text(
               widget.recommendationReason!,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: Theme.of(context).primaryColor,
-                fontSize: 9,
-                fontWeight: FontWeight.w500,
-              ),
+                    color: Theme.of(context).primaryColor,
+                    fontSize: 9,
+                    fontWeight: FontWeight.w500,
+                  ),
             ),
           ),
         ],
@@ -351,7 +356,7 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
             .scale(begin: const Offset(1.0, 1.0), end: const Offset(1.2, 1.2))
             .then()
             .scale(begin: const Offset(1.2, 1.2), end: const Offset(1.0, 1.0)),
-        
+
         if (!widget.compactMode) ...[
           const SizedBox(height: 8),
           // 菜谱按钮
@@ -378,7 +383,7 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
   Future<void> _toggleFavorite() async {
     // 添加触觉反馈
     // HapticFeedback.lightImpact();
-    
+
     setState(() {
       _isFavorite = !_isFavorite;
     });
@@ -403,16 +408,16 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
   Future<void> _viewRecipe() async {
     try {
       final unifiedService = UnifiedFoodDataService();
-      
+
       // 记录查看行为
       await unifiedService.recordUserAction(
         widget.food.id,
         UserActionType.view,
       );
-      
+
       // 获取详细菜谱信息
       final recipe = await unifiedService.getRecipeByFoodId(widget.food.id);
-      
+
       if (recipe != null && mounted) {
         // 这里可以导航到菜谱详情页
         // Navigator.of(context).push(...);

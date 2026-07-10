@@ -39,20 +39,20 @@ class _TextPhysicalEntityWidgetState extends State<TextPhysicalEntityWidget>
   late AnimationController _glowController;
   late AnimationController _floatController;
   late AnimationController _specialEffectController;
-  
+
   late Animation<double> _hoverAnimation;
   late Animation<double> _tapAnimation;
   late Animation<double> _glowAnimation;
   late Animation<double> _floatAnimation;
   late Animation<double> _specialEffectAnimation;
-  
+
   bool _isHovered = false;
   bool _isPressed = false;
 
   @override
   void initState() {
     super.initState();
-    
+
     // 悬停动画
     _hoverController = AnimationController(
       duration: const Duration(milliseconds: 200),
@@ -65,7 +65,7 @@ class _TextPhysicalEntityWidgetState extends State<TextPhysicalEntityWidget>
       parent: _hoverController,
       curve: Curves.easeOutCubic,
     ));
-    
+
     // 点击动画
     _tapController = AnimationController(
       duration: const Duration(milliseconds: 150),
@@ -78,7 +78,7 @@ class _TextPhysicalEntityWidgetState extends State<TextPhysicalEntityWidget>
       parent: _tapController,
       curve: Curves.easeOutCubic,
     ));
-    
+
     // 发光动画
     _glowController = AnimationController(
       duration: const Duration(milliseconds: 800),
@@ -91,7 +91,7 @@ class _TextPhysicalEntityWidgetState extends State<TextPhysicalEntityWidget>
       parent: _glowController,
       curve: Curves.easeInOut,
     ));
-    
+
     // 浮动动画
     _floatController = AnimationController(
       duration: const Duration(milliseconds: 3000),
@@ -104,7 +104,7 @@ class _TextPhysicalEntityWidgetState extends State<TextPhysicalEntityWidget>
       parent: _floatController,
       curve: Curves.linear,
     ));
-    
+
     // 特殊效果动画（如热气、闪光等）
     _specialEffectController = AnimationController(
       duration: const Duration(milliseconds: 2000),
@@ -117,11 +117,11 @@ class _TextPhysicalEntityWidgetState extends State<TextPhysicalEntityWidget>
       parent: _specialEffectController,
       curve: Curves.easeInOut,
     ));
-    
+
     // 禁用所有无限循环动画以解决乱窜问题
     // _floatController.repeat();
     // _specialEffectController.repeat();
-    
+
     // 禁用发光动画
     /*
     if (widget.isSelected) {
@@ -133,7 +133,7 @@ class _TextPhysicalEntityWidgetState extends State<TextPhysicalEntityWidget>
   @override
   void didUpdateWidget(TextPhysicalEntityWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     // 禁用动画更新
     /*
     if (widget.isSelected != oldWidget.isSelected) {
@@ -160,7 +160,7 @@ class _TextPhysicalEntityWidgetState extends State<TextPhysicalEntityWidget>
   @override
   Widget build(BuildContext context) {
     final size = widget.entity.radius * 2 * widget.scale;
-    
+
     return AnimatedBuilder(
       animation: Listenable.merge([
         _hoverAnimation,
@@ -174,7 +174,7 @@ class _TextPhysicalEntityWidgetState extends State<TextPhysicalEntityWidget>
         final hoverScale = 1.0; // 禁用悬停缩放
         final tapScale = _tapAnimation.value; // 保留点击反馈
         final glowRadius = 0.0; // 禁用发光效果
-        
+
         return Transform.translate(
           offset: Offset(0, floatOffset),
           child: Transform.scale(
@@ -196,7 +196,7 @@ class _TextPhysicalEntityWidgetState extends State<TextPhysicalEntityWidget>
                     children: [
                       // 特殊效果层（热气、闪光等）
                       _buildSpecialEffects(),
-                      
+
                       // 外层发光效果
                       if (widget.isSelected || _isHovered || widget.isLiked)
                         Container(
@@ -213,18 +213,16 @@ class _TextPhysicalEntityWidgetState extends State<TextPhysicalEntityWidget>
                             ],
                           ),
                         ),
-                      
+
                       // 主体文字背景
                       _buildTextBackground(),
-                      
+
                       // 文字内容
                       _buildTextContent(),
-                      
+
                       // 状态指示器
-                      if (widget.isLiked)
-                        _buildStatusIndicator(Icons.thumb_up, Colors.green),
-                      if (widget.isDisliked)
-                        _buildStatusIndicator(Icons.thumb_down, Colors.red),
+                      if (widget.isLiked) _buildStatusIndicator(Icons.thumb_up, Colors.green),
+                      if (widget.isDisliked) _buildStatusIndicator(Icons.thumb_down, Colors.red),
                       if (widget.isSelected && !widget.isLiked && !widget.isDisliked)
                         _buildStatusIndicator(Icons.check, Colors.blue),
                     ],
@@ -468,7 +466,7 @@ class _TextPhysicalEntityWidgetState extends State<TextPhysicalEntityWidget>
     setState(() {
       _isHovered = isHovered;
     });
-    
+
     if (isHovered) {
       _hoverController.forward();
     } else {
@@ -490,13 +488,13 @@ class HeatEffectPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final center = Offset(size.width / 2, size.height / 2);
-    
+
     // 绘制上升的热气波浪
     for (int i = 0; i < 3; i++) {
       final waveOffset = (progress + i * 0.3) % 1.0;
       final y = center.dy - (waveOffset * size.height * 0.6);
       final amplitude = 8.0 * (1.0 - waveOffset);
-      
+
       final path = Path();
       path.moveTo(center.dx - amplitude, y);
       path.quadraticBezierTo(
@@ -505,7 +503,7 @@ class HeatEffectPainter extends CustomPainter {
         center.dx + amplitude,
         y,
       );
-      
+
       canvas.drawPath(path, paint..color = Colors.red.withValues(alpha: 0.3 * (1.0 - waveOffset)));
     }
   }
@@ -537,7 +535,7 @@ class SparkleEffectPainter extends CustomPainter {
         center.dx + math.cos(angle) * radius,
         center.dy + math.sin(angle) * radius,
       );
-      
+
       final sparkleSize = 2 + math.sin(progress * 6 + i) * 1.5;
       canvas.drawCircle(sparkleCenter, sparkleSize, paint);
     }
@@ -561,12 +559,12 @@ class WaveEffectPainter extends CustomPainter {
       ..strokeWidth = 2.0;
 
     final center = Offset(size.width / 2, size.height / 2);
-    
+
     // 绘制扩散的波纹
     for (int i = 0; i < 3; i++) {
       final waveRadius = (progress + i * 0.3) % 1.0 * size.width * 0.6;
       final opacity = 1.0 - ((progress + i * 0.3) % 1.0);
-      
+
       canvas.drawCircle(
         center,
         waveRadius,
@@ -592,25 +590,25 @@ class AromaEffectPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     final center = Offset(size.width / 2, size.height / 2);
-    
+
     // 绘制螺旋上升的芳香线条
     for (int i = 0; i < 4; i++) {
       final spiralProgress = (progress + i * 0.25) % 1.0;
       final path = Path();
-      
+
       for (double t = 0; t <= spiralProgress; t += 0.1) {
         final angle = t * 4 * math.pi;
         final radius = 15 * (1.0 - t);
         final y = center.dy - t * size.height * 0.8;
         final x = center.dx + math.cos(angle) * radius;
-        
+
         if (t == 0) {
           path.moveTo(x, y);
         } else {
           path.lineTo(x, y);
         }
       }
-      
+
       canvas.drawPath(
         path,
         paint

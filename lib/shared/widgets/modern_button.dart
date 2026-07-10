@@ -39,8 +39,7 @@ class ModernButton extends StatefulWidget {
   State<ModernButton> createState() => _ModernButtonState();
 }
 
-class _ModernButtonState extends State<ModernButton>
-    with SingleTickerProviderStateMixin {
+class _ModernButtonState extends State<ModernButton> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
 
@@ -185,8 +184,9 @@ class _ModernButtonState extends State<ModernButton>
           ),
         );
       },
-    ).animate()
-      .fadeIn(duration: 300.ms)
-      .slideY(begin: 0.2, end: 0, duration: 300.ms, curve: Curves.easeOutCubic);
+    )
+        .animate()
+        .fadeIn(duration: 300.ms)
+        .slideY(begin: 0.2, end: 0, duration: 300.ms, curve: Curves.easeOutCubic);
   }
 }

@@ -3,8 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../controllers/bubble_controller.dart';
 import '../../recommendation/screens/recommendation_screen.dart';
-import '../../../shared/widgets/modern_bubble_widget.dart';
+import '../widgets/modern_bubble_widget.dart';
 import '../../../shared/widgets/modern_loading_animation.dart';
+import '../../../shared/widgets/loading_button.dart';
+import '../../../shared/themes/design_tokens.dart';
+import '../../../shared/widgets/ui/greeting_header.dart';
+import '../../../shared/widgets/ui/stat_pill.dart';
+import '../../../shared/widgets/ui/primary_cta_button.dart';
+import '../../../shared/widgets/preference_saved_toast.dart';
+import '../../../core/utils/analytics_helper.dart';
 
 /// 气泡主界面
 class BubbleScreen extends StatefulWidget {
@@ -14,8 +21,7 @@ class BubbleScreen extends StatefulWidget {
   State<BubbleScreen> createState() => _BubbleScreenState();
 }
 
-class _BubbleScreenState extends State<BubbleScreen>
-    with TickerProviderStateMixin {
+class _BubbleScreenState extends State<BubbleScreen> with TickerProviderStateMixin {
   late AnimationController _backgroundController;
   late Animation<Color?> _backgroundAnimation;
   bool _useEnhancedBubbles = true; // 控制是否使用增强气泡
@@ -23,6 +29,9 @@ class _BubbleScreenState extends State<BubbleScreen>
   @override
   void initState() {
     super.initState();
+
+    // 埋点：记录气泡页面进入
+    AnalyticsHelper.logPageEnter('bubble_screen');
 
     // 初始化背景动画
     _backgroundController = AnimationController(
@@ -42,6 +51,13 @@ class _BubbleScreenState extends State<BubbleScreen>
       final controller = context.read<BubbleController>();
       final size = MediaQuery.of(context).size;
       controller.initialize(screenSize: size);
+
+      // 设置偏好保存回调
+      controller.onPreferenceSaved = (bool isLike) {
+        if (mounted) {
+          ToastManager.showPreferenceSavedToast(context, isLike);
+        }
+      };
     });
   }
 
@@ -54,35 +70,14 @@ class _BubbleScreenState extends State<BubbleScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: AnimatedBuilder(
-        animation: _backgroundAnimation,
-        builder: (context, child) {
-          return Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  _backgroundAnimation.value ??
-                      const Color(0xFFFFF3E0), // 主色调 - 暖黄
-                  Colors.white, // 中性色
-                  const Color(0xFFE3F2FD), // 辅助色 - 淡蓝
-                ],
-              ),
-            ),
-            child: SafeArea(
-              child: Column(
-                children: [
-                  _buildHeader(),
-                  Expanded(
-                    child: _buildBubbleArea(),
-                  ),
-                  _buildBottomControls(),
-                ],
-              ),
-            ),
-          );
-        },
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(),
+            Expanded(child: _buildBubbleArea()),
+            _buildBottomControls(),
+          ],
+        ),
       ),
     );
   }
@@ -91,66 +86,54 @@ class _BubbleScreenState extends State<BubbleScreen>
   Widget _buildHeader() {
     return Consumer<BubbleController>(
       builder: (context, controller, child) {
-        return Container(
-          padding: const EdgeInsets.all(16),
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                '吃什么',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: const Color(0xFFFF8A65), // 主色调 - 暖橙
-                    ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                controller.selectedCount > 0
-                    ? '已选择 ${controller.selectedCount} 个口味'
-                    : '点击气泡选择你的口味偏好',
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey.shade600,
-                    ),
-              ),
-              if (controller.selectedCount > 0) ...[
-                const SizedBox(height: 8),
-                Text(
-                  '左滑不喜欢，右滑喜欢，点击选择',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Colors.grey.shade500,
-                      ),
-                ),
-              ],
-              const SizedBox(height: 16),
-              // 液态玻璃效果切换按钮
+              const GreetingHeader(title: 'Hi, Chef 👋', subtitle: '选择你的今日口味'),
               Row(
-                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    '液态玻璃效果:',
-                    style: Theme.of(context).textTheme.bodySmall,
+                  Expanded(
+                    child: StatPill(
+                      icon: Icons.bubble_chart_rounded,
+                      value: '${controller.bubbles.length}',
+                      label: '口味',
+                      color: DesignTokens.mint,
+                    ),
                   ),
-                  const SizedBox(width: 8),
-                  Switch.adaptive(
-                    value: _useEnhancedBubbles,
-                    onChanged: (value) {
-                      setState(() {
-                        _useEnhancedBubbles = value;
-                      });
-                    },
-                    activeColor: const Color(0xFFFF8A65),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: StatPill(
+                      icon: Icons.favorite_rounded,
+                      value: '${controller.selectedCount}',
+                      label: '已选',
+                      color: DesignTokens.orange,
+                    ),
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    _useEnhancedBubbles ? '开启' : '关闭',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: _useEnhancedBubbles
-                              ? const Color(0xFFFF8A65)
-                              : Colors.grey,
-                          fontWeight: FontWeight.w500,
-                        ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: StatPill(
+                      icon: Icons.timer_rounded,
+                      value: '今日',
+                      label: '推荐',
+                      color: DesignTokens.pink,
+                    ),
                   ),
                 ],
               ),
+              const SizedBox(height: 6),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text('增强气泡', style: DesignTokens.caption),
+                  Switch.adaptive(
+                    value: _useEnhancedBubbles,
+                    activeColor: DesignTokens.mint,
+                    onChanged: (v) => setState(() => _useEnhancedBubbles = v),
+                  )
+                ],
+              )
             ],
           ),
         );
@@ -164,11 +147,7 @@ class _BubbleScreenState extends State<BubbleScreen>
       builder: (context, controller, child) {
         if (!controller.isInitialized) {
           return const Center(
-            child: ModernLoadingAnimation(
-              type: LoadingAnimationType.bubbles,
-              color: Colors.orange,
-              message: '气泡加载中...'
-            ),
+            child: ModernLoadingAnimation(size: 60, color: Colors.orange, message: '气泡加载中...'),
           );
         }
 
@@ -198,25 +177,24 @@ class _BubbleScreenState extends State<BubbleScreen>
                       child: ModernBubbleWidget(
                         bubble: bubble,
                         isSelected: controller.isBubbleSelected(bubble),
-                        isHighlighted: false,
                         onTap: () {
                           HapticFeedback.selectionClick();
                           controller.toggleBubble(bubble);
                         },
-                        onLongPress: (name) {
+                        onLongPress: () {
                           // 可扩展：显示气泡详情
                         },
-                        onSwipeUp: (name) {
-                          controller.likeBubbleByName(name);
+                        onSwipeUp: () {
+                          controller.likeBubbleByName(bubble.name);
                         },
-                        onSwipeDown: (name) {
-                          controller.dislikeBubbleByName(name);
+                        onSwipeDown: () {
+                          controller.dislikeBubbleByName(bubble.name);
                         },
-                        onSwipeLeft: (name) {
-                          controller.ignoreBubbleByName(name);
+                        onSwipeLeft: () {
+                          controller.ignoreBubbleByName(bubble.name);
                         },
-                        onSwipeRight: (name) {
-                          controller.confirmBubbleByName(name);
+                        onSwipeRight: () {
+                          controller.confirmBubbleByName(bubble.name);
                         },
                       ),
                     ),
@@ -234,8 +212,8 @@ class _BubbleScreenState extends State<BubbleScreen>
   Widget _buildBottomControls() {
     return Consumer<BubbleController>(
       builder: (context, controller, child) {
-        return Container(
-          padding: const EdgeInsets.all(16),
+        return Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -266,37 +244,35 @@ class _BubbleScreenState extends State<BubbleScreen>
               // 操作按钮
               Row(
                 children: [
-                  // 重置按钮
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: controller.selectedCount > 0
                           ? controller.resetSelection
                           : controller.resetAllBubbles,
                       icon: const Icon(Icons.refresh),
-                      label: Text(
-                          controller.selectedCount > 0 ? '重置选择' : '重置气泡'),
+                      label: Text(controller.selectedCount > 0 ? '重置选择' : '重置气泡'),
                     ),
                   ),
-                  const SizedBox(width: 16),
-
-                  // 生成推荐按钮
+                  const SizedBox(width: 12),
                   Expanded(
                     flex: 2,
-                    child: LoadingButton(
-                      text: '生成推荐',
-                      loadingText: '生成中...',
-                      isLoading: controller.isGeneratingRecommendations,
-                      onPressed: controller.selectedCount > 0 &&
-                              !controller.isGeneratingRecommendations
-                          ? () => _generateRecommendations(controller)
-                          : null,
-                      backgroundColor: Colors.orange,
-                      textColor: Colors.white,
-                      loadingType: LoadingAnimationType.bubbles,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        borderRadius: DesignTokens.pillRadius,
+                        boxShadow: DesignTokens.softShadows(),
+                      ),
+                      child: PrimaryCtaButton(
+                        label: controller.isGeneratingRecommendations ? '生成中…' : '生成推荐',
+                        icon: Icons.auto_awesome_rounded,
+                        onPressed:
+                            controller.selectedCount > 0 && !controller.isGeneratingRecommendations
+                                ? () => _generateRecommendations(controller)
+                                : null,
+                      ),
                     ),
                   ),
                 ],
-              ),
+              )
             ],
           ),
         );

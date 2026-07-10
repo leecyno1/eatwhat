@@ -133,11 +133,8 @@ class RecipeCard extends StatelessWidget {
                         ],
                       ),
                       child: Icon(
-                        recipe.isFavorite
-                            ? Icons.favorite
-                            : Icons.favorite_border,
-                        color:
-                            recipe.isFavorite ? Colors.red : Colors.grey[600],
+                        recipe.isFavorite ? Icons.favorite : Icons.favorite_border,
+                        color: recipe.isFavorite ? Colors.red : Colors.grey[600],
                         size: 20,
                       ),
                     ),
@@ -262,8 +259,10 @@ class RecipeCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
 
-                  // 菜系和烹饪方式
-                  Row(
+                  // 菜系和烹饪方式（Wrap避免窄屏溢出）
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 6,
                     children: [
                       _buildInfoChip(
                         Icons.restaurant,
@@ -271,7 +270,6 @@ class RecipeCard extends StatelessWidget {
                         Colors.blue.shade50,
                         Colors.blue.shade700,
                       ),
-                      const SizedBox(width: 8),
                       _buildInfoChip(
                         Icons.local_fire_department,
                         recipe.cookingMethod.label,
@@ -282,47 +280,64 @@ class RecipeCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
 
-                  // 底部信息
+                  // 底部信息 - 修复溢出问题
                   Row(
                     children: [
-                      // 评分
-                      Icon(
-                        Icons.star,
-                        color: Colors.amber.shade600,
-                        size: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        recipe.rating.toStringAsFixed(1),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                      // 评分信息 - 使用Flexible防止溢出
+                      Flexible(
+                        flex: 3,
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 4,
+                          children: [
+                            Icon(
+                              Icons.star,
+                              color: Colors.amber.shade600,
+                              size: 16,
+                            ),
+                            Text(
+                              recipe.rating.toStringAsFixed(1),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            Text(
+                              '(${recipe.reviewCount})',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '(${recipe.reviewCount})',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                        ),
-                      ),
-                      const Spacer(),
+                      const SizedBox(width: 8),
 
-                      // 时间信息
-                      Icon(
-                        Icons.access_time,
-                        color: Colors.grey[600],
-                        size: 16,
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${recipe.totalTime}分钟',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey[600],
-                          fontWeight: FontWeight.w500,
+                      // 时间信息 - 使用Flexible防止溢出
+                      Flexible(
+                        flex: 2,
+                        child: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 4,
+                          children: [
+                            Icon(
+                              Icons.access_time,
+                              color: Colors.grey[600],
+                              size: 16,
+                            ),
+                            Text(
+                              '${recipe.totalTime}分钟',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[600],
+                                fontWeight: FontWeight.w500,
+                              ),
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -386,8 +401,7 @@ class RecipeCard extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoChip(
-      IconData icon, String label, Color bgColor, Color textColor) {
+  Widget _buildInfoChip(IconData icon, String label, Color bgColor, Color textColor) {
     return Container(
       padding: const EdgeInsets.symmetric(
         horizontal: 8,

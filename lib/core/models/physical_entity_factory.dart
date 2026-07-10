@@ -29,34 +29,34 @@ class PhysicalEntityFactory {
   static List<PhysicalEntity> getBalancedEntities(int totalCount) {
     final allEntities = TastePreferenceDatabase.getAllTasteEntities();
     final entitiesByType = <PhysicalEntityType, List<PhysicalEntity>>{};
-    
+
     // 按类型分组
     for (final entity in allEntities) {
       entitiesByType.putIfAbsent(entity.type, () => []).add(entity);
     }
-    
+
     final result = <PhysicalEntity>[];
     final types = entitiesByType.keys.toList()..shuffle(_random);
-    
+
     // 轮流从每个类型中选择实体
     for (int i = 0; i < totalCount; i++) {
       final typeIndex = i % types.length;
       final type = types[typeIndex];
       final entitiesOfType = entitiesByType[type]!;
-      
+
       if (entitiesOfType.isNotEmpty) {
         final entity = entitiesOfType.removeAt(_random.nextInt(entitiesOfType.length));
         result.add(entity);
       }
     }
-    
+
     return result;
   }
 
   /// 创建传统的口味类实体（保留用于兼容性）
   static List<PhysicalEntity> _createTasteEntities() {
     const double unifiedRadius = 80.0; // 统一固定框体尺寸
-    
+
     return [
       // 辣
       PhysicalEntity(
@@ -72,7 +72,7 @@ class PhysicalEntityFactory {
         bounciness: 0.9,
         friction: 0.01,
       ),
-      
+
       // 甜
       PhysicalEntity(
         id: 'taste_sweet',
@@ -87,7 +87,7 @@ class PhysicalEntityFactory {
         bounciness: 0.7,
         friction: 0.03,
       ),
-      
+
       // 酸
       PhysicalEntity(
         id: 'taste_sour',
@@ -102,7 +102,7 @@ class PhysicalEntityFactory {
         bounciness: 0.8,
         friction: 0.02,
       ),
-      
+
       // 咸
       PhysicalEntity(
         id: 'taste_salty',
@@ -117,7 +117,7 @@ class PhysicalEntityFactory {
         bounciness: 0.6,
         friction: 0.04,
       ),
-      
+
       // 鲜
       PhysicalEntity(
         id: 'taste_umami',
@@ -132,7 +132,7 @@ class PhysicalEntityFactory {
         bounciness: 0.85,
         friction: 0.015,
       ),
-      
+
       // 香
       PhysicalEntity(
         id: 'taste_aromatic',
@@ -147,7 +147,7 @@ class PhysicalEntityFactory {
         bounciness: 0.9,
         friction: 0.01,
       ),
-      
+
       // 苦
       PhysicalEntity(
         id: 'taste_bitter',
@@ -162,7 +162,7 @@ class PhysicalEntityFactory {
         bounciness: 0.7,
         friction: 0.025,
       ),
-      
+
       // 麻
       PhysicalEntity(
         id: 'taste_numbing',
@@ -177,7 +177,7 @@ class PhysicalEntityFactory {
         bounciness: 0.95,
         friction: 0.008,
       ),
-      
+
       // 清淡
       PhysicalEntity(
         id: 'taste_light',
@@ -192,7 +192,7 @@ class PhysicalEntityFactory {
         bounciness: 0.8,
         friction: 0.02,
       ),
-      
+
       // 浓郁
       PhysicalEntity(
         id: 'taste_rich',
@@ -207,7 +207,7 @@ class PhysicalEntityFactory {
         bounciness: 0.6,
         friction: 0.03,
       ),
-      
+
       // 爽口
       PhysicalEntity(
         id: 'taste_crisp',
@@ -222,7 +222,7 @@ class PhysicalEntityFactory {
         bounciness: 0.85,
         friction: 0.015,
       ),
-      
+
       // 滑嫩
       PhysicalEntity(
         id: 'taste_tender',
@@ -257,7 +257,7 @@ class PhysicalEntityFactory {
         bounciness: 0.8,
         friction: 0.02,
       ),
-      
+
       // 粤菜 - 茶壶
       PhysicalEntity(
         id: 'cuisine_cantonese',
@@ -272,7 +272,7 @@ class PhysicalEntityFactory {
         bounciness: 0.75,
         friction: 0.025,
       ),
-      
+
       // 鲁菜 - 麦穗
       PhysicalEntity(
         id: 'cuisine_shandong',
@@ -287,7 +287,7 @@ class PhysicalEntityFactory {
         bounciness: 0.7,
         friction: 0.03,
       ),
-      
+
       // 湘菜 - 辣椒串
       PhysicalEntity(
         id: 'cuisine_hunan',
@@ -302,7 +302,7 @@ class PhysicalEntityFactory {
         bounciness: 0.9,
         friction: 0.01,
       ),
-      
+
       // 西餐 - 刀叉
       PhysicalEntity(
         id: 'cuisine_western',
@@ -317,7 +317,7 @@ class PhysicalEntityFactory {
         bounciness: 0.8,
         friction: 0.02,
       ),
-      
+
       // 日料 - 寿司
       PhysicalEntity(
         id: 'cuisine_japanese',
@@ -352,7 +352,7 @@ class PhysicalEntityFactory {
         bounciness: 0.6,
         friction: 0.04,
       ),
-      
+
       // 海鲜 - 虾
       PhysicalEntity(
         id: 'ingredient_seafood',
@@ -367,7 +367,7 @@ class PhysicalEntityFactory {
         bounciness: 0.9,
         friction: 0.01,
       ),
-      
+
       // 蔬菜 - 西兰花
       PhysicalEntity(
         id: 'ingredient_vegetable',
@@ -382,7 +382,7 @@ class PhysicalEntityFactory {
         bounciness: 0.85,
         friction: 0.02,
       ),
-      
+
       // 豆腐 - 豆腐块
       PhysicalEntity(
         id: 'ingredient_tofu',
@@ -417,7 +417,7 @@ class PhysicalEntityFactory {
         bounciness: 0.8,
         friction: 0.02,
       ),
-      
+
       // 约会 - 爱心
       PhysicalEntity(
         id: 'scenario_date',
@@ -432,7 +432,7 @@ class PhysicalEntityFactory {
         bounciness: 0.9,
         friction: 0.01,
       ),
-      
+
       // 加班 - 咖啡
       PhysicalEntity(
         id: 'scenario_overtime',
@@ -447,7 +447,7 @@ class PhysicalEntityFactory {
         bounciness: 0.7,
         friction: 0.025,
       ),
-      
+
       // 健身 - 肌肉
       PhysicalEntity(
         id: 'scenario_fitness',
@@ -482,7 +482,7 @@ class PhysicalEntityFactory {
         bounciness: 0.8,
         friction: 0.02,
       ),
-      
+
       // 低卡路里 - 苹果
       PhysicalEntity(
         id: 'nutrition_low_cal',
@@ -497,7 +497,7 @@ class PhysicalEntityFactory {
         bounciness: 0.9,
         friction: 0.01,
       ),
-      
+
       // 维生素 - 胡萝卜
       PhysicalEntity(
         id: 'nutrition_vitamin',
@@ -519,20 +519,20 @@ class PhysicalEntityFactory {
   static void distributeEntities(List<PhysicalEntity> entities, Size containerSize) {
     const double minDistance = 120.0; // 增加最小间距，防止重叠
     const int maxAttempts = 100; // 增加尝试次数
-    
+
     final placedPositions = <Offset>[];
-    
+
     for (int i = 0; i < entities.length; i++) {
       bool positioned = false;
       int attempts = 0;
-      
+
       while (!positioned && attempts < maxAttempts) {
-        final x = entities[i].radius + _random.nextDouble() * 
-                 (containerSize.width - 2 * entities[i].radius);
-        final y = entities[i].radius + _random.nextDouble() * 
-                 (containerSize.height - 2 * entities[i].radius);
+        final x = entities[i].radius +
+            _random.nextDouble() * (containerSize.width - 2 * entities[i].radius);
+        final y = entities[i].radius +
+            _random.nextDouble() * (containerSize.height - 2 * entities[i].radius);
         final newPosition = Offset(x, y);
-        
+
         // 检查是否与已放置的实体重叠
         bool overlapping = false;
         for (final placedPos in placedPositions) {
@@ -541,22 +541,22 @@ class PhysicalEntityFactory {
             break;
           }
         }
-        
+
         if (!overlapping) {
           entities[i] = entities[i].copyWith(position: newPosition);
           placedPositions.add(newPosition);
           positioned = true;
         }
-        
+
         attempts++;
       }
-      
+
       // 如果尝试次数超限，随机放置
       if (!positioned) {
-        final x = entities[i].radius + _random.nextDouble() * 
-                 (containerSize.width - 2 * entities[i].radius);
-        final y = entities[i].radius + _random.nextDouble() * 
-                 (containerSize.height - 2 * entities[i].radius);
+        final x = entities[i].radius +
+            _random.nextDouble() * (containerSize.width - 2 * entities[i].radius);
+        final y = entities[i].radius +
+            _random.nextDouble() * (containerSize.height - 2 * entities[i].radius);
         entities[i] = entities[i].copyWith(position: Offset(x, y));
       }
     }
@@ -570,7 +570,7 @@ class PhysicalEntityFactory {
         (_random.nextDouble() - 0.5) * 0.1,
       );
       final angularVelocity = (_random.nextDouble() - 0.5) * 0.005; // 极小的角速度
-      
+
       entities[i] = entities[i].copyWith(
         velocity: velocity,
         angularVelocity: angularVelocity,

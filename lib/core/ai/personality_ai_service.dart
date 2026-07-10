@@ -5,25 +5,25 @@ import 'ai_service.dart';
 
 /// 美食人格类型
 enum FoodPersonality {
-  gourmetChef,    // 美食大厨 - 专业严谨
-  cuteHelper,     // 萌宠助手 - 可爱活泼  
-  wiseMaster,     // 养生大师 - 健康专业
-  trendyFriend,   // 潮流达人 - 时尚年轻
-  homelyMom,      // 居家妈妈 - 温暖贴心
+  gourmetChef, // 美食大厨 - 专业严谨
+  cuteHelper, // 萌宠助手 - 可爱活泼
+  wiseMaster, // 养生大师 - 健康专业
+  trendyFriend, // 潮流达人 - 时尚年轻
+  homelyMom, // 居家妈妈 - 温暖贴心
 }
 
 /// 用户场景类型
 enum FoodScenario {
-  lateNightSnack,    // 深夜食堂
-  fitnessRecovery,   // 健身餐
-  dateNight,         // 情侣约会
-  familyGathering,   // 家庭聚餐
-  businessMeal,      // 商务用餐
-  hangoverCure,      // 解酒醒胃
-  comfortFood,       // 心情调节
-  quickBite,         // 快速充饥
-  healthyChoice,     // 健康选择
-  celebrationMeal,   // 庆祝大餐
+  lateNightSnack, // 深夜食堂
+  fitnessRecovery, // 健身餐
+  dateNight, // 情侣约会
+  familyGathering, // 家庭聚餐
+  businessMeal, // 商务用餐
+  hangoverCure, // 解酒醒胃
+  comfortFood, // 心情调节
+  quickBite, // 快速充饥
+  healthyChoice, // 健康选择
+  celebrationMeal, // 庆祝大餐
 }
 
 /// 个性化AI服务 - 提供拟人化的美食推荐体验
@@ -34,10 +34,9 @@ class PersonalityAiService {
 
   final AiService _aiService = AiService();
   final MemoryManager _memoryManager = MemoryManager();
-  
+
   // 用户个性档案缓存
   final Map<String, FoodPersonality> _userPersonalities = {};
-  final Map<String, Map<String, dynamic>> _userContexts = {};
 
   /// 初始化个性化AI服务
   Future<void> initialize() async {
@@ -55,7 +54,8 @@ class PersonalityAiService {
 
     // 基于用户画像智能选择人格
     if (user.age != null && user.age! < 25) {
-      personality = user.gender == 'female' ? FoodPersonality.cuteHelper : FoodPersonality.trendyFriend;
+      personality =
+          user.gender == 'female' ? FoodPersonality.cuteHelper : FoodPersonality.trendyFriend;
     } else if (user.healthGoals.isNotEmpty) {
       personality = FoodPersonality.wiseMaster;
     } else if (user.workoutFrequency > 3) {
@@ -68,7 +68,7 @@ class PersonalityAiService {
 
     _memoryManager.cache(cacheKey, personality, duration: const Duration(days: 7));
     _userPersonalities[user.userId] = personality;
-    
+
     debugPrint('Determined personality for ${user.userId}: $personality');
     return personality;
   }
@@ -78,7 +78,7 @@ class PersonalityAiService {
     final now = DateTime.now();
     final hour = now.hour;
     final isWeekend = now.weekday >= 6;
-    
+
     // 时间场景判断
     if (hour >= 23 || hour <= 2) {
       return FoodScenario.lateNightSnack;
@@ -89,7 +89,7 @@ class PersonalityAiService {
     } else if (hour >= 17 && hour <= 21) {
       return _getDinnerScenario(user, isWeekend);
     }
-    
+
     // 活动场景判断
     if (user.currentActivity == 'workout') {
       return FoodScenario.fitnessRecovery;
@@ -100,7 +100,7 @@ class PersonalityAiService {
     } else if (user.currentMood == 'celebratory') {
       return FoodScenario.celebrationMeal;
     }
-    
+
     return FoodScenario.quickBite;
   }
 
@@ -138,7 +138,7 @@ class PersonalityAiService {
   }) async {
     final personality = determinePersonality(user);
     final scenario = detectCurrentScenario(user);
-    
+
     final cacheKey = 'rec_${foodName}_${personality.name}_${scenario.name}';
     final cached = _memoryManager.getCached<PersonalizedRecommendation>(cacheKey);
     if (cached != null) return cached;
@@ -169,7 +169,8 @@ class PersonalityAiService {
       return recommendation;
     } catch (e) {
       debugPrint('Error generating personalized recommendation: $e');
-      return _getFallbackRecommendation(foodName, matchedBubbles, matchScore, personality, scenario);
+      return _getFallbackRecommendation(
+          foodName, matchedBubbles, matchScore, personality, scenario);
     }
   }
 
@@ -182,15 +183,6 @@ class PersonalityAiService {
     required FoodScenario scenario,
     required EnhancedUserProfile user,
   }) async {
-    final prompt = _buildPersonalityPrompt(
-      foodName: foodName,
-      matchedBubbles: matchedBubbles,
-      matchScore: matchScore,
-      personality: personality,
-      scenario: scenario,
-      user: user,
-    );
-
     try {
       final response = await _aiService.getBubbleRecommendations(
         selectedBubbles: matchedBubbles,
@@ -199,44 +191,11 @@ class PersonalityAiService {
         timeOfDay: _getTimeContext(),
         weather: user.currentWeather,
       );
-      
+
       return _formatPersonalizedResponse(response.reasons, personality);
     } catch (e) {
       return _getFallbackDialogue(foodName, personality, scenario);
     }
-  }
-
-  /// 构建个性化提示词
-  String _buildPersonalityPrompt({
-    required String foodName,
-    required List<String> matchedBubbles,
-    required double matchScore,
-    required FoodPersonality personality,
-    required FoodScenario scenario,
-    required EnhancedUserProfile user,
-  }) {
-    final personalityContext = _getPersonalityContext(personality);
-    final scenarioContext = _getScenarioContext(scenario);
-    final userContext = _buildUserContext(user);
-    
-    return '''
-作为一个${personalityContext['name']}，请用${personalityContext['style']}的语气为用户推荐「$foodName」。
-
-当前场景：${scenarioContext['description']}
-用户偏好：${matchedBubbles.join('、')}
-匹配度：${matchScore.toStringAsFixed(1)}分
-用户信息：$userContext
-
-请按照以下格式回复：
-1. 个性化问候语
-2. 场景感知的推荐理由
-3. 食物特色介绍
-4. 实用建议
-5. 鼓励性结语
-
-语气要求：${personalityContext['tone']}
-长度：100-150字
-''';
   }
 
   /// 获取人格上下文
@@ -330,12 +289,12 @@ class PersonalityAiService {
   /// 构建用户上下文
   String _buildUserContext(EnhancedUserProfile user) {
     final contexts = <String>[];
-    
+
     if (user.age != null) contexts.add('年龄${user.age}岁');
     if (user.healthGoals.isNotEmpty) contexts.add('健康目标：${user.healthGoals.join('、')}');
     if (user.allergies.isNotEmpty) contexts.add('过敏：${user.allergies.join('、')}');
     if (user.currentMood != null) contexts.add('心情：${user.currentMood}');
-    
+
     return contexts.join('，');
   }
 
@@ -354,7 +313,7 @@ class PersonalityAiService {
   /// 格式化个性化回复
   String _formatPersonalizedResponse(String response, FoodPersonality personality) {
     final context = _getPersonalityContext(personality);
-    
+
     // 添加人格化的开头和结尾
     return '${context['greeting']}！\n\n$response\n\n${context['encouragement']}';
   }
@@ -387,7 +346,7 @@ class PersonalityAiService {
   String _getFallbackDialogue(String foodName, FoodPersonality personality, FoodScenario scenario) {
     final personalityContext = _getPersonalityContext(personality);
     final scenarioContext = _getScenarioContext(scenario);
-    
+
     return '''
 ${personalityContext['greeting']}！
 
@@ -427,27 +386,27 @@ class EnhancedUserProfile {
   final int? age;
   final String? gender;
   final String location;
-  
+
   // 健康数据
   final double? bmi;
   final List<String> allergies;
   final List<String> healthGoals;
-  
+
   // 生活作息
   final Map<String, String> mealTimes; // 时间字符串，如 "12:30"
   final int sleepHours;
   final int workoutFrequency;
-  
+
   // 社交偏好
   final bool prefersGroupDining;
   final List<String> favoriteCuisines;
   final double spiceLevel;
-  
+
   // 环境感知
   final String? currentWeather;
   final String? currentMood;
   final String? currentActivity;
-  
+
   // 行为数据
   final Map<String, int> bubbleInteractionCount;
   final Map<String, double> timeBasedPreferences;

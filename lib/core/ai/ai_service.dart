@@ -82,7 +82,7 @@ class AiService {
 
       // 缓存结果
       _cacheResult(cacheKey, result);
-      
+
       return result;
     } catch (e) {
       debugPrint('AI推荐失败，使用备用推荐: $e');
@@ -171,10 +171,7 @@ class AiService {
     final requestData = {
       'model': EnvConfig.aiModelName,
       'messages': [
-        {
-          'role': 'system',
-          'content': '你是一个专业的美食推荐专家，具有丰富的饮食文化知识和个性化推荐经验。'
-        },
+        {'role': 'system', 'content': '你是一个专业的美食推荐专家，具有丰富的饮食文化知识和个性化推荐经验。'},
         {
           'role': 'user',
           'content': prompt,
@@ -196,7 +193,7 @@ class AiService {
     if (response.statusCode == 200) {
       final data = response.data;
       final content = data['choices']?[0]?['message']?['content'] as String?;
-      
+
       if (content == null || content.isEmpty) {
         throw Exception('AI返回内容为空');
       }
@@ -212,7 +209,7 @@ class AiService {
   AiRecommendationResult _parseRecommendationResponse(
       String response, List<String> originalBubbles) {
     final parsed = PromptTemplates.parseRecommendationResponse(response);
-    
+
     return AiRecommendationResult(
       recommendations: parsed['recommendations'] as List<String>,
       reasons: parsed['reasons'] as String,
@@ -239,8 +236,10 @@ class AiService {
   }
 
   String _extractAnalysisItem(String response, String itemName) {
-    final regex = RegExp('$itemName[：:]\\s*(.+?)(?=\\n\\d+\\.|\\n[^\\n]*[：:]|\\n\\n|\$)', 
-        multiLine: true, dotAll: true);
+    final regex = RegExp(
+        '$itemName[：:]\\s*(.+?)(?=\\n\\d+\\.|\\n[^\\n]*[：:]|\\n\\n|\$)',
+        multiLine: true,
+        dotAll: true);
     final match = regex.firstMatch(response);
     return match?.group(1)?.trim() ?? '';
   }
@@ -258,8 +257,8 @@ class AiService {
 
   void _cleanCacheIfNeeded() {
     final now = DateTime.now();
-    if (_lastCacheClean == null || 
-        now.difference(_lastCacheClean!).inSeconds > EnvConfig.aiCacheDuration) {
+    if (_lastCacheClean == null ||
+        now.difference(_lastCacheClean!) > EnvConfig.aiCacheMaxAge) {
       _cache.clear();
       _lastCacheClean = now;
       debugPrint('AI缓存已清理');
@@ -271,7 +270,7 @@ class AiService {
       List<String> bubbles, List<String> foods) {
     final recommendations = foods.take(2).toList();
     final bubbleText = bubbles.join('、');
-    
+
     return AiRecommendationResult(
       recommendations: recommendations,
       reasons: '根据您选择的$bubbleText，为您推荐这些美食',
@@ -283,7 +282,8 @@ class AiService {
     );
   }
 
-  String _generateFallbackExplanation(String food, List<String> bubbles, double score) {
+  String _generateFallbackExplanation(
+      String food, List<String> bubbles, double score) {
     final bubbleText = bubbles.isEmpty ? '' : '，符合您的${bubbles.join('、')}偏好';
     return '$food是一道经典美食$bubbleText，推荐指数${score.toStringAsFixed(1)}分';
   }
@@ -342,5 +342,3 @@ class UserPreferenceAnalysis {
     required this.timestamp,
   });
 }
-
- 

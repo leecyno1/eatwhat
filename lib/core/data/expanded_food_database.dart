@@ -3,10 +3,10 @@ import '../models/food.dart';
 /// 扩展美食数据库 - 包含1000+道菜品
 class ExpandedFoodDatabase {
   static final List<Food> _allFoods = _generateAllFoods();
-  
+
   /// 获取所有美食
   static List<Food> getAllFoods() => List.from(_allFoods);
-  
+
   /// 根据偏好获取推荐
   static Future<List<Food>> getRecommendations({
     required List<String> preferences,
@@ -16,24 +16,24 @@ class ExpandedFoodDatabase {
     int limit = 10,
   }) async {
     await Future.delayed(const Duration(milliseconds: 300)); // 模拟网络延迟
-    
+
     var filtered = _allFoods.where((food) {
       // 口味匹配
       if (tastes != null && tastes.isNotEmpty) {
-        bool tasteMatch = tastes.any((taste) => 
-          food.tasteAttributes.any((attr) => attr.contains(taste) || taste.contains(attr))
-        );
+        final attrs = food.tasteAttributes ?? const <String>[];
+        final bool tasteMatch = tastes
+            .any((taste) => attrs.any((attr) => attr.contains(taste) || taste.contains(attr)));
         if (!tasteMatch) return false;
       }
-      
+
       // 菜系匹配
       if (cuisines != null && cuisines.isNotEmpty) {
-        bool cuisineMatch = cuisines.any((cuisine) => 
-          food.cuisineType.contains(cuisine) || cuisine.contains(food.cuisineType)
-        );
+        final ctype = food.cuisineType ?? '';
+        final bool cuisineMatch =
+            cuisines.any((cuisine) => ctype.contains(cuisine) || cuisine.contains(ctype));
         if (!cuisineMatch) return false;
       }
-      
+
       // 价格范围匹配
       if (priceRange != null && food.price != null) {
         switch (priceRange) {
@@ -48,91 +48,94 @@ class ExpandedFoodDatabase {
             break;
         }
       }
-      
+
       return true;
     }).toList();
-    
+
     // 按评分排序
     filtered.sort((a, b) => b.rating.compareTo(a.rating));
-    
+
     return filtered.take(limit).toList();
   }
-  
+
   /// 按菜系获取美食
   static List<Food> getFoodsByCuisine(String cuisine) {
-    return _allFoods.where((food) => food.cuisineType.contains(cuisine)).toList();
+    return _allFoods.where((food) => (food.cuisineType ?? '').contains(cuisine)).toList();
   }
-  
+
   /// 按口味获取美食
   static List<Food> getFoodsByTaste(String taste) {
-    return _allFoods.where((food) => 
-      food.tasteAttributes.any((attr) => attr.contains(taste))
-    ).toList();
+    return _allFoods
+        .where((food) =>
+            (food.tasteAttributes ?? const <String>[]).any((attr) => attr.contains(taste)))
+        .toList();
   }
-  
+
   /// 搜索美食
   static List<Food> searchFoods(String query) {
     final lowercaseQuery = query.toLowerCase();
-    return _allFoods.where((food) =>
-      food.name.toLowerCase().contains(lowercaseQuery) ||
-      (food.description?.toLowerCase().contains(lowercaseQuery) ?? false) ||
-      food.cuisineType.toLowerCase().contains(lowercaseQuery) ||
-      food.tasteAttributes.any((attr) => attr.toLowerCase().contains(lowercaseQuery))
-    ).toList();
+    return _allFoods
+        .where((food) =>
+            food.name.toLowerCase().contains(lowercaseQuery) ||
+            (food.description?.toLowerCase().contains(lowercaseQuery) ?? false) ||
+            ((food.cuisineType ?? '').toLowerCase().contains(lowercaseQuery)) ||
+            ((food.tasteAttributes ?? const <String>[])
+                .any((attr) => attr.toLowerCase().contains(lowercaseQuery))))
+        .toList();
   }
-  
+
   /// 生成所有美食数据
   static List<Food> _generateAllFoods() {
     final foods = <Food>[];
-    
+
     // 川菜 (100道)
     foods.addAll(_generateSichuanCuisine());
-    
+
     // 粤菜 (100道)
     foods.addAll(_generateCantoneseCuisine());
-    
+
     // 鲁菜 (80道)
     foods.addAll(_generateShandongCuisine());
-    
+
     // 苏菜 (80道)
     foods.addAll(_generateJiangsuCuisine());
-    
+
     // 浙菜 (80道)
     foods.addAll(_generateZhejiangCuisine());
-    
+
     // 闽菜 (70道)
     foods.addAll(_generateFujianCuisine());
-    
+
     // 湘菜 (90道)
     foods.addAll(_generateHunanCuisine());
-    
+
     // 徽菜 (70道)
     foods.addAll(_generateAnhuiCuisine());
-    
+
     // 东北菜 (60道)
     foods.addAll(_generateNortheastCuisine());
-    
+
     // 西北菜 (50道)
     foods.addAll(_generateNorthwestCuisine());
-    
+
     // 云贵菜 (50道)
     foods.addAll(_generateYunnanGuizhouCuisine());
-    
+
     // 西餐 (80道)
     foods.addAll(_generateWesternCuisine());
-    
+
     // 日料 (60道)
     foods.addAll(_generateJapaneseCuisine());
-    
+
     // 韩料 (40道)
     foods.addAll(_generateKoreanCuisine());
-    
+
     // 东南亚料理 (40道)
     foods.addAll(_generateSoutheastAsianCuisine());
-    
+
     return foods;
   }
-  
+
   /// 川菜
   static List<Food> _generateSichuanCuisine() {
     return [
@@ -147,7 +150,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['辣', '麻', '鲜'],
         imageUrl: 'https://images.unsplash.com/photo-1582878825481-ca86a10bbdb8?w=400',
         ingredients: ['鸡胸肉', '花生米', '干辣椒', '花椒', '豆瓣酱'],
-        preparationTime: '15分钟',
         difficulty: '中等',
         nutritionFacts: {
           'calories': 245,
@@ -167,15 +169,8 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['麻', '辣', '鲜'],
         imageUrl: 'https://images.unsplash.com/photo-1517244683847-7456b63c5969?w=400',
         ingredients: ['嫩豆腐', '牛肉末', '豆瓣酱', '花椒', '蒜苗'],
-        preparationTime: '12分钟',
         difficulty: '简单',
-        nutritionFacts: {
-          'calories': 180,
-          'protein': 15.0,
-          'carbs': 8.0,
-          'fat': 12.0,
-          'fiber': 2.0
-        },
+        nutritionFacts: {'calories': 180, 'protein': 15.0, 'carbs': 8.0, 'fat': 12.0, 'fiber': 2.0},
       ),
       Food(
         id: 'sc_003',
@@ -187,15 +182,8 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['辣', '麻', '鲜'],
         imageUrl: 'https://images.unsplash.com/photo-1547330874-e47bda1b3f40?w=400',
         ingredients: ['鲈鱼', '豆芽', '豆瓣酱', '干辣椒', '花椒'],
-        preparationTime: '25分钟',
         difficulty: '中等',
-        nutritionFacts: {
-          'calories': 320,
-          'protein': 35.0,
-          'carbs': 6.0,
-          'fat': 18.0,
-          'fiber': 4.0
-        },
+        nutritionFacts: {'calories': 320, 'protein': 35.0, 'carbs': 6.0, 'fat': 18.0, 'fiber': 4.0},
       ),
       Food(
         id: 'sc_004',
@@ -207,7 +195,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['香', '辣', '咸'],
         imageUrl: 'https://images.unsplash.com/photo-1565299585323-38174c4a6a27?w=400',
         ingredients: ['五花肉', '青椒', '豆瓣酱', '甜面酱', '蒜苗'],
-        preparationTime: '18分钟',
         difficulty: '中等',
         nutritionFacts: {
           'calories': 380,
@@ -227,7 +214,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['酸', '甜', '辣'],
         imageUrl: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?w=400',
         ingredients: ['猪肉丝', '黑木耳', '胡萝卜', '泡椒', '醋'],
-        preparationTime: '15分钟',
         difficulty: '中等',
         nutritionFacts: {
           'calories': 260,
@@ -248,15 +234,8 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['麻', '辣', '鲜'],
         imageUrl: 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=400',
         ingredients: ['白切鸡', '花生碎', '芝麻', '辣椒油', '花椒'],
-        preparationTime: '20分钟',
         difficulty: '中等',
-        nutritionFacts: {
-          'calories': 290,
-          'protein': 32.0,
-          'carbs': 8.0,
-          'fat': 15.0,
-          'fiber': 2.0
-        },
+        nutritionFacts: {'calories': 290, 'protein': 32.0, 'carbs': 8.0, 'fat': 15.0, 'fiber': 2.0},
       ),
       Food(
         id: 'sc_007',
@@ -268,7 +247,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['麻', '辣', '香'],
         imageUrl: 'https://images.unsplash.com/photo-1585032226651-759b368d7be1?w=400',
         ingredients: ['手工面条', '芝麻酱', '辣椒油', '榨菜', '肉末'],
-        preparationTime: '10分钟',
         difficulty: '简单',
         nutritionFacts: {
           'calories': 420,
@@ -288,7 +266,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['麻', '辣', '鲜'],
         imageUrl: 'https://images.unsplash.com/photo-1504544750208-dc0358e63f7f?w=400',
         ingredients: ['火锅底料', '毛肚', '鸭血', '土豆片', '娃娃菜'],
-        preparationTime: '60分钟',
         difficulty: '简单',
         nutritionFacts: {
           'calories': 450,
@@ -302,7 +279,7 @@ class ExpandedFoodDatabase {
       // 这里省略更多菜品以节省空间...
     ];
   }
-  
+
   /// 粤菜
   static List<Food> _generateCantoneseCuisine() {
     return [
@@ -316,15 +293,8 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['鲜', '嫩', '清淡'],
         imageUrl: 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=400',
         ingredients: ['土鸡', '姜', '葱', '生抽', '香油'],
-        preparationTime: '30分钟',
         difficulty: '中等',
-        nutritionFacts: {
-          'calories': 280,
-          'protein': 35.0,
-          'carbs': 2.0,
-          'fat': 14.0,
-          'fiber': 0.0
-        },
+        nutritionFacts: {'calories': 280, 'protein': 35.0, 'carbs': 2.0, 'fat': 14.0, 'fiber': 0.0},
       ),
       Food(
         id: 'gd_002',
@@ -336,15 +306,8 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['嫩', '鲜', '清淡'],
         imageUrl: 'https://images.unsplash.com/photo-1565299585323-38174c4a6a27?w=400',
         ingredients: ['鸡蛋', '温水', '盐', '香油', '葱花'],
-        preparationTime: '15分钟',
         difficulty: '简单',
-        nutritionFacts: {
-          'calories': 140,
-          'protein': 12.0,
-          'carbs': 2.0,
-          'fat': 9.0,
-          'fiber': 0.0
-        },
+        nutritionFacts: {'calories': 140, 'protein': 12.0, 'carbs': 2.0, 'fat': 9.0, 'fiber': 0.0},
       ),
       Food(
         id: 'gd_003',
@@ -356,15 +319,8 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['香', '甜', '鲜'],
         imageUrl: 'https://images.unsplash.com/photo-1547330874-e47bda1b3f40?w=400',
         ingredients: ['水鸭', '五香粉', '蜂蜜', '生抽', '料酒'],
-        preparationTime: '90分钟',
         difficulty: '困难',
-        nutritionFacts: {
-          'calories': 350,
-          'protein': 28.0,
-          'carbs': 8.0,
-          'fat': 24.0,
-          'fiber': 0.0
-        },
+        nutritionFacts: {'calories': 350, 'protein': 28.0, 'carbs': 8.0, 'fat': 24.0, 'fiber': 0.0},
       ),
       Food(
         id: 'gd_004',
@@ -376,7 +332,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['香', '鲜', '咸'],
         imageUrl: 'https://images.unsplash.com/photo-1585032226651-759b368d7be1?w=400',
         ingredients: ['河粉', '豆芽', '韭黄', '牛肉丝', '生抽'],
-        preparationTime: '12分钟',
         difficulty: '中等',
         nutritionFacts: {
           'calories': 380,
@@ -396,20 +351,13 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['鲜', '甜', '嫩'],
         imageUrl: 'https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=400',
         ingredients: ['虾仁', '澄粉', '猪肉', '笋丝', '胡椒粉'],
-        preparationTime: '25分钟',
         difficulty: '困难',
-        nutritionFacts: {
-          'calories': 180,
-          'protein': 16.0,
-          'carbs': 22.0,
-          'fat': 4.0,
-          'fiber': 1.0
-        },
+        nutritionFacts: {'calories': 180, 'protein': 16.0, 'carbs': 22.0, 'fat': 4.0, 'fiber': 1.0},
       ),
       // 继续添加更多粤菜...
     ];
   }
-  
+
   /// 鲁菜
   static List<Food> _generateShandongCuisine() {
     return [
@@ -423,7 +371,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['酸', '甜', '鲜'],
         imageUrl: 'https://images.unsplash.com/photo-1547330874-e47bda1b3f40?w=400',
         ingredients: ['鲤鱼', '白糖', '醋', '番茄酱', '淀粉'],
-        preparationTime: '35分钟',
         difficulty: '中等',
         nutritionFacts: {
           'calories': 320,
@@ -443,20 +390,13 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['香', '咸', '鲜'],
         imageUrl: 'https://images.unsplash.com/photo-1565299585323-38174c4a6a27?w=400',
         ingredients: ['羊肉片', '大葱', '生抽', '料酒', '胡椒粉'],
-        preparationTime: '15分钟',
         difficulty: '中等',
-        nutritionFacts: {
-          'calories': 280,
-          'protein': 25.0,
-          'carbs': 8.0,
-          'fat': 16.0,
-          'fiber': 2.0
-        },
+        nutritionFacts: {'calories': 280, 'protein': 25.0, 'carbs': 8.0, 'fat': 16.0, 'fiber': 2.0},
       ),
       // 继续添加更多鲁菜...
     ];
   }
-  
+
   /// 苏菜
   static List<Food> _generateJiangsuCuisine() {
     return [
@@ -470,7 +410,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['酸', '甜', '鲜'],
         imageUrl: 'https://images.unsplash.com/photo-1547330874-e47bda1b3f40?w=400',
         ingredients: ['桂鱼', '虾仁', '笋丝', '番茄酱', '白糖'],
-        preparationTime: '45分钟',
         difficulty: '困难',
         nutritionFacts: {
           'calories': 350,
@@ -490,7 +429,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['鲜', '香', '嫩'],
         imageUrl: 'https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=400',
         ingredients: ['面粉', '蟹粉', '猪肉', '皮冻', '生姜'],
-        preparationTime: '60分钟',
         difficulty: '困难',
         nutritionFacts: {
           'calories': 280,
@@ -503,7 +441,7 @@ class ExpandedFoodDatabase {
       // 继续添加更多苏菜...
     ];
   }
-  
+
   /// 浙菜
   static List<Food> _generateZhejiangCuisine() {
     return [
@@ -517,7 +455,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['酸', '甜', '鲜'],
         imageUrl: 'https://images.unsplash.com/photo-1547330874-e47bda1b3f40?w=400',
         ingredients: ['草鱼', '镇江醋', '白糖', '生抽', '料酒'],
-        preparationTime: '30分钟',
         difficulty: '中等',
         nutritionFacts: {
           'calories': 300,
@@ -537,7 +474,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['甜', '香', '糯'],
         imageUrl: 'https://images.unsplash.com/photo-1565299585323-38174c4a6a27?w=400',
         ingredients: ['五花肉', '绍兴酒', '冰糖', '老抽', '生抽'],
-        preparationTime: '120分钟',
         difficulty: '中等',
         nutritionFacts: {
           'calories': 420,
@@ -550,7 +486,7 @@ class ExpandedFoodDatabase {
       // 继续添加更多浙菜...
     ];
   }
-  
+
   /// 闽菜
   static List<Food> _generateFujianCuisine() {
     return [
@@ -564,7 +500,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['鲜', '香', '醇'],
         imageUrl: 'https://images.unsplash.com/photo-1547330874-e47bda1b3f40?w=400',
         ingredients: ['鲍鱼', '海参', '鱼翅', '花胶', '瑶柱'],
-        preparationTime: '180分钟',
         difficulty: '困难',
         nutritionFacts: {
           'calories': 450,
@@ -577,7 +512,7 @@ class ExpandedFoodDatabase {
       // 继续添加更多闽菜...
     ];
   }
-  
+
   /// 湘菜
   static List<Food> _generateHunanCuisine() {
     return [
@@ -591,15 +526,8 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['辣', '鲜', '香'],
         imageUrl: 'https://images.unsplash.com/photo-1547330874-e47bda1b3f40?w=400',
         ingredients: ['鱼头', '剁椒', '蒸鱼豉油', '料酒', '蒜蓉'],
-        preparationTime: '25分钟',
         difficulty: '中等',
-        nutritionFacts: {
-          'calories': 320,
-          'protein': 30.0,
-          'carbs': 8.0,
-          'fat': 18.0,
-          'fiber': 2.0
-        },
+        nutritionFacts: {'calories': 320, 'protein': 30.0, 'carbs': 8.0, 'fat': 18.0, 'fiber': 2.0},
       ),
       Food(
         id: 'hn_002',
@@ -611,7 +539,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['甜', '辣', '香'],
         imageUrl: 'https://images.unsplash.com/photo-1565299585323-38174c4a6a27?w=400',
         ingredients: ['五花肉', '冰糖', '生抽', '老抽', '干辣椒'],
-        preparationTime: '60分钟',
         difficulty: '中等',
         nutritionFacts: {
           'calories': 380,
@@ -624,7 +551,7 @@ class ExpandedFoodDatabase {
       // 继续添加更多湘菜...
     ];
   }
-  
+
   /// 徽菜
   static List<Food> _generateAnhuiCuisine() {
     return [
@@ -638,20 +565,13 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['鲜', '香', '咸'],
         imageUrl: 'https://images.unsplash.com/photo-1547330874-e47bda1b3f40?w=400',
         ingredients: ['鳜鱼', '笋丝', '木耳', '生抽', '料酒'],
-        preparationTime: '45分钟',
         difficulty: '中等',
-        nutritionFacts: {
-          'calories': 280,
-          'protein': 32.0,
-          'carbs': 6.0,
-          'fat': 14.0,
-          'fiber': 2.0
-        },
+        nutritionFacts: {'calories': 280, 'protein': 32.0, 'carbs': 6.0, 'fat': 14.0, 'fiber': 2.0},
       ),
       // 继续添加更多徽菜...
     ];
   }
-  
+
   /// 东北菜
   static List<Food> _generateNortheastCuisine() {
     return [
@@ -665,7 +585,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['酸', '甜', '脆'],
         imageUrl: 'https://images.unsplash.com/photo-1565299585323-38174c4a6a27?w=400',
         ingredients: ['猪里脊', '土豆淀粉', '白糖', '醋', '胡萝卜丝'],
-        preparationTime: '20分钟',
         difficulty: '中等',
         nutritionFacts: {
           'calories': 350,
@@ -685,7 +604,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['鲜', '酸', '香'],
         imageUrl: 'https://images.unsplash.com/photo-1565299585323-38174c4a6a27?w=400',
         ingredients: ['五花肉', '血肠', '酸菜', '粉条', '大葱'],
-        preparationTime: '40分钟',
         difficulty: '简单',
         nutritionFacts: {
           'calories': 320,
@@ -698,7 +616,7 @@ class ExpandedFoodDatabase {
       // 继续添加更多东北菜...
     ];
   }
-  
+
   /// 西北菜
   static List<Food> _generateNorthwestCuisine() {
     return [
@@ -712,20 +630,13 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['鲜', '香', '清'],
         imageUrl: 'https://images.unsplash.com/photo-1585032226651-759b368d7be1?w=400',
         ingredients: ['拉面', '牛肉', '白萝卜', '香菜', '辣椒油'],
-        preparationTime: '15分钟',
         difficulty: '中等',
-        nutritionFacts: {
-          'calories': 380,
-          'protein': 22.0,
-          'carbs': 55.0,
-          'fat': 8.0,
-          'fiber': 4.0
-        },
+        nutritionFacts: {'calories': 380, 'protein': 22.0, 'carbs': 55.0, 'fat': 8.0, 'fiber': 4.0},
       ),
       // 继续添加更多西北菜...
     ];
   }
-  
+
   /// 云贵菜
   static List<Food> _generateYunnanGuizhouCuisine() {
     return [
@@ -739,20 +650,13 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['鲜', '香', '嫩'],
         imageUrl: 'https://images.unsplash.com/photo-1585032226651-759b368d7be1?w=400',
         ingredients: ['米线', '鸡汤', '鸡肉片', '韭菜', '豆腐皮'],
-        preparationTime: '20分钟',
         difficulty: '中等',
-        nutritionFacts: {
-          'calories': 320,
-          'protein': 18.0,
-          'carbs': 45.0,
-          'fat': 8.0,
-          'fiber': 3.0
-        },
+        nutritionFacts: {'calories': 320, 'protein': 18.0, 'carbs': 45.0, 'fat': 8.0, 'fiber': 3.0},
       ),
       // 继续添加更多云贵菜...
     ];
   }
-  
+
   /// 西餐
   static List<Food> _generateWesternCuisine() {
     return [
@@ -766,15 +670,8 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['鲜', '嫩', '香'],
         imageUrl: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=400',
         ingredients: ['牛排', '黑胡椒', '蒜蓉', '黄油', '迷迭香'],
-        preparationTime: '15分钟',
         difficulty: '中等',
-        nutritionFacts: {
-          'calories': 450,
-          'protein': 35.0,
-          'carbs': 5.0,
-          'fat': 32.0,
-          'fiber': 1.0
-        },
+        nutritionFacts: {'calories': 450, 'protein': 35.0, 'carbs': 5.0, 'fat': 32.0, 'fiber': 1.0},
       ),
       Food(
         id: 'west_002',
@@ -786,7 +683,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['香', '酸', '鲜'],
         imageUrl: 'https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?w=400',
         ingredients: ['意面', '番茄酱', '牛肉末', '洋葱', '芝士'],
-        preparationTime: '25分钟',
         difficulty: '简单',
         nutritionFacts: {
           'calories': 420,
@@ -799,7 +695,7 @@ class ExpandedFoodDatabase {
       // 继续添加更多西餐...
     ];
   }
-  
+
   /// 日料
   static List<Food> _generateJapaneseCuisine() {
     return [
@@ -813,15 +709,8 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['鲜', '甜', '嫩'],
         imageUrl: 'https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?w=400',
         ingredients: ['三文鱼', '寿司饭', '海苔', '芥末', '生抽'],
-        preparationTime: '30分钟',
         difficulty: '困难',
-        nutritionFacts: {
-          'calories': 280,
-          'protein': 20.0,
-          'carbs': 35.0,
-          'fat': 8.0,
-          'fiber': 2.0
-        },
+        nutritionFacts: {'calories': 280, 'protein': 20.0, 'carbs': 35.0, 'fat': 8.0, 'fiber': 2.0},
       ),
       Food(
         id: 'jp_002',
@@ -833,7 +722,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['鲜', '香', '醇'],
         imageUrl: 'https://images.unsplash.com/photo-1585032226651-759b368d7be1?w=400',
         ingredients: ['拉面', '叉烧', '糖心蛋', '海苔', '大葱'],
-        preparationTime: '20分钟',
         difficulty: '中等',
         nutritionFacts: {
           'calories': 450,
@@ -846,7 +734,7 @@ class ExpandedFoodDatabase {
       // 继续添加更多日料...
     ];
   }
-  
+
   /// 韩料
   static List<Food> _generateKoreanCuisine() {
     return [
@@ -860,7 +748,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['香', '咸', '辣'],
         imageUrl: 'https://images.unsplash.com/photo-1565299585323-38174c4a6a27?w=400',
         ingredients: ['牛肉片', '韩式辣椒酱', '大蒜', '洋葱', '生菜'],
-        preparationTime: '15分钟',
         difficulty: '简单',
         nutritionFacts: {
           'calories': 380,
@@ -880,20 +767,13 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['酸', '辣', '脆'],
         imageUrl: 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=400',
         ingredients: ['白菜', '韩式辣椒粉', '蒜蓉', '生姜', '鱼露'],
-        preparationTime: '30分钟',
         difficulty: '中等',
-        nutritionFacts: {
-          'calories': 25,
-          'protein': 2.0,
-          'carbs': 5.0,
-          'fat': 0.0,
-          'fiber': 2.0
-        },
+        nutritionFacts: {'calories': 25, 'protein': 2.0, 'carbs': 5.0, 'fat': 0.0, 'fiber': 2.0},
       ),
       // 继续添加更多韩料...
     ];
   }
-  
+
   /// 东南亚料理
   static List<Food> _generateSoutheastAsianCuisine() {
     return [
@@ -907,15 +787,8 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['酸', '辣', '鲜'],
         imageUrl: 'https://images.unsplash.com/photo-1547330874-e47bda1b3f40?w=400',
         ingredients: ['虾', '香茅', '柠檬叶', '辣椒', '鱼露'],
-        preparationTime: '20分钟',
         difficulty: '中等',
-        nutritionFacts: {
-          'calories': 120,
-          'protein': 15.0,
-          'carbs': 8.0,
-          'fat': 3.0,
-          'fiber': 2.0
-        },
+        nutritionFacts: {'calories': 120, 'protein': 15.0, 'carbs': 8.0, 'fat': 3.0, 'fiber': 2.0},
       ),
       Food(
         id: 'sea_002',
@@ -927,7 +800,6 @@ class ExpandedFoodDatabase {
         tasteAttributes: ['香', '咸', '微辣'],
         imageUrl: 'https://images.unsplash.com/photo-1585032226651-759b368d7be1?w=400',
         ingredients: ['河粉', '咖喱粉', '虾仁', '叉烧', '豆芽'],
-        preparationTime: '15分钟',
         difficulty: '中等',
         nutritionFacts: {
           'calories': 350,

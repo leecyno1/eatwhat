@@ -4,37 +4,37 @@ import 'package:uuid/uuid.dart';
 part 'user_preference.g.dart';
 
 /// 用户偏好模型
-/// 
+///
 /// 使用Hive进行本地存储
 @HiveType(typeId: 4)
 class UserPreference extends HiveObject {
   @HiveField(0)
   final String id;
-  
+
   @HiveField(1)
   final String userId;
-  
+
   @HiveField(2)
   final List<String> likedBubbles;
-  
+
   @HiveField(3)
   final List<String> dislikedBubbles;
-  
+
   @HiveField(4)
   final List<String> ignoredBubbles;
-  
+
   @HiveField(5)
   final Map<String, int> bubbleInteractionCount;
-  
+
   @HiveField(6)
   final DateTime lastUpdated;
-  
+
   @HiveField(7)
   final Map<String, double> bubbleWeights;
-  
+
   @HiveField(8)
   final List<String> favoriteFoods;
-  
+
   @HiveField(9)
   final List<String> dislikedFoods;
 
@@ -57,17 +57,17 @@ class UserPreference extends HiveObject {
     List<String>? dislikedFoods,
     Map<String, double>? cuisinePreferences,
     Map<String, double>? tastePreferences,
-  }) : id = id ?? const Uuid().v4(),
-       likedBubbles = likedBubbles ?? [],
-       dislikedBubbles = dislikedBubbles ?? [],
-       ignoredBubbles = ignoredBubbles ?? [],
-       bubbleInteractionCount = bubbleInteractionCount ?? {},
-       lastUpdated = lastUpdated ?? DateTime.now(),
-       bubbleWeights = bubbleWeights ?? {},
-       favoriteFoods = favoriteFoods ?? [],
-       dislikedFoods = dislikedFoods ?? [],
-       cuisinePreferences = cuisinePreferences ?? {},
-       tastePreferences = tastePreferences ?? {};
+  })  : id = id ?? const Uuid().v4(),
+        likedBubbles = likedBubbles ?? [],
+        dislikedBubbles = dislikedBubbles ?? [],
+        ignoredBubbles = ignoredBubbles ?? [],
+        bubbleInteractionCount = bubbleInteractionCount ?? {},
+        lastUpdated = lastUpdated ?? DateTime.now(),
+        bubbleWeights = bubbleWeights ?? {},
+        favoriteFoods = favoriteFoods ?? [],
+        dislikedFoods = dislikedFoods ?? [],
+        cuisinePreferences = cuisinePreferences ?? {},
+        tastePreferences = tastePreferences ?? {};
 
   /// 复制并修改属性
   UserPreference copyWith({
@@ -226,9 +226,15 @@ class UserPreference extends HiveObject {
   }
 
   /// 更新口味偏好
-  UserPreference updateTastePreference(String taste, double score) {
+  /// [taste] 口味名称
+  /// [score] 基础分数变化量（正数增加偏好，负数减少偏好）
+  /// [intensity] 强度因子（0.0-1.0），默认1.0，实际分数变化量为 score * intensity
+  UserPreference updateTastePreference(String taste, double score, {double intensity = 1.0}) {
     final newPreferences = Map<String, double>.from(tastePreferences);
-    newPreferences[taste] = score.clamp(-10.0, 10.0);
+    final currentScore = newPreferences[taste] ?? 0.0;
+    // 实际变化量 = 基础分数 * 强度
+    final actualChange = score * intensity.clamp(0.0, 1.0);
+    newPreferences[taste] = (currentScore + actualChange).clamp(-10.0, 10.0);
 
     return copyWith(
       tastePreferences: newPreferences,

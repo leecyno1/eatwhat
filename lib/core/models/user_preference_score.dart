@@ -96,10 +96,10 @@ class UserPreferenceScore {
   }) {
     // 将分数标准化到0-1之间
     final normalizedScore = (score - minScore) / (maxScore - minScore);
-    
+
     // 使用S曲线让变化更明显
     final curvedScore = _sigmoid(normalizedScore * 6 - 3);
-    
+
     // 映射到半径范围
     return minRadius + (maxRadius - minRadius) * curvedScore;
   }
@@ -199,6 +199,6 @@ class UserPreferenceScore {
   @override
   String toString() {
     return 'UserPreferenceScore(id: $entityId, name: $entityName, score: $score, '
-           'likes: $likeCount, dislikes: $dislikeCount, level: ${getPreferenceLevel()})';
+        'likes: $likeCount, dislikes: $dislikeCount, level: ${getPreferenceLevel()})';
   }
 }

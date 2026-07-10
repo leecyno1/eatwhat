@@ -87,8 +87,10 @@ class _FavoritesScreenState extends State<FavoritesScreen>
       // 搜索过滤
       final matchesSearch = _searchQuery.isEmpty ||
           food.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
-          food.ingredients.any((ingredient) =>
-              ingredient.toLowerCase().contains(_searchQuery.toLowerCase()));
+          (food.ingredients ?? const <String>[]).any(
+            (ingredient) =>
+                ingredient.toLowerCase().contains(_searchQuery.toLowerCase()),
+          );
 
       // 菜系过滤
       final matchesCuisine =

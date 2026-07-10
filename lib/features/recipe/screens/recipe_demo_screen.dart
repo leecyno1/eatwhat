@@ -156,7 +156,7 @@ class _RecipeDemoScreenState extends State<RecipeDemoScreen> {
                           ],
                         ),
                         const SizedBox(height: 8),
-                        
+
                         // 基本信息
                         Row(
                           children: [
@@ -174,7 +174,7 @@ class _RecipeDemoScreenState extends State<RecipeDemoScreen> {
                           ],
                         ),
                         const SizedBox(height: 16),
-                        
+
                         // 描述
                         Text(
                           recipe.description,
@@ -185,7 +185,7 @@ class _RecipeDemoScreenState extends State<RecipeDemoScreen> {
                           ),
                         ),
                         const SizedBox(height: 24),
-                        
+
                         // 食材
                         const Text(
                           '食材',
@@ -195,35 +195,37 @@ class _RecipeDemoScreenState extends State<RecipeDemoScreen> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        ...recipe.ingredients.map((ingredient) => Container(
-                          margin: const EdgeInsets.only(bottom: 8),
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[50],
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            children: [
-                              Icon(
-                                ingredient.isMain ? Icons.star : Icons.fiber_manual_record,
-                                size: 16,
-                                color: ingredient.isMain ? Colors.orange : Colors.grey,
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                ingredient.name,
-                                style: const TextStyle(fontWeight: FontWeight.w500),
-                              ),
-                              const Spacer(),
-                              Text(
-                                '${ingredient.amount} ${ingredient.unit}',
-                                style: TextStyle(color: Colors.grey[600]),
-                              ),
-                            ],
-                          ),
-                        )).toList(),
+                        ...recipe.ingredients
+                            .map((ingredient) => Container(
+                                  margin: const EdgeInsets.only(bottom: 8),
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[50],
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        ingredient.isMain ? Icons.star : Icons.fiber_manual_record,
+                                        size: 16,
+                                        color: ingredient.isMain ? Colors.orange : Colors.grey,
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        ingredient.name,
+                                        style: const TextStyle(fontWeight: FontWeight.w500),
+                                      ),
+                                      const Spacer(),
+                                      Text(
+                                        '${ingredient.amount} ${ingredient.unit}',
+                                        style: TextStyle(color: Colors.grey[600]),
+                                      ),
+                                    ],
+                                  ),
+                                ))
+                            .toList(),
                         const SizedBox(height: 24),
-                        
+
                         // 制作步骤
                         const Text(
                           '制作步骤',
@@ -233,76 +235,78 @@ class _RecipeDemoScreenState extends State<RecipeDemoScreen> {
                           ),
                         ),
                         const SizedBox(height: 12),
-                        ...recipe.steps.map((step) => Container(
-                          margin: const EdgeInsets.only(bottom: 16),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                width: 28,
-                                height: 28,
-                                decoration: BoxDecoration(
-                                  color: Colors.orange.shade600,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    '${step.stepNumber}',
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      step.description,
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        height: 1.5,
-                                      ),
-                                    ),
-                                    if (step.tip != null) ...[
-                                      const SizedBox(height: 8),
+                        ...recipe.steps
+                            .map((step) => Container(
+                                  margin: const EdgeInsets.only(bottom: 16),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
                                       Container(
-                                        padding: const EdgeInsets.all(8),
+                                        width: 28,
+                                        height: 28,
                                         decoration: BoxDecoration(
-                                          color: Colors.blue.shade50,
-                                          borderRadius: BorderRadius.circular(6),
+                                          color: Colors.orange.shade600,
+                                          shape: BoxShape.circle,
                                         ),
-                                        child: Row(
-                                          children: [
-                                            Icon(
-                                              Icons.lightbulb_outline,
-                                              size: 16,
-                                              color: Colors.blue.shade600,
+                                        child: Center(
+                                          child: Text(
+                                            '${step.stepNumber}',
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontWeight: FontWeight.bold,
                                             ),
-                                            const SizedBox(width: 4),
-                                            Expanded(
-                                              child: Text(
-                                                step.tip!,
-                                                style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.blue.shade600,
-                                                ),
+                                          ),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              step.description,
+                                              style: const TextStyle(
+                                                fontSize: 16,
+                                                height: 1.5,
                                               ),
                                             ),
+                                            if (step.tip != null) ...[
+                                              const SizedBox(height: 8),
+                                              Container(
+                                                padding: const EdgeInsets.all(8),
+                                                decoration: BoxDecoration(
+                                                  color: Colors.blue.shade50,
+                                                  borderRadius: BorderRadius.circular(6),
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    Icon(
+                                                      Icons.lightbulb_outline,
+                                                      size: 16,
+                                                      color: Colors.blue.shade600,
+                                                    ),
+                                                    const SizedBox(width: 4),
+                                                    Expanded(
+                                                      child: Text(
+                                                        step.tip!,
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          color: Colors.blue.shade600,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ],
                                           ],
                                         ),
                                       ),
                                     ],
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        )).toList(),
-                        
+                                  ),
+                                ))
+                            .toList(),
+
                         // 营养信息
                         const SizedBox(height: 24),
                         const Text(
@@ -323,17 +327,21 @@ class _RecipeDemoScreenState extends State<RecipeDemoScreen> {
                             children: [
                               Row(
                                 children: [
-                                  _buildNutritionItem('卡路里', '${recipe.nutrition.calories.toInt()}kcal'),
+                                  _buildNutritionItem(
+                                      '卡路里', '${recipe.nutrition.calories.toInt()}kcal'),
                                   const SizedBox(width: 16),
-                                  _buildNutritionItem('蛋白质', '${recipe.nutrition.protein.toStringAsFixed(1)}g'),
+                                  _buildNutritionItem(
+                                      '蛋白质', '${recipe.nutrition.protein.toStringAsFixed(1)}g'),
                                 ],
                               ),
                               const SizedBox(height: 12),
                               Row(
                                 children: [
-                                  _buildNutritionItem('碳水', '${recipe.nutrition.carbs.toStringAsFixed(1)}g'),
+                                  _buildNutritionItem(
+                                      '碳水', '${recipe.nutrition.carbs.toStringAsFixed(1)}g'),
                                   const SizedBox(width: 16),
-                                  _buildNutritionItem('脂肪', '${recipe.nutrition.fat.toStringAsFixed(1)}g'),
+                                  _buildNutritionItem(
+                                      '脂肪', '${recipe.nutrition.fat.toStringAsFixed(1)}g'),
                                 ],
                               ),
                             ],

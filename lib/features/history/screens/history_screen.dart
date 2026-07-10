@@ -13,8 +13,7 @@ class HistoryScreen extends StatefulWidget {
   State<HistoryScreen> createState() => _HistoryScreenState();
 }
 
-class _HistoryScreenState extends State<HistoryScreen>
-    with TickerProviderStateMixin {
+class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateMixin {
   List<Food> _historyFoods = [];
   List<Food> _filteredFoods = [];
   bool _isLoading = true;
@@ -60,11 +59,11 @@ class _HistoryScreenState extends State<HistoryScreen>
     try {
       final historyData = StorageService.getFoodHistory();
       final foods = <Food>[];
-      
+
       // 这里需要根据实际的存储格式来解析数据
       for (final data in historyData) {
         foods.add(Food.fromJson(data));
-            }
+      }
 
       setState(() {
         _historyFoods = foods;

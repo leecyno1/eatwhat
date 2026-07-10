@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/bubble.dart';
+import '../../shared/themes/design_tokens.dart';
 
 /// 现代化应用主题配置
 class AppTheme {
@@ -133,15 +134,106 @@ class AppTheme {
 
   static const TextTheme _darkTextTheme = TextTheme(
     displayLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: darkTextPrimaryColor),
-    displayMedium: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: darkTextPrimaryColor),
+    displayMedium:
+        TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: darkTextPrimaryColor),
     displaySmall: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: darkTextPrimaryColor),
-    headlineMedium: TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: darkTextPrimaryColor),
-    headlineSmall: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: darkTextPrimaryColor),
+    headlineMedium:
+        TextStyle(fontSize: 18, fontWeight: FontWeight.w600, color: darkTextPrimaryColor),
+    headlineSmall:
+        TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: darkTextPrimaryColor),
     titleLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: darkTextPrimaryColor),
     bodyLarge: TextStyle(fontSize: 16, color: darkTextPrimaryColor),
     bodyMedium: TextStyle(fontSize: 14, color: darkTextSecondaryColor),
     labelLarge: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: textOnPrimaryColor),
   );
+
+  /// New rounded pastel theme based on the target reference
+  /// Does not replace existing themes; opt-in via `AppTheme.roundedPastel`.
+  static ThemeData get roundedPastel {
+    return ThemeData(
+      brightness: Brightness.light,
+      scaffoldBackgroundColor: DesignTokens.cream,
+      primaryColor: DesignTokens.mint,
+      colorScheme: ColorScheme(
+        brightness: Brightness.light,
+        primary: DesignTokens.mint,
+        onPrimary: Colors.white,
+        secondary: DesignTokens.orange,
+        onSecondary: DesignTokens.ink,
+        surface: DesignTokens.surface,
+        onSurface: DesignTokens.ink,
+        error: const Color(0xFFDA3C3C),
+        onError: Colors.white,
+        primaryContainer: DesignTokens.teal,
+        secondaryContainer: DesignTokens.butter,
+      ),
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        foregroundColor: DesignTokens.ink,
+        titleTextStyle: DesignTokens.h3,
+      ),
+      textTheme: const TextTheme(
+        displayLarge: DesignTokens.h1,
+        displayMedium: DesignTokens.h2,
+        headlineMedium: DesignTokens.h3,
+        bodyMedium: DesignTokens.body,
+        bodySmall: DesignTokens.caption,
+      ),
+      cardTheme: const CardThemeData(
+        color: DesignTokens.surface,
+        elevation: 0,
+        margin: EdgeInsets.zero,
+        shape: RoundedRectangleBorder(borderRadius: DesignTokens.bigRadius),
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: DesignTokens.ink,
+          foregroundColor: Colors.white,
+          shadowColor: Colors.transparent,
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+          shape: const StadiumBorder(),
+          textStyle: const TextStyle(fontWeight: FontWeight.w700),
+        ),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: DesignTokens.mint,
+          foregroundColor: Colors.white,
+          shape: const StadiumBorder(),
+          textStyle: const TextStyle(fontWeight: FontWeight.w700),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: DesignTokens.ink,
+          side: const BorderSide(color: DesignTokens.ink),
+          shape: const StadiumBorder(),
+          textStyle: const TextStyle(fontWeight: FontWeight.w700),
+        ),
+      ),
+      inputDecorationTheme: const InputDecorationTheme(
+        filled: true,
+        fillColor: DesignTokens.surface,
+        hintStyle: DesignTokens.caption,
+        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        border:
+            OutlineInputBorder(borderRadius: DesignTokens.bigRadius, borderSide: BorderSide.none),
+        focusedBorder: OutlineInputBorder(
+            borderRadius: DesignTokens.bigRadius,
+            borderSide: BorderSide(color: DesignTokens.mint, width: 2)),
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: DesignTokens.surface,
+        labelStyle: const TextStyle(color: DesignTokens.ink, fontWeight: FontWeight.w600),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        shape: const StadiumBorder(),
+        selectedColor: DesignTokens.mint.withOpacity(0.15),
+      ),
+      useMaterial3: true,
+    );
+  }
 
   /// 气泡主题颜色
   static Color getBubbleColor(BubbleType type) {
@@ -156,6 +248,9 @@ class AppTheme {
         return const Color(0xFF45B7D1);
       case BubbleType.nutrition:
         return const Color(0xFFEECA7C);
+      // 兼容新增的细分口味类型，统一归类为 taste 色系
+      default:
+        return const Color(0xFFFF6B6B);
     }
   }
 
@@ -199,9 +294,7 @@ class AppTheme {
       ];
 
   /// 气泡发光阴影
-  static List<BoxShadow> getBubbleGlowShadow(Color color,
-          {double intensity = 1.0}) =>
-      [
+  static List<BoxShadow> getBubbleGlowShadow(Color color, {double intensity = 1.0}) => [
         BoxShadow(
           color: color.withValues(alpha: 0.3 * intensity),
           blurRadius: 8 + 12 * intensity,

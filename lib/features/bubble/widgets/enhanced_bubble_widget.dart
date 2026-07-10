@@ -84,4 +84,4 @@ class _EnhancedBubbleWidgetState extends State<EnhancedBubbleWidget>
       ),
     );
   }
-} 
+}

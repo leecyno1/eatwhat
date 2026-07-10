@@ -20,8 +20,7 @@ class FoodCard extends StatefulWidget {
   State<FoodCard> createState() => _FoodCardState();
 }
 
-class _FoodCardState extends State<FoodCard>
-    with SingleTickerProviderStateMixin {
+class _FoodCardState extends State<FoodCard> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
@@ -126,15 +125,13 @@ class _FoodCardState extends State<FoodCard>
           // 背景图片或占位符
           if (widget.food.imageUrl != null)
             ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
               child: Image.network(
                 widget.food.imageUrl!,
                 width: double.infinity,
                 height: double.infinity,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    _buildImagePlaceholder(),
+                errorBuilder: (context, error, stackTrace) => _buildImagePlaceholder(),
               ),
             )
           else
@@ -236,7 +233,7 @@ class _FoodCardState extends State<FoodCard>
               fontWeight: FontWeight.bold,
             ),
           ),
-          if (widget.food.ratingCount > 0) ...[
+          if ((widget.food.ratingCount ?? 0) > 0) ...[
             const SizedBox(width: 4),
             Text(
               '(${widget.food.ratingCount})',
@@ -318,11 +315,13 @@ class _FoodCardState extends State<FoodCard>
     final tags = <String>[];
 
     // 添加菜系
-    tags.add(widget.food.cuisineType);
+    if (widget.food.cuisineType != null) {
+      tags.add(widget.food.cuisineType!);
+    }
 
     // 添加主要口味特点（最多2个）
-    if (widget.food.tasteAttributes.isNotEmpty) {
-      tags.addAll(widget.food.tasteAttributes.take(2));
+    if ((widget.food.tasteAttributes ?? []).isNotEmpty) {
+      tags.addAll((widget.food.tasteAttributes ?? []).take(2));
     }
 
     if (tags.isEmpty) return const SizedBox.shrink();

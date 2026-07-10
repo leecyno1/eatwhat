@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../shared/themes/design_tokens.dart';
+import '../../../shared/widgets/ui/rounded_card.dart';
 import '../../recommendation/widgets/food_card.dart';
 import '../widgets/search_filters.dart';
 import '../widgets/search_suggestions.dart';
@@ -15,8 +17,7 @@ class SearchScreen extends StatefulWidget {
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen>
-    with TickerProviderStateMixin {
+class _SearchScreenState extends State<SearchScreen> with TickerProviderStateMixin {
   final TextEditingController _searchController = TextEditingController();
   final FocusNode _searchFocus = FocusNode();
 
@@ -105,9 +106,8 @@ class _SearchScreenState extends State<SearchScreen>
 
     _searchFocus.addListener(() {
       setState(() {
-        _showSuggestions = _searchFocus.hasFocus &&
-            _searchQuery.isNotEmpty &&
-            _searchResults.isEmpty;
+        _showSuggestions =
+            _searchFocus.hasFocus && _searchQuery.isNotEmpty && _searchResults.isEmpty;
       });
     });
   }
@@ -126,26 +126,25 @@ class _SearchScreenState extends State<SearchScreen>
         final queryLower = query.toLowerCase();
 
         // 搜索食物名称
-        if (food.name.toLowerCase().contains(queryLower)) return true;
+        if ((food.name).toLowerCase().contains(queryLower)) return true;
 
         // 搜索菜系
-        if (food.cuisineType.toLowerCase().contains(queryLower)) return true;
+        if ((food.cuisineType ?? '').toLowerCase().contains(queryLower)) return true;
 
         // 搜索食材
-        if (food.ingredients
+        if ((food.ingredients ?? const [])
             .any((ingredient) => ingredient.toLowerCase().contains(queryLower))) {
           return true;
         }
 
         // 搜索口味属性
-        if (food.tasteAttributes
+        if ((food.tasteAttributes ?? const [])
             .any((taste) => taste.toLowerCase().contains(queryLower))) {
           return true;
         }
 
         // 搜索场景
-        if (food.scenarios?.any(
-                (scenario) => scenario.toLowerCase().contains(queryLower)) ==
+        if ((food.scenarios)?.any((scenario) => scenario.toLowerCase().contains(queryLower)) ==
             true) {
           return true;
         }
@@ -179,22 +178,19 @@ class _SearchScreenState extends State<SearchScreen>
   List<Food> _applyFilters(List<Food> foods) {
     return foods.where((food) {
       // 菜系筛选
-      if (_selectedCuisines.isNotEmpty &&
-          !_selectedCuisines.contains(food.cuisineType)) {
+      if (_selectedCuisines.isNotEmpty && !_selectedCuisines.contains(food.cuisineType)) {
         return false;
       }
 
       // 口味筛选
       if (_selectedTastes.isNotEmpty &&
-          !_selectedTastes
-              .any((taste) => food.tasteAttributes.contains(taste))) {
+          !(_selectedTastes.any((taste) => (food.tasteAttributes ?? const []).contains(taste)))) {
         return false;
       }
 
       // 热量筛选
       if (food.calories != null) {
-        if (food.calories! < _caloriesRange.start ||
-            food.calories! > _caloriesRange.end) {
+        if (food.calories! < _caloriesRange.start || food.calories! > _caloriesRange.end) {
           return false;
         }
       }
@@ -217,8 +213,7 @@ class _SearchScreenState extends State<SearchScreen>
         sortedFoods.sort((a, b) => b.rating.compareTo(a.rating));
         break;
       case 'calories':
-        sortedFoods
-            .sort((a, b) => (a.calories ?? 0).compareTo(b.calories ?? 0));
+        sortedFoods.sort((a, b) => (a.calories ?? 0).compareTo(b.calories ?? 0));
         break;
       case 'name':
         sortedFoods.sort((a, b) => a.name.compareTo(b.name));
@@ -260,10 +255,14 @@ class _SearchScreenState extends State<SearchScreen>
 
   /// 生成搜索建议
   void _generateSuggestions() {
-    final cuisines = _allFoods.map((f) => f.cuisineType).toSet().toList();
-    final tastes = _allFoods.expand((f) => f.tasteAttributes).toSet().toList();
-
-    _suggestions = [...cuisines, ...tastes].take(20).toList();
+    final cuisines =
+        _allFoods.map((f) => f.cuisineType ?? '').where((e) => e.isNotEmpty).toSet().toList();
+    final tastes = _allFoods
+        .expand((f) => (f.tasteAttributes ?? const <String>[]))
+        .toSet()
+        .toList()
+        .cast<String>();
+    _suggestions = [...cuisines, ...tastes].take(20).cast<String>().toList();
   }
 
   @override
@@ -271,14 +270,9 @@ class _SearchScreenState extends State<SearchScreen>
     return Scaffold(
       appBar: AppBar(
         title: _buildSearchBar(),
-        elevation: 0,
         titleSpacing: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.tune),
-            onPressed: _showFilters,
-            tooltip: '筛选',
-          ),
+          IconButton(icon: const Icon(Icons.tune_rounded), onPressed: _showFilters, tooltip: '筛选'),
         ],
       ),
       body: _buildBody(),
@@ -304,12 +298,10 @@ class _SearchScreenState extends State<SearchScreen>
                   },
                 )
               : null,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(25),
-            borderSide: BorderSide.none,
-          ),
+          border: const OutlineInputBorder(
+              borderRadius: DesignTokens.bigRadius, borderSide: BorderSide.none),
           filled: true,
-          fillColor: Colors.grey[100],
+          fillColor: DesignTokens.surface,
           contentPadding: const EdgeInsets.symmetric(horizontal: 16),
         ),
         textInputAction: TextInputAction.search,
@@ -356,16 +348,7 @@ class _SearchScreenState extends State<SearchScreen>
 
   /// 构建加载状态
   Widget _buildLoadingState() {
-    return const Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircularProgressIndicator(),
-          SizedBox(height: 16),
-          Text('搜索中...'),
-        ],
-      ),
-    );
+    return const Center(child: CircularProgressIndicator());
   }
 
   /// 构建空状态
@@ -447,13 +430,16 @@ class _SearchScreenState extends State<SearchScreen>
                 final food = _searchResults[index];
 
                 return AnimatedContainer(
-                  duration: Duration(milliseconds: 300 + index * 50),
+                  duration: Duration(milliseconds: 300 + index * 40),
                   curve: Curves.easeOutBack,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: FoodCard(
-                    food: food,
-                    onTap: () => _showFoodDetail(food),
-                    onFavorite: () => _toggleFavorite(food),
+                  margin: const EdgeInsets.only(bottom: 14),
+                  child: RoundedCard(
+                    padding: const EdgeInsets.all(0),
+                    child: FoodCard(
+                      food: food,
+                      onTap: () => _showFoodDetail(food),
+                      onFavorite: () => _toggleFavorite(food),
+                    ),
                   ),
                 );
               },
@@ -467,20 +453,15 @@ class _SearchScreenState extends State<SearchScreen>
   /// 构建结果头部
   Widget _buildResultsHeader() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.grey[50],
-        border: Border(
-          bottom: BorderSide(color: Colors.grey[200]!),
-        ),
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: const BoxDecoration(color: DesignTokens.creamAlt),
       child: Row(
         children: [
           Text(
             '找到 ${_searchResults.length} 个结果',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+                  fontWeight: FontWeight.w600,
+                ),
           ),
           const Spacer(),
           DropdownButton<String>(

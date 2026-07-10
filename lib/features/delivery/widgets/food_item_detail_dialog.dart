@@ -42,9 +42,9 @@ class FoodItemDetailDialog extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // 食品图片
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
@@ -70,9 +70,9 @@ class FoodItemDetailDialog extends StatelessWidget {
                 },
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // 食品名称
             Text(
               food.name,
@@ -81,9 +81,9 @@ class FoodItemDetailDialog extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            
+
             const SizedBox(height: 8),
-            
+
             // 食品描述
             if (food.description?.isNotEmpty == true)
               Text(
@@ -93,9 +93,9 @@ class FoodItemDetailDialog extends StatelessWidget {
                   color: Colors.grey[600],
                 ),
               ),
-            
+
             const SizedBox(height: 16),
-            
+
             // 价格信息
             Row(
               children: [
@@ -119,9 +119,9 @@ class FoodItemDetailDialog extends StatelessWidget {
                   ),
               ],
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // 其他信息
             if (food.preparationTime != null) ...[
               Row(
@@ -136,7 +136,7 @@ class FoodItemDetailDialog extends StatelessWidget {
               ),
               const SizedBox(height: 8),
             ],
-            
+
             if (food.rating > 0) ...[
               Row(
                 children: [
@@ -150,7 +150,7 @@ class FoodItemDetailDialog extends StatelessWidget {
               ),
               const SizedBox(height: 8),
             ],
-            
+
             Row(
               children: [
                 const Icon(Icons.shopping_bag, size: 16, color: Colors.grey),
@@ -161,9 +161,9 @@ class FoodItemDetailDialog extends StatelessWidget {
                 ),
               ],
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // 操作按钮
             SizedBox(
               width: double.infinity,
@@ -191,4 +191,4 @@ class FoodItemDetailDialog extends StatelessWidget {
       ),
     );
   }
-} 
+}

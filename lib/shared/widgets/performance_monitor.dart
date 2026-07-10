@@ -20,8 +20,7 @@ class PerformanceMonitor extends StatefulWidget {
   State<PerformanceMonitor> createState() => _PerformanceMonitorState();
 }
 
-class _PerformanceMonitorState extends State<PerformanceMonitor>
-    with TickerProviderStateMixin {
+class _PerformanceMonitorState extends State<PerformanceMonitor> with TickerProviderStateMixin {
   late Ticker _ticker;
   final List<Duration> _frameDurations = [];
   double _currentFps = 0.0;
@@ -51,7 +50,7 @@ class _PerformanceMonitorState extends State<PerformanceMonitor>
 
     if (frameDuration.inMicroseconds > 0) {
       _frameDurations.add(frameDuration);
-      
+
       // 保持最近60帧的数据
       if (_frameDurations.length > 60) {
         _frameDurations.removeAt(0);
@@ -59,20 +58,20 @@ class _PerformanceMonitorState extends State<PerformanceMonitor>
 
       // 计算FPS
       if (_frameDurations.isNotEmpty) {
-        final avgFrameTime = _frameDurations
-            .map((d) => d.inMicroseconds)
-            .reduce((a, b) => a + b) / _frameDurations.length;
-        
+        final avgFrameTime = _frameDurations.map((d) => d.inMicroseconds).reduce((a, b) => a + b) /
+            _frameDurations.length;
+
         _currentFps = 1000000 / avgFrameTime;
 
         // 检测掉帧
-        if (frameDuration.inMilliseconds > 20) {  // 超过20ms算掉帧
+        if (frameDuration.inMilliseconds > 20) {
+          // 超过20ms算掉帧
           _droppedFrames++;
-          
+
           // 性能问题回调
           if (_droppedFrames > 5 && widget.onPerformanceIssue != null) {
             widget.onPerformanceIssue!();
-            _droppedFrames = 0;  // 重置计数
+            _droppedFrames = 0; // 重置计数
           }
         }
       }
@@ -138,7 +137,7 @@ class PerformanceTester {
     final stopwatch = Stopwatch()..start();
     function();
     stopwatch.stop();
-    
+
     developer.log(
       '$operation took ${stopwatch.elapsedMilliseconds}ms',
       name: 'Performance',
@@ -152,7 +151,7 @@ class PerformanceTester {
     final stopwatch = Stopwatch()..start();
     await function();
     stopwatch.stop();
-    
+
     developer.log(
       '$operation took ${stopwatch.elapsedMilliseconds}ms',
       name: 'Performance',

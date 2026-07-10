@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'bubble.dart';
+import '../data/taste_visual_mapping.dart';
 
 /// 气泡工厂类，用于创建预定义的气泡
 class BubbleFactory {
@@ -21,48 +22,18 @@ class BubbleFactory {
 
   /// 创建口味类气泡
   static List<Bubble> createTasteBubbles() {
-    return [
-      Bubble(
+    final keys = ['甜', '酸', '辣', '咸', '鲜', '麻', '清淡', '重口', '火锅'];
+    return keys.map((k) {
+      final spec = TasteVisualMapping.guess(k);
+      return Bubble(
         type: BubbleType.taste,
-        name: '甜',
-        icon: '🍯',
-        description: '甜味食物',
-        color: Colors.pink.shade300,
-        size: 60.0,
-      ),
-      Bubble(
-        type: BubbleType.taste,
-        name: '酸',
-        icon: '🍋',
-        description: '酸味食物',
-        color: Colors.yellow.shade400,
-        size: 55.0,
-      ),
-      Bubble(
-        type: BubbleType.taste,
-        name: '辣',
-        icon: '🌶️',
-        description: '辣味食物',
-        color: Colors.red.shade400,
-        size: 65.0,
-      ),
-      Bubble(
-        type: BubbleType.taste,
-        name: '咸',
-        icon: '🧂',
-        description: '咸味食物',
-        color: Colors.grey.shade400,
-        size: 50.0,
-      ),
-      Bubble(
-        type: BubbleType.taste,
-        name: '鲜',
-        icon: '🦐',
-        description: '鲜味食物',
-        color: Colors.blue.shade300,
-        size: 58.0,
-      ),
-    ];
+        name: spec.label,
+        icon: spec.emoji,
+        description: '${spec.label}风格',
+        color: spec.color,
+        size: 54.0 + (k.hashCode % 12),
+      );
+    }).toList();
   }
 
   /// 创建菜系类气泡
@@ -342,6 +313,13 @@ class BubbleFactory {
         return createScenarioBubbles();
       case BubbleType.nutrition:
         return createNutritionBubbles();
+      case BubbleType.spicy:
+      case BubbleType.sweet:
+      case BubbleType.sour:
+      case BubbleType.bitter:
+      case BubbleType.salty:
+      case BubbleType.umami:
+        return createTasteBubbles(); // 默认返回口味气泡
     }
   }
 

@@ -3,7 +3,6 @@ import '../models/physical_entity.dart';
 
 /// 口味偏好数据库 - 完整的口味偏好分类系统
 class TastePreferenceDatabase {
-  
   /// 获取所有口味偏好实体
   static List<PhysicalEntity> getAllTasteEntities() {
     return [
@@ -39,7 +38,7 @@ class TastePreferenceDatabase {
         bounciness: 0.85,
         friction: 0.02,
       ),
-      
+
       PhysicalEntity(
         id: 'taste_yogurt_sour',
         name: '酸奶酸',

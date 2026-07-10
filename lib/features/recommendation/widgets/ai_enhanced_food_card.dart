@@ -31,7 +31,7 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
   late AnimationController _hoverController;
   late AnimationController _favoriteController;
   late AnimationController _imageController;
-  
+
   late Animation<double> _elevationAnimation;
   late Animation<double> _scaleAnimation;
   late Animation<double> _favoriteScaleAnimation;
@@ -45,7 +45,7 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
   @override
   void initState() {
     super.initState();
-    
+
     // 悬停动画控制器
     _hoverController = AnimationController(
       duration: const Duration(milliseconds: 300),
@@ -169,7 +169,7 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return AIButtonAnimation(
       onTap: widget.onTap,
       child: MouseRegion(
@@ -222,7 +222,8 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
                                     end: Alignment.bottomRight,
                                     colors: [
                                       theme.primaryColor.withValues(alpha: 0.1),
-                                      theme.colorScheme.secondary.withValues(alpha: 0.1),
+                                      theme.colorScheme.secondary
+                                          .withValues(alpha: 0.1),
                                     ],
                                   ),
                                 ),
@@ -245,10 +246,12 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
                                                 width: double.infinity,
                                                 height: double.infinity,
                                                 fit: BoxFit.cover,
-                                                errorBuilder: (context, error, stackTrace) {
+                                                errorBuilder: (context, error,
+                                                    stackTrace) {
                                                   return Container(
                                                     color: Colors.grey[200],
-                                                    child: const Icon(Icons.star),
+                                                    child:
+                                                        const Icon(Icons.star),
                                                   );
                                                 },
                                               )
@@ -266,13 +269,14 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
                                           );
                                         },
                                       ),
-                                    
+
                                     // 悬停遮罩
                                     AnimatedBuilder(
                                       animation: _overlayOpacityAnimation,
                                       builder: (context, child) {
                                         return Opacity(
-                                          opacity: _overlayOpacityAnimation.value,
+                                          opacity:
+                                              _overlayOpacityAnimation.value,
                                           child: Container(
                                             width: double.infinity,
                                             height: double.infinity,
@@ -282,38 +286,50 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
                                                 end: Alignment.bottomCenter,
                                                 colors: [
                                                   Colors.transparent,
-                                                  theme.primaryColor.withValues(alpha: 0.8),
+                                                  theme.primaryColor
+                                                      .withValues(alpha: 0.8),
                                                 ],
                                               ),
                                             ),
                                             child: _isHovered
                                                 ? Center(
                                                     child: Container(
-                                                      padding: const EdgeInsets.symmetric(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
                                                         horizontal: 16,
                                                         vertical: 8,
                                                       ),
                                                       decoration: BoxDecoration(
                                                         color: Colors.white,
-                                                        borderRadius: BorderRadius.circular(20),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20),
                                                         boxShadow: [
                                                           BoxShadow(
-                                                            color: Colors.black.withValues(alpha: 0.1),
+                                                            color: Colors.black
+                                                                .withValues(
+                                                                    alpha: 0.1),
                                                             blurRadius: 8,
                                                             spreadRadius: 2,
                                                           ),
                                                         ],
                                                       ),
                                                       child: Row(
-                                                        mainAxisSize: MainAxisSize.min,
+                                                        mainAxisSize:
+                                                            MainAxisSize.min,
                                                         children: [
-                                                          const Icon(Icons.star),
-                                                          const SizedBox(width: 4),
+                                                          const Icon(
+                                                              Icons.star),
+                                                          const SizedBox(
+                                                              width: 4),
                                                           Text(
                                                             '查看详情',
                                                             style: TextStyle(
-                                                              color: theme.primaryColor,
-                                                              fontWeight: FontWeight.w600,
+                                                              color: theme
+                                                                  .primaryColor,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
                                                               fontSize: 12,
                                                             ),
                                                           ),
@@ -326,7 +342,7 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
                                         );
                                       },
                                     ),
-                                    
+
                                     // 收藏按钮
                                     Positioned(
                                       top: 12,
@@ -337,15 +353,20 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
                                           animation: _favoriteScaleAnimation,
                                           builder: (context, child) {
                                             return Transform.scale(
-                                              scale: _favoriteScaleAnimation.value,
+                                              scale:
+                                                  _favoriteScaleAnimation.value,
                                               child: Container(
-                                                padding: const EdgeInsets.all(8),
+                                                padding:
+                                                    const EdgeInsets.all(8),
                                                 decoration: BoxDecoration(
-                                                  color: Colors.white.withValues(alpha: 0.9),
+                                                  color: Colors.white
+                                                      .withValues(alpha: 0.9),
                                                   shape: BoxShape.circle,
                                                   boxShadow: [
                                                     BoxShadow(
-                                                      color: Colors.black.withValues(alpha: 0.1),
+                                                      color: Colors.black
+                                                          .withValues(
+                                                              alpha: 0.1),
                                                       blurRadius: 4,
                                                       spreadRadius: 1,
                                                     ),
@@ -362,7 +383,7 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
                                 ),
                               ),
                             ),
-                            
+
                             // 信息区域
                             Expanded(
                               flex: 2,
@@ -377,9 +398,11 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
                                         Expanded(
                                           child: Text(
                                             widget.food.name,
-                                            style: theme.textTheme.titleMedium?.copyWith(
+                                            style: theme.textTheme.titleMedium
+                                                ?.copyWith(
                                               fontWeight: FontWeight.bold,
-                                              color: theme.colorScheme.onSurface,
+                                              color:
+                                                  theme.colorScheme.onSurface,
                                             ),
                                             maxLines: 1,
                                             overflow: TextOverflow.ellipsis,
@@ -393,12 +416,15 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
                                               vertical: 4,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: theme.primaryColor.withValues(alpha: 0.1),
-                                              borderRadius: BorderRadius.circular(12),
+                                              color: theme.primaryColor
+                                                  .withValues(alpha: 0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
                                             ),
                                             child: Text(
                                               '¥${widget.food.price}',
-                                              style: theme.textTheme.labelMedium?.copyWith(
+                                              style: theme.textTheme.labelMedium
+                                                  ?.copyWith(
                                                 color: theme.primaryColor,
                                                 fontWeight: FontWeight.bold,
                                               ),
@@ -407,47 +433,54 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
                                         ],
                                       ],
                                     ),
-                                    
+
                                     const SizedBox(height: 8),
-                                    
+
                                     // 描述
                                     if (widget.food.description != null)
                                       Text(
                                         widget.food.description!,
-                                        style: theme.textTheme.bodySmall?.copyWith(
-                                          color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                                        style:
+                                            theme.textTheme.bodySmall?.copyWith(
+                                          color: theme.colorScheme.onSurface
+                                              .withValues(alpha: 0.7),
                                         ),
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                       ),
-                                    
+
                                     const Spacer(),
-                                    
+
                                     // 标签和评分
                                     Row(
                                       children: [
                                         // 分类标签
-                                        if (widget.food.cuisineType.isNotEmpty)
+                                        if ((widget.food.cuisineType ?? '')
+                                            .isNotEmpty)
                                           Container(
                                             padding: const EdgeInsets.symmetric(
                                               horizontal: 6,
                                               vertical: 2,
                                             ),
                                             decoration: BoxDecoration(
-                                              color: theme.colorScheme.secondary.withValues(alpha: 0.1),
-                                              borderRadius: BorderRadius.circular(8),
+                                              color: theme.colorScheme.secondary
+                                                  .withValues(alpha: 0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
                                             child: Text(
-                                              widget.food.cuisineType,
-                                              style: theme.textTheme.labelSmall?.copyWith(
-                                                color: theme.colorScheme.secondary,
+                                              widget.food.cuisineType ?? '',
+                                              style: theme.textTheme.labelSmall
+                                                  ?.copyWith(
+                                                color:
+                                                    theme.colorScheme.secondary,
                                                 fontSize: 10,
                                               ),
                                             ),
                                           ),
-                                        
+
                                         const Spacer(),
-                                        
+
                                         // 评分
                                         Row(
                                           children: [
@@ -455,8 +488,11 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
                                             const SizedBox(width: 2),
                                             Text(
                                               '4.5', // TODO: 使用实际评分
-                                              style: theme.textTheme.labelSmall?.copyWith(
-                                                color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                                              style: theme.textTheme.labelSmall
+                                                  ?.copyWith(
+                                                color: theme
+                                                    .colorScheme.onSurface
+                                                    .withValues(alpha: 0.7),
                                                 fontWeight: FontWeight.w500,
                                               ),
                                             ),
@@ -470,7 +506,7 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
                             ),
                           ],
                         ),
-                        
+
                         // 点击波纹效果
                         Positioned.fill(
                           child: Material(
@@ -478,8 +514,10 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
                             child: InkWell(
                               onTap: widget.onTap,
                               borderRadius: BorderRadius.circular(20),
-                              splashColor: theme.primaryColor.withValues(alpha: 0.1),
-                              highlightColor: theme.primaryColor.withValues(alpha: 0.05),
+                              splashColor:
+                                  theme.primaryColor.withValues(alpha: 0.1),
+                              highlightColor:
+                                  theme.primaryColor.withValues(alpha: 0.05),
                             ),
                           ),
                         ),
@@ -494,4 +532,4 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
       ),
     );
   }
-} 
+}

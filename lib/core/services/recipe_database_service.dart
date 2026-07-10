@@ -6,18 +6,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/recipe.dart';
 import '../models/user_preference_score.dart';
 import 'user_preference_manager.dart';
+import 'real_xiachufang_crawler_service.dart';
 
 /// 菜谱数据库服务
 class RecipeDatabaseService {
   static const String _recipesKey = 'cached_recipes';
   static const String _favoritesKey = 'favorite_recipes';
   static const String _bookmarksKey = 'bookmarked_recipes';
-  
+  static const String _realDataKey = 'real_recipe_data_loaded';
+
   final UserPreferenceManager _preferenceManager = UserPreferenceManager();
+  final RealXiachufangCrawlerService _crawlerService = RealXiachufangCrawlerService();
   final List<Recipe> _recipes = [];
   final Set<String> _favoriteIds = {};
   final Set<String> _bookmarkIds = {};
-  
+
   static final RecipeDatabaseService _instance = RecipeDatabaseService._internal();
   factory RecipeDatabaseService() => _instance;
   RecipeDatabaseService._internal();
@@ -25,29 +28,76 @@ class RecipeDatabaseService {
   /// 初始化数据库
   Future<void> initialize() async {
     await _loadCachedData();
-    await _loadSampleRecipes();
+
+    // 优先尝试加载真实数据
+    if (_recipes.isEmpty) {
+      debugPrint('📊 未找到缓存数据，尝试加载真实菜谱数据...');
+      await _loadRealRecipes();
+    }
+
+    // 如果真实数据加载失败，使用示例数据
+    if (_recipes.isEmpty) {
+      debugPrint('⚠️ 真实数据加载失败，使用示例数据');
+      await _loadSampleRecipes();
+    }
+
     debugPrint('菜谱数据库初始化完成，共 ${_recipes.length} 个菜谱');
+  }
+
+  /// 加载真实菜谱数据
+  Future<void> _loadRealRecipes() async {
+    try {
+      await _crawlerService.initialize();
+
+      // 检查是否已有真实数据缓存
+      final prefs = await SharedPreferences.getInstance();
+      final hasRealData = prefs.getBool(_realDataKey) ?? false;
+
+      if (!hasRealData) {
+        debugPrint('🕷️ 开始爬取真实菜谱数据...');
+
+        final result = await _crawlerService.crawlRecipes(
+          categories: ['家常菜', '川菜', '粤菜', '湘菜'],
+          targetCount: 50, // 先爬取50个菜谱
+          onProgress: (message) => debugPrint('📈 $message'),
+        );
+
+        if (result.success) {
+          final realRecipes = _crawlerService.crawledRecipes;
+          _recipes.addAll(realRecipes);
+
+          await prefs.setBool(_realDataKey, true);
+          await _saveCachedData();
+
+          debugPrint('✅ 成功加载 ${realRecipes.length} 个真实菜谱');
+        } else {
+          debugPrint('❌ 真实数据爬取失败: ${result.message}');
+        }
+      }
+    } catch (e) {
+      debugPrint('❌ 加载真实数据时出错: $e');
+    }
   }
 
   /// 加载缓存数据
   Future<void> _loadCachedData() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       // 加载收藏
       final favoritesJson = prefs.getString(_favoritesKey);
       if (favoritesJson != null) {
         final favoritesList = List<String>.from(jsonDecode(favoritesJson));
         _favoriteIds.addAll(favoritesList);
       }
-      
+
       // 加载书签
       final bookmarksJson = prefs.getString(_bookmarksKey);
       if (bookmarksJson != null) {
         final bookmarksList = List<String>.from(jsonDecode(bookmarksJson));
         _bookmarkIds.addAll(bookmarksList);
       }
-      
+
       // 加载菜谱缓存
       final recipesJson = prefs.getString(_recipesKey);
       if (recipesJson != null) {
@@ -55,7 +105,6 @@ class RecipeDatabaseService {
         _recipes.clear();
         _recipes.addAll(recipesList.map((json) => Recipe.fromJson(json)));
       }
-      
     } catch (e) {
       debugPrint('加载缓存数据时出错: $e');
     }
@@ -65,17 +114,16 @@ class RecipeDatabaseService {
   Future<void> _saveCachedData() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       // 保存收藏
       await prefs.setString(_favoritesKey, jsonEncode(_favoriteIds.toList()));
-      
+
       // 保存书签
       await prefs.setString(_bookmarksKey, jsonEncode(_bookmarkIds.toList()));
-      
+
       // 保存菜谱（限制数量以避免存储过大）
       final recipesToSave = _recipes.take(100).toList();
       await prefs.setString(_recipesKey, jsonEncode(recipesToSave.map((r) => r.toJson()).toList()));
-      
     } catch (e) {
       debugPrint('保存缓存数据时出错: $e');
     }
@@ -84,13 +132,13 @@ class RecipeDatabaseService {
   /// 加载示例菜谱数据
   Future<void> _loadSampleRecipes() async {
     if (_recipes.isNotEmpty) return;
-    
+
     final sampleRecipes = _createSampleRecipes();
     _recipes.addAll(sampleRecipes);
     await _saveCachedData();
   }
 
-  /// 创建示例菜谱数据
+  /// 创建示例菜谱数据（使用真实图片链接）
   List<Recipe> _createSampleRecipes() {
     return [
       // 川菜
@@ -104,7 +152,8 @@ class RecipeDatabaseService {
         preparationTime: 15,
         cookingTime: 10,
         servings: 3,
-        imageUrl: 'https://example.com/gongbao.jpg',
+        imageUrl:
+            'https://cp1.douguo.com/upload/caiku/1/c/a/yuan_1c18f0e5a5a04ba2b6a6c56b7ce30f2a.jpg',
         tags: ['川菜', '下饭菜', '家常菜', '鸡肉'],
         ingredients: [
           RecipeIngredient(name: '鸡胸肉', amount: '300', unit: '克', isMain: true),
@@ -171,8 +220,10 @@ class RecipeDatabaseService {
         createdAt: DateTime.now().subtract(const Duration(days: 30)),
         updatedAt: DateTime.now().subtract(const Duration(days: 5)),
         tips: '鸡肉腌制时间要足够，炒制过程要大火快炒，保持鸡肉嫩滑。花生米要提前炸好，最后放入保持酥脆。',
+        seasonalInfo: SeasonalInfo(),
+        equipment: CookingEquipment(),
       ),
-      
+
       // 粤菜
       Recipe(
         id: 'recipe_002',
@@ -184,7 +235,8 @@ class RecipeDatabaseService {
         preparationTime: 10,
         cookingTime: 25,
         servings: 4,
-        imageUrl: 'https://example.com/baiqieji.jpg',
+        imageUrl:
+            'https://cp1.douguo.com/upload/caiku/2/5/1/yuan_2537ec8b4c5c54a15f75ede81a69a601.jpg',
         tags: ['粤菜', '清淡', '白切', '鸡肉'],
         ingredients: [
           RecipeIngredient(name: '整鸡', amount: '1', unit: '只', isMain: true),
@@ -249,8 +301,10 @@ class RecipeDatabaseService {
         createdAt: DateTime.now().subtract(const Duration(days: 45)),
         updatedAt: DateTime.now().subtract(const Duration(days: 10)),
         tips: '选用新鲜的土鸡，煮制时间要准确，过长会使鸡肉老柴。冰水冷却是关键步骤，能让鸡皮紧致有弹性。',
+        seasonalInfo: SeasonalInfo(),
+        equipment: CookingEquipment(),
       ),
-      
+
       // 家常菜
       Recipe(
         id: 'recipe_003',
@@ -262,7 +316,8 @@ class RecipeDatabaseService {
         preparationTime: 10,
         cookingTime: 60,
         servings: 4,
-        imageUrl: 'https://example.com/hongshaorou.jpg',
+        imageUrl:
+            'https://cp1.douguo.com/upload/caiku/4/b/8/yuan_4b5b1c0a8a0c42888e4b8c8d35ed7a58.jpg',
         tags: ['家常菜', '红烧', '猪肉', '下饭菜'],
         ingredients: [
           RecipeIngredient(name: '五花肉', amount: '500', unit: '克', isMain: true),
@@ -329,8 +384,10 @@ class RecipeDatabaseService {
         createdAt: DateTime.now().subtract(const Duration(days: 60)),
         updatedAt: DateTime.now().subtract(const Duration(days: 15)),
         tips: '选用肥瘦相间的五花肉，炒糖色是关键步骤，炖制时间要足够，最后大火收汁让色泽红亮。',
+        seasonalInfo: SeasonalInfo(),
+        equipment: CookingEquipment(),
       ),
-      
+
       // 素食
       Recipe(
         id: 'recipe_004',
@@ -342,7 +399,8 @@ class RecipeDatabaseService {
         preparationTime: 8,
         cookingTime: 12,
         servings: 3,
-        imageUrl: 'https://example.com/mapodoufu.jpg',
+        imageUrl:
+            'https://cp1.douguo.com/upload/caiku/1/4/5/yuan_140c5b6d20c7e8a5a9a7a5d3e08b1be5.jpg',
         tags: ['川菜', '素食', '豆腐', '麻辣'],
         ingredients: [
           RecipeIngredient(name: '嫩豆腐', amount: '400', unit: '克', isMain: true),
@@ -408,8 +466,10 @@ class RecipeDatabaseService {
         createdAt: DateTime.now().subtract(const Duration(days: 25)),
         updatedAt: DateTime.now().subtract(const Duration(days: 3)),
         tips: '选用嫩豆腐，处理时要轻，豆瓣酱是关键调料，最后撒花椒粉提味。',
+        seasonalInfo: SeasonalInfo(),
+        equipment: CookingEquipment(),
       ),
-      
+
       // 汤类
       Recipe(
         id: 'recipe_005',
@@ -421,7 +481,8 @@ class RecipeDatabaseService {
         preparationTime: 15,
         cookingTime: 90,
         servings: 4,
-        imageUrl: 'https://example.com/dongguatang.jpg',
+        imageUrl:
+            'https://cp1.douguo.com/upload/caiku/8/1/2/yuan_8196c2b7a5c54e8b89e1a2b3c4d5e6f7.jpg',
         tags: ['汤类', '清淡', '营养', '排骨'],
         ingredients: [
           RecipeIngredient(name: '排骨', amount: '500', unit: '克', isMain: true),
@@ -486,6 +547,8 @@ class RecipeDatabaseService {
         createdAt: DateTime.now().subtract(const Duration(days: 40)),
         updatedAt: DateTime.now().subtract(const Duration(days: 8)),
         tips: '选用新鲜排骨，煲汤时间要足够，冬瓜后放，调味要清淡。',
+        seasonalInfo: SeasonalInfo(),
+        equipment: CookingEquipment(),
       ),
     ];
   }
@@ -502,36 +565,36 @@ class RecipeDatabaseService {
     // 获取用户偏好统计
     final preferenceStats = _preferenceManager.getPreferenceStats();
     final topPreferences = preferenceStats['topPreferences'] as List<UserPreferenceScore>;
-    
+
     // 计算每个菜谱的推荐分数
     final scoredRecipes = _recipes.map((recipe) {
       double score = 0.0;
-      
+
       // 基于用户偏好计算分数
       for (final preference in topPreferences) {
         // 检查菜谱标签是否匹配偏好
         if (recipe.tags.any((tag) => tag.contains(preference.entityName))) {
           score += preference.score * 0.3;
         }
-        
+
         // 检查菜谱名称是否匹配偏好
         if (recipe.name.contains(preference.entityName)) {
           score += preference.score * 0.5;
         }
-        
+
         // 检查菜谱描述是否匹配偏好
         if (recipe.description.contains(preference.entityName)) {
           score += preference.score * 0.2;
         }
       }
-      
+
       // 加入菜谱本身的评分权重
       score += recipe.rating * 10;
-      
+
       // 加入随机因子，避免推荐过于固化
       final random = Random();
       score += random.nextDouble() * 20;
-      
+
       return MapEntry(recipe, score);
     }).toList();
 
@@ -709,9 +772,7 @@ class RecipeDatabaseService {
       await _loadSampleRecipes();
     }
 
-    final quickRecipes = _recipes
-        .where((recipe) => recipe.isQuickDish)
-        .toList()
+    final quickRecipes = _recipes.where((recipe) => recipe.isQuickDish).toList()
       ..sort((a, b) => a.totalTime.compareTo(b.totalTime));
 
     return quickRecipes
@@ -768,12 +829,50 @@ class RecipeDatabaseService {
     }
   }
 
+  /// 强制刷新真实数据
+  Future<bool> refreshRealData({
+    Function(String message)? onProgress,
+  }) async {
+    try {
+      onProgress?.call('🚀 开始更新真实菜谱数据...');
+
+      await _crawlerService.initialize();
+
+      final result = await _crawlerService.crawlRecipes(
+        categories: ['家常菜', '川菜', '粤菜', '湘菜', '鲁菜', '苏菜'],
+        targetCount: 100, // 更新时爬取更多数据
+        onProgress: onProgress,
+      );
+
+      if (result.success) {
+        // 清空现有数据，加载新数据
+        _recipes.clear();
+        final realRecipes = _crawlerService.crawledRecipes;
+        _recipes.addAll(realRecipes);
+
+        // 更新缓存
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setBool(_realDataKey, true);
+        await _saveCachedData();
+
+        onProgress?.call('✅ 数据更新完成，共获取 ${realRecipes.length} 个菜谱');
+        return true;
+      } else {
+        onProgress?.call('❌ 数据更新失败: ${result.message}');
+        return false;
+      }
+    } catch (e) {
+      onProgress?.call('❌ 数据更新过程出错: $e');
+      return false;
+    }
+  }
+
   /// 清空缓存
   Future<void> clearCache() async {
     _recipes.clear();
     _favoriteIds.clear();
     _bookmarkIds.clear();
-    
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_recipesKey);
     await prefs.remove(_favoritesKey);

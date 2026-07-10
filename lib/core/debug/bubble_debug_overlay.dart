@@ -22,7 +22,7 @@ class BubbleDebugOverlay extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.8),
+          color: Colors.black.withValues(alpha: 0.8),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
@@ -59,17 +59,17 @@ class BubbleDebugOverlay extends StatelessWidget {
               style: const TextStyle(color: Colors.yellow, fontSize: 12),
             ),
             ...entities.take(5).map((entity) => Padding(
-              padding: const EdgeInsets.only(left: 8.0),
-              child: Text(
-                '${entity.name}: V(${entity.velocity.dx.toStringAsFixed(2)}, ${entity.velocity.dy.toStringAsFixed(2)}) '
-                'R=${entity.rotation.toStringAsFixed(2)} '
-                'AV=${entity.angularVelocity.toStringAsFixed(3)}',
-                style: TextStyle(
-                  color: _getEntityStatusColor(entity),
-                  fontSize: 10,
-                ),
-              ),
-            )),
+                  padding: const EdgeInsets.only(left: 8.0),
+                  child: Text(
+                    '${entity.name}: V(${entity.velocity.dx.toStringAsFixed(2)}, ${entity.velocity.dy.toStringAsFixed(2)}) '
+                    'R=${entity.rotation.toStringAsFixed(2)} '
+                    'AV=${entity.angularVelocity.toStringAsFixed(3)}',
+                    style: TextStyle(
+                      color: _getEntityStatusColor(entity),
+                      fontSize: 10,
+                    ),
+                  ),
+                )),
             if (entities.length > 5)
               Text(
                 '... 和其他 ${entities.length - 5} 个实体',
@@ -135,7 +135,7 @@ class TrailPainter extends CustomPainter {
     if (trail.length < 2) return;
 
     final paint = Paint()
-      ..color = color.withOpacity(0.5)
+      ..color = color.withValues(alpha: 0.5)
       ..strokeWidth = 2.0
       ..style = PaintingStyle.stroke;
 
@@ -154,7 +154,7 @@ class TrailPainter extends CustomPainter {
       final pointPaint = Paint()
         ..color = color.withAlpha(alpha)
         ..style = PaintingStyle.fill;
-      
+
       canvas.drawCircle(trail[i], 2.0, pointPaint);
     }
   }

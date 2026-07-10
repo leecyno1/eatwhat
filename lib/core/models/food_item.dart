@@ -51,7 +51,7 @@ class FoodItem extends Food {
   final bool isNew; // 是否新品
   final bool isHot; // 是否热销
   @override
-  final String? preparationTime; // 制作时间
+  final int? preparationTime; // 制作时间（分钟）
   final Map<String, dynamic>? platformData; // 平台原始数据
 
   FoodItem({
@@ -70,6 +70,9 @@ class FoodItem extends Food {
     super.price,
     super.restaurant,
     super.isFavorite = false,
+    super.emoji,
+    super.score,
+    super.tags,
     required this.restaurantId,
     this.categoryId,
     this.categoryName,
@@ -106,7 +109,7 @@ class FoodItem extends Food {
       cuisineType: json['category_name'] ?? '其他',
       tasteAttributes: _parseStringList(json['attributes']),
       ingredients: _parseStringList(json['ingredients']),
-      calories: _parseInt(json['calorie']),
+      calories: _parseDouble(json['calorie']),
       rating: _parseDouble(json['rating']) ?? 0.0,
       ratingCount: _parseInt(json['rating_count']) ?? 0,
       imageUrl: json['picture'],
@@ -126,7 +129,7 @@ class FoodItem extends Food {
       isRecommended: json['is_featured'] == 1,
       isNew: json['is_new'] == 1,
       isHot: json['is_popular'] == 1,
-      preparationTime: json['prepare_time']?.toString(),
+      preparationTime: _parseInt(json['prepare_time']),
       platformData: json,
     );
   }
@@ -148,7 +151,7 @@ class FoodItem extends Food {
       cuisineType: json['category_name'] ?? '其他',
       tasteAttributes: _parseStringList(json['attributes']),
       ingredients: _parseStringList(json['ingredients']),
-      calories: _parseInt(json['calorie']),
+      calories: _parseDouble(json['calorie']),
       rating: _parseDouble(json['rating']) ?? 0.0,
       ratingCount: _parseInt(json['rating_count']) ?? 0,
       imageUrl: json['image_url'],
@@ -168,7 +171,7 @@ class FoodItem extends Food {
       isRecommended: json['is_featured'] == true,
       isNew: json['is_new'] == true,
       isHot: json['is_popular'] == true,
-      preparationTime: json['prepare_time']?.toString(),
+      preparationTime: _parseInt(json['prepare_time']),
       platformData: json,
     );
   }
@@ -263,17 +266,19 @@ class FoodItem extends Food {
     List<String>? tasteAttributes,
     List<String>? ingredients,
     List<String>? scenarios,
-    int? calories,
+    double? calories,
     double? rating,
     int? ratingCount,
     String? imageUrl,
-    Map<String, double>? nutritionFacts,
+    Map<String, dynamic>? nutritionFacts,
     double? price,
     String? restaurant,
     bool? isFavorite,
-    String? preparationTime,
+    int? preparationTime,
     String? difficulty,
     List<String>? tags,
+    String? emoji,
+    double? score,
   }) {
     return FoodItem(
       id: id ?? this.id,
@@ -291,6 +296,9 @@ class FoodItem extends Food {
       price: price ?? this.price,
       restaurant: restaurant ?? this.restaurant,
       isFavorite: isFavorite ?? this.isFavorite,
+      emoji: emoji ?? this.emoji,
+      score: score ?? this.score,
+      tags: tags ?? this.tags,
       restaurantId: restaurantId,
       categoryId: categoryId,
       categoryName: categoryName,
@@ -426,16 +434,13 @@ class FoodItem extends Food {
       cuisineType: json['cuisineType'] ?? '其他',
       tasteAttributes: List<String>.from(json['tasteAttributes'] ?? []),
       ingredients: List<String>.from(json['ingredients'] ?? []),
-      scenarios: json['scenarios'] != null
-          ? List<String>.from(json['scenarios'])
-          : null,
+      scenarios: json['scenarios'] != null ? List<String>.from(json['scenarios']) : null,
       calories: json['calories'],
       rating: (json['rating'] ?? 0.0).toDouble(),
       ratingCount: json['ratingCount'] ?? 0,
       imageUrl: json['imageUrl'],
-      nutritionFacts: json['nutritionFacts'] != null
-          ? Map<String, double>.from(json['nutritionFacts'])
-          : null,
+      nutritionFacts:
+          json['nutritionFacts'] != null ? Map<String, double>.from(json['nutritionFacts']) : null,
       price: json['price']?.toDouble(),
       restaurant: json['restaurant'],
       isFavorite: json['isFavorite'] ?? false,
@@ -546,11 +551,7 @@ List<String> _parseStringList(dynamic value) {
     return value.map((e) => e.toString()).toList();
   }
   if (value is String) {
-    return value
-        .split(',')
-        .map((e) => e.trim())
-        .where((e) => e.isNotEmpty)
-        .toList();
+    return value.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
   }
   return [];
 }

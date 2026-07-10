@@ -28,7 +28,8 @@ class EnhancedRecommendationList extends StatefulWidget {
   });
 
   @override
-  State<EnhancedRecommendationList> createState() => _EnhancedRecommendationListState();
+  State<EnhancedRecommendationList> createState() =>
+      _EnhancedRecommendationListState();
 }
 
 class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
@@ -44,22 +45,22 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    
+
     if (widget.isLoading) {
       _loadingController.repeat();
     }
-    
+
     _categorizeFoods();
   }
 
   @override
   void didUpdateWidget(EnhancedRecommendationList oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     if (oldWidget.foods != widget.foods) {
       _categorizeFoods();
     }
-    
+
     if (oldWidget.isLoading != widget.isLoading) {
       if (widget.isLoading) {
         _loadingController.repeat();
@@ -78,25 +79,25 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
   void _categorizeFoods() {
     _categorizedFoods.clear();
     _categorizedFoods['全部'] = widget.foods;
-    
+
     // 按菜系分类
     final cuisineGroups = <String, List<Food>>{};
     for (final food in widget.foods) {
-      cuisineGroups.putIfAbsent(food.cuisineType, () => []).add(food);
+      cuisineGroups.putIfAbsent(food.cuisineType ?? '其他', () => []).add(food);
     }
     _categorizedFoods.addAll(cuisineGroups);
-    
+
     // 按口味分类
     final tasteGroups = <String, List<Food>>{};
     for (final food in widget.foods) {
-      for (final taste in food.tasteAttributes) {
+      for (final taste in food.tasteAttributes ?? const <String>[]) {
         if (['辣', '甜', '清淡', '香'].contains(taste)) {
           tasteGroups.putIfAbsent(taste, () => []).add(food);
         }
       }
     }
     _categorizedFoods.addAll(tasteGroups);
-    
+
     setState(() {});
   }
 
@@ -105,7 +106,7 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
     if (widget.isLoading) {
       return _buildLoadingState();
     }
-    
+
     if (widget.foods.isEmpty) {
       return _buildEmptyState();
     }
@@ -116,7 +117,6 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
           _buildCategoryTabs(),
           const SizedBox(height: 16),
         ],
-        
         Expanded(
           child: _buildRecommendationGrid(),
         ),
@@ -126,7 +126,7 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
 
   Widget _buildCategoryTabs() {
     final categories = _categorizedFoods.keys.toList();
-    
+
     return Container(
       height: 40,
       child: ListView.builder(
@@ -136,7 +136,7 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
         itemBuilder: (context, index) {
           final category = categories[index];
           final isSelected = category == _selectedCategory;
-          
+
           return GestureDetector(
             onTap: () {
               setState(() {
@@ -161,11 +161,11 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
               child: Text(
                 category,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: isSelected
-                      ? Colors.white
-                      : Theme.of(context).primaryColor,
-                  fontWeight: FontWeight.w500,
-                ),
+                      color: isSelected
+                          ? Colors.white
+                          : Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
               ),
             ),
           );
@@ -176,7 +176,7 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
 
   Widget _buildRecommendationGrid() {
     final currentFoods = _categorizedFoods[_selectedCategory] ?? [];
-    
+
     if (currentFoods.isEmpty) {
       return _buildEmptyState();
     }
@@ -188,7 +188,7 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
         itemCount: currentFoods.length,
         itemBuilder: (context, index) {
           final food = currentFoods[index];
-          
+
           return AnimationConfiguration.staggeredList(
             position: index,
             duration: const Duration(milliseconds: 375),
@@ -232,9 +232,9 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
             },
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         // 加载中的卡片动画
         Expanded(
           child: ListView.builder(
@@ -248,8 +248,9 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
                   height: widget.compactMode ? 120 : 160,
                   borderRadius: 16,
                 ),
-              ).animate(delay: Duration(milliseconds: index * 100))
-               .shimmer(duration: 1500.ms);
+              )
+                  .animate(delay: Duration(milliseconds: index * 100))
+                  .shimmer(duration: 1500.ms);
             },
           ),
         ),
@@ -296,29 +297,25 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
               .scale(duration: 500.ms, curve: Curves.easeOut)
               .then()
               .shake(hz: 2, duration: 1000.ms),
-          
           const SizedBox(height: 16),
-          
           Text(
             '暂无推荐',
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-              fontWeight: FontWeight.w500,
-            ),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  fontWeight: FontWeight.w500,
+                ),
           ),
-          
           const SizedBox(height: 8),
-          
           Text(
             '尝试选择不同的口味偏好\n或者浏览其他分类',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
-            ),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                ),
           ),
-          
           const SizedBox(height: 24),
-          
           ElevatedButton.icon(
             onPressed: () {
               // 重新生成推荐
@@ -334,10 +331,7 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
                 borderRadius: BorderRadius.circular(24),
               ),
             ),
-          )
-              .animate()
-              .fadeIn(delay: 300.ms)
-              .slideY(begin: 0.2, end: 0),
+          ).animate().fadeIn(delay: 300.ms).slideY(begin: 0.2, end: 0),
         ],
       ),
     );
@@ -348,23 +342,26 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
     if (food.rating >= 4.5) {
       return '高分推荐';
     }
-    
-    if (food.tasteAttributes.contains('辣')) {
+
+    final tasteAttributes = food.tasteAttributes ?? const <String>[];
+    final cuisineType = food.cuisineType ?? '';
+
+    if (tasteAttributes.contains('辣')) {
       return '符合辣味偏好';
     }
-    
-    if (food.tasteAttributes.contains('清淡')) {
+
+    if (tasteAttributes.contains('清淡')) {
       return '清爽口感';
     }
-    
-    if (food.cuisineType.contains('川菜')) {
+
+    if (cuisineType.contains('川菜')) {
       return '经典川菜';
     }
-    
-    if (food.preparationTime?.contains('30') == true) {
+
+    if ((food.preparationTime ?? 999) <= 30) {
       return '快手菜';
     }
-    
+
     return null;
   }
 }
@@ -400,29 +397,27 @@ class RecommendationStats extends StatelessWidget {
           Text(
             '推荐统计',
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w600,
-            ),
+                  fontWeight: FontWeight.w600,
+                ),
           ),
-          
           const SizedBox(height: 12),
-          
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildStatItem(context, '总数', '$totalCount', Icons.restaurant),
-              _buildStatItem(context, '平均评分', averageRating.toStringAsFixed(1), Icons.star),
-              _buildStatItem(context, '菜系', '${categoryStats.length}', Icons.category),
+              _buildStatItem(context, '平均评分', averageRating.toStringAsFixed(1),
+                  Icons.star),
+              _buildStatItem(
+                  context, '菜系', '${categoryStats.length}', Icons.category),
             ],
           ),
         ],
       ),
-    )
-        .animate()
-        .fadeIn(duration: 500.ms)
-        .slideY(begin: 0.1, end: 0);
+    ).animate().fadeIn(duration: 500.ms).slideY(begin: 0.1, end: 0);
   }
 
-  Widget _buildStatItem(BuildContext context, String label, String value, IconData icon) {
+  Widget _buildStatItem(
+      BuildContext context, String label, String value, IconData icon) {
     return Column(
       children: [
         Icon(
@@ -434,15 +429,15 @@ class RecommendationStats extends StatelessWidget {
         Text(
           value,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.bold,
-            color: Theme.of(context).primaryColor,
-          ),
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).primaryColor,
+              ),
         ),
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-          ),
+                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+              ),
         ),
       ],
     );

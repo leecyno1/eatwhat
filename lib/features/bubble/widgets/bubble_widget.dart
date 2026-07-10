@@ -91,6 +91,18 @@ class BubbleTypeIndicator extends StatelessWidget {
         return const Color(0xFFFFE082);
       case BubbleType.nutrition:
         return const Color(0xFFCE93D8);
+      case BubbleType.spicy:
+        return const Color(0xFFE57373);
+      case BubbleType.sweet:
+        return const Color(0xFFF48FB1);
+      case BubbleType.sour:
+        return const Color(0xFFFFF176);
+      case BubbleType.bitter:
+        return const Color(0xFF8D6E63);
+      case BubbleType.salty:
+        return const Color(0xFF64B5F6);
+      case BubbleType.umami:
+        return const Color(0xFF9575CD);
     }
   }
 
@@ -106,6 +118,18 @@ class BubbleTypeIndicator extends StatelessWidget {
         return Icons.mood;
       case BubbleType.nutrition:
         return Icons.fitness_center;
+      case BubbleType.spicy:
+        return Icons.local_fire_department;
+      case BubbleType.sweet:
+        return Icons.cake;
+      case BubbleType.sour:
+        return Icons.emoji_food_beverage;
+      case BubbleType.bitter:
+        return Icons.local_cafe;
+      case BubbleType.salty:
+        return Icons.water_drop;
+      case BubbleType.umami:
+        return Icons.ramen_dining;
     }
   }
 }

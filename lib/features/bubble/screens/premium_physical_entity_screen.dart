@@ -23,20 +23,20 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
   late AnimationController _backgroundController;
   late AnimationController _headerController;
   late AnimationController _particleController;
-  
+
   late Animation<double> _headerAnimation;
   late Animation<double> _backgroundAnimation;
   late Animation<double> _particleAnimation;
-  
+
   // 背景粒子系统
   final List<BackgroundParticle> _particles = [];
   late DateTime _lastUpdateTime;
-  
+
   @override
   void initState() {
     super.initState();
     _lastUpdateTime = DateTime.now();
-    
+
     // 背景动画
     _backgroundController = AnimationController(
       duration: const Duration(seconds: 30),
@@ -46,7 +46,7 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
       begin: 0.0,
       end: 2 * math.pi,
     ).animate(_backgroundController);
-    
+
     // 头部动画
     _headerController = AnimationController(
       duration: const Duration(milliseconds: 800),
@@ -59,7 +59,7 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
       parent: _headerController,
       curve: Curves.easeOutCubic,
     ));
-    
+
     // 粒子动画
     _particleController = AnimationController(
       duration: const Duration(seconds: 1),
@@ -69,15 +69,15 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
       begin: 0.0,
       end: 1.0,
     ).animate(_particleController);
-    
+
     // 初始化背景粒子
     _initializeParticles();
-    
+
     // 启动动画
     _backgroundController.repeat();
     _headerController.forward();
     _particleController.repeat();
-    
+
     // 初始化控制器
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final controller = context.read<PhysicalEntityController>();
@@ -115,7 +115,7 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
     final now = DateTime.now();
     final deltaTime = now.difference(_lastUpdateTime).inMilliseconds / 1000.0;
     _lastUpdateTime = now;
-    
+
     for (final particle in _particles) {
       particle.update(deltaTime, const Size(400, 800));
     }
@@ -132,7 +132,7 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
           children: [
             // 背景粒子层
             _buildBackgroundParticles(),
-            
+
             // 主要内容
             SafeArea(
               child: Column(
@@ -300,11 +300,11 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
       builder: (context, controller, child) {
         final likedKeywords = controller.likedEntities.map((e) => e.name).toList();
         final dislikedKeywords = controller.dislikedEntities.map((e) => e.name).toList();
-        
+
         if (likedKeywords.isEmpty && dislikedKeywords.isEmpty) {
           return const SizedBox();
         }
-        
+
         return Container(
           margin: EdgeInsets.symmetric(horizontal: 20.w, vertical: 8.h),
           padding: EdgeInsets.all(12.w),
@@ -507,12 +507,11 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
         decoration: BoxDecoration(
-          color: isPrimary 
-              ? Colors.white.withValues(alpha: 0.3)
-              : Colors.white.withValues(alpha: 0.1),
+          color:
+              isPrimary ? Colors.white.withValues(alpha: 0.3) : Colors.white.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(10.r),
           border: Border.all(
-            color: isPrimary 
+            color: isPrimary
                 ? Colors.white.withValues(alpha: 0.5)
                 : Colors.white.withValues(alpha: 0.2),
             width: 1,
@@ -592,7 +591,7 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
   void _handleEntityTap(entity, PhysicalEntityController controller) {
     HapticFeedback.mediumImpact();
     controller.toggleEntitySelection(entity.id);
-    
+
     // 添加选择反馈动画
     _addSelectionFeedback(entity);
   }
@@ -623,7 +622,7 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
     // 根据滑动方向给实体添加速度
     final velocity = details.velocity.pixelsPerSecond;
     controller.applyVelocityToEntity(entity.id, velocity);
-    
+
     // 检测滑动手势方向
     if (velocity.dx.abs() > velocity.dy.abs()) {
       // 水平滑动
@@ -640,7 +639,7 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
         _handleSwipeUp(entity, controller);
       }
     }
-    
+
     // 暂时禁用物理引擎恢复以解决乱窜问题
     // controller.resumePhysics(); // 恢复物理引擎
   }
@@ -792,12 +791,12 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
   void _getRecommendations() {
     final controller = context.read<PhysicalEntityController>();
     final selectedEntities = controller.getSelectedEntities();
-    
+
     if (selectedEntities.isEmpty) {
       _showMessage('请先选择一些口味偏好');
       return;
     }
-    
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -809,12 +808,12 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
   void _sharePreferences() {
     final controller = context.read<PhysicalEntityController>();
     final selectedEntities = controller.getSelectedEntities();
-    
+
     if (selectedEntities.isEmpty) {
       _showMessage('请先选择一些口味偏好');
       return;
     }
-    
+
     // TODO: 实现分享功能
     _showMessage('分享功能开发中...');
   }

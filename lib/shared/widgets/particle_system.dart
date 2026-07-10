@@ -3,11 +3,11 @@ import 'dart:math' as math;
 
 /// 粒子类型
 enum ParticleType {
-  star,      // 星星
-  bubble,    // 气泡
-  heart,     // 爱心
-  spark,     // 火花
-  food,      // 食物图标
+  star, // 星星
+  bubble, // 气泡
+  heart, // 爱心
+  spark, // 火花
+  food, // 食物图标
 }
 
 /// 单个粒子
@@ -67,7 +67,7 @@ class Particle {
 class ParticleSystemManager {
   final List<Particle> _particles = [];
   final math.Random _random = math.Random();
-  
+
   // 系统配置
   int maxParticles;
   Size containerSize;
@@ -117,7 +117,7 @@ class ParticleSystemManager {
   }) {
     // 根据帧率计算每帧应该产生的粒子数
     final particlesThisFrame = particlesPerSecond / 60;
-    
+
     if (_random.nextDouble() < particlesThisFrame) {
       if (_particles.length >= maxParticles) return;
 
@@ -129,10 +129,11 @@ class ParticleSystemManager {
       );
 
       _particles.add(Particle(
-        position: source + Offset(
-          (_random.nextDouble() - 0.5) * 20,
-          (_random.nextDouble() - 0.5) * 20,
-        ),
+        position: source +
+            Offset(
+              (_random.nextDouble() - 0.5) * 20,
+              (_random.nextDouble() - 0.5) * 20,
+            ),
         velocity: velocity,
         size: 2 + _random.nextDouble() * 4,
         life: 2.0 + _random.nextDouble() * 3.0,
@@ -158,12 +159,13 @@ class ParticleSystemManager {
 
       final t = i / (count - 1);
       final position = Offset.lerp(start, end, t)!;
-      
+
       _particles.add(Particle(
-        position: position + Offset(
-          (_random.nextDouble() - 0.5) * 10,
-          (_random.nextDouble() - 0.5) * 10,
-        ),
+        position: position +
+            Offset(
+              (_random.nextDouble() - 0.5) * 10,
+              (_random.nextDouble() - 0.5) * 10,
+            ),
         velocity: Offset(
           (_random.nextDouble() - 0.5) * 50,
           (_random.nextDouble() - 0.5) * 50,
@@ -192,9 +194,9 @@ class ParticleSystemManager {
     // 边界检查 - 移除超出边界的粒子
     _particles.removeWhere((particle) {
       return particle.position.dx < -50 ||
-             particle.position.dx > containerSize.width + 50 ||
-             particle.position.dy < -50 ||
-             particle.position.dy > containerSize.height + 50;
+          particle.position.dx > containerSize.width + 50 ||
+          particle.position.dy < -50 ||
+          particle.position.dy > containerSize.height + 50;
     });
   }
 
@@ -241,8 +243,7 @@ class ParticleSystemWidget extends StatefulWidget {
   State<ParticleSystemWidget> createState() => _ParticleSystemWidgetState();
 }
 
-class _ParticleSystemWidgetState extends State<ParticleSystemWidget>
-    with TickerProviderStateMixin {
+class _ParticleSystemWidgetState extends State<ParticleSystemWidget> with TickerProviderStateMixin {
   late AnimationController _controller;
   DateTime? _lastFrameTime;
 
@@ -264,7 +265,7 @@ class _ParticleSystemWidgetState extends State<ParticleSystemWidget>
       widget.manager.update(deltaTime);
     }
     _lastFrameTime = now;
-    
+
     if (mounted) {
       setState(() {});
     }
@@ -359,7 +360,7 @@ class ParticlePainter extends CustomPainter {
   void _drawBubble(Canvas canvas, Paint paint, double size) {
     // 外圈
     canvas.drawCircle(Offset.zero, size, paint);
-    
+
     // 高光
     final highlightPaint = Paint()
       ..color = Colors.white.withValues(alpha: 0.6)
@@ -369,12 +370,12 @@ class ParticlePainter extends CustomPainter {
 
   void _drawHeart(Canvas canvas, Paint paint, double size) {
     final path = Path();
-    
+
     // 简化的心形
     path.moveTo(0, size * 0.3);
     path.cubicTo(-size * 0.5, -size * 0.2, -size * 0.8, size * 0.2, 0, size);
     path.cubicTo(size * 0.8, size * 0.2, size * 0.5, -size * 0.2, 0, size * 0.3);
-    
+
     canvas.drawPath(path, paint);
   }
 
@@ -392,12 +393,12 @@ class ParticlePainter extends CustomPainter {
   void _drawFood(Canvas canvas, Paint paint, double size) {
     // 简单的圆形食物图标
     canvas.drawCircle(Offset.zero, size, paint);
-    
+
     // 添加一些细节
     final detailPaint = Paint()
       ..color = paint.color.withValues(alpha: 0.7)
       ..style = PaintingStyle.fill;
-    
+
     canvas.drawCircle(Offset(size * 0.3, 0), size * 0.3, detailPaint);
     canvas.drawCircle(Offset(-size * 0.2, size * 0.2), size * 0.2, detailPaint);
   }

@@ -42,8 +42,7 @@ class ModernCard extends StatefulWidget {
   State<ModernCard> createState() => _ModernCardState();
 }
 
-class _ModernCardState extends State<ModernCard>
-    with SingleTickerProviderStateMixin {
+class _ModernCardState extends State<ModernCard> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _scaleAnimation;
 
@@ -173,9 +172,10 @@ class _ModernCardState extends State<ModernCard>
               child: animatedCard,
             )
           : animatedCard,
-    ).animate()
-      .fadeIn(duration: 400.ms, delay: 100.ms)
-      .slideY(begin: 0.3, end: 0, duration: 400.ms, curve: Curves.easeOutCubic);
+    )
+        .animate()
+        .fadeIn(duration: 400.ms, delay: 100.ms)
+        .slideY(begin: 0.3, end: 0, duration: 400.ms, curve: Curves.easeOutCubic);
   }
 }
 

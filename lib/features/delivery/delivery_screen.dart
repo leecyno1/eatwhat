@@ -48,8 +48,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
       body: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0)
-                .copyWith(bottom: 8.0),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0).copyWith(bottom: 8.0),
             child: TextField(
               controller: _searchController,
               decoration: InputDecoration(
@@ -125,4 +124,4 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
     _searchController.dispose();
     super.dispose();
   }
-} 
+}

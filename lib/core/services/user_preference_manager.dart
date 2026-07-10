@@ -7,11 +7,21 @@ import '../models/user_preference_score.dart';
 import '../models/physical_entity.dart';
 import '../data/taste_preference_database.dart';
 
+/// 用户行为类型枚举
+enum UserActionType {
+  view, // 查看
+  like, // 点赞
+  favorite, // 收藏
+  share, // 分享
+  cook, // 制作
+  dislike, // 不喜欢
+}
+
 /// 用户偏好管理器 - 处理评分、气泡大小和显示概率
 class UserPreferenceManager {
   static const String _preferencesKey = 'user_preference_scores';
   static const String _lastDisplayedKey = 'last_displayed_entities';
-  
+
   final Map<String, UserPreferenceScore> _scores = {};
   final Set<String> _displayedEntityIds = {};
   final Random _random = Random();
@@ -33,22 +43,21 @@ class UserPreferenceManager {
       final prefs = await SharedPreferences.getInstance();
       final preferencesJson = prefs.getString(_preferencesKey);
       final displayedJson = prefs.getString(_lastDisplayedKey);
-      
+
       if (preferencesJson != null) {
         final Map<String, dynamic> preferencesMap = jsonDecode(preferencesJson);
         _scores.clear();
-        
+
         preferencesMap.forEach((key, value) {
           _scores[key] = UserPreferenceScore.fromJson(value);
         });
       }
-      
+
       if (displayedJson != null) {
         final List<dynamic> displayedList = jsonDecode(displayedJson);
         _displayedEntityIds.clear();
         _displayedEntityIds.addAll(displayedList.cast<String>());
       }
-      
     } catch (e) {
       debugPrint('加载用户偏好时出错: $e');
     }
@@ -58,15 +67,14 @@ class UserPreferenceManager {
   Future<void> _savePreferences() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      
+
       final preferencesMap = <String, dynamic>{};
       _scores.forEach((key, value) {
         preferencesMap[key] = value.toJson();
       });
-      
+
       await prefs.setString(_preferencesKey, jsonEncode(preferencesMap));
       await prefs.setString(_lastDisplayedKey, jsonEncode(_displayedEntityIds.toList()));
-      
     } catch (e) {
       debugPrint('保存用户偏好时出错: $e');
     }
@@ -82,7 +90,7 @@ class UserPreferenceManager {
     final score = _getOrCreateScore(entityId, entityName);
     _scores[entityId] = score.like();
     await _savePreferences();
-    
+
     debugPrint('👍 用户喜欢: $entityName (分数: ${_scores[entityId]!.score})');
   }
 
@@ -91,7 +99,7 @@ class UserPreferenceManager {
     final score = _getOrCreateScore(entityId, entityName);
     _scores[entityId] = score.dislike();
     await _savePreferences();
-    
+
     debugPrint('👎 用户不喜欢: $entityName (分数: ${_scores[entityId]!.score})');
   }
 
@@ -100,7 +108,7 @@ class UserPreferenceManager {
     final score = _getOrCreateScore(entityId, entityName);
     _scores[entityId] = score.select();
     await _savePreferences();
-    
+
     debugPrint('✅ 用户选择: $entityName (分数: ${_scores[entityId]!.score})');
   }
 
@@ -109,7 +117,7 @@ class UserPreferenceManager {
     final score = _getOrCreateScore(entityId, entityName);
     _scores[entityId] = score.ignore();
     await _savePreferences();
-    
+
     debugPrint('⏭️ 用户忽略: $entityName (分数: ${_scores[entityId]!.score})');
   }
 
@@ -118,7 +126,7 @@ class UserPreferenceManager {
     final score = _getOrCreateScore(entityId, entityName);
     _scores[entityId] = score.swipeDown();
     await _savePreferences();
-    
+
     debugPrint('⬇️ 用户滑走: $entityName (分数: ${_scores[entityId]!.score})');
   }
 
@@ -128,14 +136,15 @@ class UserPreferenceManager {
   }
 
   /// 计算实体的气泡半径
-  double calculateEntityRadius(String entityId, {
+  double calculateEntityRadius(
+    String entityId, {
     double baseRadius = 34.0,
     double minRadius = 20.0,
     double maxRadius = 50.0,
   }) {
     final score = _scores[entityId];
     if (score == null) return baseRadius;
-    
+
     return score.calculateRadius(
       baseRadius: baseRadius,
       minRadius: minRadius,
@@ -147,7 +156,7 @@ class UserPreferenceManager {
   double getEntityProbabilityWeight(String entityId) {
     final score = _scores[entityId];
     if (score == null) return 1.0;
-    
+
     return score.calculateProbabilityWeight();
   }
 
@@ -158,12 +167,11 @@ class UserPreferenceManager {
   }) {
     final allEntities = TastePreferenceDatabase.getAllTasteEntities();
     final excludeIds = excludeEntities?.map((e) => e.id).toSet() ?? <String>{};
-    
+
     // 过滤掉已排除的实体
-    final availableEntities = allEntities
-        .where((entity) => !excludeIds.contains(entity.id))
-        .toList();
-    
+    final availableEntities =
+        allEntities.where((entity) => !excludeIds.contains(entity.id)).toList();
+
     if (availableEntities.length <= count) {
       return availableEntities;
     }
@@ -185,7 +193,7 @@ class UserPreferenceManager {
     for (int i = 0; i < count && weightedEntities.isNotEmpty; i++) {
       final randomValue = _random.nextDouble() * totalWeight;
       double currentWeight = 0.0;
-      
+
       int selectedIndex = -1;
       for (int j = 0; j < weightedEntities.length; j++) {
         currentWeight += weightedEntities[j].weight;
@@ -194,21 +202,21 @@ class UserPreferenceManager {
           break;
         }
       }
-      
+
       // 如果没有找到，选择最后一个
       if (selectedIndex == -1) {
         selectedIndex = weightedEntities.length - 1;
       }
-      
+
       final selectedWeighted = weightedEntities[selectedIndex];
       final selectedEntity = selectedWeighted.entity;
-      
+
       // 避免重复选择
       if (!selectedIds.contains(selectedEntity.id)) {
         selectedEntities.add(selectedEntity);
         selectedIds.add(selectedEntity.id);
       }
-      
+
       // 从列表中移除已选择的实体
       totalWeight -= selectedWeighted.weight;
       weightedEntities.removeAt(selectedIndex);
@@ -222,13 +230,13 @@ class UserPreferenceManager {
   PhysicalEntity applyPreferencesToEntity(PhysicalEntity entity) {
     final radius = calculateEntityRadius(entity.id);
     final score = getEntityScore(entity.id);
-    
+
     // 根据分数调整透明度（负分数的实体更透明）
     double opacity = 1.0;
     if (score < 0) {
       opacity = (0.3 + (score + 100.0) / 100.0 * 0.7).clamp(0.3, 1.0);
     }
-    
+
     return entity.copyWith(
       radius: radius,
       opacity: opacity,
@@ -247,13 +255,59 @@ class UserPreferenceManager {
     _savePreferences();
   }
 
+  /// 记录用户行为
+  Future<void> recordUserAction(String entityId, UserActionType actionType) async {
+    debugPrint('记录用户行为: $entityId - $actionType');
+
+    // 这里可以实现具体的用户行为记录逻辑
+    // 比如更新用户偏好分数、记录到数据库等
+
+    try {
+      // 根据行为类型更新偏好分数
+      switch (actionType) {
+        case UserActionType.like:
+        case UserActionType.favorite:
+          await _updatePositivePreference(entityId);
+          break;
+        case UserActionType.dislike:
+          await _updateNegativePreference(entityId);
+          break;
+        case UserActionType.view:
+          await _updateViewCount(entityId);
+          break;
+        default:
+          // 其他行为类型的处理
+          break;
+      }
+    } catch (e) {
+      debugPrint('记录用户行为失败: $e');
+    }
+  }
+
+  /// 更新正面偏好
+  Future<void> _updatePositivePreference(String entityId) async {
+    // 实现正面偏好更新逻辑
+    debugPrint('更新正面偏好: $entityId');
+  }
+
+  /// 更新负面偏好
+  Future<void> _updateNegativePreference(String entityId) async {
+    // 实现负面偏好更新逻辑
+    debugPrint('更新负面偏好: $entityId');
+  }
+
+  /// 更新浏览次数
+  Future<void> _updateViewCount(String entityId) async {
+    // 实现浏览次数更新逻辑
+    debugPrint('更新浏览次数: $entityId');
+  }
+
   /// 获取新的替换实体（不重复）
   PhysicalEntity? getReplacementEntity() {
     final allEntities = TastePreferenceDatabase.getAllTasteEntities();
-    final availableEntities = allEntities
-        .where((entity) => !_displayedEntityIds.contains(entity.id))
-        .toList();
-    
+    final availableEntities =
+        allEntities.where((entity) => !_displayedEntityIds.contains(entity.id)).toList();
+
     if (availableEntities.isEmpty) {
       // 如果所有实体都显示过了，重置显示记录
       _displayedEntityIds.clear();
@@ -264,16 +318,14 @@ class UserPreferenceManager {
     // 基于概率权重选择一个替换实体
     final selectedEntities = selectRandomEntities(
       count: 1,
-      excludeEntities: allEntities
-          .where((e) => _displayedEntityIds.contains(e.id))
-          .toList(),
+      excludeEntities: allEntities.where((e) => _displayedEntityIds.contains(e.id)).toList(),
     );
 
     if (selectedEntities.isNotEmpty) {
       final replacement = selectedEntities.first;
       _displayedEntityIds.add(replacement.id);
       _savePreferences();
-      
+
       debugPrint('🔄 选择替换实体: ${replacement.name}');
       return applyPreferencesToEntity(replacement);
     }
@@ -286,7 +338,7 @@ class UserPreferenceManager {
     final totalEntities = _scores.length;
     final likedEntities = _scores.values.where((s) => s.score > 5).length;
     final dislikedEntities = _scores.values.where((s) => s.score < -5).length;
-    final averageScore = totalEntities > 0 
+    final averageScore = totalEntities > 0
         ? _scores.values.map((s) => s.score).reduce((a, b) => a + b) / totalEntities
         : 0.0;
 
@@ -303,15 +355,13 @@ class UserPreferenceManager {
 
   /// 获取最喜欢的偏好
   List<UserPreferenceScore> _getTopPreferences() {
-    final sorted = _scores.values.toList()
-      ..sort((a, b) => b.score.compareTo(a.score));
+    final sorted = _scores.values.toList()..sort((a, b) => b.score.compareTo(a.score));
     return sorted.take(5).toList();
   }
 
   /// 获取最不喜欢的偏好
   List<UserPreferenceScore> _getWorstPreferences() {
-    final sorted = _scores.values.toList()
-      ..sort((a, b) => a.score.compareTo(b.score));
+    final sorted = _scores.values.toList()..sort((a, b) => a.score.compareTo(b.score));
     return sorted.take(5).toList();
   }
 

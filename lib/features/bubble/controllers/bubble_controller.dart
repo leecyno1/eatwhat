@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../../core/models/bubble.dart';
 import '../../../core/models/bubble_factory.dart';
 import '../../../core/models/food.dart';
@@ -6,9 +7,15 @@ import '../../../core/models/user_preference.dart';
 import '../../../core/services/storage_service.dart';
 import '../../../core/physics/improved_bubble_physics.dart';
 import '../../../core/services/unified_food_data_service.dart';
+import '../../../core/services/user_preference_manager.dart' show UserActionType;
+import '../../../core/services/realtime_feedback_service.dart';
+import '../../../core/services/synchronization_manager.dart';
+import '../../../core/services/collaborative_filtering_service.dart';
 import '../../../core/utils/performance_optimizer.dart';
+import '../../../core/utils/analytics_helper.dart';
 
-/// 优化后的气泡控制器 - 减少不必要的重绘和内存使用
+/// 优化后的气泡控制器 - Phase 2 实时反馈版本
+/// 集成实时反馈服务和同步管理器
 class BubbleController extends DebouncedNotifier {
   final List<Bubble> _bubbles = [];
   final List<Bubble> _selectedBubbles = [];
@@ -17,14 +24,22 @@ class BubbleController extends DebouncedNotifier {
   // final StorageService _storageService; // 未使用，暂时注释掉
   late UserPreference _userPreference;
 
+  // Phase 2 新增服务
+  final RealtimeFeedbackService _feedbackService = RealtimeFeedbackService();
+  final SynchronizationManager _syncManager = SynchronizationManager();
+  final CollaborativeFilteringService _cfService = CollaborativeFilteringService();
+
   // 状态标识
   bool _isInitialized = false;
   bool _isLoading = false;
   bool _isGeneratingRecommendations = false;
   Size? _screenSize;
-  
+
   // TODO: 后续应从AuthService获取
-  final String _currentUserId = 'default_user'; 
+  final String _currentUserId = 'default_user';
+
+  // 偏好保存回调
+  void Function(bool isLike)? onPreferenceSaved;
 
   // Getters
   List<Bubble> get bubbles => _bubbles;
@@ -47,7 +62,20 @@ class BubbleController extends DebouncedNotifier {
     try {
       // 记录性能
       PerformanceOptimizer().recordInteraction();
-      
+
+      // 埋点：记录气泡页面进入
+      AnalyticsHelper.logPageEnter('bubble_screen');
+
+      // Phase 2: 初始化实时反馈服务
+      await _feedbackService.initialize();
+      await _syncManager.initialize();
+      await _cfService.initialize(); // 协同过滤服务初始化
+
+      // 监听同步事件
+      _syncManager.syncStream.listen((event) {
+        debugPrint('🔄 同步事件: ${event.message}');
+      });
+
       _userPreference = await StorageService.getUserPreference(_currentUserId);
       _bubbles.clear();
       _bubbles.addAll(BubbleFactory.createDefaultBubbles());
@@ -56,16 +84,16 @@ class BubbleController extends DebouncedNotifier {
         _screenSize = screenSize;
         ImprovedBubblePhysics.distributeeBubbles(_bubbles, screenSize);
       }
-      
+
       _isInitialized = true;
     } catch (e) {
       debugPrint('Bubble controller initialization error: $e');
     }
-    
+
     _isLoading = false;
     debouncedNotify();
   }
-  
+
   /// 重新分布气泡位置
   void redistributeBubbles() {
     if (_screenSize != null) {
@@ -75,7 +103,7 @@ class BubbleController extends DebouncedNotifier {
     }
   }
 
-  /// 切换气泡选择状态 - 优化版本，减少重绘
+  /// 切换气泡选择状态 - Phase 2 实时反馈优化版本
   void toggleBubble(Bubble bubble) {
     final index = _bubbles.indexWhere((b) => b.id == bubble.id);
     if (index == -1) return;
@@ -88,6 +116,27 @@ class BubbleController extends DebouncedNotifier {
     _selectedBubbles.removeWhere((b) => b.id == bubble.id);
     if (isSelected) {
       _selectedBubbles.add(_bubbles[index]);
+
+      // Phase 2: 记录实时反馈
+      _feedbackService.recordUserAction(
+        bubble.id,
+        UserActionType.like,
+        metadata: {
+          'bubbleName': bubble.name,
+          'bubbleType': bubble.type.name,
+          'selectionTime': DateTime.now().toIso8601String(),
+        },
+      );
+    } else {
+      // 取消选择时记录
+      _feedbackService.recordUserAction(
+        bubble.id,
+        UserActionType.view,
+        metadata: {
+          'action': 'deselected',
+          'bubbleName': bubble.name,
+        },
+      );
     }
 
     // 使用防抖通知减少重绘频率
@@ -129,20 +178,76 @@ class BubbleController extends DebouncedNotifier {
     notifyListeners();
   }
 
-  /// 喜欢气泡
-  void likeBubble(Bubble bubble) {
+  /// 喜欢气泡 - Phase 2 实时反馈版本
+  Future<void> likeBubble(Bubble bubble) async {
     if (!_selectedBubbles.any((b) => b.id == bubble.id)) {
       _selectedBubbles.add(bubble.copyWith(isSelected: true));
     }
-    _updateUserPreference(bubble, true);
+
+    // 埋点：记录气泡喜欢（下滑表示不喜欢，上滑表示喜欢）
+    AnalyticsHelper.logBubbleLiked(bubble.id, bubble.name);
+
+    // 实时记录用户偏好
+    _feedbackService.recordUserAction(
+      bubble.id,
+      UserActionType.favorite,
+      metadata: {
+        'bubbleName': bubble.name,
+        'bubbleType': bubble.type.name,
+        'intensity': 1.0,
+      },
+      immediate: true, // 高优先级行为立即处理
+    );
+
+    // 记录协同过滤交互
+    await _cfService.recordInteraction(
+      userId: _currentUserId,
+      recipeId: bubble.id,
+      rating: 3.0, // 喜欢
+    );
+
+    await _updateUserPreference(bubble, true);
     notifyListeners();
   }
 
-  /// 不喜欢气泡
-  void dislikeBubble(Bubble bubble) {
+  /// 不喜欢气泡 - Phase 2 实时反馈版本
+  Future<void> dislikeBubble(Bubble bubble) async {
     _selectedBubbles.removeWhere((b) => b.id == bubble.id);
-    _updateUserPreference(bubble, false);
+
+    // 埋点：记录气泡不喜欢
+    AnalyticsHelper.logBubbleDisliked(bubble.id, bubble.name);
+
+    // 实时记录负面反馈
+    _feedbackService.recordUserAction(
+      bubble.id,
+      UserActionType.dislike,
+      metadata: {
+        'bubbleName': bubble.name,
+        'bubbleType': bubble.type.name,
+        'intensity': -1.0,
+      },
+      immediate: true,
+    );
+
+    // 记录协同过滤交互
+    await _cfService.recordInteraction(
+      userId: _currentUserId,
+      recipeId: bubble.id,
+      rating: 1.0, // 不喜欢
+    );
+
+    await _updateUserPreference(bubble, false);
     notifyListeners();
+  }
+
+  /// 标记气泡为喜欢 - 用于手势操作
+  void markBubbleAsLiked(Bubble bubble) {
+    likeBubble(bubble);
+  }
+
+  /// 标记气泡为不喜欢 - 用于手势操作
+  void markBubbleAsDisliked(Bubble bubble) {
+    dislikeBubble(bubble);
   }
 
   /// 忽略气泡
@@ -159,16 +264,28 @@ class BubbleController extends DebouncedNotifier {
   void handleBubbleGesture(Bubble bubble, BubbleGesture gesture) {
     switch (gesture) {
       case BubbleGesture.tap:
+        AnalyticsHelper.logBubbleTapped(bubble.id, bubble.name);
         toggleBubble(bubble);
         break;
       case BubbleGesture.swipeUp:
+        AnalyticsHelper.logBubbleSwiped(bubble.id, bubble.name, 'up');
         likeBubble(bubble);
         break;
       case BubbleGesture.swipeDown:
+        AnalyticsHelper.logBubbleSwiped(bubble.id, bubble.name, 'down');
         dislikeBubble(bubble);
         break;
       case BubbleGesture.longPress:
+        AnalyticsHelper.logBubbleLongPressed(bubble.id, bubble.name);
         debugPrint('查看气泡详情: ${bubble.name}');
+        break;
+      case BubbleGesture.swipeLeft:
+        AnalyticsHelper.logBubbleSwiped(bubble.id, bubble.name, 'left');
+        ignoreBubble(bubble);
+        break;
+      case BubbleGesture.swipeRight:
+        AnalyticsHelper.logBubbleSwiped(bubble.id, bubble.name, 'right');
+        markBubbleAsLiked(bubble);
         break;
       // 其他手势可以后续添加
       default:
@@ -178,7 +295,7 @@ class BubbleController extends DebouncedNotifier {
   }
 
   /// 更新用户偏好
-  void _updateUserPreference(Bubble bubble, bool isLiked) {
+  Future<void> _updateUserPreference(Bubble bubble, bool isLiked) async {
     // 这里可以实现用户偏好的更新逻辑
     // 示例：更新口味偏好
     if (isLiked) {
@@ -186,11 +303,28 @@ class BubbleController extends DebouncedNotifier {
     } else {
       _userPreference = _userPreference.updateTastePreference(bubble.name, -1.0);
     }
+
+    // 异步保存偏好
+    await _savePreferences();
+
+    // 触发保存成功回调
+    _onPreferenceSaved(isLiked);
   }
 
   /// 保存偏好到存储
-  void _savePreferences() {
-    StorageService.saveUserPreference(_userPreference);
+  Future<void> _savePreferences() async {
+    await StorageService.saveUserPreference(_userPreference);
+  }
+
+  /// 偏好保存成功回调
+  void _onPreferenceSaved(bool isLike) {
+    // 触发 HapticFeedback
+    HapticFeedback.mediumImpact();
+
+    // 触发保存成功回调
+    if (onPreferenceSaved != null) {
+      onPreferenceSaved!(isLike);
+    }
   }
 
   /// 生成推荐 - 使用统一食物数据服务
@@ -200,7 +334,7 @@ class BubbleController extends DebouncedNotifier {
 
     try {
       debugPrint('🚀 开始生成美食推荐 - 使用统一数据服务...');
-      
+
       // 使用统一食物数据服务获取推荐
       final unifiedService = UnifiedFoodDataService();
       final recommendations = await unifiedService.getRecommendations(
@@ -208,12 +342,12 @@ class BubbleController extends DebouncedNotifier {
         _userPreference,
         limit: 8,
       );
-      
+
       _recommendedFoods.clear();
       _recommendedFoods.addAll(recommendations);
-      
+
       debugPrint('✅ 生成了 ${_recommendedFoods.length} 个美食推荐');
-      
+
       // 如果推荐结果不足，获取个性化推荐补充
       if (_recommendedFoods.length < 3) {
         debugPrint('📈 推荐结果不足，获取个性化推荐...');
@@ -223,26 +357,24 @@ class BubbleController extends DebouncedNotifier {
         );
         _recommendedFoods.addAll(personalizedRecommendations);
       }
-      
+
       debugPrint('🎯 最终推荐结果: ${_recommendedFoods.length} 个');
-      
     } catch (e, s) {
       debugPrint('❌ 生成推荐时出错: $e\n$s');
-      
+
       // 如果出错，使用备用推荐
       _recommendedFoods.clear();
       await _generateFallbackRecommendations();
-      
     } finally {
       _isGeneratingRecommendations = false;
       notifyListeners();
     }
   }
-  
+
   /// 生成备用推荐
   Future<void> _generateFallbackRecommendations() async {
     debugPrint('使用备用推荐策略');
-    
+
     final fallbackFoods = [
       Food(
         id: 'fallback_001',
@@ -272,27 +404,36 @@ class BubbleController extends DebouncedNotifier {
         tasteAttributes: ['酸', '甜', '鲜'],
       ),
     ];
-    
+
     _recommendedFoods.addAll(fallbackFoods);
   }
 
-  /// 切换食物收藏状态
+  /// 切换食物收藏状态 - Phase 2 实时反馈版本
   Future<void> toggleFoodFavorite(String foodId) async {
     // 使用统一服务处理收藏逻辑
     final unifiedService = UnifiedFoodDataService();
     await unifiedService.toggleFoodFavorite(foodId);
-    
-    // 记录用户行为
-    await unifiedService.recordUserAction(
-      foodId, 
+
+    // 记录用户行为 - 实时反馈
+    await _feedbackService.recordUserAction(
+      foodId,
       UserActionType.favorite,
+      metadata: {
+        'source': 'food_recommendation',
+        'timestamp': DateTime.now().toIso8601String(),
+      },
+      immediate: true,
     );
-    
+
     // 更新本地显示状态
     final index = _recommendedFoods.indexWhere((food) => food.id == foodId);
     if (index != -1) {
       final food = _recommendedFoods[index];
       _recommendedFoods[index] = food.copyWith(isFavorite: !food.isFavorite);
+
+      // 触发增量同步
+      _syncManager.performIncrementalSync();
+
       notifyListeners();
     }
   }
@@ -311,23 +452,21 @@ class BubbleController extends DebouncedNotifier {
   }
 
   /// 通过名称喜欢气泡
-  void likeBubbleByName(String bubbleName) {
+  Future<void> likeBubbleByName(String bubbleName) async {
     final bubble = _bubbles.firstWhere(
       (b) => b.name == bubbleName,
       orElse: () => _bubbles.first,
     );
-    _updateUserPreference(bubble, true);
-    _savePreferences();
+    await _updateUserPreference(bubble, true);
   }
 
   /// 通过名称不喜欢气泡
-  void dislikeBubbleByName(String bubbleName) {
+  Future<void> dislikeBubbleByName(String bubbleName) async {
     final bubble = _bubbles.firstWhere(
       (b) => b.name == bubbleName,
       orElse: () => _bubbles.first,
     );
-    _updateUserPreference(bubble, false);
-    _savePreferences();
+    await _updateUserPreference(bubble, false);
   }
 
   /// 通过名称忽略气泡
@@ -354,11 +493,39 @@ class BubbleController extends DebouncedNotifier {
 
   /// 获取推荐结果
   List<Food> get recommendations => _recommendedFoods;
-  
+
   @override
   void dispose() {
+    // Phase 2: 清理实时反馈资源
+    _feedbackService.dispose();
+    _syncManager.dispose();
+
     // 在这里清理资源，例如取消定时器、关闭流等
     super.dispose();
+  }
+
+  // Phase 2 新增方法
+
+  /// 处理即时反馈
+  void handleInstantFeedback(
+    String itemId,
+    InstantFeedbackType feedbackType,
+    double intensity,
+  ) {
+    _feedbackService.handleInstantFeedback(itemId, feedbackType, intensity);
+  }
+
+  /// 获取实时统计
+  Map<String, dynamic> getRealtimeStats() {
+    return {
+      'userActions': _feedbackService.getUserActionStatistics(),
+      'syncStatus': _syncManager.getSyncStatistics(),
+    };
+  }
+
+  /// 手动触发同步
+  Future<void> manualSync() async {
+    await _syncManager.performFullSync();
   }
 }
 

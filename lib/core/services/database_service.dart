@@ -469,6 +469,8 @@ class DatabaseService {
         createdAt: DateTime.now().subtract(const Duration(days: 30)),
         updatedAt: DateTime.now().subtract(const Duration(days: 5)),
         tips: '鸡肉要先腌制，炒制时间不宜过长以保持嫩滑',
+        seasonalInfo: SeasonalInfo(),
+        equipment: CookingEquipment(),
       ),
       Recipe(
         id: 'recipe_002',
@@ -504,6 +506,8 @@ class DatabaseService {
         createdAt: DateTime.now().subtract(const Duration(days: 15)),
         updatedAt: DateTime.now().subtract(const Duration(days: 2)),
         tips: '番茄要充分炒出汁水，面条不要煮过头',
+        seasonalInfo: SeasonalInfo(),
+        equipment: CookingEquipment(),
       ),
     ];
 
@@ -527,7 +531,7 @@ class DatabaseService {
         restaurantId: 'restaurant_001',
         rating: 4.6,
         salesCount: 520,
-        preparationTime: '25-30分钟',
+        preparationTime: 30,
         allergens: ['花生', '芝麻'],
         ingredients: ['土豆', '豆腐', '金针菇', '牛肉片'],
       ),
@@ -544,7 +548,7 @@ class DatabaseService {
         restaurantId: 'restaurant_002',
         rating: 4.8,
         salesCount: 890,
-        preparationTime: '15-20分钟',
+        preparationTime: 20,
         allergens: [],
         ingredients: ['猪肉', '面粉', '高汤'],
       ),

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import '../../../shared/themes/design_tokens.dart';
 import '../../bubble/screens/enhanced_physical_entity_screen.dart';
 import '../../recipe/screens/recipe_demo_screen.dart';
 import '../../recipe/screens/recipe_list_screen.dart';
+import '../../../screens/phase3_demo_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,11 +14,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  
+
   final List<Widget> _pages = [
     const EnhancedPhysicalEntityScreen(),
     const RecipeDemoScreen(),
     const RecipeListScreen(),
+    const Phase3DemoScreen(),
   ];
 
   @override
@@ -31,6 +34,9 @@ class _HomeScreenState extends State<HomeScreen> {
           });
         },
         type: BottomNavigationBarType.fixed,
+        selectedItemColor: DesignTokens.mint,
+        unselectedItemColor: DesignTokens.inkMuted,
+        backgroundColor: DesignTokens.surface,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.bubble_chart),
@@ -43,6 +49,10 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
             label: '搜索菜谱',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.psychology),
+            label: 'AI智能推荐',
           ),
         ],
       ),

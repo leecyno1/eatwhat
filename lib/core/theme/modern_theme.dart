@@ -10,18 +10,18 @@ class ModernTheme {
   static const Color surfaceColor = Color(0xFFFFFFFF);
   static const Color accentColor = Color(0xFF34C759); // iOS绿
   static const Color warningColor = Color(0xFFFF3B30); // iOS红
-  
+
   // 渐变色
   static const List<Color> primaryGradient = [
     Color(0xFF007AFF),
     Color(0xFF5856D6),
   ];
-  
+
   static const List<Color> foodGradient = [
     Color(0xFFFF9500),
     Color(0xFFFF6B6B),
   ];
-  
+
   static const List<Color> bubbleGradients = [
     Color(0xFFFF6B6B), // 红色系 - 辣味
     Color(0xFF4ECDC4), // 青色系 - 清淡
@@ -42,7 +42,7 @@ class ModernTheme {
         brightness: Brightness.light,
         surface: surfaceColor,
       ),
-      
+
       // 字体 - SF Pro风格
       fontFamily: '.SF Pro Text',
       textTheme: TextTheme(
@@ -61,7 +61,7 @@ class ModernTheme {
         labelMedium: TextStyle(fontSize: 12.sp, fontWeight: FontWeight.w500),
         labelSmall: TextStyle(fontSize: 11.sp, fontWeight: FontWeight.w500),
       ),
-      
+
       // AppBar主题 - iOS风格
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
@@ -75,7 +75,7 @@ class ModernTheme {
         ),
         iconTheme: const IconThemeData(color: primaryColor),
       ),
-      
+
       // 卡片主题
       cardTheme: CardThemeData(
         elevation: 0,
@@ -85,7 +85,7 @@ class ModernTheme {
         color: surfaceColor,
         shadowColor: Colors.black.withValues(alpha: 0.1),
       ),
-      
+
       // 按钮主题
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
@@ -102,7 +102,7 @@ class ModernTheme {
           ),
         ),
       ),
-      
+
       // 输入框主题
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
@@ -137,7 +137,6 @@ class ModernTheme {
         brightness: Brightness.dark,
         surface: const Color(0xFF1C1C1E),
       ),
-      
       fontFamily: '.SF Pro Text',
       textTheme: TextTheme(
         displayLarge: TextStyle(fontSize: 34.sp, fontWeight: FontWeight.bold, color: Colors.white),
@@ -145,7 +144,6 @@ class ModernTheme {
         bodyLarge: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w400, color: Colors.white),
         bodyMedium: TextStyle(fontSize: 15.sp, fontWeight: FontWeight.w400, color: Colors.white70),
       ),
-      
       appBarTheme: AppBarTheme(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -175,34 +173,34 @@ class ModernTheme {
 
   /// 毛玻璃效果
   static BoxDecoration get glassDecoration => BoxDecoration(
-    borderRadius: BorderRadius.circular(20.r),
-    border: Border.all(
-      color: Colors.white.withValues(alpha: 0.2),
-      width: 1,
-    ),
-    gradient: LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [
-        Colors.white.withValues(alpha: 0.2),
-        Colors.white.withValues(alpha: 0.1),
-      ],
-    ),
-  );
+        borderRadius: BorderRadius.circular(20.r),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.2),
+          width: 1,
+        ),
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withValues(alpha: 0.2),
+            Colors.white.withValues(alpha: 0.1),
+          ],
+        ),
+      );
 
   /// 阴影效果
   static List<BoxShadow> get softShadow => [
-    BoxShadow(
-      color: Colors.black.withValues(alpha: 0.1),
-      blurRadius: 20,
-      spreadRadius: 0,
-      offset: const Offset(0, 8),
-    ),
-  ];
+        BoxShadow(
+          color: Colors.black.withValues(alpha: 0.1),
+          blurRadius: 20,
+          spreadRadius: 0,
+          offset: const Offset(0, 8),
+        ),
+      ];
 
   /// iPhone安全区域适配
   static EdgeInsets safeAreaPadding(BuildContext context) => EdgeInsets.only(
-    top: MediaQuery.of(context).padding.top,
-    bottom: MediaQuery.of(context).padding.bottom,
-  );
+        top: MediaQuery.of(context).padding.top,
+        bottom: MediaQuery.of(context).padding.bottom,
+      );
 }

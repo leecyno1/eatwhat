@@ -131,13 +131,11 @@ class Restaurant {
   double? calculateDistance(double targetLat, double targetLng) {
     if (latitude == null || longitude == null) return null;
 
-    return _calculateHaversineDistance(
-        latitude!, longitude!, targetLat, targetLng);
+    return _calculateHaversineDistance(latitude!, longitude!, targetLat, targetLng);
   }
 
   /// 是否在配送范围内
-  bool isInDeliveryRange(double targetLat, double targetLng,
-      {double maxDistance = 5000}) {
+  bool isInDeliveryRange(double targetLat, double targetLng, {double maxDistance = 5000}) {
     final dist = calculateDistance(targetLat, targetLng);
     return dist != null && dist <= maxDistance;
   }
@@ -341,9 +339,7 @@ class Restaurant {
         (e) => e.name == (json['platform'] ?? 'unknown'),
         orElse: () => RestaurantPlatform.unknown,
       ),
-      categories: json['categories'] != null
-          ? List<String>.from(json['categories'])
-          : const [],
+      categories: json['categories'] != null ? List<String>.from(json['categories']) : const [],
       tags: json['tags'] != null ? List<String>.from(json['tags']) : const [],
       announcement: json['announcement'],
       isPromotional: json['isPromotional'] ?? false,
@@ -401,18 +397,13 @@ List<String> _parseStringList(dynamic value) {
     return value.map((e) => e.toString()).toList();
   }
   if (value is String) {
-    return value
-        .split(',')
-        .map((e) => e.trim())
-        .where((e) => e.isNotEmpty)
-        .toList();
+    return value.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
   }
   return [];
 }
 
 /// 计算两点间的距离（米）
-double _calculateHaversineDistance(
-    double lat1, double lon1, double lat2, double lon2) {
+double _calculateHaversineDistance(double lat1, double lon1, double lat2, double lon2) {
   const double earthRadius = 6371000; // 地球半径（米）
 
   final double dLat = _degreesToRadians(lat2 - lat1);

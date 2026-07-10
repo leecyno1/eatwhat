@@ -7,9 +7,13 @@ import '../../../core/models/physical_entity_factory.dart';
 import '../../../core/physics/zero_gravity_physics.dart';
 import '../../../core/models/food.dart';
 import '../../../core/models/user_preference.dart';
-import '../../../core/services/storage_service.dart';
 import '../../../core/services/simple_food_database.dart';
 import '../../../core/services/user_preference_manager.dart';
+import '../../../core/models/user_taste_action.dart';
+import '../../../core/repositories/user_preference_repository.dart';
+import '../../../core/services/preference_event_service.dart';
+import '../../../core/services/recommendation_engine.dart';
+import '../../../core/services/recommendation_orchestrator.dart';
 
 /// 物理实体控制器 - 管理零重力环境下的物理实体系统
 class PhysicalEntityController extends ChangeNotifier {
@@ -23,6 +27,12 @@ class PhysicalEntityController extends ChangeNotifier {
 
   // 用户偏好管理器
   final UserPreferenceManager _preferenceManager = UserPreferenceManager();
+
+  late final UserPreferenceRepository _preferenceRepository;
+  late final PreferenceEventService _preferenceEventService;
+  late final RecommendationOrchestrator _recommendationOrchestrator;
+  final RecommendationEngine _recommendationEngine = RecommendationEngine();
+  StreamSubscription<List<Food>>? _recommendationSubscription;
 
   // 状态标识
   bool _isInitialized = false;
@@ -73,18 +83,33 @@ class PhysicalEntityController extends ChangeNotifier {
     try {
       debugPrint('初始化物理实体系统...');
 
+      _preferenceRepository = UserPreferenceRepository(userId: _currentUserId);
+      _preferenceEventService = PreferenceEventService(_preferenceRepository);
+      _recommendationOrchestrator = RecommendationOrchestrator(
+        preferenceEventService: _preferenceEventService,
+        recommendationEngine: _recommendationEngine,
+        userPreferenceRepository: _preferenceRepository,
+      );
+
       // 初始化用户偏好管理器
       await _preferenceManager.initialize();
 
       // 加载用户偏好
-      _userPreference = await StorageService.getUserPreference(_currentUserId);
+      _userPreference = await _preferenceRepository.get();
+      await _recommendationOrchestrator.initialize();
+      _recommendationSubscription =
+          _recommendationOrchestrator.recommendationStream.listen((foods) {
+        _recommendedFoods
+          ..clear()
+          ..addAll(foods);
+        notifyListeners();
+      });
 
       // 创建默认实体 - 使用新的偏好系统
       _entities.clear();
 
       // 使用新的偏好系统随机选择30个实体
-      final selectedEntities =
-          _preferenceManager.selectRandomEntities(count: 30);
+      final selectedEntities = _preferenceManager.selectRandomEntities(count: 30);
 
       // 应用用户偏好到实体（动态大小和透明度）
       final entitiesWithPreferences =
@@ -221,8 +246,7 @@ class PhysicalEntityController extends ChangeNotifier {
   void updateContainerSize(Size newSize) {
     // 只有当尺寸真正改变时才重新分布
     if (_containerSize == null ||
-        (_containerSize!.width != newSize.width ||
-            _containerSize!.height != newSize.height)) {
+        (_containerSize!.width != newSize.width || _containerSize!.height != newSize.height)) {
       _containerSize = newSize;
 
       // 只有在尺寸发生显著变化时才重新分布（避免微小变化导致的乱窜）
@@ -311,7 +335,7 @@ class PhysicalEntityController extends ChangeNotifier {
 
     // 使用新的偏好管理器
     _preferenceManager.likeEntity(entity.id, entity.name);
-    _updateUserPreference(entity, true);
+    _recordTasteAction(entity, 1.0);
     _lastInteractionTime = DateTime.now();
     notifyListeners();
   }
@@ -326,7 +350,7 @@ class PhysicalEntityController extends ChangeNotifier {
 
     // 使用新的偏好管理器
     _preferenceManager.dislikeEntity(entity.id, entity.name);
-    _updateUserPreference(entity, false);
+    _recordTasteAction(entity, -1.0);
     _lastInteractionTime = DateTime.now();
     notifyListeners();
   }
@@ -356,8 +380,7 @@ class PhysicalEntityController extends ChangeNotifier {
   }
 
   /// 应用排斥力 - 暂时禁用
-  void applyRepulsionForce(Offset position,
-      {double radius = 60.0, double strength = 50.0}) {
+  void applyRepulsionForce(Offset position, {double radius = 60.0, double strength = 50.0}) {
     // 暂时禁用所有力的应用以保持静止
     /*
     if (_containerSize != null) {
@@ -368,8 +391,7 @@ class PhysicalEntityController extends ChangeNotifier {
   }
 
   /// 应用吸引力 - 暂时禁用
-  void applyAttractionForce(Offset position,
-      {double radius = 80.0, double strength = 30.0}) {
+  void applyAttractionForce(Offset position, {double radius = 80.0, double strength = 30.0}) {
     // 暂时禁用
     /*
     if (_containerSize != null) {
@@ -380,8 +402,7 @@ class PhysicalEntityController extends ChangeNotifier {
   }
 
   /// 应用涡旋力 - 暂时禁用
-  void applyVortexForce(Offset position,
-      {double radius = 70.0, double strength = 20.0}) {
+  void applyVortexForce(Offset position, {double radius = 70.0, double strength = 20.0}) {
     // 暂时禁用
     /*
     if (_containerSize != null) {
@@ -496,30 +517,27 @@ class PhysicalEntityController extends ChangeNotifier {
   void favoriteEntity(String entityId) {
     final index = _entities.indexWhere((e) => e.id == entityId);
     if (index != -1) {
-      _entities[index] =
-          _entities[index].copyWith(isSelected: true, isHighlighted: true);
+      _entities[index] = _entities[index].copyWith(isSelected: true, isHighlighted: true);
       if (!_selectedEntities.any((e) => e.id == entityId)) {
         _selectedEntities.add(_entities[index]);
       }
-      _updateUserPreference(_entities[index], true);
+      _recordTasteAction(_entities[index], 0.5);
       notifyListeners();
     }
   }
 
-  /// 更新用户偏好
-  void _updateUserPreference(PhysicalEntity entity, bool isLiked) {
-    if (isLiked) {
-      _userPreference = _userPreference.updateTastePreference(entity.name, 1.0);
-    } else {
-      _userPreference =
-          _userPreference.updateTastePreference(entity.name, -1.0);
-    }
-    _savePreferences();
-  }
-
-  /// 保存偏好到存储
-  void _savePreferences() {
-    StorageService.saveUserPreference(_userPreference);
+  Future<void> _recordTasteAction(
+    PhysicalEntity entity,
+    double delta,
+  ) async {
+    final action = UserTasteAction(
+      userId: _currentUserId,
+      nodeId: entity.id,
+      nodeType: entity.type,
+      weightDelta: delta,
+    );
+    _userPreference = await _preferenceEventService.recordAction(action);
+    await _recommendationOrchestrator.forceRefresh();
   }
 
   /// 生成推荐
@@ -531,8 +549,7 @@ class PhysicalEntityController extends ChangeNotifier {
       debugPrint('基于物理实体生成美食推荐...');
 
       // 获取选中的实体偏好
-      final preferences =
-          _selectedEntities.map((entity) => entity.name).toList();
+      final preferences = _selectedEntities.map((entity) => entity.name).toList();
       final tastes = _selectedEntities
           .where((entity) => entity.type == PhysicalEntityType.taste)
           .map((entity) => entity.name)
@@ -623,8 +640,7 @@ class PhysicalEntityController extends ChangeNotifier {
 
   /// 获取系统状态信息
   Map<String, dynamic> getSystemStatus() {
-    final totalEnergy =
-        ZeroGravityPhysics.calculateTotalKineticEnergy(_entities);
+    final totalEnergy = ZeroGravityPhysics.calculateTotalKineticEnergy(_entities);
     final isAtRest = ZeroGravityPhysics.isSystemNearlyAtRest(_entities);
 
     return {
@@ -674,8 +690,7 @@ class PhysicalEntityController extends ChangeNotifier {
 
       // 让下一个气泡渐现
       if (_appearanceIndex < _entities.length) {
-        _entities[_appearanceIndex] =
-            _entities[_appearanceIndex].copyWith(opacity: 1.0);
+        _entities[_appearanceIndex] = _entities[_appearanceIndex].copyWith(opacity: 1.0);
         _appearanceIndex++;
         notifyListeners();
       }
@@ -812,9 +827,7 @@ class PhysicalEntityController extends ChangeNotifier {
 
       // 将新实体添加到列表中，替换已消失的实体
       int replacedCount = 0;
-      for (int i = 0;
-          i < _entities.length && replacedCount < newEntities.length;
-          i++) {
+      for (int i = 0; i < _entities.length && replacedCount < newEntities.length; i++) {
         if (_entities[i].opacity <= 0.0) {
           _entities[i] = newEntities[replacedCount].copyWith(
             position: _entities[i].position,
@@ -843,6 +856,8 @@ class PhysicalEntityController extends ChangeNotifier {
   void dispose() {
     _stopPhysicsEngine();
     _stopGradualAppearance();
+    _recommendationSubscription?.cancel();
+    _recommendationOrchestrator.dispose();
     super.dispose();
   }
 }

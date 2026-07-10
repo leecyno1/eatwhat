@@ -40,7 +40,7 @@ class _FloatingQuestionMarksState extends State<FloatingQuestionMarks>
       duration: widget.animationDuration,
       vsync: this,
     )..repeat();
-    
+
     _initializeQuestionMarks();
   }
 
@@ -128,26 +128,29 @@ class QuestionMarksPainter extends CustomPainter {
       // 计算当前位置（循环漂浮）
       final phase = (animationValue + mark.phaseOffset) * 2 * math.pi;
       final floatOffset = math.sin(phase) * 20; // 上下浮动20像素
-      
-      final x = mark.initialX + math.cos(animationValue * 2 * math.pi * mark.speed + mark.direction) * 30;
-      final y = mark.initialY + floatOffset + math.sin(animationValue * 2 * math.pi * mark.speed + mark.direction) * 15;
-      
+
+      final x =
+          mark.initialX + math.cos(animationValue * 2 * math.pi * mark.speed + mark.direction) * 30;
+      final y = mark.initialY +
+          floatOffset +
+          math.sin(animationValue * 2 * math.pi * mark.speed + mark.direction) * 15;
+
       // 确保在边界内
       final clampedX = x.clamp(0.0, size.width);
       final clampedY = y.clamp(0.0, size.height);
-      
+
       // 计算透明度（呼吸效果）
       final breathe = math.sin(animationValue * 2 * math.pi * 0.5 + mark.phaseOffset);
       final currentOpacity = mark.opacity * (0.7 + 0.3 * breathe);
-      
+
       // 计算旋转角度
       final rotation = animationValue * 2 * math.pi * mark.rotationSpeed;
-      
+
       // 绘制问号
       canvas.save();
       canvas.translate(clampedX, clampedY);
       canvas.rotate(rotation);
-      
+
       final textPainter = TextPainter(
         text: TextSpan(
           text: '?',
@@ -166,21 +169,20 @@ class QuestionMarksPainter extends CustomPainter {
         ),
         textDirection: TextDirection.ltr,
       );
-      
+
       textPainter.layout();
       textPainter.paint(
         canvas,
         Offset(-textPainter.width / 2, -textPainter.height / 2),
       );
-      
+
       canvas.restore();
     }
   }
 
   @override
   bool shouldRepaint(QuestionMarksPainter oldDelegate) {
-    return oldDelegate.animationValue != animationValue ||
-           oldDelegate.color != color;
+    return oldDelegate.animationValue != animationValue || oldDelegate.color != color;
   }
 }
 
@@ -212,7 +214,7 @@ class _SimpleFloatingQuestionMarksState extends State<SimpleFloatingQuestionMark
       duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat(reverse: true);
-    
+
     _floatAnimation = Tween<double>(
       begin: -5,
       end: 5,
@@ -220,7 +222,7 @@ class _SimpleFloatingQuestionMarksState extends State<SimpleFloatingQuestionMark
       parent: _controller,
       curve: Curves.easeInOut,
     ));
-    
+
     _opacityAnimation = Tween<double>(
       begin: 0.2,
       end: 0.6,

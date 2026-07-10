@@ -12,6 +12,7 @@ import '../../../shared/widgets/modern_loading_animation.dart';
 import '../../../shared/widgets/particle_system.dart';
 import '../../../core/utils/performance_optimizer.dart';
 import '../../../core/services/growth_engine.dart';
+import '../../../core/models/bubble.dart'; // 添加BubbleGesture导入
 
 /// 物理实体界面 - 零重力环境下的形象化实体交互
 class PhysicalEntityScreen extends StatefulWidget {
@@ -26,47 +27,47 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
   late AnimationController _backgroundController;
   late AnimationController _headerController;
   late AnimationController _containerController;
-  
+
   late Animation<double> _headerAnimation;
   late Animation<Color?> _backgroundAnimation;
   late Animation<double> _containerAnimation;
-  
+
   // ✨ 粒子系统管理器
   late ParticleSystemManager _particleManager;
-  
+
   // 📊 性能监控
   DateTime? _lastFrameTime;
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     // ✨ 初始化粒子系统
     _particleManager = ParticleSystemManager(
       maxParticles: 150,
       containerSize: const Size(400, 600),
     );
-    
+
     // 背景渐变动画
     _backgroundController = AnimationController(
       duration: const Duration(seconds: 10),
       vsync: this,
     );
-    
+
     _backgroundAnimation = ColorTween(
       begin: const Color(0xFF0A0A23), // 深空蓝
-      end: const Color(0xFF1A1A2E),   // 宇宙紫
+      end: const Color(0xFF1A1A2E), // 宇宙紫
     ).animate(CurvedAnimation(
       parent: _backgroundController,
       curve: Curves.easeInOut,
     ));
-    
+
     // 头部动画
     _headerController = AnimationController(
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     );
-    
+
     _headerAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -74,13 +75,13 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
       parent: _headerController,
       curve: Curves.elasticOut,
     ));
-    
+
     // 容器动画
     _containerController = AnimationController(
       duration: const Duration(milliseconds: 2000),
       vsync: this,
     );
-    
+
     _containerAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -88,27 +89,27 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
       parent: _containerController,
       curve: Curves.easeOutBack,
     ));
-    
+
     _backgroundController.repeat(reverse: true);
     _headerController.forward();
     _containerController.forward();
-    
+
     // 初始化物理实体控制器
     WidgetsBinding.instance.addPostFrameCallback((_) {
       try {
         final controller = context.read<PhysicalEntityController>();
         final screenSize = MediaQuery.of(context).size;
         controller.initialize(containerSize: screenSize);
-        
+
         // 更新粒子系统容器大小
         _particleManager.containerSize = screenSize;
-        
+
         // 🎯 记录用户行为用于增长分析
         GrowthEngine().recordUserAction(
           userId: 'current_user', // TODO: 从用户服务获取
           action: UserAction.dailyLogin,
         );
-        
+
         // 🎉 添加欢迎粒子效果
         _addWelcomeEffect();
       } catch (e) {
@@ -125,16 +126,17 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
     _particleManager.clear(); // 清理粒子系统
     super.dispose();
   }
-  
+
   /// 🎉 添加欢迎粒子效果
   void _addWelcomeEffect() {
     Future.delayed(const Duration(milliseconds: 800), () {
       if (mounted) {
-        ParticleEffects.celebrationEffect(_particleManager, _particleManager.containerSize);
+        ParticleEffects.celebrationEffect(
+            _particleManager, _particleManager.containerSize);
       }
     });
   }
-  
+
   /// 📊 记录帧时间用于性能监控
   void _recordFrameTime() {
     final now = DateTime.now();
@@ -149,7 +151,7 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
   Widget build(BuildContext context) {
     // 📊 记录帧时间
     _recordFrameTime();
-    
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.transparent,
@@ -258,7 +260,7 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                     ],
                   ),
                 ),
-                
+
                 // 状态面板 - 太空仪表盘风格
                 Consumer<PhysicalEntityController>(
                   builder: (context, controller, child) {
@@ -304,8 +306,8 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                                   icon: '⚡',
                                   label: '系统能量',
                                   value: status['isSystemAtRest'] ? '低' : '高',
-                                  color: status['isSystemAtRest'] 
-                                      ? const Color(0xFF81C784) 
+                                  color: status['isSystemAtRest']
+                                      ? const Color(0xFF81C784)
                                       : const Color(0xFFFFB74D),
                                 ),
                                 Container(
@@ -316,7 +318,7 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                                 _buildStatusIndicator(
                                   icon: '🎯',
                                   label: '推荐度',
-                                  value: controller.entities.isNotEmpty 
+                                  value: controller.entities.isNotEmpty
                                       ? '${((controller.selectedCount / controller.entities.length) * 100).toInt()}%'
                                       : '0%',
                                   color: const Color(0xFFBA68C8),
@@ -378,7 +380,6 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
         if (!controller.isInitialized) {
           return const Center(
             child: ModernLoadingAnimation(
-              type: LoadingAnimationType.bubbles,
               color: Color(0xFF64B5F6),
               message: '正在初始化零重力环境...',
             ),
@@ -416,7 +417,7 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                           painter: SpaceBackgroundPainter(),
                         ),
                       ),
-                      
+
                       // 交互区域 - 禁用物理力
                       Positioned.fill(
                         child: GestureDetector(
@@ -443,10 +444,13 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                             // controller.addRandomDisturbance(strength: 150.0);
                           },
                           child: Stack(
-                            children: controller.entities.asMap().entries.map((entry) {
+                            children: controller.entities
+                                .asMap()
+                                .entries
+                                .map((entry) {
                               final index = entry.key;
                               final entity = entry.value;
-                              
+
                               return Positioned(
                                 left: entity.position.dx - entity.radius,
                                 top: entity.position.dy - entity.radius,
@@ -458,51 +462,44 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                                     child: FadeInAnimation(
                                       child: PhysicalEntityWidget(
                                         entity: entity,
-                                        isSelected: controller.isEntitySelected(entity),
+                                        isSelected:
+                                            controller.isEntitySelected(entity),
                                         onTap: () {
                                           HapticFeedback.selectionClick();
                                           controller.toggleEntity(entity);
-                                          
+
                                           // ✨ 添加选择粒子效果
                                           ParticleEffects.bubbleSelection(
                                             _particleManager,
                                             entity.position,
                                           );
-                                          
+
                                           // 🎯 记录用户行为
                                           GrowthEngine().recordUserAction(
                                             userId: 'current_user',
                                             action: UserAction.bubbleSelection,
                                           );
                                         },
-                                        onSwipeUp: () {
-                                          HapticFeedback.mediumImpact();
-                                          controller.swipeUpEntity(entity);
-                                          
-                                          // ❤️ 添加喜欢粒子效果
-                                          ParticleEffects.likeAction(
-                                            _particleManager,
-                                            entity.position,
-                                          );
-                                        },
-                                        onSwipeDown: () {
-                                          HapticFeedback.heavyImpact();
-                                          controller.swipeDownEntity(entity);
-                                          
-                                          // 💨 添加讨厌消失粒子效果
-                                          ParticleEffects.dislikeAction(
-                                            _particleManager,
-                                            entity.position,
-                                          );
-                                        },
-                                        onSwipeLeft: () {
-                                          HapticFeedback.lightImpact();
-                                          controller.ignoreEntity(entity);
-                                        },
-                                        onSwipeRight: () {
-                                          HapticFeedback.mediumImpact();
-                                          controller.confirmEntity(entity);
-                                        },
+                                        onSwipeUp: () => _handleGesture(
+                                          controller,
+                                          entity,
+                                          BubbleGesture.swipeUp,
+                                        ),
+                                        onSwipeDown: () => _handleGesture(
+                                          controller,
+                                          entity,
+                                          BubbleGesture.swipeDown,
+                                        ),
+                                        onSwipeLeft: () => _handleGesture(
+                                          controller,
+                                          entity,
+                                          BubbleGesture.swipeLeft,
+                                        ),
+                                        onSwipeRight: () => _handleGesture(
+                                          controller,
+                                          entity,
+                                          BubbleGesture.swipeRight,
+                                        ),
                                       ),
                                     ),
                                   ),
@@ -512,7 +509,7 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                           ),
                         ),
                       ),
-                      
+
                       // 操作提示
                       if (controller.selectedCount == 0)
                         Positioned(
@@ -531,10 +528,12 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                                       vertical: 16.h,
                                     ),
                                     decoration: BoxDecoration(
-                                      color: Colors.black.withValues(alpha: 0.7),
+                                      color:
+                                          Colors.black.withValues(alpha: 0.7),
                                       borderRadius: BorderRadius.circular(25.r),
                                       border: Border.all(
-                                        color: Colors.cyan.withValues(alpha: 0.5),
+                                        color:
+                                            Colors.cyan.withValues(alpha: 0.5),
                                         width: 1,
                                       ),
                                     ),
@@ -553,7 +552,8 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                                         Text(
                                           '点击选择 • 上滑喜欢 • 下滑不喜欢\n双击添加扰动 • 拖拽推动实体',
                                           style: TextStyle(
-                                            color: Colors.white.withValues(alpha: 0.8),
+                                            color: Colors.white
+                                                .withValues(alpha: 0.8),
                                             fontSize: 12.sp,
                                             height: 1.4,
                                           ),
@@ -576,6 +576,61 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
         );
       },
     );
+  }
+
+  /// 统一手势处理方法
+  void _handleGesture(
+      PhysicalEntityController controller, entity, BubbleGesture gesture,
+      {DragUpdateDetails? details}) {
+    switch (gesture) {
+      case BubbleGesture.swipeUp:
+        HapticFeedback.mediumImpact();
+        controller.swipeUpEntity(entity);
+
+        // ❤️ 添加喜欢粒子效果
+        ParticleEffects.likeAction(
+          _particleManager,
+          entity.position,
+        );
+        break;
+      case BubbleGesture.swipeDown:
+        HapticFeedback.heavyImpact();
+        controller.swipeDownEntity(entity);
+
+        // 💨 添加讨厌消失粒子效果
+        ParticleEffects.dislikeAction(
+          _particleManager,
+          entity.position,
+        );
+        break;
+      case BubbleGesture.swipeLeft:
+        HapticFeedback.lightImpact();
+        controller.ignoreEntity(entity);
+        break;
+      case BubbleGesture.swipeRight:
+        HapticFeedback.mediumImpact();
+        controller.confirmEntity(entity);
+        break;
+      case BubbleGesture.tap:
+        HapticFeedback.lightImpact();
+        // controller.selectEntity(entity.id); // 此方法暂不存在，可用其他方法代替
+
+        // 🔥 记录用户行为 - 待实现GrowthEngine单例
+        // GrowthEngine.instance.recordUserAction(
+        //   userId: 'default_user',
+        //   action: UserAction.bubbleSelection,
+        // );
+        break;
+      case BubbleGesture.longPress:
+        // 长按处理逻辑
+        HapticFeedback.heavyImpact();
+        break;
+      case BubbleGesture.dragStart:
+      case BubbleGesture.dragUpdate:
+      case BubbleGesture.dragEnd:
+        // 拖拽处理逻辑
+        break;
+    }
   }
 
   /// 任务控制面板
@@ -621,7 +676,8 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                                     Navigator.push(
                                       context,
                                       CupertinoPageRoute(
-                                        builder: (context) => const RecommendationScreen(),
+                                        builder: (context) =>
+                                            const RecommendationScreen(),
                                       ),
                                     );
                                   }
@@ -633,7 +689,8 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                                 : Colors.grey[700],
                             foregroundColor: Colors.white,
                             elevation: 0,
-                            shadowColor: const Color(0xFF64B5F6).withValues(alpha: 0.3),
+                            shadowColor:
+                                const Color(0xFF64B5F6).withValues(alpha: 0.3),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(18.r),
                             ),
@@ -644,13 +701,15 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                                   height: 24.w,
                                   child: const CircularProgressIndicator(
                                     strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
                                   ),
                                 )
                               : Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Text('🚀', style: TextStyle(fontSize: 20)),
+                                    const Text('🚀',
+                                        style: TextStyle(fontSize: 20)),
                                     SizedBox(width: 12.w),
                                     Text(
                                       controller.selectedCount > 0
@@ -665,9 +724,9 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                                 ),
                         ),
                       ),
-                      
+
                       SizedBox(height: 12.h),
-                      
+
                       // 控制按钮行
                       Row(
                         children: [
@@ -694,10 +753,10 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                                 ),
                               ),
                             ),
-                          
+
                           if (controller.selectedCount > 0)
                             SizedBox(width: 16.w),
-                          
+
                           // 物理控制按钮
                           Expanded(
                             child: TextButton.icon(
@@ -706,8 +765,8 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                                 controller.redistributeEntities();
                               },
                               icon: Icon(
-                                controller.isPhysicsRunning 
-                                    ? CupertinoIcons.tornado 
+                                controller.isPhysicsRunning
+                                    ? CupertinoIcons.tornado
                                     : CupertinoIcons.pause_circle,
                                 color: Colors.cyan,
                                 size: 18,
@@ -751,18 +810,18 @@ class SpaceBackgroundPainter extends CustomPainter {
       final radius = (i % 3) + 1.0;
       canvas.drawCircle(Offset(x, y), radius, paint);
     }
-    
+
     // 绘制星云效果
     final nebulaPaint = Paint()
       ..color = Colors.cyan.withValues(alpha: 0.05)
       ..style = PaintingStyle.fill;
-    
+
     canvas.drawCircle(
       Offset(size.width * 0.2, size.height * 0.3),
       100,
       nebulaPaint,
     );
-    
+
     canvas.drawCircle(
       Offset(size.width * 0.8, size.height * 0.7),
       80,

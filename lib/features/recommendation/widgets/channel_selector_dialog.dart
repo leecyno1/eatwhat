@@ -189,8 +189,7 @@ class _ChannelSelectorDialogState extends State<ChannelSelectorDialog>
                     width: 60,
                     height: 60,
                     fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        _buildPlaceholderImage(),
+                    errorBuilder: (context, error, stackTrace) => _buildPlaceholderImage(),
                   )
                 : _buildPlaceholderImage(),
           ),
@@ -489,8 +488,7 @@ class _ChannelSelectorDialogState extends State<ChannelSelectorDialog>
         // 小红书
         url = 'xhsdiscover://search/result?keyword=$encodedFoodName';
         if (!await launchUrl(Uri.parse(url))) {
-          url =
-              'https://www.xiaohongshu.com/search_result?keyword=$encodedFoodName';
+          url = 'https://www.xiaohongshu.com/search_result?keyword=$encodedFoodName';
         }
         break;
     }

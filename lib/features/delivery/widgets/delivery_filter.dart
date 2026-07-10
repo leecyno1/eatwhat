@@ -67,16 +67,14 @@ class _DeliveryFilterState extends State<DeliveryFilter> {
             _buildQuickFilterChip(
               '新店',
               _options.newRestaurants,
-              (value) =>
-                  _updateFilter(_options.copyWith(newRestaurants: value)),
+              (value) => _updateFilter(_options.copyWith(newRestaurants: value)),
               icon: Icons.new_releases,
             ),
             const SizedBox(width: 8),
             _buildQuickFilterChip(
               '品牌店',
               _options.brandRestaurants,
-              (value) =>
-                  _updateFilter(_options.copyWith(brandRestaurants: value)),
+              (value) => _updateFilter(_options.copyWith(brandRestaurants: value)),
               icon: Icons.verified,
             ),
           ],
@@ -85,8 +83,7 @@ class _DeliveryFilterState extends State<DeliveryFilter> {
     );
   }
 
-  Widget _buildQuickFilterChip(
-      String label, bool isSelected, Function(bool) onChanged,
+  Widget _buildQuickFilterChip(String label, bool isSelected, Function(bool) onChanged,
       {IconData? icon}) {
     return FilterChip(
       label: Row(
@@ -235,9 +232,7 @@ class _DeliveryFilterState extends State<DeliveryFilter> {
   }
 
   Widget _buildCuisineTypeFilter() {
-    final cuisineTypes = [
-      '中餐', '西餐', '日韩料理', '东南亚菜', '快餐', '甜品饮品', '小吃夜宵', '火锅烧烤'
-    ];
+    final cuisineTypes = ['中餐', '西餐', '日韩料理', '东南亚菜', '快餐', '甜品饮品', '小吃夜宵', '火锅烧烤'];
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -474,33 +469,32 @@ class FilterButton extends StatelessWidget {
 
     return GestureDetector(
       onTap: onTap,
-              child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          decoration: BoxDecoration(
-            color: hasActiveFilters ? Colors.orange : Colors.grey[100],
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: hasActiveFilters ? Colors.orange : Colors.grey[300]!,
-              width: 1,
-            ),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.tune, color: hasActiveFilters ? Colors.white : Colors.grey[700]),
-              const SizedBox(width: 4),
-              Text(
-                hasActiveFilters ? '筛选($activeCount)' : '筛选',
-                style: TextStyle(
-                  color: hasActiveFilters ? Colors.white : Colors.grey[700],
-                  fontSize: 12,
-                  fontWeight:
-                      hasActiveFilters ? FontWeight.bold : FontWeight.normal,
-                ),
-              ),
-            ],
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: hasActiveFilters ? Colors.orange : Colors.grey[100],
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: hasActiveFilters ? Colors.orange : Colors.grey[300]!,
+            width: 1,
           ),
         ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.tune, color: hasActiveFilters ? Colors.white : Colors.grey[700]),
+            const SizedBox(width: 4),
+            Text(
+              hasActiveFilters ? '筛选($activeCount)' : '筛选',
+              style: TextStyle(
+                color: hasActiveFilters ? Colors.white : Colors.grey[700],
+                fontSize: 12,
+                fontWeight: hasActiveFilters ? FontWeight.bold : FontWeight.normal,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

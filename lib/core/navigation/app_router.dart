@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/home/home_screen.dart';
+import '../../features/home/screens/home_screen.dart';
 import '../../features/bubble/screens/enhanced_physical_entity_screen.dart';
 import '../../features/recommendation/screens/enhanced_recommendation_screen.dart';
 import '../../features/favorites/screens/favorites_screen.dart';
@@ -8,6 +8,11 @@ import '../../features/history/screens/history_screen.dart';
 import '../../features/user/screens/user_profile_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
+import '../../features/recipe/screens/modern_recipe_browser_screen.dart';
+import '../../features/recipe/screens/modern_recipe_recommendation_screen.dart';
+import '../../features/recipe/screens/modern_recipe_detail_screen.dart';
+import '../../features/recipe/screens/complete_recipe_detail_screen.dart';
+import '../../features/howtocook/screens/howtocook_recipe_screen.dart';
 import '../utils/route_animations.dart';
 
 /// 现代化路由配置
@@ -20,7 +25,12 @@ class AppRouter {
   static const String profile = '/profile';
   static const String login = '/login';
   static const String register = '/register';
-  
+  static const String recipes = '/recipes';
+  static const String modernRecipes = '/modern-recipes';
+  static const String recipeDetail = '/recipe/:id';
+  static const String modernRecipeDetail = '/modern-recipe/:id';
+  static const String howtocook = '/howtocook';
+
   static GoRouter createRouter() {
     return GoRouter(
       initialLocation: home,
@@ -36,7 +46,7 @@ class AppRouter {
             transitionsBuilder: RouteAnimations.fadeTransition,
           ),
         ),
-        
+
         // 气泡选择页面
         GoRoute(
           path: bubble,
@@ -48,7 +58,7 @@ class AppRouter {
             transitionsBuilder: RouteAnimations.slideFromRightTransition,
           ),
         ),
-        
+
         // 推荐页面
         GoRoute(
           path: recommendation,
@@ -66,7 +76,7 @@ class AppRouter {
             transitionsBuilder: RouteAnimations.slideFromBottomTransition,
           ),
         ),
-        
+
         // 收藏页面
         GoRoute(
           path: favorites,
@@ -78,7 +88,7 @@ class AppRouter {
             transitionsBuilder: RouteAnimations.scaleTransition,
           ),
         ),
-        
+
         // 历史页面
         GoRoute(
           path: history,
@@ -90,7 +100,7 @@ class AppRouter {
             transitionsBuilder: RouteAnimations.fadeTransition,
           ),
         ),
-        
+
         // 用户页面
         GoRoute(
           path: profile,
@@ -102,7 +112,7 @@ class AppRouter {
             transitionsBuilder: RouteAnimations.slideFromRightTransition,
           ),
         ),
-        
+
         // 登录页面
         GoRoute(
           path: login,
@@ -114,7 +124,7 @@ class AppRouter {
             transitionsBuilder: RouteAnimations.modalTransition,
           ),
         ),
-        
+
         // 注册页面
         GoRoute(
           path: register,
@@ -126,8 +136,50 @@ class AppRouter {
             transitionsBuilder: RouteAnimations.modalTransition,
           ),
         ),
+
+        // 菜谱浏览页面
+        GoRoute(
+          path: recipes,
+          name: 'recipes',
+          builder: (context, state) => const ModernRecipeBrowserScreen(),
+          pageBuilder: (context, state) => CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: const ModernRecipeBrowserScreen(),
+            transitionsBuilder: RouteAnimations.slideFromRightTransition,
+          ),
+        ),
+
+        // 菜谱详情页面
+        GoRoute(
+          path: recipeDetail,
+          name: 'recipeDetail',
+          builder: (context, state) {
+            final recipeId = state.pathParameters['id']!;
+            return CompleteRecipeDetailScreen(recipeId: recipeId);
+          },
+          pageBuilder: (context, state) {
+            final recipeId = state.pathParameters['id']!;
+            return CustomTransitionPage<void>(
+              key: state.pageKey,
+              child: CompleteRecipeDetailScreen(recipeId: recipeId),
+              transitionsBuilder: RouteAnimations.slideFromBottomTransition,
+            );
+          },
+        ),
+
+        // HowToCook菜谱页面
+        GoRoute(
+          path: howtocook,
+          name: 'howtocook',
+          builder: (context, state) => const HowToCookRecipeScreen(),
+          pageBuilder: (context, state) => CustomTransitionPage<void>(
+            key: state.pageKey,
+            child: const HowToCookRecipeScreen(),
+            transitionsBuilder: RouteAnimations.slideFromRightTransition,
+          ),
+        ),
       ],
-      
+
       // 错误页面
       errorBuilder: (context, state) => Scaffold(
         appBar: AppBar(

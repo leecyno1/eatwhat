@@ -39,8 +39,7 @@ class EnhancedCard extends StatefulWidget {
   State<EnhancedCard> createState() => _EnhancedCardState();
 }
 
-class _EnhancedCardState extends State<EnhancedCard>
-    with TickerProviderStateMixin {
+class _EnhancedCardState extends State<EnhancedCard> with TickerProviderStateMixin {
   late AnimationController _scaleController;
   late AnimationController _shimmerController;
   late Animation<double> _scaleAnimation;
@@ -181,8 +180,7 @@ class _EnhancedCardState extends State<EnhancedCard>
                     border: widget.border ??
                         (_isHovered
                             ? Border.all(
-                                color:
-                                    colorScheme.primary.withValues(alpha: 0.3),
+                                color: colorScheme.primary.withValues(alpha: 0.3),
                                 width: 1,
                               )
                             : null),

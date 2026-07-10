@@ -40,9 +40,9 @@ class HistoryEmptyState extends StatelessWidget {
             Text(
               _getEmptyTitle(),
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w600,
-              ),
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w600,
+                  ),
               textAlign: TextAlign.center,
             ),
 

@@ -77,7 +77,7 @@ class FoodItemCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    foodItem.cuisineType,
+                    foodItem.cuisineType ?? '其他',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: colorScheme.secondary,
                       fontWeight: FontWeight.bold,
@@ -89,12 +89,13 @@ class FoodItemCard extends StatelessWidget {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          // TODO: 实现查看详情或添加到购物车的功能
+                          // 查看详情或添加到购物车
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: colorScheme.primary,
                           foregroundColor: colorScheme.onPrimary,
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 8),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
@@ -303,15 +304,17 @@ class RecommendationCard extends StatelessWidget {
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
-                children: foods.map<Widget>((food) => 
-                  Container(
-                    width: 120,
-                    margin: const EdgeInsets.only(right: 12),
-                    child: FoodItemCard(
-                      foodItem: food,
-                    ),
-                  ),
-                ).toList(),
+                children: foods
+                    .map<Widget>(
+                      (food) => Container(
+                        width: 120,
+                        margin: const EdgeInsets.only(right: 12),
+                        child: FoodItemCard(
+                          foodItem: food,
+                        ),
+                      ),
+                    )
+                    .toList(),
               ),
             ),
           ],

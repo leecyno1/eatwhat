@@ -70,7 +70,7 @@ class StorageService {
       return defaultPreference;
     }
   }
-  
+
   /// 获取当前用户偏好，或返回默认值
   static UserPreference getCurrentUserPreference(String userId) {
     return _userPreferenceBox.get(userId) ?? UserPreference(userId: userId);
@@ -182,8 +182,7 @@ class StorageService {
   // ============ 气泡状态存储 ============
 
   /// 保存气泡序列
-  static Future<void> saveBubbleSequence(
-      String sequenceId, List<Bubble> bubbles) async {
+  static Future<void> saveBubbleSequence(String sequenceId, List<Bubble> bubbles) async {
     final bubbleData = bubbles.map((bubble) => bubble.toJson()).toList();
     await _bubbleStateBox.put(sequenceId, bubbleData);
   }
@@ -193,9 +192,7 @@ class StorageService {
     final data = _bubbleStateBox.get(sequenceId);
     if (data != null && data is List) {
       try {
-        return data
-            .map((item) => Bubble.fromJson(Map<String, dynamic>.from(item)))
-            .toList();
+        return data.map((item) => Bubble.fromJson(Map<String, dynamic>.from(item))).toList();
       } catch (e) {
         debugPrint('解析气泡序列失败: $e');
       }
@@ -226,8 +223,7 @@ class StorageService {
 
   /// 获取主题模式
   static String getThemeMode() {
-    return getAppSetting<String>('theme_mode', defaultValue: 'system') ??
-        'system';
+    return getAppSetting<String>('theme_mode', defaultValue: 'system') ?? 'system';
   }
 
   /// 保存主题模式
@@ -247,8 +243,7 @@ class StorageService {
 
   /// 获取通知设置
   static bool getNotificationEnabled() {
-    return getAppSetting<bool>('notification_enabled', defaultValue: true) ??
-        true;
+    return getAppSetting<bool>('notification_enabled', defaultValue: true) ?? true;
   }
 
   /// 保存通知设置

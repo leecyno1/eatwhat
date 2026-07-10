@@ -3,11 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 
 import '../../../core/models/physical_entity.dart';
+import '../../../core/utils/performance_optimizer.dart';
 
 /// 物理实体组件 - 显示具有物理属性的实体替代气泡
+/// 性能优化：
+/// - RepaintBoundary 减少重绘区域
+/// - 帧渲染监控接入
 class PhysicalEntityWidget extends StatefulWidget {
   final PhysicalEntity entity;
   final bool isSelected;
+  // 是否启用动态环境/空闲动画（性能开关）
+  final bool enableDynamicAnimations;
   final VoidCallback? onTap;
   final VoidCallback? onSwipeUp;
   final VoidCallback? onSwipeDown;
@@ -19,6 +25,7 @@ class PhysicalEntityWidget extends StatefulWidget {
     super.key,
     required this.entity,
     this.isSelected = false,
+    this.enableDynamicAnimations = true,
     this.onTap,
     this.onSwipeUp,
     this.onSwipeDown,
@@ -109,11 +116,14 @@ class _PhysicalEntityWidgetState extends State<PhysicalEntityWidget>
     if (widget.isSelected) {
       _glowController.repeat(reverse: true);
     }
-    
+
     if (widget.entity.isHighlighted) {
       _pulseController.repeat(reverse: true);
     }
     */
+
+    // 注册到性能优化器
+    PerformanceOptimizer().registerAnimatedWidget();
   }
 
   @override
@@ -147,16 +157,19 @@ class _PhysicalEntityWidgetState extends State<PhysicalEntityWidget>
     _glowController.dispose();
     _pulseController.dispose();
     _dragController.dispose();
+    // 从性能优化器注销
+    PerformanceOptimizer().unregisterAnimatedWidget();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: Listenable.merge(
-          [_scaleAnimation, _glowAnimation, _pulseAnimation, _dragAnimation]),
-      builder: (context, child) {
-        return Transform.translate(
+    return RepaintBoundary(
+      child: AnimatedBuilder(
+        animation: Listenable.merge(
+            [_scaleAnimation, _glowAnimation, _pulseAnimation, _dragAnimation]),
+        builder: (context, child) {
+          return Transform.translate(
           offset: _isDragging ? _dragOffset : _dragAnimation.value,
           child: Transform.scale(
             scale: _scaleAnimation.value,
@@ -374,6 +387,7 @@ class _PhysicalEntityWidgetState extends State<PhysicalEntityWidget>
           ),
         );
       },
+    ),
     );
   }
 

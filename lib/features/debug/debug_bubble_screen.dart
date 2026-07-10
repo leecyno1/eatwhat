@@ -5,6 +5,7 @@ import 'dart:async';
 import '../bubble/controllers/physical_entity_controller.dart';
 import '../../core/debug/bubble_debug_overlay.dart';
 import '../bubble/widgets/physical_entity_widget.dart';
+import '../../core/models/bubble.dart'; // 添加BubbleGesture导入
 
 /// 调试专用气泡屏幕 - 用于Chrome Web调试
 class DebugBubbleScreen extends StatefulWidget {
@@ -29,10 +30,10 @@ class _DebugBubbleScreenState extends State<DebugBubbleScreen> {
     super.initState();
     _controller = PhysicalEntityController();
     _controller.initialize();
-    
+
     // 启动轨迹记录
     _startTrailRecording();
-    
+
     // FPS计算
     _startFPSCounter();
   }
@@ -40,17 +41,17 @@ class _DebugBubbleScreenState extends State<DebugBubbleScreen> {
   void _startTrailRecording() {
     _trailTimer = Timer.periodic(const Duration(milliseconds: 50), (timer) {
       if (!mounted) return;
-      
+
       for (final entity in _controller.entities) {
         _entityTrails[entity.id] ??= [];
         _entityTrails[entity.id]!.add(entity.position);
-        
+
         // 保持轨迹长度
         if (_entityTrails[entity.id]!.length > 20) {
           _entityTrails[entity.id]!.removeAt(0);
         }
       }
-      
+
       if (_showTrails) {
         setState(() {});
       }
@@ -60,19 +61,44 @@ class _DebugBubbleScreenState extends State<DebugBubbleScreen> {
   void _startFPSCounter() {
     Timer.periodic(const Duration(milliseconds: 16), (timer) {
       if (!mounted) return;
-      
+
       _frameCount++;
       final now = DateTime.now();
       final elapsed = now.difference(_lastFrameTime);
-      
+
       if (elapsed.inMilliseconds >= 1000) {
         _fps = _frameCount / elapsed.inSeconds;
         _frameCount = 0;
         _lastFrameTime = now;
-        
+
         if (mounted) setState(() {});
       }
     });
+  }
+
+  /// 统一手势处理方法
+  void _handleGesture(
+      PhysicalEntityController controller, entity, BubbleGesture gesture,
+      {DragUpdateDetails? details}) {
+    switch (gesture) {
+      case BubbleGesture.swipeUp:
+        controller.likeEntity(entity.id);
+        break;
+      case BubbleGesture.swipeDown:
+        controller.dislikeEntity(entity.id);
+        break;
+      case BubbleGesture.tap:
+        controller.toggleEntity(entity);
+        break;
+      case BubbleGesture.swipeLeft:
+      case BubbleGesture.swipeRight:
+      case BubbleGesture.longPress:
+      case BubbleGesture.dragStart:
+      case BubbleGesture.dragUpdate:
+      case BubbleGesture.dragEnd:
+        // 其他手势暂不处理
+        break;
+    }
   }
 
   @override
@@ -150,7 +176,7 @@ class _DebugBubbleScreenState extends State<DebugBubbleScreen> {
                   child: LayoutBuilder(
                     builder: (context, constraints) {
                       controller.updateContainerSize(constraints.biggest);
-                      
+
                       return Stack(
                         children: [
                           // 轨迹层
@@ -158,13 +184,13 @@ class _DebugBubbleScreenState extends State<DebugBubbleScreen> {
                             ...controller.entities.map((entity) {
                               final trail = _entityTrails[entity.id] ?? [];
                               if (trail.isEmpty) return const SizedBox.shrink();
-                              
+
                               return EntityTracker(
                                 entity: entity,
                                 trail: trail,
                               );
                             }),
-                          
+
                           // 气泡层
                           ...controller.entities.map((entity) {
                             return Positioned(
@@ -174,18 +200,36 @@ class _DebugBubbleScreenState extends State<DebugBubbleScreen> {
                                 entity: entity,
                                 isSelected: controller.isEntitySelected(entity),
                                 onTap: () => controller.toggleEntity(entity),
-                                onSwipeUp: () => controller.likeEntity(entity.id),
-                                onSwipeDown: () => controller.dislikeEntity(entity.id),
+                                onSwipeUp: () => _handleGesture(
+                                  controller,
+                                  entity,
+                                  BubbleGesture.swipeUp,
+                                ),
+                                onSwipeDown: () => _handleGesture(
+                                  controller,
+                                  entity,
+                                  BubbleGesture.swipeDown,
+                                ),
+                                onSwipeLeft: () => _handleGesture(
+                                  controller,
+                                  entity,
+                                  BubbleGesture.swipeLeft,
+                                ),
+                                onSwipeRight: () => _handleGesture(
+                                  controller,
+                                  entity,
+                                  BubbleGesture.swipeRight,
+                                ),
                               ),
                             );
                           }),
-                          
+
                           // 网格线
                           CustomPaint(
                             size: constraints.biggest,
                             painter: GridPainter(),
                           ),
-                          
+
                           // 边界标识
                           Container(
                             decoration: BoxDecoration(
@@ -200,7 +244,7 @@ class _DebugBubbleScreenState extends State<DebugBubbleScreen> {
                     },
                   ),
                 ),
-                
+
                 // 调试信息覆盖层
                 if (_showDebugInfo)
                   BubbleDebugOverlay(
@@ -208,7 +252,7 @@ class _DebugBubbleScreenState extends State<DebugBubbleScreen> {
                     isPhysicsRunning: controller.isPhysicsRunning,
                     containerSize: MediaQuery.of(context).size,
                   ),
-                
+
                 // 控制面板
                 Positioned(
                   bottom: 20,

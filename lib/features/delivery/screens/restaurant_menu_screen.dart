@@ -103,9 +103,9 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                         },
                       ),
                     ),
-                    
+
                     const SizedBox(width: 12),
-                    
+
                     // 餐厅信息
                     Expanded(
                       child: Column(
@@ -118,9 +118,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          
                           const SizedBox(height: 4),
-                          
                           if (widget.restaurant.description != null)
                             Text(
                               widget.restaurant.description!,
@@ -131,9 +129,7 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis,
                             ),
-                          
                           const SizedBox(height: 8),
-                          
                           Row(
                             children: [
                               if (widget.restaurant.rating != null) ...[
@@ -145,7 +141,6 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                                 ),
                                 const SizedBox(width: 12),
                               ],
-                              
                               if (widget.restaurant.deliveryTime != null) ...[
                                 const Icon(Icons.timer, size: 14, color: Colors.grey),
                                 const SizedBox(width: 2),
@@ -155,7 +150,6 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                                 ),
                                 const SizedBox(width: 12),
                               ],
-                              
                               if (widget.restaurant.deliveryFee != null) ...[
                                 const Icon(Icons.delivery_dining, size: 14, color: Colors.grey),
                                 const SizedBox(width: 2),
@@ -171,7 +165,6 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
                     ),
                   ],
                 ),
-                
                 if (widget.restaurant.announcement?.isNotEmpty == true) ...[
                   const SizedBox(height: 12),
                   Container(
@@ -200,9 +193,9 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
               ],
             ),
           ),
-          
+
           const Divider(height: 1),
-          
+
           // 菜单内容
           Expanded(
             child: _buildMenuContent(),
@@ -267,4 +260,4 @@ class _RestaurantMenuScreenState extends State<RestaurantMenuScreen> {
       ),
     );
   }
-} 
+}

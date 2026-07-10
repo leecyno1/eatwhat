@@ -23,8 +23,7 @@ class AnimatedTitle extends StatefulWidget {
   State<AnimatedTitle> createState() => _AnimatedTitleState();
 }
 
-class _AnimatedTitleState extends State<AnimatedTitle>
-    with TickerProviderStateMixin {
+class _AnimatedTitleState extends State<AnimatedTitle> with TickerProviderStateMixin {
   late AnimationController _scaleController;
   late AnimationController _bounceController;
   late AnimationController _glowController;
@@ -125,26 +124,20 @@ class _AnimatedTitleState extends State<AnimatedTitle>
                   scale: _scaleAnimation.value,
                   child: Transform.translate(
                     offset: Offset(
-                      math.sin(_bounceController.value * math.pi * 2) *
-                          8, // 添加水平摇摆
-                      -_bounceAnimation.value *
-                          math.sin(_bounceController.value * math.pi * 2),
+                      math.sin(_bounceController.value * math.pi * 2) * 8, // 添加水平摇摆
+                      -_bounceAnimation.value * math.sin(_bounceController.value * math.pi * 2),
                     ),
                     child: Transform.rotate(
-                      angle: math.sin(_bounceController.value * math.pi * 4) *
-                          0.05, // 添加轻微旋转
+                      angle: math.sin(_bounceController.value * math.pi * 4) * 0.05, // 添加轻微旋转
                       child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 32, vertical: 16), // 增加内边距
+                        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16), // 增加内边距
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(35),
                           boxShadow: [
                             BoxShadow(
-                              color: widget.textColor.withValues(
-                                  alpha: 0.15 +
-                                      _glowAnimation.value * 0.3), // 增强发光效果
-                              blurRadius:
-                                  25 + _glowAnimation.value * 20, // 更大的阴影范围
+                              color: widget.textColor
+                                  .withValues(alpha: 0.15 + _glowAnimation.value * 0.3), // 增强发光效果
+                              blurRadius: 25 + _glowAnimation.value * 20, // 更大的阴影范围
                               spreadRadius: 3,
                             ),
                           ],
@@ -154,8 +147,8 @@ class _AnimatedTitleState extends State<AnimatedTitle>
                             return LinearGradient(
                               colors: [
                                 widget.textColor,
-                                widget.textColor.withValues(
-                                    alpha: 0.8 + _glowAnimation.value * 0.2),
+                                widget.textColor
+                                    .withValues(alpha: 0.8 + _glowAnimation.value * 0.2),
                                 widget.textColor,
                               ],
                               stops: const [0.0, 0.5, 1.0],
@@ -200,19 +193,14 @@ class _AnimatedTitleState extends State<AnimatedTitle>
                   animation: _bounceController,
                   builder: (context, child) {
                     return Transform.rotate(
-                      angle: math.sin(_bounceController.value * math.pi * 2) *
-                          0.4, // 增大旋转范围
+                      angle: math.sin(_bounceController.value * math.pi * 2) * 0.4, // 增大旋转范围
                       child: Transform.translate(
                         offset: Offset(
-                          math.sin(_bounceController.value * math.pi * 3) *
-                              15, // 添加水平移动
-                          math.cos(_bounceController.value * math.pi * 2) *
-                              8, // 添加垂直移动
+                          math.sin(_bounceController.value * math.pi * 3) * 15, // 添加水平移动
+                          math.cos(_bounceController.value * math.pi * 2) * 8, // 添加垂直移动
                         ),
                         child: Opacity(
-                          opacity: 0.4 +
-                              math.sin(_glowController.value * math.pi * 2) *
-                                  0.3,
+                          opacity: 0.4 + math.sin(_glowController.value * math.pi * 2) * 0.3,
                           child: Text(
                             '?',
                             style: TextStyle(
@@ -240,19 +228,14 @@ class _AnimatedTitleState extends State<AnimatedTitle>
                   animation: _bounceController,
                   builder: (context, child) {
                     return Transform.rotate(
-                      angle: -math.sin(_bounceController.value * math.pi * 2) *
-                          0.4, // 增大旋转范围
+                      angle: -math.sin(_bounceController.value * math.pi * 2) * 0.4, // 增大旋转范围
                       child: Transform.translate(
                         offset: Offset(
-                          -math.sin(_bounceController.value * math.pi * 3) *
-                              15, // 添加水平移动
-                          math.sin(_bounceController.value * math.pi * 2) *
-                              8, // 添加垂直移动
+                          -math.sin(_bounceController.value * math.pi * 3) * 15, // 添加水平移动
+                          math.sin(_bounceController.value * math.pi * 2) * 8, // 添加垂直移动
                         ),
                         child: Opacity(
-                          opacity: 0.4 +
-                              math.cos(_glowController.value * math.pi * 2) *
-                                  0.3,
+                          opacity: 0.4 + math.cos(_glowController.value * math.pi * 2) * 0.3,
                           child: Text(
                             '?',
                             style: TextStyle(

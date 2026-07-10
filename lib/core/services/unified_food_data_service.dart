@@ -6,7 +6,7 @@ import '../models/food.dart';
 import '../models/recipe.dart';
 import '../models/user_preference.dart';
 import 'recipe_database_service.dart';
-import 'user_preference_manager.dart';
+import 'user_preference_manager.dart' show UserPreferenceManager, UserActionType;
 import 'vectorized_recommendation_engine.dart';
 
 /// 统一食物数据服务 - Phase 1 核心架构
@@ -19,18 +19,18 @@ class UnifiedFoodDataService {
   final RecipeDatabaseService _recipeService = RecipeDatabaseService();
   final UserPreferenceManager _preferenceManager = UserPreferenceManager();
   final VectorizedRecommendationEngine _vectorEngine = VectorizedRecommendationEngine();
-  
+
   bool _initialized = false;
 
   /// 初始化服务
   Future<void> initialize() async {
     if (_initialized) return;
-    
+
     debugPrint('🚀 初始化统一食物数据服务...');
-    
+
     await _recipeService.initialize();
     debugPrint('✅ 菜谱数据库初始化完成');
-    
+
     _initialized = true;
     debugPrint('🎉 统一食物数据服务初始化完成');
   }
@@ -56,7 +56,7 @@ class UnifiedFoodDataService {
 
     // 3. 转换为Food模型
     final foods = await _convertRecipesToFoods(recipes);
-    
+
     // 4. 使用向量化推荐引擎排序 (Phase 1 核心优化)
     final vectorizedResults = await _vectorEngine.getVectorizedRecommendations(
       selectedBubbles,
@@ -68,7 +68,7 @@ class UnifiedFoodDataService {
     // 5. 返回推荐结果
     final result = vectorizedResults.take(limit).toList();
     debugPrint('🎯 最终推荐: ${result.length}个菜品 (向量化算法)');
-    
+
     return result;
   }
 
@@ -80,7 +80,7 @@ class UnifiedFoodDataService {
     final tasteTags = <String>[];
     final cuisineTags = <String>[];
     final ingredientTags = <String>[];
-    
+
     // 从选中的气泡中提取偏好
     for (final bubble in selectedBubbles) {
       switch (bubble.type) {
@@ -150,9 +150,7 @@ class UnifiedFoodDataService {
     // 使用菜谱数据库的搜索功能
     final recipes = await _recipeService.searchRecipes(
       tags: preferences.tasteTags.isNotEmpty ? preferences.tasteTags : null,
-      cuisine: preferences.cuisineTags?.isNotEmpty == true 
-        ? preferences.cuisineTags!.first 
-        : null,
+      cuisine: preferences.cuisineTags?.isNotEmpty == true ? preferences.cuisineTags!.first : null,
       difficulty: preferences.difficultyPreference,
       limit: limit,
     );
@@ -173,14 +171,14 @@ class UnifiedFoodDataService {
     return recipes.map((recipe) {
       // 从菜谱提取口味属性
       final tasteAttributes = <String>[];
-      
+
       // 从标签中提取口味信息
       for (final tag in recipe.tags) {
         if (_isTasteTag(tag)) {
           tasteAttributes.add(tag);
         }
       }
-      
+
       // 从菜系推断口味
       tasteAttributes.addAll(_inferTasteFromCuisine(recipe.cuisine));
 
@@ -192,7 +190,7 @@ class UnifiedFoodDataService {
         tasteAttributes: tasteAttributes,
         ingredients: recipe.ingredients.map((i) => i.name).toList(),
         scenarios: _extractScenarios(recipe.tags),
-        calories: recipe.nutrition.calories.toInt(),
+        calories: recipe.nutrition.calories.toDouble(),
         rating: recipe.rating,
         ratingCount: recipe.reviewCount,
         imageUrl: recipe.imageUrl,
@@ -202,7 +200,7 @@ class UnifiedFoodDataService {
           'fat': recipe.nutrition.fat,
           'fiber': recipe.nutrition.fiber,
         },
-        preparationTime: '${recipe.totalTime}分钟',
+        preparationTime: recipe.totalTime,
         difficulty: recipe.difficulty.label,
         tags: recipe.tags,
       );
@@ -212,8 +210,22 @@ class UnifiedFoodDataService {
   /// 判断是否为口味标签
   bool _isTasteTag(String tag) {
     const tasteKeywords = [
-      '甜', '辣', '酸', '咸', '鲜', '香', '麻', '清淡', '浓郁', 
-      '微辣', '中辣', '重辣', '麻辣', '香辣', '酸甜', '咸鲜'
+      '甜',
+      '辣',
+      '酸',
+      '咸',
+      '鲜',
+      '香',
+      '麻',
+      '清淡',
+      '浓郁',
+      '微辣',
+      '中辣',
+      '重辣',
+      '麻辣',
+      '香辣',
+      '酸甜',
+      '咸鲜'
     ];
     return tasteKeywords.any((keyword) => tag.contains(keyword));
   }
@@ -246,15 +258,11 @@ class UnifiedFoodDataService {
 
   /// 提取场景标签
   List<String>? _extractScenarios(List<String> tags) {
-    const scenarioKeywords = [
-      '下饭菜', '宵夜', '聚餐', '减脂', '暖胃', '快手菜', 
-      '汤类', '素食', '家常菜', '节日菜'
-    ];
-    
-    final scenarios = tags.where((tag) => 
-      scenarioKeywords.any((keyword) => tag.contains(keyword))
-    ).toList();
-    
+    const scenarioKeywords = ['下饭菜', '宵夜', '聚餐', '减脂', '暖胃', '快手菜', '汤类', '素食', '家常菜', '节日菜'];
+
+    final scenarios =
+        tags.where((tag) => scenarioKeywords.any((keyword) => tag.contains(keyword))).toList();
+
     return scenarios.isNotEmpty ? scenarios : null;
   }
 
@@ -270,7 +278,7 @@ class UnifiedFoodDataService {
 
     // 按分数排序
     scoredFoods.sort((a, b) => b.score.compareTo(a.score));
-    
+
     return scoredFoods.map((sf) => sf.food).toList();
   }
 
@@ -280,10 +288,11 @@ class UnifiedFoodDataService {
 
     // 1. 口味匹配 (40%)
     double tasteScore = 0.0;
+    final tasteAttributes = food.tasteAttributes ?? [];
     for (final taste in preferences.tasteTags) {
-      if (food.tasteAttributes.contains(taste)) {
+      if (tasteAttributes.contains(taste)) {
         tasteScore += 2.0; // 完全匹配
-      } else if (food.tasteAttributes.any((attr) => _isSimilarTaste(taste, attr))) {
+      } else if (tasteAttributes.any((attr) => _isSimilarTaste(taste, attr))) {
         tasteScore += 1.0; // 相似匹配
       }
     }
@@ -301,8 +310,9 @@ class UnifiedFoodDataService {
 
     // 3. 食材匹配 (15%)
     double ingredientScore = 0.0;
+    final ingredients = food.ingredients ?? [];
     for (final ingredient in preferences.ingredientTags) {
-      if (food.ingredients.any((i) => i.contains(ingredient))) {
+      if (ingredients.any((i) => i.contains(ingredient))) {
         ingredientScore += 1.5;
       }
     }
@@ -344,7 +354,7 @@ class UnifiedFoodDataService {
   /// 获取菜谱详情 (通过Food ID)
   Future<Recipe?> getRecipeByFoodId(String foodId) async {
     if (!_initialized) await initialize();
-    
+
     try {
       return await _recipeService.getRecipeById(foodId);
     } catch (e) {
@@ -356,7 +366,7 @@ class UnifiedFoodDataService {
   /// 切换收藏状态
   Future<void> toggleFoodFavorite(String foodId) async {
     if (!_initialized) await initialize();
-    
+
     await _recipeService.toggleFavorite(foodId);
   }
 
@@ -367,8 +377,8 @@ class UnifiedFoodDataService {
   ) async {
     // 记录用户行为，用于优化推荐算法
     debugPrint('记录用户行为: $foodId - $actionType');
-    
-    // 这里可以实现用户行为分析和学习
+
+    // 直接调用用户偏好管理器
     await _preferenceManager.recordUserAction(foodId, actionType);
   }
 
@@ -385,7 +395,7 @@ class UnifiedFoodDataService {
     );
 
     final foods = await _convertRecipesToFoods(recipes);
-    
+
     // 基于用户偏好排序
     final preferences = UserPreferenceData(
       tasteTags: userPreference.likedTastes,
@@ -430,14 +440,4 @@ class ScoredFood {
   final double score;
 
   ScoredFood({required this.food, required this.score});
-}
-
-/// 用户行为类型
-enum UserActionType {
-  view,        // 查看
-  like,        // 点赞
-  favorite,    // 收藏
-  share,       // 分享
-  cook,        // 制作
-  dislike,     // 不喜欢
 }

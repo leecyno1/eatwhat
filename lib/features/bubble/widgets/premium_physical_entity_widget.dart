@@ -26,12 +26,11 @@ class PremiumPhysicalEntityWidget extends StatefulWidget {
   });
 
   @override
-  State<PremiumPhysicalEntityWidget> createState() =>
-      _PremiumPhysicalEntityWidgetState();
+  State<PremiumPhysicalEntityWidget> createState() => _PremiumPhysicalEntityWidgetState();
 }
 
-class _PremiumPhysicalEntityWidgetState
-    extends State<PremiumPhysicalEntityWidget> with TickerProviderStateMixin {
+class _PremiumPhysicalEntityWidgetState extends State<PremiumPhysicalEntityWidget>
+    with TickerProviderStateMixin {
   late AnimationController _hoverController;
   late AnimationController _tapController;
   late AnimationController _glowController;
@@ -178,8 +177,7 @@ class _PremiumPhysicalEntityWidgetState
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color:
-                                    widget.entity.primaryColor.withValues(alpha: 0.3),
+                                color: widget.entity.primaryColor.withValues(alpha: 0.3),
                                 blurRadius: 20.0 + glowRadius,
                                 spreadRadius: 5.0,
                               ),
@@ -234,14 +232,12 @@ class _PremiumPhysicalEntityWidgetState
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color:
-                                  widget.entity.primaryColor.withValues(alpha: 0.9),
+                              color: widget.entity.primaryColor.withValues(alpha: 0.9),
                               width: 3.0,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                color:
-                                    widget.entity.primaryColor.withValues(alpha: 0.8),
+                                color: widget.entity.primaryColor.withValues(alpha: 0.8),
                                 blurRadius: 15.0,
                                 spreadRadius: 2.0,
                               ),

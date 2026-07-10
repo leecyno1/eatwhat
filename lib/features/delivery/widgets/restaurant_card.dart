@@ -51,8 +51,7 @@ class RestaurantCard extends StatelessWidget {
                             width: 80,
                             height: 80,
                             fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) =>
-                                _buildPlaceholderImage(),
+                            errorBuilder: (context, error, stackTrace) => _buildPlaceholderImage(),
                           )
                         : _buildPlaceholderImage(),
                   ),
@@ -70,10 +69,7 @@ class RestaurantCard extends StatelessWidget {
                             Expanded(
                               child: Text(
                                 restaurant.name,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium
-                                    ?.copyWith(
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
                                       fontWeight: FontWeight.bold,
                                     ),
                                 maxLines: 1,
@@ -91,10 +87,9 @@ class RestaurantCard extends StatelessWidget {
                         if (restaurant.description != null)
                           Text(
                             restaurant.description!,
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Colors.grey[600],
-                                    ),
+                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Colors.grey[600],
+                                ),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -152,8 +147,7 @@ class RestaurantCard extends StatelessWidget {
                 children: [
                   // 营业状态
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: restaurant.isOpen ? Colors.green : Colors.red,
                       borderRadius: BorderRadius.circular(12),
@@ -172,8 +166,7 @@ class RestaurantCard extends StatelessWidget {
 
                   // 平台标签
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: _getPlatformColor(restaurant.platform ?? RestaurantPlatform.unknown),
                       borderRadius: BorderRadius.circular(12),
@@ -193,8 +186,7 @@ class RestaurantCard extends StatelessWidget {
                   // 优惠信息
                   if (restaurant.hasPromotion)
                     Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: Colors.red[100],
                         borderRadius: BorderRadius.circular(12),
@@ -311,8 +303,7 @@ class RestaurantCard extends StatelessWidget {
           Expanded(
             flex: 3,
             child: ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(8)),
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
               child: item.imageUrl != null
                   ? Image.network(
                       item.imageUrl!,

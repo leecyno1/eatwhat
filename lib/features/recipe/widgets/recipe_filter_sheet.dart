@@ -6,8 +6,7 @@ class RecipeFilterSheet extends StatefulWidget {
   final String? selectedCuisine;
   final RecipeDifficulty? selectedDifficulty;
   final int? maxTime;
-  final Function(String? cuisine, RecipeDifficulty? difficulty, int? maxTime)
-      onApply;
+  final Function(String? cuisine, RecipeDifficulty? difficulty, int? maxTime) onApply;
 
   const RecipeFilterSheet({
     super.key,

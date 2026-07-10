@@ -22,19 +22,25 @@ void main() {
     );
   }
 
+  Future<void> pumpQuestionnaireFrames(WidgetTester tester) async {
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 120));
+    await tester.pump(const Duration(milliseconds: 240));
+  }
+
   testWidgets('AppV2 closes the cold-start questionnaire after skipping',
       (tester) async {
     await tester.pumpWidget(buildTestApp());
-    await tester.pumpAndSettle();
+    await pumpQuestionnaireFrames(tester);
 
     expect(find.text('你更喜欢什么菜系？'), findsWidgets);
 
     await tester.tap(find.text('跳过'));
-    await tester.pumpAndSettle();
+    await pumpQuestionnaireFrames(tester);
     expect(find.text('跳过问卷'), findsOneWidget);
 
     await tester.tap(find.text('确定跳过'));
-    await tester.pumpAndSettle();
+    await pumpQuestionnaireFrames(tester);
 
     expect(find.text('你更喜欢什么菜系？'), findsNothing);
     expect(find.byType(MaterialApp), findsOneWidget);
@@ -56,7 +62,7 @@ void main() {
         ),
       ),
     );
-    await tester.pumpAndSettle();
+    await pumpQuestionnaireFrames(tester);
 
     expect(find.text('1 / 8'), findsOneWidget);
     expect(find.text('你更喜欢什么菜系？'), findsWidgets);

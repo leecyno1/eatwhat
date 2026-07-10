@@ -134,8 +134,7 @@ class MonetizationService {
 
     // 获取餐厅合作等级
     final partnership = _restaurantPartners[restaurantId];
-    final commissionRate =
-        _getCommissionRate(partnership?.tier ?? PartnerTier.basic, platform);
+    final commissionRate = _getCommissionRate(partnership?.tier ?? PartnerTier.basic, platform);
 
     final commissionAmount = orderValue * commissionRate;
     final platformFee = commissionAmount * 0.1; // 平台费用
@@ -247,8 +246,7 @@ class MonetizationService {
   }
 
   /// 激活订阅
-  Future<UserSubscription> _activateSubscription(
-      String userId, SubscriptionPlan plan) async {
+  Future<UserSubscription> _activateSubscription(String userId, SubscriptionPlan plan) async {
     final startDate = DateTime.now();
     final endDate = startDate.add(plan.duration);
 
@@ -341,8 +339,7 @@ class MonetizationService {
   }
 
   /// 判断是否应该显示广告
-  bool _shouldShowAd(
-      AdvertisingCampaign campaign, List<String> userPreferences) {
+  bool _shouldShowAd(AdvertisingCampaign campaign, List<String> userPreferences) {
     // 简单的目标定位逻辑
     final targetAudience = campaign.targetAudience.toLowerCase();
 
@@ -356,8 +353,7 @@ class MonetizationService {
   }
 
   /// 计算目标匹配度
-  double _calculateTargetScore(
-      AdvertisingCampaign campaign, List<String> userPreferences) {
+  double _calculateTargetScore(AdvertisingCampaign campaign, List<String> userPreferences) {
     final targetAudience = campaign.targetAudience.toLowerCase();
     int matches = 0;
 

@@ -5,13 +5,13 @@ import 'dart:async';
 class DynamicThemeService extends ChangeNotifier {
   Timer? _timer;
   DateTime _currentTime = DateTime.now();
-  
+
   /// 当前背景渐变
   LinearGradient get backgroundGradient => _getTimeBasedGradient();
-  
+
   /// 当前时间
   DateTime get currentTime => _currentTime;
-  
+
   /// 当前时间段描述
   String get timePeriodDescription => _getTimePeriodDescription();
 
@@ -27,7 +27,7 @@ class DynamicThemeService extends ChangeNotifier {
     //   _currentTime = DateTime.now();
     //   notifyListeners();
     // });
-    
+
     // 只设置一次初始时间，不再定时更新
     _currentTime = DateTime.now();
   }
@@ -35,7 +35,7 @@ class DynamicThemeService extends ChangeNotifier {
   /// 根据时间获取渐变背景
   LinearGradient _getTimeBasedGradient() {
     final hour = _currentTime.hour;
-    
+
     // 早晨 6-10点：白色渐变黄色
     if (hour >= 6 && hour < 10) {
       return const LinearGradient(
@@ -132,7 +132,7 @@ class DynamicThemeService extends ChangeNotifier {
   /// 获取时间段描述
   String _getTimePeriodDescription() {
     final hour = _currentTime.hour;
-    
+
     if (hour >= 6 && hour < 10) {
       return '清晨';
     } else if (hour >= 10 && hour < 12) {
@@ -153,7 +153,7 @@ class DynamicThemeService extends ChangeNotifier {
   /// 获取与背景相匹配的文字颜色
   Color get primaryTextColor {
     final hour = _currentTime.hour;
-    
+
     // 深夜时使用白色文字，其他时间使用深色文字
     if (hour >= 22 || hour < 6) {
       return Colors.white.withValues(alpha: 0.9);
@@ -165,7 +165,7 @@ class DynamicThemeService extends ChangeNotifier {
   /// 获取次要文字颜色
   Color get secondaryTextColor {
     final hour = _currentTime.hour;
-    
+
     if (hour >= 22 || hour < 6) {
       return Colors.white.withValues(alpha: 0.7);
     } else {
@@ -176,7 +176,7 @@ class DynamicThemeService extends ChangeNotifier {
   /// 获取强调色
   Color get accentColor {
     final hour = _currentTime.hour;
-    
+
     if (hour >= 6 && hour < 10) {
       return const Color(0xFFFFD700); // 金色
     } else if (hour >= 10 && hour < 14) {
@@ -201,13 +201,13 @@ class DynamicThemeService extends ChangeNotifier {
   /// 获取动画渐变（用于平滑过渡）
   LinearGradient getAnimatedGradient(double animationValue) {
     final current = _getTimeBasedGradient();
-    
+
     // 添加动画效果，让渐变有轻微的呼吸感
     final animatedColors = current.colors.map((color) {
       final opacity = 0.8 + (animationValue * 0.2); // 0.8 - 1.0
       return color.withValues(alpha: opacity);
     }).toList();
-    
+
     return LinearGradient(
       begin: current.begin,
       end: current.end,
@@ -225,19 +225,19 @@ class DynamicThemeService extends ChangeNotifier {
 
 /// 时间段枚举
 enum TimePeriod {
-  dawn,      // 清晨 6-10
-  morning,   // 上午 10-12
-  noon,      // 中午 12-14
+  dawn, // 清晨 6-10
+  morning, // 上午 10-12
+  noon, // 中午 12-14
   afternoon, // 下午 14-17
-  evening,   // 傍晚 17-19
-  night,     // 晚上 19-22
-  midnight,  // 深夜 22-6
+  evening, // 傍晚 17-19
+  night, // 晚上 19-22
+  midnight, // 深夜 22-6
 }
 
 /// 获取当前时间段
 TimePeriod getCurrentTimePeriod() {
   final hour = DateTime.now().hour;
-  
+
   if (hour >= 6 && hour < 10) {
     return TimePeriod.dawn;
   } else if (hour >= 10 && hour < 12) {

@@ -5,9 +5,11 @@ import 'package:provider/provider.dart';
 import '../controllers/physical_entity_controller.dart';
 import '../widgets/physical_entity_widget.dart';
 import '../../recommendation/screens/enhanced_recommendation_screen.dart';
+import '../../../core/services/recommendation_engine.dart';
 import '../../../shared/widgets/animated_title_simple.dart';
-import '../../../shared/widgets/like_dislike_controls.dart';
 import '../../../core/services/growth_engine.dart';
+import '../../../core/models/bubble.dart'; // 添加BubbleGesture导入
+import '../../../core/config/performance_flags.dart';
 
 /// 增强版物理实体界面 - 新的UI设计
 class EnhancedPhysicalEntityScreen extends StatefulWidget {
@@ -22,7 +24,7 @@ class _EnhancedPhysicalEntityScreenState
     extends State<EnhancedPhysicalEntityScreen> with TickerProviderStateMixin {
   late AnimationController _backgroundController;
   late AnimationController _containerController;
-  late Animation<double> _backgroundAnimation;
+  // removed unused _backgroundAnimation
   late Animation<double> _containerAnimation;
 
   // 动态主题服务
@@ -47,13 +49,7 @@ class _EnhancedPhysicalEntityScreenState
       vsync: this,
     );
 
-    _backgroundAnimation = Tween<double>(
-      begin: 0.0,
-      end: 1.0,
-    ).animate(CurvedAnimation(
-      parent: _backgroundController,
-      curve: Curves.easeInOut,
-    ));
+    // removed background animation setup (unused)
 
     _containerAnimation = Tween<double>(
       begin: 0.0,
@@ -120,17 +116,13 @@ class _EnhancedPhysicalEntityScreenState
         children: [
           // 中心标题 - 扩大字体和动画范围
           Positioned.fill(
-            child: OverflowBox(
-              maxHeight: 200, // 限制垂直溢出
-              maxWidth: 400, // 限制水平溢出
-              child: Center(
-                child: AnimatedTitleSimple(
-                  title: '吃什么',
-                  fontSize: 56, // 大幅增加字体大小
-                  textColor: Colors.black87,
-                  questionMarkColor: Colors.black54,
-                  showQuestionMarks: true,
-                ),
+            child: Center(
+              child: AnimatedTitleSimple(
+                title: '吃什么',
+                fontSize: 56, // 大幅增加字体大小
+                textColor: Colors.black87,
+                questionMarkColor: Colors.black54,
+                showQuestionMarks: true,
               ),
             ),
           ),
@@ -327,11 +319,29 @@ class _EnhancedPhysicalEntityScreenState
                   child: PhysicalEntityWidget(
                     entity: entity,
                     isSelected: controller.isEntitySelected(entity),
+                    enableDynamicAnimations:
+                        PerformanceFlags.enableDynamicBubbleAnimations,
                     onTap: () => _handleEntityTap(controller, entity),
-                    onSwipeUp: () => _handleSwipeUp(controller, entity),
-                    onSwipeDown: () => _handleSwipeDown(controller, entity),
-                    onSwipeLeft: () => _handleSwipeLeft(controller, entity),
-                    onSwipeRight: () => _handleSwipeRight(controller, entity),
+                    onSwipeUp: () => _handleGesture(
+                      controller,
+                      entity,
+                      BubbleGesture.swipeUp,
+                    ),
+                    onSwipeDown: () => _handleGesture(
+                      controller,
+                      entity,
+                      BubbleGesture.swipeDown,
+                    ),
+                    onSwipeLeft: () => _handleGesture(
+                      controller,
+                      entity,
+                      BubbleGesture.swipeLeft,
+                    ),
+                    onSwipeRight: () => _handleGesture(
+                      controller,
+                      entity,
+                      BubbleGesture.swipeRight,
+                    ),
                     onLongPress: () => _handleLongPress(controller, entity),
                   ),
                 ),
@@ -343,10 +353,7 @@ class _EnhancedPhysicalEntityScreenState
     );
   }
 
-  /// 构建实体区域（保留原方法作为备用）
-  Widget _buildEntitiesArea(PhysicalEntityController controller) {
-    return _buildExpandedEntitiesArea(controller);
-  }
+  // removed unused _buildEntitiesArea
 
   /// 构建加载状态
   Widget _buildLoadingState() {
@@ -406,10 +413,7 @@ class _EnhancedPhysicalEntityScreenState
     );
   }
 
-  /// 构建底部区域（保留原方法作为备用）
-  Widget _buildBottomSection(PhysicalEntityController controller) {
-    return _buildCompactBottomSection(controller);
-  }
+  // removed unused _buildBottomSection
 
   /// 构建紧凑的操作按钮
   Widget _buildCompactActionButton({
@@ -451,20 +455,7 @@ class _EnhancedPhysicalEntityScreenState
     );
   }
 
-  /// 构建操作按钮（保留原方法作为备用）
-  Widget _buildActionButton({
-    required String text,
-    required IconData icon,
-    required Color color,
-    VoidCallback? onPressed,
-  }) {
-    return _buildCompactActionButton(
-      text: text,
-      icon: icon,
-      color: color,
-      onPressed: onPressed,
-    );
-  }
+  // removed unused _buildActionButton wrapper
 
   // 事件处理方法 - 移除拖拽功能以避免干扰物理引擎
   void _handleEntityDrag(PhysicalEntityController controller, entity, details) {
@@ -483,27 +474,41 @@ class _EnhancedPhysicalEntityScreenState
     );
   }
 
-  void _handleSwipeUp(PhysicalEntityController controller, entity) {
-    HapticFeedback.mediumImpact();
-    controller.likeEntity(entity.id);
-
-    // 添加触觉反馈效果
-    HapticFeedback.mediumImpact();
-  }
-
-  void _handleSwipeDown(PhysicalEntityController controller, entity) {
-    HapticFeedback.heavyImpact();
-    controller.dislikeEntity(entity.id);
-  }
-
-  void _handleSwipeLeft(PhysicalEntityController controller, entity) {
-    HapticFeedback.lightImpact();
-    controller.ignoreEntity(entity);
-  }
-
-  void _handleSwipeRight(PhysicalEntityController controller, entity) {
-    HapticFeedback.mediumImpact();
-    controller.confirmEntity(entity);
+  void _handleGesture(
+      PhysicalEntityController controller, entity, BubbleGesture gesture,
+      {DragUpdateDetails? details}) {
+    switch (gesture) {
+      case BubbleGesture.swipeUp:
+        HapticFeedback.mediumImpact();
+        controller.likeEntity(entity.id);
+        break;
+      case BubbleGesture.swipeDown:
+        HapticFeedback.heavyImpact();
+        controller.dislikeEntity(entity.id);
+        break;
+      case BubbleGesture.swipeLeft:
+        HapticFeedback.lightImpact();
+        controller.ignoreEntity(entity);
+        break;
+      case BubbleGesture.swipeRight:
+        HapticFeedback.mediumImpact();
+        controller.confirmEntity(entity);
+        break;
+      case BubbleGesture.tap:
+        _handleEntityTap(controller, entity);
+        break;
+      case BubbleGesture.longPress:
+        HapticFeedback.heavyImpact();
+        _showEntityDetails(entity);
+        break;
+      case BubbleGesture.dragStart:
+      case BubbleGesture.dragUpdate:
+      case BubbleGesture.dragEnd:
+        if (details != null) {
+          _handleEntityDrag(controller, entity, details);
+        }
+        break;
+    }
   }
 
   void _handleLongPress(PhysicalEntityController controller, entity) {
@@ -533,31 +538,42 @@ class _EnhancedPhysicalEntityScreenState
   void _generateRecommendations(PhysicalEntityController controller) async {
     await controller.generateRecommendations();
 
-    if (mounted) {
-      Navigator.push(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (context, animation, secondaryAnimation) {
-            return EnhancedRecommendationScreen(
-              recommendedFoods: controller.recommendedFoods,
-              selectedPreferences: controller.getSelectedEntities(),
-            );
-          },
-          transitionsBuilder: (context, animation, secondaryAnimation, child) {
-            return SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(1.0, 0.0),
-                end: Offset.zero,
-              ).animate(CurvedAnimation(
-                parent: animation,
-                curve: Curves.easeInOut,
-              )),
-              child: child,
-            );
-          },
-        ),
-      );
+    // 尝试使用新的 RecommendationEngine 生成带打分推荐
+    List<ScoredFood>? scored;
+    try {
+      final engine = RecommendationEngine();
+      // 基于当前用户偏好（如果 controller 有 userPreference）
+      final pref = controller.userPreference; // 已有 UserPreference
+      scored = engine.getPersonalizedScoredRecommendations(pref, limit: 12);
+    } catch (e) {
+      debugPrint('生成打分推荐失败，回退使用普通列表: $e');
     }
+
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return EnhancedRecommendationScreen(
+            recommendedFoods: controller.recommendedFoods,
+            selectedPreferences: controller.getSelectedEntities(),
+            scoredFoods: scored,
+          );
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SlideTransition(
+            position: Tween<Offset>(
+              begin: const Offset(1.0, 0.0),
+              end: Offset.zero,
+            ).animate(CurvedAnimation(
+              parent: animation,
+              curve: Curves.easeInOut,
+            )),
+            child: child,
+          );
+        },
+      ),
+    );
   }
 
   void _showEntityDetails(entity) {
@@ -596,25 +612,7 @@ class _EnhancedPhysicalEntityScreenState
     );
   }
 
-  IconData _getTimePeriodIcon() {
-    final hour = DateTime.now().hour;
-
-    if (hour >= 6 && hour < 10) {
-      return Icons.wb_sunny_outlined;
-    } else if (hour >= 10 && hour < 12) {
-      return Icons.wb_sunny;
-    } else if (hour >= 12 && hour < 14) {
-      return Icons.wb_sunny_sharp;
-    } else if (hour >= 14 && hour < 17) {
-      return Icons.wb_cloudy;
-    } else if (hour >= 17 && hour < 19) {
-      return Icons.wb_cloudy_outlined;
-    } else if (hour >= 19 && hour < 22) {
-      return Icons.nights_stay;
-    } else {
-      return Icons.bedtime;
-    }
-  }
+  // removed unused _getTimePeriodIcon
 
   @override
   void dispose() {

@@ -9,8 +9,7 @@ import 'recommendation_engine.dart';
 /// AI增强推荐引擎
 /// 结合传统推荐算法和AI大模型智能分析
 class EnhancedRecommendationEngine extends RecommendationEngine {
-  static final EnhancedRecommendationEngine _instance = 
-      EnhancedRecommendationEngine._internal();
+  static final EnhancedRecommendationEngine _instance = EnhancedRecommendationEngine._internal();
   factory EnhancedRecommendationEngine() => _instance;
   EnhancedRecommendationEngine._internal();
 
@@ -80,9 +79,8 @@ class EnhancedRecommendationEngine extends RecommendationEngine {
 
       // 6. 缓存结果
       _cacheResult(_buildCacheKey(selectedBubbles), result);
-      
-      return result;
 
+      return result;
     } catch (e) {
       debugPrint('AI增强推荐失败，回退到传统推荐: $e');
       return _getFallbackEnhancedResult(selectedBubbles, userPreference, limit);
@@ -90,12 +88,12 @@ class EnhancedRecommendationEngine extends RecommendationEngine {
   }
 
   /// 用户偏好智能分析
-  Future<UserPreferenceAnalysis> analyzeUserPreferences(
-      UserPreference userPreference) async {
+  Future<UserPreferenceAnalysis> analyzeUserPreferences(UserPreference userPreference) async {
     // 检查缓存
     if (_cachedAnalysis != null && _lastAnalysis != null) {
       final timeDiff = DateTime.now().difference(_lastAnalysis!).inMinutes;
-      if (timeDiff < 30) { // 30分钟内使用缓存
+      if (timeDiff < 30) {
+        // 30分钟内使用缓存
         return _cachedAnalysis!;
       }
     }
@@ -109,7 +107,7 @@ class EnhancedRecommendationEngine extends RecommendationEngine {
 
       _cachedAnalysis = analysis;
       _lastAnalysis = DateTime.now();
-      
+
       return analysis;
     } catch (e) {
       debugPrint('用户偏好分析失败: $e');
@@ -174,7 +172,7 @@ class EnhancedRecommendationEngine extends RecommendationEngine {
   ) {
     final Set<String> aiRecommendedNames = aiResult.recommendations.toSet();
     final Set<String> traditionalNames = traditionalResults.map((f) => f.name).toSet();
-    
+
     // 优先选择AI和传统算法都推荐的食物
     final bothRecommended = <Food>[];
     final aiOnly = <Food>[];
@@ -192,16 +190,16 @@ class EnhancedRecommendationEngine extends RecommendationEngine {
 
     // 构建最终推荐列表
     final result = <Food>[];
-    
+
     // 1. 优先添加双重推荐
     result.addAll(bothRecommended.take((limit * 0.4).round()));
-    
+
     // 2. 添加AI独有推荐
     final remainingSlots = limit - result.length;
     if (remainingSlots > 0) {
       result.addAll(aiOnly.take((remainingSlots * 0.6).round()));
     }
-    
+
     // 3. 补充传统推荐
     final finalSlots = limit - result.length;
     if (finalSlots > 0) {
@@ -218,7 +216,7 @@ class EnhancedRecommendationEngine extends RecommendationEngine {
     AiRecommendationResult aiResult,
   ) async {
     final explanations = <String, String>{};
-    
+
     for (final food in foods) {
       try {
         final explanation = await _aiService.generateFoodExplanation(
@@ -231,7 +229,7 @@ class EnhancedRecommendationEngine extends RecommendationEngine {
         explanations[food.name] = _generateFallbackExplanation(food, bubbleNames, food.rating);
       }
     }
-    
+
     return explanations;
   }
 
@@ -241,12 +239,14 @@ class EnhancedRecommendationEngine extends RecommendationEngine {
     AiRecommendationResult aiResult,
     List<Food> fusedResults,
   ) {
-    final traditionalScore = traditionalResults.isEmpty ? 0.0 : 
-        traditionalResults.map((f) => f.rating).reduce((a, b) => a + b) / traditionalResults.length;
-    
+    final traditionalScore = traditionalResults.isEmpty
+        ? 0.0
+        : traditionalResults.map((f) => f.rating).reduce((a, b) => a + b) /
+            traditionalResults.length;
+
     final aiScore = aiResult.score;
     final fusionBonus = fusedResults.isNotEmpty ? 1.0 : 0.0;
-    
+
     return (traditionalScore * 0.4 + aiScore * 0.5 + fusionBonus * 0.1).clamp(0.0, 10.0);
   }
 
@@ -269,29 +269,28 @@ class EnhancedRecommendationEngine extends RecommendationEngine {
   /// 计算平均评分
   double _calculateAverageScore(List<Food> foods, UserPreference? preference) {
     if (foods.isEmpty) return 0.0;
-    
+
     double totalScore = 0.0;
     for (final food in foods) {
-      totalScore += preference != null 
-          ? _calculatePersonalizedScore(food, preference)
-          : food.rating;
+      totalScore +=
+          preference != null ? _calculatePersonalizedScore(food, preference) : food.rating;
     }
-    
+
     return totalScore / foods.length;
   }
 
   /// 计算个性化评分
   double _calculatePersonalizedScore(Food food, UserPreference preference) {
     double score = food.rating;
-    
+
     // 根据用户偏好调整评分
     if (preference.favoriteCuisines.contains(food.cuisineType)) {
       score += 1.0;
     }
-    
+
     // 根据口味偏好调整
     // 这里可以根据实际需求添加更多逻辑
-    
+
     return score;
   }
 
@@ -376,11 +375,11 @@ class EnhancedRecommendationEngine extends RecommendationEngine {
   ) {
     final explanations = <String, String>{};
     final bubbleText = bubbles.map((b) => b.name).join('、');
-    
+
     for (final food in foods) {
       explanations[food.name] = '${food.name}符合您的$bubbleText偏好，是不错的选择';
     }
-    
+
     return explanations;
   }
 
@@ -442,10 +441,8 @@ class EnhancedRecommendationResult {
 
 /// 推荐策略枚举
 enum RecommendationStrategy {
-  aiFused,           // AI融合策略
-  aiPrimary,         // AI主导策略
+  aiFused, // AI融合策略
+  aiPrimary, // AI主导策略
   traditionalPrimary, // 传统主导策略
-  balanced,          // 平衡策略
+  balanced, // 平衡策略
 }
-
- 

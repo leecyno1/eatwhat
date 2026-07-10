@@ -5,32 +5,32 @@ import '../utils/memory_manager.dart';
 
 /// 用户增长策略类型
 enum GrowthStrategy {
-  viralSharing,      // 病毒式分享
-  gamification,      // 游戏化
-  socialProof,       // 社会证明
-  contentMarketing,  // 内容营销
-  referralProgram,   // 推荐计划
-  retentionBoosts,   // 留存提升
+  viralSharing, // 病毒式分享
+  gamification, // 游戏化
+  socialProof, // 社会证明
+  contentMarketing, // 内容营销
+  referralProgram, // 推荐计划
+  retentionBoosts, // 留存提升
 }
 
 /// 挑战类型
 enum ChallengeType {
-  bubbleChallenge,    // 气泡挑战
-  tasteExploration,   // 口味探索
-  cuisineAdventure,   // 菜系冒险
-  healthyEating,      // 健康饮食
-  socialSharing,      // 社交分享
-  streakBuilding,     // 连续打卡
+  bubbleChallenge, // 气泡挑战
+  tasteExploration, // 口味探索
+  cuisineAdventure, // 菜系冒险
+  healthyEating, // 健康饮食
+  socialSharing, // 社交分享
+  streakBuilding, // 连续打卡
 }
 
 /// 成就类型
 enum AchievementType {
-  firstRecommendation,  // 首次推荐
-  bubbleMaster,         // 气泡大师
-  foodExplorer,         // 美食探索家
-  socialInfluencer,     // 社交影响者
-  healthGuru,           // 健康达人
-  loyalUser,            // 忠实用户
+  firstRecommendation, // 首次推荐
+  bubbleMaster, // 气泡大师
+  foodExplorer, // 美食探索家
+  socialInfluencer, // 社交影响者
+  healthGuru, // 健康达人
+  loyalUser, // 忠实用户
 }
 
 /// 用户增长引擎 - 负责用户获取、激活、留存和推荐
@@ -40,17 +40,17 @@ class GrowthEngine {
   GrowthEngine._internal();
 
   final MemoryManager _memoryManager = MemoryManager();
-  
+
   // 增长数据
   final Map<String, UserGrowthProfile> _userProfiles = {};
   final Map<String, Challenge> _activeChallenges = {};
   final Map<String, Achievement> _achievements = {};
   final List<ShareableContent> _viralContent = [];
-  
+
   // 增长统计
   final Map<GrowthStrategy, int> _strategyStats = {};
   final Map<String, ReferralProgram> _referralPrograms = {};
-  
+
   bool _isInitialized = false;
 
   /// 初始化增长引擎
@@ -61,7 +61,7 @@ class GrowthEngine {
     await _loadAchievements();
     await _loadReferralPrograms();
     await _generateViralContent();
-    
+
     _isInitialized = true;
     debugPrint('GrowthEngine initialized');
   }
@@ -247,10 +247,10 @@ class GrowthEngine {
     );
 
     _userProfiles[userId] = profile;
-    
+
     // 欢迎奖励
     await _grantWelcomeRewards(userId);
-    
+
     return profile;
   }
 
@@ -258,7 +258,7 @@ class GrowthEngine {
   Future<void> _grantWelcomeRewards(String userId) async {
     // 新用户积分奖励
     await addPoints(userId, 100, reason: '新用户欢迎奖励');
-    
+
     // 激活新手挑战
     await _activateNewUserChallenges(userId);
   }
@@ -294,10 +294,10 @@ class GrowthEngine {
     if (profile == null) return [];
 
     final events = <GrowthEvent>[];
-    
+
     // 更新最后活跃时间
     profile.lastActiveDate = DateTime.now();
-    
+
     // 根据行为类型处理
     switch (action) {
       case UserAction.bubbleSelection:
@@ -327,10 +327,10 @@ class GrowthEngine {
 
     // 检查成就解锁
     await _checkAchievementUnlocks(userId, profile, events);
-    
+
     // 检查挑战完成
     await _checkChallengeCompletion(userId, profile, events);
-    
+
     return events;
   }
 
@@ -342,15 +342,15 @@ class GrowthEngine {
     List<GrowthEvent> events,
   ) async {
     profile.totalBubbleSelections++;
-    
+
     // 更新气泡挑战进度
     await _updateChallengeProgress(
-      userId, 
-      ChallengeType.bubbleChallenge, 
-      1, 
+      userId,
+      ChallengeType.bubbleChallenge,
+      1,
       events,
     );
-    
+
     // 积分奖励
     await addPoints(userId, 5, reason: '气泡选择');
   }
@@ -363,7 +363,7 @@ class GrowthEngine {
     List<GrowthEvent> events,
   ) async {
     profile.totalRecommendations++;
-    
+
     // 更新口味探索挑战
     await _updateChallengeProgress(
       userId,
@@ -371,10 +371,10 @@ class GrowthEngine {
       1,
       events,
     );
-    
+
     // 积分奖励
     await addPoints(userId, 20, reason: '获得推荐');
-    
+
     // 首次推荐成就
     if (profile.totalRecommendations == 1) {
       await _unlockAchievement(userId, 'first_recommendation', events);
@@ -389,7 +389,7 @@ class GrowthEngine {
     List<GrowthEvent> events,
   ) async {
     profile.totalShares++;
-    
+
     // 更新分享挑战进度
     await _updateChallengeProgress(
       userId,
@@ -397,10 +397,10 @@ class GrowthEngine {
       1,
       events,
     );
-    
+
     // 积分奖励
     await addPoints(userId, 50, reason: '社交分享');
-    
+
     // 记录增长策略效果
     _updateStrategyStats(GrowthStrategy.viralSharing);
   }
@@ -413,12 +413,12 @@ class GrowthEngine {
     List<GrowthEvent> events,
   ) async {
     profile.referralCount++;
-    
+
     // 推荐奖励
     final program = _referralPrograms['standard'];
     if (program != null) {
       await addPoints(userId, 200, reason: '成功推荐好友');
-      
+
       events.add(GrowthEvent(
         type: GrowthEventType.referralReward,
         userId: userId,
@@ -426,7 +426,7 @@ class GrowthEngine {
         timestamp: DateTime.now(),
       ));
     }
-    
+
     _updateStrategyStats(GrowthStrategy.referralProgram);
   }
 
@@ -438,7 +438,7 @@ class GrowthEngine {
   ) async {
     final today = DateTime.now();
     final lastLogin = profile.lastActiveDate;
-    
+
     // 检查是否连续登录
     if (_isSameDay(lastLogin, today.subtract(const Duration(days: 1)))) {
       profile.streak++;
@@ -448,12 +448,12 @@ class GrowthEngine {
     } else if (!_isSameDay(lastLogin, today)) {
       profile.streak = 1; // 重新开始连续登录
     }
-    
+
     // 连续登录奖励
     final streakReward = _calculateStreakReward(profile.streak);
     if (streakReward > 0) {
       await addPoints(userId, streakReward, reason: '连续登录第${profile.streak}天');
-      
+
       events.add(GrowthEvent(
         type: GrowthEventType.streakReward,
         userId: userId,
@@ -465,9 +465,7 @@ class GrowthEngine {
 
   /// 判断是否同一天
   bool _isSameDay(DateTime date1, DateTime date2) {
-    return date1.year == date2.year &&
-           date1.month == date2.month &&
-           date1.day == date2.day;
+    return date1.year == date2.year && date1.month == date2.month && date1.day == date2.day;
   }
 
   /// 计算连续登录奖励
@@ -492,14 +490,14 @@ class GrowthEngine {
       final challenge = _activeChallenges[challengeId];
       if (challenge != null && challenge.type == challengeType && challenge.isActive) {
         challenge.currentProgress += progress;
-        
+
         events.add(GrowthEvent(
           type: GrowthEventType.challengeProgress,
           userId: userId,
           description: '${challenge.title} 进度 +$progress',
           timestamp: DateTime.now(),
         ));
-        
+
         break; // 只更新一个匹配的挑战
       }
     }
@@ -512,20 +510,19 @@ class GrowthEngine {
     List<GrowthEvent> events,
   ) async {
     final completedChallenges = <String>[];
-    
+
     for (final challengeId in profile.activeChallengeIds) {
       final challenge = _activeChallenges[challengeId];
-      if (challenge != null && 
+      if (challenge != null &&
           challenge.currentProgress >= challenge.targetValue &&
           !profile.completedChallengeIds.contains(challengeId)) {
-        
         // 标记挑战完成
         profile.completedChallengeIds.add(challengeId);
         completedChallenges.add(challengeId);
-        
+
         // 授予奖励
         await _grantChallengeReward(userId, challenge, events);
-        
+
         events.add(GrowthEvent(
           type: GrowthEventType.challengeCompleted,
           userId: userId,
@@ -534,7 +531,7 @@ class GrowthEngine {
         ));
       }
     }
-    
+
     // 从活跃挑战中移除已完成的
     profile.activeChallengeIds.removeWhere(completedChallenges.contains);
   }
@@ -570,24 +567,21 @@ class GrowthEngine {
   ) async {
     final profile = _userProfiles[userId];
     final achievement = _achievements[achievementId];
-    
-    if (profile != null && 
-        achievement != null &&
-        !profile.achievementIds.contains(achievementId)) {
-      
+
+    if (profile != null && achievement != null && !profile.achievementIds.contains(achievementId)) {
       profile.achievementIds.add(achievementId);
       achievement.unlockedAt = DateTime.now();
-      
+
       // 积分奖励
       await addPoints(userId, achievement.pointsReward, reason: '解锁成就');
-      
+
       events.add(GrowthEvent(
         type: GrowthEventType.achievementUnlocked,
         userId: userId,
         description: '解锁成就：${achievement.title}',
         timestamp: DateTime.now(),
       ));
-      
+
       debugPrint('Achievement unlocked for $userId: ${achievement.title}');
     }
   }
@@ -599,20 +593,17 @@ class GrowthEngine {
     List<GrowthEvent> events,
   ) async {
     // 气泡大师成就
-    if (profile.totalBubbleSelections >= 100 && 
-        !profile.achievementIds.contains('bubble_master')) {
+    if (profile.totalBubbleSelections >= 100 && !profile.achievementIds.contains('bubble_master')) {
       await _unlockAchievement(userId, 'bubble_master', events);
     }
-    
+
     // 美食探索家成就
-    if (profile.totalRecommendations >= 50 &&
-        !profile.achievementIds.contains('food_explorer')) {
+    if (profile.totalRecommendations >= 50 && !profile.achievementIds.contains('food_explorer')) {
       await _unlockAchievement(userId, 'food_explorer', events);
     }
-    
+
     // 社交影响者成就
-    if (profile.referralCount >= 10 &&
-        !profile.achievementIds.contains('social_influencer')) {
+    if (profile.referralCount >= 10 && !profile.achievementIds.contains('social_influencer')) {
       await _unlockAchievement(userId, 'social_influencer', events);
     }
   }
@@ -622,14 +613,14 @@ class GrowthEngine {
     final profile = _userProfiles[userId];
     if (profile != null) {
       profile.totalPoints += points;
-      
+
       // 检查等级提升
       final newLevel = _calculateLevel(profile.totalPoints);
       if (newLevel > profile.level) {
         profile.level = newLevel;
         debugPrint('User $userId leveled up to $newLevel');
       }
-      
+
       debugPrint('Added $points points to $userId ($reason)');
     }
   }
@@ -646,18 +637,16 @@ class GrowthEngine {
     required String contentType,
     Map<String, dynamic>? context,
   }) async {
-    final templates = _viralContent
-        .where((content) => content.type.toString().contains(contentType))
-        .toList();
-    
+    final templates =
+        _viralContent.where((content) => content.type.toString().contains(contentType)).toList();
+
     if (templates.isEmpty) {
       return _getDefaultShareContent();
     }
-    
+
     // 选择最佳模板
-    final template = templates.reduce((a, b) => 
-        a.viralScore > b.viralScore ? a : b);
-    
+    final template = templates.reduce((a, b) => a.viralScore > b.viralScore ? a : b);
+
     // 个性化内容
     String personalizedText = template.template;
     if (context != null) {
@@ -665,7 +654,7 @@ class GrowthEngine {
         personalizedText = personalizedText.replaceAll('{$key}', value.toString());
       });
     }
-    
+
     return ShareableContent(
       id: '${template.id}_${DateTime.now().millisecondsSinceEpoch}',
       type: template.type,
@@ -700,16 +689,14 @@ class GrowthEngine {
 
   /// 获取活跃挑战
   List<Challenge> getActiveChallenges() {
-    return _activeChallenges.values
-        .where((challenge) => challenge.isActive)
-        .toList();
+    return _activeChallenges.values.where((challenge) => challenge.isActive).toList();
   }
 
   /// 获取用户成就
   List<Achievement> getUserAchievements(String userId) {
     final profile = _userProfiles[userId];
     if (profile == null) return [];
-    
+
     return profile.achievementIds
         .map((id) => _achievements[id])
         .where((achievement) => achievement != null)
@@ -736,37 +723,37 @@ enum UserAction {
 
 /// 奖励类型
 enum RewardType {
-  points,           // 积分
-  badge,           // 徽章
-  premiumFeature,  // 高级功能
-  premiumTrial,    // 高级试用
+  points, // 积分
+  badge, // 徽章
+  premiumFeature, // 高级功能
+  premiumTrial, // 高级试用
 }
 
 /// 成就稀有度
 enum AchievementRarity {
-  common,     // 普通
-  rare,       // 稀有
-  epic,       // 史诗
-  legendary,  // 传说
+  common, // 普通
+  rare, // 稀有
+  epic, // 史诗
+  legendary, // 传说
 }
 
 /// 分享内容类型
 enum ShareContentType {
   recommendation, // 推荐分享
-  challenge,      // 挑战分享
-  achievement,    // 成就分享
-  discovery,      // 发现分享
-  general,        // 通用分享
+  challenge, // 挑战分享
+  achievement, // 成就分享
+  discovery, // 发现分享
+  general, // 通用分享
 }
 
 /// 增长事件类型
 enum GrowthEventType {
-  challengeProgress,    // 挑战进度
-  challengeCompleted,   // 挑战完成
-  achievementUnlocked,  // 成就解锁
-  referralReward,      // 推荐奖励
-  streakReward,        // 连续奖励
-  levelUp,             // 等级提升
+  challengeProgress, // 挑战进度
+  challengeCompleted, // 挑战完成
+  achievementUnlocked, // 成就解锁
+  referralReward, // 推荐奖励
+  streakReward, // 连续奖励
+  levelUp, // 等级提升
 }
 
 /// 用户增长档案

@@ -16,12 +16,13 @@ class _AIDemoScreenState extends State<AIDemoScreen>
     with TickerProviderStateMixin {
   late AnimationController _pageController;
   late Animation<double> _fadeAnimation;
-  
+
   bool _showLoading = false;
   bool _isFavorite = false;
 
   // 示例食物数据
   final Food demoFood = Food(
+    id: 'demo_kung_pao_chicken',
     name: '宫保鸡丁',
     description: '经典川菜，酸甜微辣，鸡肉嫩滑配花生',
     cuisineType: '川菜',
@@ -37,12 +38,12 @@ class _AIDemoScreenState extends State<AIDemoScreen>
   @override
   void initState() {
     super.initState();
-    
+
     _pageController = AnimationController(
       duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
-    
+
     _fadeAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -50,7 +51,7 @@ class _AIDemoScreenState extends State<AIDemoScreen>
       parent: _pageController,
       curve: Curves.easeInOut,
     ));
-    
+
     _pageController.forward();
   }
 
@@ -71,7 +72,7 @@ class _AIDemoScreenState extends State<AIDemoScreen>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     // 演示用的食物数据
     final demoFood = Food(
       id: 'demo_1',
@@ -79,7 +80,8 @@ class _AIDemoScreenState extends State<AIDemoScreen>
       description: '经典家常菜，肥瘦相间，入口即化。采用传统工艺精心制作，色泽红亮，香甜可口。',
       cuisineType: '中式菜品',
       price: 32.0,
-      imageUrl: 'https://images.unsplash.com/photo-1555126634-323283e090fa?ixlib=rb-4.0.3',
+      imageUrl:
+          'https://images.unsplash.com/photo-1555126634-323283e090fa?ixlib=rb-4.0.3',
       rating: 4.5,
       ratingCount: 128,
     );
@@ -107,7 +109,8 @@ class _AIDemoScreenState extends State<AIDemoScreen>
                             icon: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: theme.primaryColor.withValues(alpha: 0.1),
+                                color:
+                                    theme.primaryColor.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: const Icon(Icons.star),
@@ -120,7 +123,8 @@ class _AIDemoScreenState extends State<AIDemoScreen>
                               children: [
                                 Text(
                                   'AI界面演示',
-                                  style: theme.textTheme.headlineSmall?.copyWith(
+                                  style:
+                                      theme.textTheme.headlineSmall?.copyWith(
                                     fontWeight: FontWeight.bold,
                                     color: theme.colorScheme.onSurface,
                                   ),
@@ -128,7 +132,8 @@ class _AIDemoScreenState extends State<AIDemoScreen>
                                 Text(
                                   '体验AI增强的现代界面',
                                   style: theme.textTheme.bodyMedium?.copyWith(
-                                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                                    color: theme.colorScheme.onSurface
+                                        .withValues(alpha: 0.7),
                                   ),
                                 ),
                               ],
@@ -137,7 +142,7 @@ class _AIDemoScreenState extends State<AIDemoScreen>
                         ],
                       ),
                     ),
-                    
+
                     // 内容区域
                     Expanded(
                       child: SingleChildScrollView(
@@ -160,38 +165,43 @@ class _AIDemoScreenState extends State<AIDemoScreen>
                                     Container(
                                       height: 140,
                                       decoration: BoxDecoration(
-                                        color: theme.primaryColor.withValues(alpha: 0.05),
+                                        color: theme.primaryColor
+                                            .withValues(alpha: 0.05),
                                         borderRadius: BorderRadius.circular(16),
                                         border: Border.all(
-                                          color: theme.primaryColor.withValues(alpha: 0.2),
+                                          color: theme.primaryColor
+                                              .withValues(alpha: 0.2),
                                           style: BorderStyle.solid,
                                           width: 1,
                                         ),
                                       ),
                                       child: Center(
                                         child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             const Icon(Icons.star),
                                             const SizedBox(height: 8),
                                             Text(
                                               '点击下方按钮查看动画',
-                                              style: theme.textTheme.bodyMedium?.copyWith(
-                                                color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                              style: theme.textTheme.bodyMedium
+                                                  ?.copyWith(
+                                                color: theme
+                                                    .colorScheme.onSurface
+                                                    .withValues(alpha: 0.6),
                                               ),
                                             ),
                                           ],
                                         ),
                                       ),
                                     ),
-                                  
                                   const SizedBox(height: 16),
-                                  
                                   AIButtonAnimation(
                                     onTap: _toggleLoading,
                                     child: Container(
                                       width: double.infinity,
-                                      padding: const EdgeInsets.symmetric(vertical: 16),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 16),
                                       decoration: BoxDecoration(
                                         gradient: LinearGradient(
                                           colors: [
@@ -202,7 +212,8 @@ class _AIDemoScreenState extends State<AIDemoScreen>
                                         borderRadius: BorderRadius.circular(16),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: theme.primaryColor.withValues(alpha: 0.3),
+                                            color: theme.primaryColor
+                                                .withValues(alpha: 0.3),
                                             blurRadius: 8,
                                             spreadRadius: 2,
                                           ),
@@ -211,7 +222,8 @@ class _AIDemoScreenState extends State<AIDemoScreen>
                                       child: Text(
                                         _showLoading ? '停止动画' : '开始AI动画',
                                         textAlign: TextAlign.center,
-                                        style: theme.textTheme.titleMedium?.copyWith(
+                                        style: theme.textTheme.titleMedium
+                                            ?.copyWith(
                                           color: Colors.white,
                                           fontWeight: FontWeight.bold,
                                         ),
@@ -221,9 +233,9 @@ class _AIDemoScreenState extends State<AIDemoScreen>
                                 ],
                               ),
                             ),
-                            
+
                             const SizedBox(height: 24),
-                            
+
                             // AI食物卡片演示
                             _buildSectionCard(
                               title: '🍜 AI增强食物卡片',
@@ -235,9 +247,11 @@ class _AIDemoScreenState extends State<AIDemoScreen>
                                       food: demoFood,
                                       isFavorite: _isFavorite,
                                       onTap: () {
-                                        ScaffoldMessenger.of(context).showSnackBar(
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
                                           SnackBar(
-                                            content: Text('查看 ${demoFood.name} 详情'),
+                                            content:
+                                                Text('查看 ${demoFood.name} 详情'),
                                             backgroundColor: theme.primaryColor,
                                           ),
                                         );
@@ -245,21 +259,22 @@ class _AIDemoScreenState extends State<AIDemoScreen>
                                       onFavorite: _toggleFavorite,
                                     ),
                                   ),
-                                  
                                   const SizedBox(height: 16),
-                                  
                                   Container(
                                     padding: const EdgeInsets.all(16),
                                     decoration: BoxDecoration(
-                                      color: theme.primaryColor.withValues(alpha: 0.1),
+                                      color: theme.primaryColor
+                                          .withValues(alpha: 0.1),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           '✨ AI增强特性',
-                                          style: theme.textTheme.titleSmall?.copyWith(
+                                          style: theme.textTheme.titleSmall
+                                              ?.copyWith(
                                             fontWeight: FontWeight.bold,
                                             color: theme.primaryColor,
                                           ),
@@ -276,9 +291,9 @@ class _AIDemoScreenState extends State<AIDemoScreen>
                                 ],
                               ),
                             ),
-                            
+
                             const SizedBox(height: 24),
-                            
+
                             // AI工具推荐
                             _buildSectionCard(
                               title: '🛠️ 推荐的AI工具',
@@ -288,7 +303,8 @@ class _AIDemoScreenState extends State<AIDemoScreen>
                                   _buildToolItem(
                                     icon: Icons.animation,
                                     name: 'LottieFiles AI',
-                                    description: 'Motion Copilot + AI Prompt to Vector',
+                                    description:
+                                        'Motion Copilot + AI Prompt to Vector',
                                     url: 'lottiefiles.com/ai',
                                   ),
                                   _buildToolItem(
@@ -312,7 +328,7 @@ class _AIDemoScreenState extends State<AIDemoScreen>
                                 ],
                               ),
                             ),
-                            
+
                             const SizedBox(height: 32),
                           ],
                         ),
@@ -334,7 +350,7 @@ class _AIDemoScreenState extends State<AIDemoScreen>
     required Widget child,
   }) {
     final theme = Theme.of(context);
-    
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(20),
@@ -375,7 +391,7 @@ class _AIDemoScreenState extends State<AIDemoScreen>
 
   Widget _buildFeatureItem(String text) {
     final theme = Theme.of(context);
-    
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
@@ -402,7 +418,7 @@ class _AIDemoScreenState extends State<AIDemoScreen>
     required String url,
   }) {
     final theme = Theme.of(context);
-    
+
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -459,4 +475,4 @@ class _AIDemoScreenState extends State<AIDemoScreen>
       ),
     );
   }
-} 
+}

@@ -22,8 +22,7 @@ class AnimatedTitleSimple extends StatefulWidget {
   State<AnimatedTitleSimple> createState() => _AnimatedTitleSimpleState();
 }
 
-class _AnimatedTitleSimpleState extends State<AnimatedTitleSimple>
-    with TickerProviderStateMixin {
+class _AnimatedTitleSimpleState extends State<AnimatedTitleSimple> with TickerProviderStateMixin {
   late AnimationController _scaleController;
   late AnimationController _bounceController;
   late AnimationController _glowController;
@@ -83,8 +82,7 @@ class _AnimatedTitleSimpleState extends State<AnimatedTitleSimple>
                         return LinearGradient(
                           colors: [
                             widget.textColor,
-                            widget.textColor
-                                .withOpacity(0.8 + _glowController.value * 0.2),
+                            widget.textColor.withOpacity(0.8 + _glowController.value * 0.2),
                             widget.textColor,
                           ],
                           stops: const [0.0, 0.5, 1.0],
@@ -126,16 +124,14 @@ class _AnimatedTitleSimpleState extends State<AnimatedTitleSimple>
                 animation: _bounceController,
                 builder: (context, child) {
                   return Transform.rotate(
-                    angle:
-                        math.sin(_bounceController.value * math.pi * 2) * 0.2,
+                    angle: math.sin(_bounceController.value * math.pi * 2) * 0.2,
                     child: Transform.translate(
                       offset: Offset(
                         math.sin(_bounceController.value * math.pi * 3) * 10,
                         math.sin(_bounceController.value * math.pi * 2) * 5,
                       ),
                       child: Opacity(
-                        opacity: 0.4 +
-                            math.sin(_glowController.value * math.pi * 2) * 0.3,
+                        opacity: 0.4 + math.sin(_glowController.value * math.pi * 2) * 0.3,
                         child: Text(
                           '?',
                           style: TextStyle(
@@ -159,16 +155,14 @@ class _AnimatedTitleSimpleState extends State<AnimatedTitleSimple>
                 animation: _bounceController,
                 builder: (context, child) {
                   return Transform.rotate(
-                    angle:
-                        -math.sin(_bounceController.value * math.pi * 2) * 0.2,
+                    angle: -math.sin(_bounceController.value * math.pi * 2) * 0.2,
                     child: Transform.translate(
                       offset: Offset(
                         -math.sin(_bounceController.value * math.pi * 3) * 10,
                         math.sin(_bounceController.value * math.pi * 2) * 5,
                       ),
                       child: Opacity(
-                        opacity: 0.4 +
-                            math.cos(_glowController.value * math.pi * 2) * 0.3,
+                        opacity: 0.4 + math.cos(_glowController.value * math.pi * 2) * 0.3,
                         child: Text(
                           '?',
                           style: TextStyle(

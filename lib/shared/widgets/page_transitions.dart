@@ -122,9 +122,7 @@ class ModernPageTransition extends StatelessWidget {
   }
 
   Widget _buildMorphingTransition() {
-    return child
-        .animate()
-        .custom(
+    return child.animate().custom(
           duration: duration,
           builder: (context, value, child) {
             return ClipPath(
@@ -161,10 +159,10 @@ class _MorphingClipper extends CustomClipper<Path> {
       final centerX = width / 2;
       final centerY = height / 2;
       final maxRadius = width > height ? width : height;
-      
+
       final currentRadius = maxRadius * (1 - morphProgress);
       final rectProgress = morphProgress;
-      
+
       if (rectProgress < 1) {
         // 圆形到矩形的过渡
         final rect = Rect.fromCenter(
@@ -172,7 +170,7 @@ class _MorphingClipper extends CustomClipper<Path> {
           width: currentRadius + (width - currentRadius) * rectProgress,
           height: currentRadius + (height - currentRadius) * rectProgress,
         );
-        
+
         final cornerRadius = currentRadius * (1 - rectProgress);
         path.addRRect(RRect.fromRectAndRadius(
           rect,
@@ -207,7 +205,7 @@ class BottomNavPageTransition extends StatelessWidget {
   Widget build(BuildContext context) {
     // 根据导航方向选择动画
     final isForward = currentIndex > previousIndex;
-    
+
     return child
         .animate()
         .slideX(
@@ -410,4 +408,4 @@ class DragFeedbackTransition extends StatelessWidget {
           duration: 100.ms,
         );
   }
-} 
+}

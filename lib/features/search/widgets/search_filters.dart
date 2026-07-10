@@ -188,8 +188,7 @@ class _SearchFiltersState extends State<SearchFilters> {
                 });
               },
               backgroundColor: Colors.grey[200],
-              selectedColor:
-                  Theme.of(context).primaryColor.withValues(alpha: 0.2),
+              selectedColor: Theme.of(context).primaryColor.withValues(alpha: 0.2),
               checkmarkColor: Theme.of(context).primaryColor,
             );
           }).toList(),
@@ -233,8 +232,7 @@ class _SearchFiltersState extends State<SearchFilters> {
                 });
               },
               backgroundColor: Colors.grey[200],
-              selectedColor:
-                  Theme.of(context).primaryColor.withValues(alpha: 0.2),
+              selectedColor: Theme.of(context).primaryColor.withValues(alpha: 0.2),
               checkmarkColor: Theme.of(context).primaryColor,
             );
           }).toList(),

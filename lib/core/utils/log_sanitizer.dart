@@ -6,41 +6,90 @@ import 'package:flutter/foundation.dart';
 class LogSanitizer {
   // 敏感字段关键词
   static const List<String> _sensitiveKeywords = [
-    'password', 'passwd', 'pwd', 'secret', 'token', 'key', 'api_key', 'apikey',
-    'auth', 'authorization', 'bearer', 'session', 'cookie', 'csrf',
-    'credit_card', 'creditcard', 'card_number', 'cardnumber', 'cvv', 'ssn',
-    'social_security', 'phone', 'mobile', 'email', 'address', 'location',
-    'signature', 'hash', 'salt', 'nonce', 'private', 'confidential',
-    'personal', 'pii', 'sensitive', 'encrypted', 'decrypt'
+    'password',
+    'passwd',
+    'pwd',
+    'secret',
+    'token',
+    'key',
+    'api_key',
+    'apikey',
+    'auth',
+    'authorization',
+    'bearer',
+    'session',
+    'cookie',
+    'csrf',
+    'credit_card',
+    'creditcard',
+    'card_number',
+    'cardnumber',
+    'cvv',
+    'ssn',
+    'social_security',
+    'phone',
+    'mobile',
+    'email',
+    'address',
+    'location',
+    'signature',
+    'hash',
+    'salt',
+    'nonce',
+    'private',
+    'confidential',
+    'personal',
+    'pii',
+    'sensitive',
+    'encrypted',
+    'decrypt'
   ];
 
   // URL中敏感的查询参数
   static const List<String> _sensitiveUrlParams = [
-    'token', 'api_key', 'apikey', 'auth', 'password', 'secret', 'session',
-    'access_token', 'refresh_token', 'bearer', 'key', 'signature'
+    'token',
+    'api_key',
+    'apikey',
+    'auth',
+    'password',
+    'secret',
+    'session',
+    'access_token',
+    'refresh_token',
+    'bearer',
+    'key',
+    'signature'
   ];
 
   // 敏感的HTTP头部
   static const List<String> _sensitiveHeaders = [
-    'authorization', 'cookie', 'set-cookie', 'x-api-key', 'x-auth-token',
-    'x-access-token', 'x-csrf-token', 'x-session-id', 'authentication',
-    'proxy-authorization', 'www-authenticate'
+    'authorization',
+    'cookie',
+    'set-cookie',
+    'x-api-key',
+    'x-auth-token',
+    'x-access-token',
+    'x-csrf-token',
+    'x-session-id',
+    'authentication',
+    'proxy-authorization',
+    'www-authenticate'
   ];
 
   /// 脱敏字符串
   static String sanitizeString(String input) {
     if (input.isEmpty) return input;
-    
+
     // 检查是否为JSON格式
     if (_isJson(input)) {
       return _sanitizeJson(input);
     }
-    
+
     // 检查是否为URL格式
     if (_isUrl(input)) {
       return _sanitizeUrl(input);
     }
-    
+
     // 一般字符串处理
     return _sanitizeGeneralString(input);
   }
@@ -82,7 +131,7 @@ class LogSanitizer {
     try {
       final uri = Uri.parse(url);
       final sanitizedParams = <String, String>{};
-      
+
       uri.queryParameters.forEach((key, value) {
         if (_isSensitiveUrlParam(key.toLowerCase())) {
           sanitizedParams[key] = _maskValue(value);
@@ -90,7 +139,7 @@ class LogSanitizer {
           sanitizedParams[key] = value;
         }
       });
-      
+
       return uri.replace(queryParameters: sanitizedParams).toString();
     } catch (e) {
       // 如果URL解析失败，返回掩码版本
@@ -101,7 +150,7 @@ class LogSanitizer {
   /// 脱敏HTTP头部
   static Map<String, String> sanitizeHeaders(Map<String, String> headers) {
     final sanitized = <String, String>{};
-    
+
     headers.forEach((key, value) {
       if (_isSensitiveHeader(key.toLowerCase())) {
         sanitized[key] = _maskValue(value);
@@ -109,52 +158,38 @@ class LogSanitizer {
         sanitized[key] = value;
       }
     });
-    
+
     return sanitized;
   }
 
   /// 脱敏一般字符串
   static String _sanitizeGeneralString(String input) {
     String result = input;
-    
+
     // 查找并替换可能的敏感信息模式
-    
+
     // Email模式
     result = result.replaceAll(
-      RegExp(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'),
-      '***@***.***'
-    );
-    
+        RegExp(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'), '***@***.***');
+
     // 手机号模式（中国）
-    result = result.replaceAll(
-      RegExp(r'\b1[3-9]\d{9}\b'),
-      '***-****-****'
-    );
-    
+    result = result.replaceAll(RegExp(r'\b1[3-9]\d{9}\b'), '***-****-****');
+
     // 信用卡号模式
     result = result.replaceAll(
-      RegExp(r'\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b'),
-      '****-****-****-****'
-    );
-    
+        RegExp(r'\b\d{4}[\s-]?\d{4}[\s-]?\d{4}[\s-]?\d{4}\b'), '****-****-****-****');
+
     // API密钥模式（以sk-、pk-等开头的长字符串）
-    result = result.replaceAll(
-      RegExp(r'\b(sk|pk|rk|ak)[-_][a-zA-Z0-9]{20,}\b'),
-      r'$1-***[REDACTED]***'
-    );
-    
+    result =
+        result.replaceAll(RegExp(r'\b(sk|pk|rk|ak)[-_][a-zA-Z0-9]{20,}\b'), r'$1-***[REDACTED]***');
+
     // JWT令牌模式
-    result = result.replaceAll(
-      RegExp(r'\beyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*\b'),
-      'eyJ***[JWT_REDACTED]***'
-    );
-    
+    result = result.replaceAll(RegExp(r'\beyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*\b'),
+        'eyJ***[JWT_REDACTED]***');
+
     // 长的Base64字符串
-    result = result.replaceAll(
-      RegExp(r'\b[A-Za-z0-9+/]{40,}={0,2}\b'),
-      '[BASE64_REDACTED]'
-    );
-    
+    result = result.replaceAll(RegExp(r'\b[A-Za-z0-9+/]{40,}={0,2}\b'), '[BASE64_REDACTED]');
+
     return result;
   }
 
@@ -176,10 +211,10 @@ class LogSanitizer {
   /// 掩盖值
   static String _maskValue(dynamic value) {
     if (value == null) return 'null';
-    
+
     final str = value.toString();
     if (str.isEmpty) return '';
-    
+
     if (str.length <= 4) {
       return '***';
     } else if (str.length <= 8) {
@@ -227,15 +262,13 @@ class LogSanitizer {
   static String sanitizeStackTrace(StackTrace stackTrace) {
     final trace = stackTrace.toString();
     // 移除可能包含敏感信息的文件路径
-    return trace.replaceAll(
-      RegExp(r'/[^/\s]+/[^/\s]+/[^/\s]+/'),
-      '/.../.../.../');
+    return trace.replaceAll(RegExp(r'/[^/\s]+/[^/\s]+/[^/\s]+/'), '/.../.../.../');
   }
 
   /// 安全日志记录
   static void secureLog(String message, {String? tag}) {
     if (!kDebugMode) return; // 生产环境不记录日志
-    
+
     final sanitizedMessage = sanitizeString(message);
     final logTag = tag != null ? '[$tag] ' : '';
     debugPrint('$logTag$sanitizedMessage');
@@ -244,15 +277,15 @@ class LogSanitizer {
   /// 安全错误日志记录
   static void secureLogError(String message, {Exception? error, StackTrace? stackTrace}) {
     if (!kDebugMode) return;
-    
+
     final sanitizedMessage = sanitizeString(message);
     debugPrint('ERROR: $sanitizedMessage');
-    
+
     if (error != null) {
       final sanitizedError = sanitizeException(error);
       debugPrint('Exception: $sanitizedError');
     }
-    
+
     if (stackTrace != null) {
       final sanitizedTrace = sanitizeStackTrace(stackTrace);
       debugPrint('Stack trace: $sanitizedTrace');
@@ -262,19 +295,20 @@ class LogSanitizer {
   /// 验证脱敏效果
   static bool isDataSanitized(String data) {
     // 检查是否包含常见的敏感信息模式
-    
+
     // 检查明文密码
     if (RegExp(r'"password"\s*:\s*"[^*]').hasMatch(data)) return false;
-    
+
     // 检查API密钥
     if (RegExp(r'"api_key"\s*:\s*"[^*]').hasMatch(data)) return false;
-    
+
     // 检查JWT令牌
-    if (RegExp(r'\beyJ[a-zA-Z0-9_-]{20,}\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\b').hasMatch(data)) return false;
-    
+    if (RegExp(r'\beyJ[a-zA-Z0-9_-]{20,}\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\b').hasMatch(data))
+      return false;
+
     // 检查邮箱
     if (RegExp(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b').hasMatch(data)) return false;
-    
+
     return true;
   }
 }
@@ -282,37 +316,37 @@ class LogSanitizer {
 /// 安全日志记录器
 class SecureLogger {
   static const String _defaultTag = 'EatWhat';
-  
+
   /// 记录信息日志
   static void info(String message, {String? tag}) {
     LogSanitizer.secureLog(message, tag: tag ?? _defaultTag);
   }
-  
+
   /// 记录警告日志
   static void warning(String message, {String? tag}) {
     LogSanitizer.secureLog('WARNING: $message', tag: tag ?? _defaultTag);
   }
-  
+
   /// 记录错误日志
   static void error(String message, {Exception? error, StackTrace? stackTrace, String? tag}) {
     LogSanitizer.secureLogError(message, error: error, stackTrace: stackTrace);
   }
-  
+
   /// 记录调试日志
   static void debug(String message, {String? tag}) {
     if (kDebugMode) {
       LogSanitizer.secureLog('DEBUG: $message', tag: tag ?? _defaultTag);
     }
   }
-  
+
   /// 记录API请求
   static void apiRequest(String method, String url, {Map<String, String>? headers, String? body}) {
     if (!kDebugMode) return;
-    
+
     final sanitizedUrl = LogSanitizer._sanitizeUrl(url);
     final sanitizedHeaders = headers != null ? LogSanitizer.sanitizeHeaders(headers) : null;
     final sanitizedBody = body != null ? LogSanitizer.sanitizeString(body) : null;
-    
+
     info('API Request: $method $sanitizedUrl');
     if (sanitizedHeaders != null) {
       debug('Headers: $sanitizedHeaders');
@@ -321,13 +355,13 @@ class SecureLogger {
       debug('Body: $sanitizedBody');
     }
   }
-  
+
   /// 记录API响应
   static void apiResponse(int statusCode, String? body) {
     if (!kDebugMode) return;
-    
+
     final sanitizedBody = body != null ? LogSanitizer.sanitizeString(body) : null;
-    
+
     info('API Response: $statusCode');
     if (sanitizedBody != null) {
       debug('Response body: $sanitizedBody');

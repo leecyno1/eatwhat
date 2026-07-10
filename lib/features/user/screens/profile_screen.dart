@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 /// 用户个人资料页面
 class ProfileScreen extends StatelessWidget {
   final List<Widget> extraActions;
-  
+
   const ProfileScreen({
     super.key,
     this.extraActions = const [],
@@ -44,7 +44,7 @@ class ProfileScreen extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 32),
-            
+
             // 个人设置项
             const ListTile(
               leading: Icon(Icons.favorite),
@@ -71,7 +71,7 @@ class ProfileScreen extends StatelessWidget {
               title: Text('关于我们'),
               trailing: Icon(Icons.chevron_right),
             ),
-            
+
             // 额外的操作按钮
             if (extraActions.isNotEmpty) ...[
               const SizedBox(height: 24),

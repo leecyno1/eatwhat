@@ -180,8 +180,7 @@ class _RecipeListScreenState extends State<RecipeListScreen> {
                         _filterRecipes();
                       }),
                     if (_selectedCookingMethod != null)
-                      _buildFilterChip('烹饪: ${_selectedCookingMethod!.label}',
-                          () {
+                      _buildFilterChip('烹饪: ${_selectedCookingMethod!.label}', () {
                         setState(() {
                           _selectedCookingMethod = null;
                         });

@@ -13,7 +13,7 @@ class PromptTemplates {
   }) {
     final bubbleText = selectedBubbles.join('、');
     final foodList = availableFoods.take(20).join('、'); // 限制食物列表长度
-    
+
     return '''
 你是一个专业的美食推荐专家，请根据用户选择的气泡关键词为用户推荐最合适的食物。
 
@@ -48,7 +48,7 @@ ${weather != null ? '天气情况：$weather' : ''}
   }) {
     final favoritesText = favoriteHistory.isEmpty ? '无' : favoriteHistory.join('、');
     final dislikedText = dislikedHistory.isEmpty ? '无' : dislikedHistory.join('、');
-    
+
     return '''
 请分析用户的饮食偏好模式，帮助改善推荐系统。
 
@@ -74,7 +74,7 @@ ${weather != null ? '天气情况：$weather' : ''}
     required double score,
   }) {
     final bubblesText = matchedBubbles.join('、');
-    
+
     return '''
 请为推荐的食物生成一个吸引人的推荐解释。
 
@@ -101,7 +101,7 @@ ${weather != null ? '天气情况：$weather' : ''}
     String? mood,
   }) {
     final foodList = availableFoods.take(15).join('、');
-    
+
     return '''
 用户场景：$context
 当前时间：$timeOfDay
@@ -126,7 +126,7 @@ ${mood != null ? '心情：$mood' : ''}
     required List<String> availableSides,
   }) {
     final sidesText = availableSides.join('、');
-    
+
     return '''
 主食：$mainFood
 可搭配选项：$sidesText
@@ -144,7 +144,7 @@ ${mood != null ? '心情：$mood' : ''}
   /// 处理AI响应的通用方法
   static Map<String, dynamic> parseRecommendationResponse(String response) {
     // 简单的响应解析，可根据实际AI返回格式调整
-    
+
     return {
       'fullResponse': response,
       'recommendations': _extractRecommendations(response),
@@ -183,4 +183,4 @@ ${mood != null ? '心情：$mood' : ''}
     final match = regex.firstMatch(response);
     return match?.group(1)?.trim() ?? '';
   }
-} 
+}

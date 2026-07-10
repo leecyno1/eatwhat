@@ -1,85 +1,123 @@
+import 'package:flutter/material.dart';
+
 /// 食物模型
 class Food {
   final String id;
   final String name;
   final String? description;
-  final String cuisineType;
-  final List<String> tasteAttributes;
-  final List<String> ingredients;
-  final List<String>? scenarios;
-  final int? calories;
-  final double rating;
-  final int ratingCount;
   final String? imageUrl;
-  final Map<String, double>? nutritionFacts;
-  final double? price;
-  final String? restaurant;
+  final List<String> tags;
+  final double rating;
   final bool isFavorite;
-  final String? preparationTime; // 制作时间
-  final String? difficulty; // 难度等级：简单、中等、困难
-  final List<String>? tags; // 标签：如"下饭菜"、"经典川菜"等
 
-  Food({
-    String? id,
+  // 新增属性
+  final String? cuisineType;
+  final List<String>? tasteAttributes;
+  final String? emoji;
+  final double? score;
+  final List<String>? ingredients;
+  final int? ratingCount;
+  final double? price;
+  final double? calories;
+  final String? restaurant;
+  final List<String>? scenarios;
+  final String? difficulty;
+  final Map<String, dynamic>? nutritionFacts;
+  final int? preparationTime; // 准备时间（分钟）
+
+  const Food({
+    required this.id,
     required this.name,
     this.description,
-    required this.cuisineType,
-    this.tasteAttributes = const [],
-    this.ingredients = const [],
-    this.scenarios,
-    this.calories,
-    this.rating = 0.0,
-    this.ratingCount = 0,
     this.imageUrl,
-    this.nutritionFacts,
-    this.price,
-    this.restaurant,
+    this.tags = const [],
+    this.rating = 0.0,
     this.isFavorite = false,
-    this.preparationTime,
+    this.cuisineType,
+    this.tasteAttributes,
+    this.emoji,
+    this.score,
+    this.ingredients,
+    this.ratingCount,
+    this.price,
+    this.calories,
+    this.restaurant,
+    this.scenarios,
     this.difficulty,
-    this.tags,
-  }) : id = id ?? DateTime.now().millisecondsSinceEpoch.toString();
+    this.nutritionFacts,
+    this.preparationTime,
+  });
 
   /// 复制食物并修改部分属性
   Food copyWith({
     String? id,
     String? name,
     String? description,
+    String? imageUrl,
+    List<String>? tags,
+    double? rating,
+    bool? isFavorite,
     String? cuisineType,
     List<String>? tasteAttributes,
+    String? emoji,
+    double? score,
     List<String>? ingredients,
-    List<String>? scenarios,
-    int? calories,
-    double? rating,
     int? ratingCount,
-    String? imageUrl,
-    Map<String, double>? nutritionFacts,
     double? price,
+    double? calories,
     String? restaurant,
-    bool? isFavorite,
-    String? preparationTime,
+    List<String>? scenarios,
     String? difficulty,
-    List<String>? tags,
+    Map<String, dynamic>? nutritionFacts,
+    int? preparationTime,
   }) {
     return Food(
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
+      imageUrl: imageUrl ?? this.imageUrl,
+      tags: tags ?? this.tags,
+      rating: rating ?? this.rating,
+      isFavorite: isFavorite ?? this.isFavorite,
       cuisineType: cuisineType ?? this.cuisineType,
       tasteAttributes: tasteAttributes ?? this.tasteAttributes,
+      emoji: emoji ?? this.emoji,
+      score: score ?? this.score,
       ingredients: ingredients ?? this.ingredients,
-      scenarios: scenarios ?? this.scenarios,
-      calories: calories ?? this.calories,
-      rating: rating ?? this.rating,
       ratingCount: ratingCount ?? this.ratingCount,
-      imageUrl: imageUrl ?? this.imageUrl,
-      nutritionFacts: nutritionFacts ?? this.nutritionFacts,
       price: price ?? this.price,
+      calories: calories ?? this.calories,
       restaurant: restaurant ?? this.restaurant,
-      isFavorite: isFavorite ?? this.isFavorite,
-      preparationTime: preparationTime ?? this.preparationTime,
+      scenarios: scenarios ?? this.scenarios,
       difficulty: difficulty ?? this.difficulty,
-      tags: tags ?? this.tags,
+      nutritionFacts: nutritionFacts ?? this.nutritionFacts,
+      preparationTime: preparationTime ?? this.preparationTime,
+    );
+  }
+
+  /// 从JSON创建食物
+  factory Food.fromJson(Map<String, dynamic> json) {
+    return Food(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      description: json['description'] as String?,
+      imageUrl: json['imageUrl'] as String?,
+      tags: List<String>.from(json['tags'] ?? []),
+      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
+      isFavorite: json['isFavorite'] as bool? ?? false,
+      cuisineType: json['cuisineType'] as String?,
+      tasteAttributes: List<String>.from(json['tasteAttributes'] ?? []),
+      emoji: json['emoji'] as String?,
+      score: (json['score'] as num?)?.toDouble(),
+      ingredients: List<String>.from(json['ingredients'] ?? []),
+      ratingCount: json['ratingCount'] as int?,
+      price: (json['price'] as num?)?.toDouble(),
+      calories: (json['calories'] as num?)?.toDouble(),
+      restaurant: json['restaurant'] as String?,
+      scenarios: List<String>.from(json['scenarios'] ?? []),
+      difficulty: json['difficulty'] as String?,
+      nutritionFacts: json['nutritionFacts'] as Map<String, dynamic>?,
+      preparationTime: json['preparationTime'] as int?,
     );
   }
 
@@ -89,63 +127,23 @@ class Food {
       'id': id,
       'name': name,
       'description': description,
+      'imageUrl': imageUrl,
+      'tags': tags,
+      'rating': rating,
+      'isFavorite': isFavorite,
       'cuisineType': cuisineType,
       'tasteAttributes': tasteAttributes,
+      'emoji': emoji,
+      'score': score,
       'ingredients': ingredients,
-      'scenarios': scenarios,
-      'calories': calories,
-      'rating': rating,
       'ratingCount': ratingCount,
-      'imageUrl': imageUrl,
-      'nutritionFacts': nutritionFacts,
       'price': price,
+      'calories': calories,
       'restaurant': restaurant,
-      'isFavorite': isFavorite,
-      'preparationTime': preparationTime,
+      'scenarios': scenarios,
       'difficulty': difficulty,
-      'tags': tags,
+      'nutritionFacts': nutritionFacts,
+      'preparationTime': preparationTime,
     };
-  }
-
-  /// 从JSON创建食物
-  factory Food.fromJson(Map<String, dynamic> json) {
-    return Food(
-      id: json['id'],
-      name: json['name'],
-      description: json['description'],
-      cuisineType: json['cuisineType'],
-      tasteAttributes: List<String>.from(json['tasteAttributes'] ?? []),
-      ingredients: List<String>.from(json['ingredients'] ?? []),
-      scenarios: json['scenarios'] != null
-          ? List<String>.from(json['scenarios'])
-          : null,
-      calories: json['calories'],
-      rating: json['rating']?.toDouble() ?? 0.0,
-      ratingCount: json['ratingCount'] ?? 0,
-      imageUrl: json['imageUrl'],
-      nutritionFacts: json['nutritionFacts'] != null
-          ? Map<String, double>.from(json['nutritionFacts'])
-          : null,
-      price: json['price']?.toDouble(),
-      restaurant: json['restaurant'],
-      isFavorite: json['isFavorite'] ?? false,
-      preparationTime: json['preparationTime'],
-      difficulty: json['difficulty'],
-      tags: json['tags'] != null ? List<String>.from(json['tags']) : null,
-    );
-  }
-
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
-    return other is Food && other.id == id;
-  }
-
-  @override
-  int get hashCode => id.hashCode;
-
-  @override
-  String toString() {
-    return 'Food(id: $id, name: $name, cuisineType: $cuisineType, rating: $rating)';
   }
 }

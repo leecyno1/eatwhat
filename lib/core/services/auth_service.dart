@@ -27,13 +27,13 @@ class AuthService {
 
   /// 检查是否已登录
   static bool get isLoggedIn => _currentUser != null && _authToken != null && !isSessionExpired;
-  
+
   /// 检查会话是否过期
   static bool get isSessionExpired {
     if (_sessionExpiry == null) return false;
     return DateTime.now().isAfter(_sessionExpiry!);
   }
-  
+
   /// 获取会话剩余时间
   static Duration? get sessionTimeRemaining {
     if (_sessionExpiry == null) return null;
@@ -41,7 +41,7 @@ class AuthService {
     if (now.isAfter(_sessionExpiry!)) return Duration.zero;
     return _sessionExpiry!.difference(now);
   }
-  
+
   /// 检查是否需要刷新会话
   static bool get shouldRefreshSession {
     final remaining = sessionTimeRemaining;
@@ -64,7 +64,7 @@ class AuthService {
         if (userMap != null && token != null) {
           _currentUser = User.fromJson(userMap);
           _authToken = token;
-          
+
           // 验证令牌并设置会话
           final tokenValidation = TokenService.validateToken(token);
           if (tokenValidation.isValid && tokenValidation.expiresAt != null) {
@@ -92,12 +92,11 @@ class AuthService {
   }) async {
     try {
       // 验证输入
-      final validation =
-          _validateRegistration(username, email, password, confirmPassword);
+      final validation = _validateRegistration(username, email, password, confirmPassword);
       if (!validation.success) {
         return validation;
       }
-      
+
       // 验证密码强度
       final passwordValidation = PasswordHashUtil.validatePasswordComplexity(password);
       if (passwordValidation != null) {
@@ -163,8 +162,7 @@ class AuthService {
       }
 
       // 查找用户
-      final user =
-          await _getUserByUsernameOrEmail(usernameOrEmail, usernameOrEmail);
+      final user = await _getUserByUsernameOrEmail(usernameOrEmail, usernameOrEmail);
       if (user == null) {
         return AuthResult(
           success: false,
@@ -365,12 +363,10 @@ class AuthService {
     return PasswordHashUtil.verifyPassword(password, hash);
   }
 
-
   /// 设置当前用户
-  static Future<void> _setCurrentUser(User user,
-      {bool rememberMe = false}) async {
+  static Future<void> _setCurrentUser(User user, {bool rememberMe = false}) async {
     _currentUser = user;
-    
+
     // 生成JWT令牌对
     final tokenPair = await TokenService.generateTokenPair(user.id);
     _authToken = tokenPair.accessToken;
@@ -381,7 +377,7 @@ class AuthService {
       // 使用安全存储保存敏感信息
       await SecureStorageService.setSecureJson(_keyCurrentUser, user.toJson());
       await SecureStorageService.setSecureString(_keyUserToken, _authToken!);
-      
+
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(_keyRememberMe, true);
     }
@@ -392,14 +388,13 @@ class AuthService {
     // 清除安全存储中的敏感信息
     await SecureStorageService.removeSecureString(_keyCurrentUser);
     await SecureStorageService.removeSecureString(_keyUserToken);
-    
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_keyRememberMe);
   }
 
   /// 获取用户通过用户名或邮箱
-  static Future<User?> _getUserByUsernameOrEmail(
-      String username, String email) async {
+  static Future<User?> _getUserByUsernameOrEmail(String username, String email) async {
     final prefs = await SharedPreferences.getInstance();
     final usersJson = prefs.getString(_keyUsers);
 
@@ -487,18 +482,18 @@ class AuthService {
       // 忽略删除错误
     }
   }
-  
+
   /// 刷新会话
   static Future<bool> refreshSession() async {
     if (!isLoggedIn || _currentUser == null) return false;
-    
+
     try {
       final newTokenPair = await TokenService.refreshToken();
       if (newTokenPair != null) {
         _authToken = newTokenPair.accessToken;
         _sessionExpiry = newTokenPair.expiresAt;
         _lastActivity = DateTime.now();
-        
+
         // 更新存储的令牌
         await SecureStorageService.setSecureString(_keyUserToken, _authToken!);
         return true;
@@ -506,67 +501,67 @@ class AuthService {
     } catch (e) {
       debugPrint('Session refresh failed: $e');
     }
-    
+
     return false;
   }
-  
+
   /// 记录用户活动
   static void recordActivity() {
     if (isLoggedIn) {
       _lastActivity = DateTime.now();
     }
   }
-  
+
   /// 检查会话并自动刷新
   static Future<bool> checkAndRefreshSession() async {
     if (!isLoggedIn) return false;
-    
+
     // 记录活动
     recordActivity();
-    
+
     // 检查是否需要刷新
     if (shouldRefreshSession) {
       return await refreshSession();
     }
-    
+
     // 检查是否已过期
     if (isSessionExpired) {
       await logout();
       return false;
     }
-    
+
     return true;
   }
-  
+
   /// 强制过期会话
   static Future<void> expireSession() async {
     _sessionExpiry = DateTime.now().subtract(const Duration(seconds: 1));
     await logout();
   }
-  
+
   /// 延长会话
   static Future<bool> extendSession({Duration? extension}) async {
     if (!isLoggedIn || _sessionExpiry == null) return false;
-    
+
     final extensionDuration = extension ?? const Duration(hours: 1);
     final newExpiry = _sessionExpiry!.add(extensionDuration);
-    
+
     // 检查新的过期时间是否合理（不超过7天）
     final maxExpiry = DateTime.now().add(const Duration(days: 7));
     if (newExpiry.isAfter(maxExpiry)) {
       return false;
     }
-    
+
     _sessionExpiry = newExpiry;
     _lastActivity = DateTime.now();
-    
+
     return true;
   }
-  
+
   /// 获取会话信息
   static SessionInfo? getSessionInfo() {
     if (!isLoggedIn || _currentUser == null) return null;
-    
+
     return SessionInfo(
       userId: _currentUser!.id,
       sessionExpiry: _sessionExpiry,
@@ -654,8 +649,7 @@ class User {
       passwordHash: json['passwordHash'],
       avatar: json['avatar'],
       createdAt: DateTime.parse(json['createdAt']),
-      updatedAt:
-          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
       lastLoginAt: DateTime.parse(json['lastLoginAt']),
       userPreference: UserPreference.fromJson(json['userPreference']),
     );
@@ -683,7 +677,7 @@ class SessionInfo {
   final bool isExpired;
   final Duration? timeRemaining;
   final bool shouldRefresh;
-  
+
   SessionInfo({
     required this.userId,
     this.sessionExpiry,
@@ -692,7 +686,7 @@ class SessionInfo {
     this.timeRemaining,
     required this.shouldRefresh,
   });
-  
+
   @override
   String toString() {
     return 'SessionInfo(userId: $userId, expired: $isExpired, timeRemaining: $timeRemaining)';

@@ -11,19 +11,19 @@ class MemoryManager {
   // 缓存系统
   final Map<String, _CacheEntry> _cache = {};
   final Queue<String> _accessOrder = Queue<String>();
-  
+
   // 配置参数
   static const int maxCacheSize = 100;
   static const Duration defaultCacheDuration = Duration(minutes: 30);
   static const int maxAccessOrderSize = 200;
-  
+
   Timer? _cleanupTimer;
   bool _isInitialized = false;
 
   /// 初始化内存管理器
   void initialize() {
     if (_isInitialized) return;
-    
+
     _startPeriodicCleanup();
     _isInitialized = true;
     debugPrint('MemoryManager initialized');
@@ -45,10 +45,10 @@ class MemoryManager {
 
     final expiry = DateTime.now().add(duration ?? defaultCacheDuration);
     _cache[key] = _CacheEntry(data, expiry);
-    
+
     // 更新访问顺序
     _updateAccessOrder(key);
-    
+
     debugPrint('Cached: $key, expires: $expiry');
   }
 
@@ -67,7 +67,7 @@ class MemoryManager {
 
     // 更新访问顺序
     _updateAccessOrder(key);
-    
+
     return entry.data as T?;
   }
 
@@ -75,13 +75,13 @@ class MemoryManager {
   bool hasCached(String key) {
     final entry = _cache[key];
     if (entry == null) return false;
-    
+
     if (DateTime.now().isAfter(entry.expiry)) {
       _cache.remove(key);
       _accessOrder.remove(key);
       return false;
     }
-    
+
     return true;
   }
 
@@ -103,7 +103,7 @@ class MemoryManager {
   void _updateAccessOrder(String key) {
     _accessOrder.remove(key);
     _accessOrder.add(key);
-    
+
     // 限制访问顺序队列大小
     if (_accessOrder.length > maxAccessOrderSize) {
       _accessOrder.removeFirst();
@@ -179,7 +179,7 @@ class MemoryManager {
   void optimizeMemory() {
     // 立即执行清理
     _performCleanup();
-    
+
     // 如果缓存使用率过高，清理一半
     if (_cache.length > maxCacheSize * 0.8) {
       final keysToRemove = _accessOrder.take(_cache.length ~/ 2).toList();
@@ -225,9 +225,9 @@ class _CacheEntry {
 
 /// 智能缓存策略
 enum CacheStrategy {
-  lru,        // 最近最少使用
-  lfu,        // 最少使用频率
-  fifo,       // 先进先出
+  lru, // 最近最少使用
+  lfu, // 最少使用频率
+  fifo, // 先进先出
   timeExpiry, // 时间过期
 }
 
@@ -240,10 +240,13 @@ class AdvancedCacheManager {
   AdvancedCacheManager({
     CacheStrategy strategy = CacheStrategy.lru,
     int maxSize = 100,
-  }) : _strategy = strategy, _maxSize = maxSize;
+  })  : _strategy = strategy,
+        _maxSize = maxSize;
 
   /// 智能缓存
-  void smartCache<T>(String key, T data, {
+  void smartCache<T>(
+    String key,
+    T data, {
     Duration? duration,
     int priority = 1,
   }) {

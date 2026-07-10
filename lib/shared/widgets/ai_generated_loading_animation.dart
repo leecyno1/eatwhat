@@ -31,7 +31,7 @@ class _AIGeneratedLoadingAnimationState extends State<AIGeneratedLoadingAnimatio
   @override
   void initState() {
     super.initState();
-    
+
     // 主旋转控制器
     _controller = AnimationController(
       duration: const Duration(seconds: 2),
@@ -113,7 +113,7 @@ class _AIGeneratedLoadingAnimationState extends State<AIGeneratedLoadingAnimatio
                       ),
                     ),
                   ),
-                  
+
                   // 中层旋转环
                   Transform.rotate(
                     angle: _rotationAnimation.value * 2 * 3.14159,
@@ -137,8 +137,8 @@ class _AIGeneratedLoadingAnimationState extends State<AIGeneratedLoadingAnimatio
                             top: 2,
                             left: widget.size * 0.35 - 4,
                             child: Transform.rotate(
-                              angle: (index * 2 * 3.14159 / 3) + 
-                                    (_rotationAnimation.value * 2 * 3.14159),
+                              angle: (index * 2 * 3.14159 / 3) +
+                                  (_rotationAnimation.value * 2 * 3.14159),
                               child: Container(
                                 width: 8,
                                 height: 8,
@@ -160,7 +160,7 @@ class _AIGeneratedLoadingAnimationState extends State<AIGeneratedLoadingAnimatio
                       ),
                     ),
                   ),
-                  
+
                   // 内核食物图标
                   Transform.scale(
                     scale: _scaleAnimation.value * 0.3,
@@ -186,7 +186,7 @@ class _AIGeneratedLoadingAnimationState extends State<AIGeneratedLoadingAnimatio
             },
           ),
         ),
-        
+
         // 文字提示
         if (widget.text != null) ...[
           const SizedBox(height: 16),
@@ -229,8 +229,7 @@ class AIButtonAnimation extends StatefulWidget {
   State<AIButtonAnimation> createState() => _AIButtonAnimationState();
 }
 
-class _AIButtonAnimationState extends State<AIButtonAnimation>
-    with SingleTickerProviderStateMixin {
+class _AIButtonAnimationState extends State<AIButtonAnimation> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
 
@@ -385,7 +384,7 @@ class ParticlePainter extends CustomPainter {
     for (final particle in particles) {
       final x = (particle.x + particle.vx * animationValue) % 1 * size.width;
       final y = (particle.y + particle.vy * animationValue) % 1 * size.height;
-      
+
       canvas.drawCircle(
         Offset(x, y),
         particle.size,
@@ -396,4 +395,4 @@ class ParticlePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
-} 
+}

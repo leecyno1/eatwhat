@@ -102,7 +102,7 @@ class FoodDatabase {
   /// 根据口味获取食物
   static List<Food> getFoodsByTaste(List<String> tastes) {
     return _foods.where((food) {
-      return food.tasteAttributes.any((taste) => tastes.contains(taste));
+      return (food.tasteAttributes ?? const []).any((taste) => tastes.contains(taste));
     }).toList();
   }
 
@@ -112,8 +112,9 @@ class FoodDatabase {
     return _foods.where((food) {
       return food.name.toLowerCase().contains(lowerQuery) ||
           (food.description?.toLowerCase().contains(lowerQuery) ?? false) ||
-          food.cuisineType.toLowerCase().contains(lowerQuery) ||
-          food.tasteAttributes.any((taste) => taste.toLowerCase().contains(lowerQuery));
+          (food.cuisineType ?? '').toLowerCase().contains(lowerQuery) ||
+          (food.tasteAttributes ?? const [])
+              .any((taste) => taste.toLowerCase().contains(lowerQuery));
     }).toList();
   }
 
@@ -121,8 +122,8 @@ class FoodDatabase {
   static List<Food> getPopularFoods({int limit = 10}) {
     final sorted = List<Food>.from(_foods);
     sorted.sort((a, b) {
-      final aScore = a.rating * a.ratingCount;
-      final bScore = b.rating * b.ratingCount;
+      final aScore = a.rating * (a.ratingCount ?? 0);
+      final bScore = b.rating * (b.ratingCount ?? 0);
       return bScore.compareTo(aScore);
     });
     return sorted.take(limit).toList();
@@ -134,4 +135,4 @@ class FoodDatabase {
     filtered.sort((a, b) => b.rating.compareTo(a.rating));
     return filtered.take(limit).toList();
   }
-} 
+}

@@ -1,10 +1,13 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import '../../bubble/controllers/bubble_controller.dart';
-import '../widgets/food_card.dart';
-import '../../../shared/widgets/modern_loading_animation.dart';
-import '../../../shared/widgets/page_transitions.dart';
+import '../../../core/models/food.dart';
+import '../../../core/services/incremental_learning_service.dart';
+import '../../../shared/widgets/taste_feedback_slider.dart';
+import '../widgets/food_recommendation_loading.dart';
+import '../../../shared/widgets/loading_button.dart';
+import '../../../shared/themes/design_tokens.dart';
+import '../../../shared/widgets/ui/rounded_card.dart';
 
 /// 推荐结果页面
 class RecommendationScreen extends StatefulWidget {
@@ -14,8 +17,7 @@ class RecommendationScreen extends StatefulWidget {
   State<RecommendationScreen> createState() => _RecommendationScreenState();
 }
 
-class _RecommendationScreenState extends State<RecommendationScreen>
-    with TickerProviderStateMixin {
+class _RecommendationScreenState extends State<RecommendationScreen> with TickerProviderStateMixin {
   late AnimationController _slideController;
   late Animation<Offset> _slideAnimation;
 
@@ -48,12 +50,8 @@ class _RecommendationScreenState extends State<RecommendationScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade50,
       appBar: AppBar(
         title: const Text('推荐结果'),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        foregroundColor: Colors.orange.shade700,
         actions: [
           Consumer<BubbleController>(
             builder: (context, controller, child) {
@@ -92,9 +90,7 @@ class _RecommendationScreenState extends State<RecommendationScreen>
   /// 构建加载状态
   Widget _buildLoadingState() {
     return const Center(
-      child: FoodRecommendationLoading(
-        message: 'AI正在为您精心挑选美食...'
-      ),
+      child: FoodRecommendationLoading(message: 'AI正在为您精心挑选美食...'),
     );
   }
 
@@ -142,93 +138,30 @@ class _RecommendationScreenState extends State<RecommendationScreen>
   Widget _buildRecommendationList(BubbleController controller) {
     return SlideTransition(
       position: _slideAnimation,
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Colors.white.withOpacity(0.95),
-              Colors.grey.shade50.withOpacity(0.98),
-            ],
-          ),
-        ),
-        child: Column(
-          children: [
-            // 选择的口味标签
-            _buildSelectedTags(controller),
-
-            // 推荐列表 - 优化为瀑布流布局
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                child: CustomScrollView(
-                  slivers: [
-                    SliverPadding(
-                      padding: const EdgeInsets.only(top: 16),
-                      sliver: SliverGrid(
-                        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2, // 每行显示2个
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 12,
-                          childAspectRatio: 0.75, // 调整高宽比显示更多照片
-                        ),
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            final food = controller.recommendations[index];
-                            return _buildEnhancedFoodCard(food, index);
-                          },
-                          childCount: controller.recommendations.length,
-                        ),
-                      ),
-                    ),
-                    const SliverPadding(
-                      padding: EdgeInsets.only(bottom: 100), // 为底部操作栏预留空间
-                    ),
-                  ],
-                ),
-              ),
+      child: Column(
+        children: [
+          _buildSelectedTags(controller),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              itemCount: controller.recommendations.length,
+              itemBuilder: (context, index) {
+                final food = controller.recommendations[index];
+                return _buildEnhancedFoodCard(food, index);
+              },
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
   /// 构建增强的美食卡片
-  Widget _buildEnhancedFoodCard(dynamic food, int index) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withOpacity(0.9),
-            Colors.white.withOpacity(0.7),
-          ],
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 10,
-            spreadRadius: 2,
-            offset: const Offset(0, 4),
-          ),
-          BoxShadow(
-            color: Colors.white.withOpacity(0.8),
-            blurRadius: 8,
-            spreadRadius: -2,
-            offset: const Offset(0, -2),
-          ),
-        ],
-        border: Border.all(
-          color: Colors.white.withOpacity(0.3),
-          width: 1,
-        ),
-      ),
+  Widget _buildEnhancedFoodCard(Food food, int index) {
+    return RoundedCard(
+      padding: const EdgeInsets.all(0),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: DesignTokens.bigRadius,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -237,16 +170,7 @@ class _RecommendationScreenState extends State<RecommendationScreen>
               flex: 3,
               child: Container(
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.orange.shade100.withOpacity(0.5),
-                      Colors.orange.shade200.withOpacity(0.3),
-                    ],
-                  ),
-                ),
+                color: DesignTokens.surfaceMuted,
                 child: Stack(
                   children: [
                     // 美食图片占位或实际图片
@@ -263,15 +187,9 @@ class _RecommendationScreenState extends State<RecommendationScreen>
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.orange.withOpacity(0.9),
+                          color: DesignTokens.orange,
                           borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
+                          boxShadow: DesignTokens.softShadows(),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
@@ -298,22 +216,13 @@ class _RecommendationScreenState extends State<RecommendationScreen>
                 ),
               ),
             ),
-            
+
             // 食物信息
             Expanded(
               flex: 2,
               child: Container(
                 padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.white.withOpacity(0.95),
-                      Colors.grey.shade50.withOpacity(0.9),
-                    ],
-                  ),
-                ),
+                color: DesignTokens.surface,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -321,15 +230,12 @@ class _RecommendationScreenState extends State<RecommendationScreen>
                     Text(
                       food.name ?? '美食',
                       style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
+                          fontSize: 16, fontWeight: FontWeight.w800, color: DesignTokens.ink),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     const SizedBox(height: 4),
-                    
+
                     // 食物描述或标签
                     if (food.description != null)
                       Text(
@@ -341,9 +247,33 @@ class _RecommendationScreenState extends State<RecommendationScreen>
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                    
+
                     const Spacer(),
-                    
+
+                    // 反馈按钮行
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildFeedbackButton(
+                            icon: Icons.thumb_up_outlined,
+                            label: '喜欢',
+                            color: Colors.green,
+                            onTap: () => _showPositiveFeedback(food, index),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: _buildFeedbackButton(
+                            icon: Icons.thumb_down_outlined,
+                            label: '不感兴趣',
+                            color: Colors.grey,
+                            onTap: () => _showNegativeFeedback(food, index),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+
                     // 操作按钮
                     SizedBox(
                       width: double.infinity,
@@ -375,6 +305,157 @@ class _RecommendationScreenState extends State<RecommendationScreen>
         ),
       ),
     );
+  }
+
+  /// 构建反馈按钮
+  Widget _buildFeedbackButton({
+    required IconData icon,
+    required String label,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        decoration: BoxDecoration(
+          border: Border.all(color: color.withValues(alpha: 0.5)),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, size: 14, color: color),
+            const SizedBox(width: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                color: color,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 显示正向反馈（喜欢）
+  void _showPositiveFeedback(Food food, int index) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: TasteFeedbackSlider(
+            label: '喜欢这个推荐吗？',
+            initialValue: 0.6,
+            useStarRating: true,
+            onChanged: (intensity) {
+              _recordPositiveFeedback(food, index, intensity);
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 显示负向反馈（不感兴趣）
+  void _showNegativeFeedback(Food food, int index) {
+    showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: TasteFeedbackSlider(
+            label: '为什么不喜欢？',
+            initialValue: 0.4,
+            useStarRating: true,
+            onChanged: (intensity) {
+              _recordNegativeFeedback(food, index, intensity);
+            },
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 记录正向反馈
+  void _recordPositiveFeedback(Food food, int index, double intensity) {
+    final event = TasteFeedbackEvent(
+      recipeId: food.id ?? '',
+      intensity: intensity,
+      isPositive: true,
+      recommendationIndex: index,
+      tasteVector: _getTasteVectorFromFood(food),
+    );
+
+    IncrementalLearningService().recordFeedback(event);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('感谢您的反馈！已记录 "${food.name}" 的正向反馈'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+
+    debugPrint('✅ 正向反馈已记录: recipeId=${food.id}, intensity=$intensity, index=$index');
+  }
+
+  /// 记录负向反馈
+  void _recordNegativeFeedback(Food food, int index, double intensity) {
+    final event = TasteFeedbackEvent(
+      recipeId: food.id ?? '',
+      intensity: intensity,
+      isPositive: false,
+      recommendationIndex: index,
+      tasteVector: _getTasteVectorFromFood(food),
+    );
+
+    IncrementalLearningService().recordFeedback(event);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('感谢您的反馈！我们会减少 "${food.name}" 类似推荐'),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+
+    debugPrint('✅ 负向反馈已记录: recipeId=${food.id}, intensity=$intensity, index=$index');
+  }
+
+  /// 从 Food 模型提取口味向量
+  List<double>? _getTasteVectorFromFood(Food food) {
+    // 将 Food 的口味属性转换为 46 维向量
+    // 这里简化处理，实际项目应该使用更完整的映射
+    final vector = List<double>.filled(46, 0.0);
+
+    // 基本口味（0-9）
+    final tasteAttributes = food.tasteAttributes ?? [];
+    if (tasteAttributes.contains('甜')) vector[0] = 0.5;
+    if (tasteAttributes.contains('酸')) vector[1] = 0.5;
+    if (tasteAttributes.contains('辣')) vector[3] = 0.5;
+    if (tasteAttributes.contains('咸')) vector[4] = 0.5;
+    if (tasteAttributes.contains('鲜')) vector[5] = 0.5;
+    if (tasteAttributes.contains('清淡')) vector[7] = 0.5;
+    if (tasteAttributes.contains('香')) vector[8] = 0.5;
+
+    // 菜系（30-39）
+    final cuisineType = food.cuisineType ?? '';
+    final cuisineMap = {
+      '川菜': 30, '粤菜': 31, '苏菜': 32, '浙菜': 33,
+      '闽菜': 34, '湘菜': 35, '徽菜': 36, '鲁菜': 37,
+      '西餐': 38, '日韩': 39,
+    };
+    if (cuisineMap.containsKey(cuisineType)) {
+      vector[cuisineMap[cuisineType]!] = 0.5;
+    }
+
+    return vector;
   }
 
   /// 选择美食后的处理
@@ -413,23 +494,21 @@ class _RecommendationScreenState extends State<RecommendationScreen>
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.grey.shade300,
+                  color: DesignTokens.surfaceMuted,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              
+
               // 标题
               Padding(
                 padding: const EdgeInsets.all(16),
                 child: Text(
                   '获取 ${food.name ?? '美食'}',
                   style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                      fontSize: 18, fontWeight: FontWeight.w800, color: DesignTokens.ink),
                 ),
               ),
-              
+
               // 渠道选项
               Expanded(
                 child: ListView(
@@ -481,23 +560,13 @@ class _RecommendationScreenState extends State<RecommendationScreen>
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           child: Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  color.withOpacity(0.1),
-                  color.withOpacity(0.05),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: color.withOpacity(0.3),
-                width: 1,
-              ),
+              color: DesignTokens.surface,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: DesignTokens.softShadows(),
             ),
             child: Row(
               children: [
@@ -505,7 +574,7 @@ class _RecommendationScreenState extends State<RecommendationScreen>
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
                     color: color.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(12),
                   ),
                   child: Icon(
                     icon,
@@ -521,17 +590,11 @@ class _RecommendationScreenState extends State<RecommendationScreen>
                       Text(
                         title,
                         style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
+                            fontSize: 16, fontWeight: FontWeight.w800, color: DesignTokens.ink),
                       ),
                       Text(
                         subtitle,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey.shade600,
-                        ),
+                        style: const TextStyle(fontSize: 13, color: DesignTokens.inkMuted),
                       ),
                     ],
                   ),
@@ -573,40 +636,6 @@ class _RecommendationScreenState extends State<RecommendationScreen>
     // TODO: 集成大众点评API
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('正在查找附近提供${food.name}的餐厅...')),
-    );
-  }
-          Expanded(
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12),
-              child: CustomScrollView(
-                slivers: [
-                  SliverPadding(
-                    padding: const EdgeInsets.only(top: 16),
-                    sliver: SliverGrid(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2, // 每行显示2个
-                        crossAxisSpacing: 12,
-                        mainAxisSpacing: 12,
-                        childAspectRatio: 0.75, // 调整高宽比显示更多照片
-                      ),
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final food = controller.recommendations[index];
-                          return _buildEnhancedFoodCard(food, index);
-                        },
-                        childCount: controller.recommendations.length,
-                      ),
-                    ),
-                  ),
-                  const SliverPadding(
-                    padding: EdgeInsets.only(bottom: 100), // 为底部操作栏预留空间
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
@@ -679,7 +708,6 @@ class _RecommendationScreenState extends State<RecommendationScreen>
                       : () => _regenerateRecommendations(controller),
                   backgroundColor: Colors.orange,
                   textColor: Colors.white,
-                  loadingType: LoadingAnimationType.bubbles,
                 );
               },
             ),
@@ -702,90 +730,13 @@ class _RecommendationScreenState extends State<RecommendationScreen>
     }
   }
 
-  /// 显示食物详情
-  void _showFoodDetail(dynamic food) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        maxChildSize: 0.9,
-        minChildSize: 0.5,
-        builder: (context, scrollController) {
-          return Container(
-            decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-            ),
-            child: Column(
-              children: [
-                // 拖拽指示器
-                Container(
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(2),
-                  ),
-                ),
-
-                // 食物详情内容
-                Expanded(
-                  child: SingleChildScrollView(
-                    controller: scrollController,
-                    padding: const EdgeInsets.all(20),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          food.name ?? '未知美食',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                        ),
-                        const SizedBox(height: 8),
-                        if (food.description != null) ...[
-                          Text(
-                            food.description!,
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodyMedium
-                                ?.copyWith(
-                                  color: Colors.grey.shade600,
-                                ),
-                          ),
-                          const SizedBox(height: 16),
-                        ],
-
-                        // 其他食物信息可以在这里添加
-                        Text(
-                          '推荐理由',
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          '基于您选择的口味偏好，这道美食非常适合您的口味！',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Colors.grey.shade600,
-                                  ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          );
-        },
+  /// 切换收藏状态
+  void _toggleFavorite(Food food) {
+    // TODO: 实现收藏功能
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${food.name} 已添加到收藏'),
+        duration: const Duration(seconds: 2),
       ),
     );
   }

@@ -35,23 +35,22 @@ class ModernBubbleWidget extends StatefulWidget {
   State<ModernBubbleWidget> createState() => _ModernBubbleWidgetState();
 }
 
-class _ModernBubbleWidgetState extends State<ModernBubbleWidget>
-    with TickerProviderStateMixin {
+class _ModernBubbleWidgetState extends State<ModernBubbleWidget> with TickerProviderStateMixin {
   late AnimationController _scaleController;
   late AnimationController _glowController;
   late AnimationController _rotationController;
-  
+
   late Animation<double> _scaleAnimation;
   late Animation<double> _glowAnimation;
   late Animation<double> _rotationAnimation;
-  
+
   Offset? _panStart;
   bool _isPanning = false;
 
   @override
   void initState() {
     super.initState();
-    
+
     // 缩放动画
     _scaleController = AnimationController(
       duration: const Duration(milliseconds: 150),
@@ -64,7 +63,7 @@ class _ModernBubbleWidgetState extends State<ModernBubbleWidget>
       parent: _scaleController,
       curve: Curves.easeInOut,
     ));
-    
+
     // 发光动画
     _glowController = AnimationController(
       duration: const Duration(milliseconds: 600),
@@ -77,7 +76,7 @@ class _ModernBubbleWidgetState extends State<ModernBubbleWidget>
       parent: _glowController,
       curve: Curves.easeInOut,
     ));
-    
+
     // 旋转动画
     _rotationController = AnimationController(
       duration: const Duration(milliseconds: 800),
@@ -102,19 +101,18 @@ class _ModernBubbleWidgetState extends State<ModernBubbleWidget>
   @override
   void didUpdateWidget(ModernBubbleWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     // 禁用动画更新
-    /*
-    if (widget.isSelected != oldWidget.isSelected) {
-      if (widget.isSelected) {
-        _glowController.repeat(reverse: true);
-        _rotationController.forward();
-      } else {
-        _glowController.stop();
-        _glowController.reset();
-        _rotationController.reverse();
-      }
-    }
+    // if (widget.isSelected != oldWidget.isSelected) {
+    //   if (widget.isSelected) {
+    //     _glowController.repeat(reverse: true);
+    //     _rotationController.forward();
+    //   } else {
+    //     _glowController.stop();
+    //     _glowController.reset();
+    //     _rotationController.reverse();
+    //   }
+    // }
   }
 
   @override
@@ -127,9 +125,9 @@ class _ModernBubbleWidgetState extends State<ModernBubbleWidget>
 
   @override
   Widget build(BuildContext context) {
-    final bubbleSize = widget.bubble.size.clamp(60.0, 120.0); // 增大气泡尺寸
+    final bubbleSize = widget.bubble.size.clamp(48.0, 120.0); // 放宽下限以适配更多口味
     final gradient = ModernTheme.getBubbleGradient(widget.gradientIndex);
-    
+
     return AnimatedBuilder(
       animation: Listenable.merge([_scaleAnimation, _glowAnimation, _rotationAnimation]),
       builder: (context, child) {
@@ -162,11 +160,11 @@ class _ModernBubbleWidgetState extends State<ModernBubbleWidget>
               },
               onPanEnd: (details) {
                 if (_panStart == null || !_isPanning) return;
-                
+
                 _isPanning = false;
                 final velocity = details.velocity.pixelsPerSecond;
                 const threshold = 200.0; // 降低阈值使手势更敏感
-                
+
                 // 根据速度大小判断手势方向
                 if (velocity.dx.abs() > velocity.dy.abs()) {
                   // 水平手势优先
@@ -180,7 +178,7 @@ class _ModernBubbleWidgetState extends State<ModernBubbleWidget>
                     return;
                   }
                 }
-                
+
                 // 垂直手势
                 if (velocity.dy.abs() > threshold) {
                   if (velocity.dy < 0) {
@@ -191,7 +189,7 @@ class _ModernBubbleWidgetState extends State<ModernBubbleWidget>
                     widget.onSwipeDown?.call();
                   }
                 }
-                
+
                 _panStart = null;
               },
               onPanCancel: () {
@@ -211,7 +209,8 @@ class _ModernBubbleWidgetState extends State<ModernBubbleWidget>
                             shape: BoxShape.circle,
                             boxShadow: [
                               BoxShadow(
-                                color: gradient.colors.first.withValues(alpha: _glowAnimation.value * 0.5),
+                                color: gradient.colors.first
+                                    .withValues(alpha: _glowAnimation.value * 0.5),
                                 blurRadius: 20.0 + (_glowAnimation.value * 15.0),
                                 spreadRadius: 5.0 + (_glowAnimation.value * 10.0),
                               ),
@@ -219,7 +218,7 @@ class _ModernBubbleWidgetState extends State<ModernBubbleWidget>
                           ),
                         ),
                       ),
-                    
+
                     // 主气泡容器
                     Positioned.fill(
                       child: Container(
@@ -239,7 +238,7 @@ class _ModernBubbleWidgetState extends State<ModernBubbleWidget>
                           decoration: BoxDecoration(
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: widget.isSelected 
+                              color: widget.isSelected
                                   ? Colors.white.withValues(alpha: 0.8)
                                   : Colors.white.withValues(alpha: 0.3),
                               width: widget.isSelected ? 3 : 1,
@@ -266,9 +265,9 @@ class _ModernBubbleWidgetState extends State<ModernBubbleWidget>
                                       size: (bubbleSize * 0.3).w,
                                       color: Colors.white,
                                     ),
-                                  
+
                                   SizedBox(height: 1.h),
-                                  
+
                                   // 气泡文字
                                   AutoSizeText(
                                     widget.bubble.name,
@@ -295,7 +294,7 @@ class _ModernBubbleWidgetState extends State<ModernBubbleWidget>
                         ),
                       ),
                     ),
-                    
+
                     // 选中状态指示器
                     if (widget.isSelected)
                       Positioned(
@@ -348,6 +347,18 @@ class _ModernBubbleWidgetState extends State<ModernBubbleWidget>
         return Icons.schedule;
       case BubbleType.nutrition:
         return Icons.fitness_center;
+      case BubbleType.spicy:
+        return Icons.local_fire_department;
+      case BubbleType.sweet:
+        return Icons.cake;
+      case BubbleType.sour:
+        return Icons.eco;
+      case BubbleType.bitter:
+        return Icons.medical_services;
+      case BubbleType.salty:
+        return Icons.water_drop;
+      case BubbleType.umami:
+        return Icons.restaurant_menu;
     }
   }
 }

@@ -9,8 +9,7 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen>
-    with TickerProviderStateMixin {
+class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -85,9 +84,7 @@ class _RegisterScreenState extends State<RegisterScreen>
         email: _emailController.text.trim(),
         password: _passwordController.text,
         confirmPassword: _confirmPasswordController.text,
-        nickname: _nicknameController.text.trim().isEmpty 
-            ? null 
-            : _nicknameController.text.trim(),
+        nickname: _nicknameController.text.trim().isEmpty ? null : _nicknameController.text.trim(),
       );
 
       if (result.success && mounted) {
@@ -165,9 +162,9 @@ class _RegisterScreenState extends State<RegisterScreen>
                     ),
                     textAlign: TextAlign.center,
                   ),
-                  
+
                   const SizedBox(height: 8),
-                  
+
                   Text(
                     '加入吃什么，发现更多美食',
                     style: theme.textTheme.bodyLarge?.copyWith(
@@ -227,8 +224,7 @@ class _RegisterScreenState extends State<RegisterScreen>
                       if (value == null || value.trim().isEmpty) {
                         return '请输入邮箱';
                       }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                          .hasMatch(value)) {
+                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
                         return '邮箱格式不正确';
                       }
                       return null;
@@ -299,7 +295,8 @@ class _RegisterScreenState extends State<RegisterScreen>
                       hintText: '请再次输入密码',
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
-                        icon: Icon(_obscureConfirmPassword ? Icons.visibility_off : Icons.visibility),
+                        icon:
+                            Icon(_obscureConfirmPassword ? Icons.visibility_off : Icons.visibility),
                         onPressed: () {
                           setState(() {
                             _obscureConfirmPassword = !_obscureConfirmPassword;

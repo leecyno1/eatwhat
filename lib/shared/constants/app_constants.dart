@@ -103,8 +103,8 @@ class PriceRangeConstants {
   static const String budget = '经济实惠';
   static const String moderate = '中等价位';
   static const String expensive = '高端消费';
-  
+
   static const double budgetMax = 30.0;
   static const double moderateMax = 80.0;
   static const double expensiveMax = 200.0;
-} 
+}

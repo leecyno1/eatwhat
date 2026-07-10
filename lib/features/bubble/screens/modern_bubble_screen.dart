@@ -20,23 +20,22 @@ class ModernBubbleScreen extends StatefulWidget {
   State<ModernBubbleScreen> createState() => _ModernBubbleScreenState();
 }
 
-class _ModernBubbleScreenState extends State<ModernBubbleScreen>
-    with TickerProviderStateMixin {
+class _ModernBubbleScreenState extends State<ModernBubbleScreen> with TickerProviderStateMixin {
   late AnimationController _backgroundController;
   late AnimationController _headerController;
   late Animation<double> _headerAnimation;
   late Animation<Color?> _backgroundAnimation;
-  
+
   @override
   void initState() {
     super.initState();
-    
+
     // 背景渐变动画
     _backgroundController = AnimationController(
       duration: const Duration(seconds: 8),
       vsync: this,
     );
-    
+
     _backgroundAnimation = ColorTween(
       begin: const Color(0xFFF8F9FA),
       end: const Color(0xFFE8F4FD),
@@ -44,13 +43,13 @@ class _ModernBubbleScreenState extends State<ModernBubbleScreen>
       parent: _backgroundController,
       curve: Curves.easeInOut,
     ));
-    
+
     // 头部动画
     _headerController = AnimationController(
       duration: const Duration(milliseconds: 1200),
       vsync: this,
     );
-    
+
     _headerAnimation = Tween<double>(
       begin: 0.0,
       end: 1.0,
@@ -58,10 +57,10 @@ class _ModernBubbleScreenState extends State<ModernBubbleScreen>
       parent: _headerController,
       curve: Curves.elasticOut,
     ));
-    
+
     _backgroundController.repeat(reverse: true);
     _headerController.forward();
-    
+
     // 初始化气泡控制器
     WidgetsBinding.instance.addPostFrameCallback((_) {
       try {
@@ -158,7 +157,7 @@ class _ModernBubbleScreenState extends State<ModernBubbleScreen>
                     ],
                   ),
                 ),
-                
+
                 // 选择状态指示器
                 Consumer<BubbleController>(
                   builder: (context, controller, child) {
@@ -215,7 +214,8 @@ class _ModernBubbleScreenState extends State<ModernBubbleScreen>
                                 _buildStatusItem(
                                   icon: CupertinoIcons.heart_fill,
                                   label: '推荐度',
-                                  value: '${controller.bubbles.isNotEmpty ? ((controller.selectedCount / controller.bubbles.length) * 100).toInt() : 0}%',
+                                  value:
+                                      '${controller.bubbles.isNotEmpty ? ((controller.selectedCount / controller.bubbles.length) * 100).toInt() : 0}%',
                                   color: ModernTheme.warningColor,
                                 ),
                               ],
@@ -276,7 +276,6 @@ class _ModernBubbleScreenState extends State<ModernBubbleScreen>
         if (!controller.isInitialized) {
           return const Center(
             child: ModernLoadingAnimation(
-              type: LoadingAnimationType.bubbles,
               color: ModernTheme.primaryColor,
               message: '正在准备您的专属口味气泡...',
             ),
@@ -294,7 +293,7 @@ class _ModernBubbleScreenState extends State<ModernBubbleScreen>
                     painter: BubbleBackgroundPainter(),
                   ),
                 ),
-                
+
                 // 手势检测区域
                 GestureDetector(
                   onTapDown: (details) {
@@ -317,7 +316,7 @@ class _ModernBubbleScreenState extends State<ModernBubbleScreen>
                       children: controller.bubbles.asMap().entries.map((entry) {
                         final index = entry.key;
                         final bubble = entry.value;
-                        
+
                         return Positioned(
                           left: bubble.position.dx - bubble.size / 2,
                           top: bubble.position.dy - bubble.size / 2,
@@ -360,7 +359,7 @@ class _ModernBubbleScreenState extends State<ModernBubbleScreen>
                     ),
                   ),
                 ),
-                
+
                 // 提示文字
                 if (controller.selectedCount == 0)
                   Positioned(
@@ -496,9 +495,9 @@ class _ModernBubbleScreenState extends State<ModernBubbleScreen>
                                   ),
                           ),
                         ),
-                        
+
                         SizedBox(height: 8.h),
-                        
+
                         // 重置按钮
                         if (controller.selectedCount > 0)
                           TextButton(
@@ -542,13 +541,13 @@ class BubbleBackgroundPainter extends CustomPainter {
       80,
       paint,
     );
-    
+
     canvas.drawCircle(
       Offset(size.width * 0.8, size.height * 0.7),
       60,
       paint,
     );
-    
+
     canvas.drawCircle(
       Offset(size.width * 0.6, size.height * 0.2),
       40,

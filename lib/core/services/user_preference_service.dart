@@ -56,8 +56,7 @@ class UserPreferenceService {
   static Future<void> updateBubblePreference(String bubbleName, double score,
       [String? userId]) async {
     final preference = await getUserPreference(userId);
-    final updatedPreference =
-        preference.updateBubblePreference(bubbleName, score);
+    final updatedPreference = preference.updateBubblePreference(bubbleName, score);
     await saveUserPreference(updatedPreference);
   }
 
@@ -76,17 +75,14 @@ class UserPreferenceService {
   }
 
   /// 更新菜系偏好
-  static Future<void> updateCuisinePreference(String cuisine, int score,
-      [String? userId]) async {
+  static Future<void> updateCuisinePreference(String cuisine, int score, [String? userId]) async {
     final preference = await getUserPreference(userId);
-    final updatedPreference =
-        preference.updateCuisinePreference(cuisine, score.toDouble());
+    final updatedPreference = preference.updateCuisinePreference(cuisine, score.toDouble());
     await saveUserPreference(updatedPreference);
   }
 
   /// 更新口味偏好
-  static Future<void> updateTastePreference(String taste, int score,
-      [String? userId]) async {
+  static Future<void> updateTastePreference(String taste, int score, [String? userId]) async {
     final preference = await getUserPreference(userId);
     final updatedPreference = preference.updateTastePreference(taste, score.toDouble());
     await saveUserPreference(updatedPreference);

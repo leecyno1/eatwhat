@@ -41,17 +41,17 @@ class _TopLikeDislikeControlsState extends State<TopLikeDislikeControls>
     super.initState();
     _previousLikedCount = widget.likedCount;
     _previousDislikedCount = widget.dislikedCount;
-    
+
     _pulseController = AnimationController(
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _countController = AnimationController(
       duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-    
+
     _pulseAnimation = Tween<double>(
       begin: 1.0,
       end: 1.2,
@@ -59,7 +59,7 @@ class _TopLikeDislikeControlsState extends State<TopLikeDislikeControls>
       parent: _pulseController,
       curve: Curves.elasticOut,
     ));
-    
+
     _scaleAnimation = Tween<double>(
       begin: 0.8,
       end: 1.0,
@@ -72,7 +72,7 @@ class _TopLikeDislikeControlsState extends State<TopLikeDislikeControls>
   @override
   void didUpdateWidget(TopLikeDislikeControls oldWidget) {
     super.didUpdateWidget(oldWidget);
-    
+
     // 检测计数变化并触发动画
     if (widget.likedCount != _previousLikedCount ||
         widget.dislikedCount != _previousDislikedCount) {
@@ -85,7 +85,7 @@ class _TopLikeDislikeControlsState extends State<TopLikeDislikeControls>
   void _triggerCountAnimation() {
     _countController.reset();
     _countController.forward();
-    
+
     // 添加触觉反馈
     HapticFeedback.lightImpact();
   }
@@ -188,9 +188,9 @@ class _TopLikeDislikeControlsState extends State<TopLikeDislikeControls>
               );
             },
           ),
-          
+
           const SizedBox(width: 16),
-          
+
           // 分割线
           Container(
             width: 1,
@@ -207,9 +207,9 @@ class _TopLikeDislikeControlsState extends State<TopLikeDislikeControls>
               ),
             ),
           ),
-          
+
           const SizedBox(width: 16),
-          
+
           // 不喜欢按钮
           AnimatedBuilder(
             animation: Listenable.merge([_pulseAnimation, _scaleAnimation]),
@@ -278,7 +278,7 @@ class _TopLikeDislikeControlsState extends State<TopLikeDislikeControls>
               );
             },
           ),
-          
+
           // 重置按钮
           if (widget.onReset != null && (widget.likedCount > 0 || widget.dislikedCount > 0)) ...[
             const SizedBox(width: 16),
@@ -333,8 +333,7 @@ class StatusIndicator extends StatefulWidget {
   State<StatusIndicator> createState() => _StatusIndicatorState();
 }
 
-class _StatusIndicatorState extends State<StatusIndicator>
-    with SingleTickerProviderStateMixin {
+class _StatusIndicatorState extends State<StatusIndicator> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _pulseAnimation;
 
@@ -345,7 +344,7 @@ class _StatusIndicatorState extends State<StatusIndicator>
       duration: const Duration(seconds: 1),
       vsync: this,
     );
-    
+
     _pulseAnimation = Tween<double>(
       begin: 0.8,
       end: 1.0,
@@ -353,7 +352,7 @@ class _StatusIndicatorState extends State<StatusIndicator>
       parent: _controller,
       curve: Curves.easeInOut,
     ));
-    
+
     if (widget.isActive) {
       _controller.repeat(reverse: true);
     }

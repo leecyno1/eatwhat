@@ -58,19 +58,18 @@ class MealTypeSelector extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     if (showIcons) ...[
-                                          Icon(
-                      _getMealTypeIcon(mealType),
-                      color: isSelected ? Colors.white : Colors.grey[600],
-                      size: 20,
-                    ),
-                    const SizedBox(height: 4),
+                      Icon(
+                        _getMealTypeIcon(mealType),
+                        color: isSelected ? Colors.white : Colors.grey[600],
+                        size: 20,
+                      ),
+                      const SizedBox(height: 4),
                     ],
                     Text(
                       mealType.displayName,
                       style: TextStyle(
                         color: isSelected ? Colors.white : Colors.grey[700],
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                         fontSize: 13,
                       ),
                     ),
@@ -123,8 +122,7 @@ class MealTypeSelector extends StatelessWidget {
                       mealType.displayName,
                       style: TextStyle(
                         color: isSelected ? Colors.white : Colors.grey[700],
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                         fontSize: 12,
                       ),
                     ),

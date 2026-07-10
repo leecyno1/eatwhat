@@ -186,7 +186,7 @@ class DeliveryRecommendationService {
 
       // 基础评分
       score += item.rating * 2;
-    
+
       // 价格评分
       if (item.price != null && item.price! > 0) {
         if (item.price! <= 50.0) {
@@ -224,7 +224,7 @@ class DeliveryRecommendationService {
     int totalChecks = 0;
 
     // 检查口味匹配
-    for (final taste in item.tasteAttributes) {
+    for (final taste in item.tasteAttributes ?? const <String>[]) {
       totalChecks++;
       final tasteScore = userPreference.tastePreferences[taste] ?? 0;
       if (tasteScore > 0) {
