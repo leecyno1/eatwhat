@@ -1,41 +1,52 @@
 # 《吃什么》Flutter 应用
 
-一个帮助用户解决饮食选择困难的创新移动应用，通过气泡交互方式提供个性化美食推荐。
+一个帮助用户解决饮食选择困难的 Flutter 应用。当前主线是 V2 体验：通过口味卡片收集偏好，先从本地统一菜谱库召回候选，再用 AI 做推荐收束与理由生成。
 
 ## 🌟 核心功能
 
 ### ✅ 已实现
-- **气泡交互系统**: 创新的气泡选择界面，支持点击、滑动等手势
-- **智能推荐引擎**: 基于用户偏好的食物推荐算法
-- **外卖平台集成**: 美团、饿了么API接口集成
-- **用户系统**: 登录、注册、个人资料管理
-- **收藏功能**: 食物收藏和管理
-- **搜索功能**: 智能食物搜索和筛选
-- **历史记录**: 浏览历史追踪
+- **V2 口味选择**: 首页通过口味卡片、自由文本和语音输入形成口味信号
+- **本地优先推荐**: 基于 `unified_recipes.db` 做召回和启发式打分
+- **AI 推荐收束**: 使用 SiliconFlow/MiniMax 兼容接口生成精排、理由、简介、营养和搭配内容
+- **HowToCook 菜谱增强**: 用 HowToCook 数据补全食材、步骤和菜图
+- **收藏与偏好学习**: 收藏标签/菜品，并把反馈写入本地偏好分数
+- **执行路径**: 预留美团、饿了么、大众点评 Provider 和代理服务接入
 
 ### 🚧 开发中
-- 真实API接口对接
+- 真实外卖/到店 API 资质与代理服务对接
 - 推荐算法优化
-- 用户偏好学习系统
-- 社交分享功能
+- 仓库治理与 CI 稳定化
+- 旧版 `lib/core + lib/features` 收敛到 V2 主线
 
 ## 🏗️ 项目架构
 
 ```
 lib/
-├── core/                   # 核心模块
-│   ├── models/            # 数据模型
-│   ├── services/          # 业务服务
-│   ├── utils/             # 工具类
-│   └── theme/             # 主题配置
-├── features/              # 功能模块
-│   ├── auth/              # 认证模块
-│   ├── bubble/            # 气泡系统
-│   ├── recommendation/    # 推荐模块
-│   ├── search/            # 搜索功能
-│   ├── favorites/         # 收藏功能
-│   └── user/              # 用户管理
-└── shared/                # 共享组件
+├── main.dart              # 应用入口，初始化 Hive、EnvConfig、ProviderScope
+├── v2/                    # 当前产品主线
+│   ├── app_v2.dart        # MaterialApp + ScreenUtil + 首启问卷/引导
+│   ├── core/              # V2 数据模型、推荐服务、执行平台、主题
+│   └── features/          # V2 首页、决策页、结果页、详情页、收藏、执行
+├── core/                  # 旧版基础服务和部分仍复用的数据/数据库服务
+├── features/              # 旧版功能页，新增产品功能优先不要从这里扩展
+└── shared/                # 跨版本共享组件和设计 token
+```
+
+当前主流程：
+
+```text
+main.dart -> AppV2 -> HomePage -> DecisionPage -> ResultPage
+```
+
+推荐链路：
+
+```text
+口味标签/自由输入
+  -> V2Phase2RecommendationService
+  -> UnifiedRecommendationServiceV2 本地召回
+  -> GenerationService AI 收束
+  -> V2HowToCookRecipeService 补全菜谱详情
+  -> ResultPage 展示与执行
 ```
 
 ## 🚀 快速开始
@@ -51,6 +62,21 @@ lib/
 flutter pub get
 ```
 
+### 配置环境变量
+开发时可以复制示例文件：
+
+```bash
+cp .env.example .env
+```
+
+`.env` 已被 `.gitignore` 忽略，并且不会作为 Flutter asset 打包。生产或 CI 更推荐使用编译参数注入非敏感配置：
+
+```bash
+flutter run --dart-define=SILICONFLOW_API_KEY=your_key
+```
+
+正式发布不要把长期有效的 AI 或平台密钥放在客户端包内，优先通过后端代理或短期 token 调用。
+
 ### 运行应用
 ```bash
 # 调试模式
@@ -63,56 +89,49 @@ flutter run --release
 ## 📱 技术栈
 
 - **框架**: Flutter 3.x
-- **状态管理**: Provider
-- **本地存储**: Hive
+- **状态管理**: Riverpod + 局部 ChangeNotifier/Service 单例
+- **本地存储**: SharedPreferences、Hive、SQLite
 - **网络请求**: Dio
-- **动画**: Flutter原生动画库
-- **图标**: Cupertino Icons
+- **路由**: V2 当前使用 MaterialApp + Navigator；旧版保留 GoRouter
+- **动画/交互**: Flutter 动画、Flame、Rive、传感器输入
 
 ## 🎯 开发计划
 
-### 阶段一 (当前)
-- [x] 基础架构搭建
-- [x] 核心功能实现
-- [ ] 代码质量优化
-- [ ] 单元测试编写
+### 当前优先级
+- [x] V2 主链路搭建
+- [x] 本地菜谱库 + AI 收束推荐
+- [x] HowToCook 菜谱增强
+- [ ] 修复 CI 阻断项
+- [ ] 清理历史产物和旧版入口
 
-### 阶段二 (下期)
-- [ ] 真实API集成
-- [ ] 性能优化
-- [ ] 用户反馈系统
-- [ ] 多语言支持
+### 下期
+- [ ] 拆分结果页职责
+- [ ] 扩充统一菜谱库
+- [ ] 接入正式执行层代理服务
+- [ ] 完善偏好学习和回归测试
 
-### 阶段三 (未来)
-- [ ] AI智能推荐
-- [ ] 社交功能
-- [ ] 离线模式
-- [ ] 跨平台发布
+## 📊 当前数据规模
 
-## 🤝 贡献指南
+- `assets/data/unified_recipes.db`: 340 道菜、341 个菜谱变体、710 个标签
+- `assets/data/howtocook_complete_recipes.db`: 195 条 HowToCook 菜谱
+- `assets/images/prebuilt_dishes/`: 结果页优先使用的预制菜图
 
-1. Fork 项目
-2. 创建功能分支 (`git checkout -b feature/AmazingFeature`)
-3. 提交更改 (`git commit -m 'Add some AmazingFeature'`)
-4. 推送到分支 (`git push origin feature/AmazingFeature`)
-5. 开启 Pull Request
+核对命令：
+
+```bash
+sqlite3 assets/data/unified_recipes.db "select 'dish', count(*) from dish union all select 'recipe_variant', count(*) from recipe_variant union all select 'tag', count(*) from tag;"
+sqlite3 assets/data/howtocook_complete_recipes.db 'select count(*) from howtocook_recipes;'
+```
+
+## 🧪 常用命令
+
+```bash
+flutter analyze
+dart format .
+flutter test
+dart run build_runner build --delete-conflicting-outputs
+```
 
 ## 📄 许可证
 
 本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情
-
-## 📊 项目统计
-
-- **代码文件**: 38个Dart文件
-- **代码行数**: 12,728行
-- **功能模块**: 9个主要模块
-- **开发进度**: 70%完成
-
-## 🐛 问题反馈
-
-如果你发现任何问题，请在 [Issues](https://github.com/your-repo/issues) 页面提交。
-
-## 📞 联系我们
-
-- 邮箱: your-email@example.com
-- 微信: your-wechat
