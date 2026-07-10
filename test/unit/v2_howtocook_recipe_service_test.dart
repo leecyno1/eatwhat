@@ -1,4 +1,3 @@
-import 'package:eatwhat_app/v2/core/data/models/howtocook_recipe_detail.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/services/v2_howtocook_recipe_service.dart';
 import 'package:flutter_test/flutter_test.dart';
