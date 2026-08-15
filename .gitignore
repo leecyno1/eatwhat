@@ -18,6 +18,12 @@ migrate_working_dir/
 /*.db
 /*_report_*.json
 
+# Vendored third-party recipe sources and local artifacts
+/HowToCook/
+/HowToCook-1.5.0/
+/what-to-eat/
+/output/
+
 # IntelliJ related
 *.iml
 *.ipr
