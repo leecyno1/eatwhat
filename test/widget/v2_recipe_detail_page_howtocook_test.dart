@@ -114,6 +114,59 @@ void main() {
     expect(find.text('生成图片'), findsNothing);
     expect(find.text('一道十分下饭的美食'), findsNothing);
     expect(find.text('鸡腿 2只'), findsNothing);
+    expect(find.text('暖食编辑部 · 今日菜谱'), findsNothing);
+  });
+
+  testWidgets('统一库简化步骤会替换为匹配的 HowToCook 详细步骤', (tester) async {
+    final service = V2HowToCookRecipeService(
+      searchLoader: (query, limit) async => [
+        {
+          'id': 'htc_1',
+          'name': '黄焖鸡',
+          'description': '一道十分下饭的美食',
+          'difficulty': 3,
+          'category': '荤菜',
+        },
+      ],
+      completeLoader: (recipeId) async => {
+        'id': 'htc_1',
+        'name': '黄焖鸡',
+        'description': '一道十分下饭的美食',
+        'difficulty': 3,
+        'category': '荤菜',
+        'ingredients': [
+          {'name': '鸡腿', 'amount': '2', 'unit': '只'},
+          {'name': '香菇', 'amount': '5', 'unit': '朵'},
+        ],
+        'steps': [
+          {'description': '鸡腿加料酒和姜片腌制 15 分钟。'},
+          {'description': '炒香糖色后焖煮 20 分钟，最后加入青椒。'},
+        ],
+      },
+      assetIndexLoader: () async => '{"items":[]}',
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: RecipeDetailPage(
+          recipe: const RecipeModel(
+            id: '19',
+            name: '黄焖鸡',
+            description: '统一库简化描述',
+            ingredients: ['鸡肉'],
+            steps: ['准备食材。', '调味装盘。'],
+            source: 'unified_db',
+          ),
+          howToCookRecipeService: service,
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('鸡腿加料酒和姜片腌制 15 分钟。'), findsOneWidget);
+    expect(find.text('准备食材。'), findsNothing);
   });
 
   testWidgets('RecipeDetailPage 可从照着做摘要进入做菜模式', (tester) async {
@@ -144,7 +197,7 @@ void main() {
 
     expect(find.text('计时 8 分钟'), findsOneWidget);
     expect(
-        find.byKey(const ValueKey('recipe-cooking-mode-panel')), findsNothing);
+        find.byKey(const ValueKey('recipe-cooking-mode-page')), findsNothing);
 
     await tester.ensureVisible(
         find.byKey(const ValueKey('recipe-brief-start-cooking-button')));
@@ -153,9 +206,23 @@ void main() {
         .tap(find.byKey(const ValueKey('recipe-brief-start-cooking-button')));
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const ValueKey('recipe-cooking-mode-panel')),
-        findsOneWidget);
+    expect(
+        find.byKey(const ValueKey('recipe-cooking-mode-page')), findsOneWidget);
+    expect(
+        find.byKey(const ValueKey('recipe-cooking-page-view')), findsOneWidget);
     expect(find.text('做菜模式'), findsOneWidget);
+    expect(find.text('第 1 / 2 步 · 完成 0/2'), findsOneWidget);
+    expect(find.text('番茄炒出沙。'), findsWidgets);
+
+    await tester.tap(
+      find.byKey(const ValueKey('recipe-cooking-next-step-button')),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('第 2 / 2 步 · 完成 1/2'), findsOneWidget);
+    expect(find.text('加水煮 8 分钟后下肥牛。'), findsWidgets);
+    expect(find.byKey(const ValueKey('recipe-cooking-complete-button')),
+        findsOneWidget);
   });
 
   testWidgets('RecipeDetailPage 能渲染 HowToCook 本地图片资产', (tester) async {
@@ -453,9 +520,13 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
 
     expect(find.text('做菜模式'), findsOneWidget);
-    expect(find.textContaining('先备料'), findsOneWidget);
-    expect(find.text('完成 0/2'), findsOneWidget);
-    expect(find.byKey(const ValueKey('recipe-cooking-mode-panel')),
+    expect(
+      find.byKey(const ValueKey('recipe-cooking-page-view')),
+      findsOneWidget,
+    );
+    expect(find.text('第 1 / 2 步 · 完成 0/2'), findsOneWidget);
+    expect(find.text('番茄炒出沙。'), findsWidgets);
+    expect(find.byKey(const ValueKey('recipe-cooking-next-step-button')),
         findsOneWidget);
   });
 
@@ -505,6 +576,13 @@ void main() {
 
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
+
+    expect(find.byKey(const ValueKey('recipe-cooking-next-step-button')),
+        findsOneWidget);
+
+    await tester
+        .tap(find.byKey(const ValueKey('recipe-cooking-next-step-button')));
+    await tester.pumpAndSettle();
 
     expect(find.byKey(const ValueKey('recipe-cooking-complete-button')),
         findsOneWidget);

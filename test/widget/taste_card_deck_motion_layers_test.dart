@@ -5,7 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('TasteDealEntryCard', () {
-    testWidgets('wraps child with deal entry transform', (tester) async {
+    testWidgets('wraps child with deal entry fade', (tester) async {
       final controller = AnimationController(
         vsync: tester,
         duration: const Duration(milliseconds: 520),
@@ -26,7 +26,7 @@ void main() {
       expect(
         find.descendant(
           of: find.byType(TasteDealEntryCard),
-          matching: find.byType(Transform),
+          matching: find.byType(Opacity),
         ),
         findsOneWidget,
       );

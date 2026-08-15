@@ -36,7 +36,7 @@ void main() {
 
     await _pumpUntilFound(
       tester,
-      _gridCardFinder(),
+      find.byKey(const ValueKey('taste-physical-habitat')),
       step: const Duration(milliseconds: 120),
       maxPumps: 20,
     );
@@ -58,6 +58,15 @@ void main() {
     expect(find.byKey(const ValueKey('result-candidate-rail')), findsOneWidget);
     expect(find.text('番茄肥牛锅'), findsWidgets);
     expect(find.text('热菜、带汤感，适合今晚直接收口。'), findsWidgets);
+
+    await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(find.text('正在准备推荐'), findsNothing);
+    expect(
+      find.byKey(const ValueKey('home-start-inference-button')),
+      findsOneWidget,
+    );
   });
 }
 
@@ -79,10 +88,8 @@ V2Phase2RecommendationService _fakeRecommendationFlowService(
   expect(input.freeformRequirement, contains('锅气'));
 
   return V2Phase2RecommendationService(
-    aiRecommendationLoader: ({
-      required tags,
-      required userProfile,
-    }) async {
+    enableAiEnhancement: false,
+    localRecommendationLoader: (input, tags, limit) async {
       return const [
         RecipeModel(
           id: 'dish_2',
@@ -90,7 +97,7 @@ V2Phase2RecommendationService _fakeRecommendationFlowService(
           description: '热菜、带汤感，适合今晚直接收口。',
           ingredients: ['番茄', '肥牛'],
           tags: ['热菜', '夜宵'],
-          source: 'AI Recommendation',
+          source: 'unified_db',
         ),
         RecipeModel(
           id: 'dish_1',
@@ -98,7 +105,7 @@ V2Phase2RecommendationService _fakeRecommendationFlowService(
           description: '锅气和辣味更冲，适合想吃更刺激一点的时候。',
           ingredients: ['鸡肉', '辣椒'],
           tags: ['辣', '夜宵'],
-          source: 'AI Recommendation',
+          source: 'unified_db',
         ),
         RecipeModel(
           id: 'dish_3',
@@ -106,7 +113,7 @@ V2Phase2RecommendationService _fakeRecommendationFlowService(
           description: '口味直接，适合今天这口。',
           ingredients: ['牛肉', '蔬菜'],
           tags: ['辣', '锅气'],
-          source: 'AI Recommendation',
+          source: 'unified_db',
         ),
       ];
     },
@@ -120,11 +127,4 @@ V2HowToCookRecipeService _fakeHowToCookService() {
     completeLoader: (recipeId) async => null,
     assetIndexLoader: () async => '{"items":[]}',
   );
-}
-
-Finder _gridCardFinder() {
-  return find.byWidgetPredicate((widget) {
-    final key = widget.key;
-    return key is ValueKey<String> && key.value.startsWith('taste-grid-card-');
-  });
 }

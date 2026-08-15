@@ -16,15 +16,15 @@ void main() {
     );
   }
 
-  test('4x4 会话默认展示第一页 16 张卡', () {
+  test('2x4 会话默认展示第一页 8 张卡', () {
     final session = TasteDeckSessionState.initial(
-      deck: buildCards(32),
+      deck: buildCards(16),
       cardDeckSeed: 7,
     );
 
     expect(session.currentPageCards.length, TasteDeckSessionState.pageSize);
     expect(session.currentPageCards.first.id, 'tag_0');
-    expect(session.currentPageCards.last.id, 'tag_15');
+    expect(session.currentPageCards.last.id, 'tag_7');
     expect(session.currentPageNumber, 1);
     expect(session.totalPageCount, 2);
   });
@@ -38,9 +38,9 @@ void main() {
 
     expect(session.likedTagIds, ['tag_0']);
     expect(session.currentPageCards.length, TasteDeckSessionState.pageSize);
-    expect(session.currentPageCards.first.id, 'tag_16');
+    expect(session.currentPageCards.first.id, 'tag_8');
     expect(session.currentPageCards[1].id, 'tag_1');
-    expect(session.currentPageCards[15].id, 'tag_15');
+    expect(session.currentPageCards[7].id, 'tag_7');
     expect(session.pageReactionFor('tag_0'), TasteCardReaction.liked);
     expect(session.currentPageNumber, 1);
   });
@@ -55,8 +55,8 @@ void main() {
         .recordReaction(cards[1], TasteCardReaction.disliked)
         .advancePage();
 
-    expect(session.seenTagIds,
-        containsAll(['tag_0', 'tag_1', 'tag_16', 'tag_17']));
+    expect(
+        session.seenTagIds, containsAll(['tag_0', 'tag_1', 'tag_8', 'tag_9']));
     expect(session.currentPageCards.map((card) => card.id),
         isNot(contains('tag_0')));
     expect(session.currentPageCards.map((card) => card.id),
@@ -79,10 +79,10 @@ void main() {
     expect(session.dislikedTagIds, ['tag_1']);
     expect(session.skippedTagIds.length, TasteDeckSessionState.pageSize);
     expect(session.currentPageNumber, 2);
-    expect(session.currentPageCards.first.id, 'tag_18');
+    expect(session.currentPageCards.first.id, 'tag_10');
   });
 
-  test('4x4 结果和文本要求会一起进入推理输入', () {
+  test('2x4 结果和文本要求会一起进入推理输入', () {
     final cards = buildCards(40);
     final session = TasteDeckSessionState.initial(
       deck: cards,
@@ -147,5 +147,6 @@ void main() {
     expect(input.primarySignals, contains('素食'));
     expect(input.primarySignals, contains('叫外卖'));
     expect(input.primarySignals, contains('附近'));
+    expect(session.canStartInference, isTrue);
   });
 }

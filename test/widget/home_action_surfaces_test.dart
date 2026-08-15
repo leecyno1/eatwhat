@@ -47,8 +47,7 @@ void main() {
 
       expect(find.byKey(const ValueKey('home-start-inference-button')),
           findsOneWidget);
-      expect(find.text('已收集 3 项'), findsOneWidget);
-      expect(find.text('下一步：查看今日推荐'), findsOneWidget);
+      expect(find.text('生成推荐 · 3 项'), findsOneWidget);
 
       await tester
           .tap(find.byKey(const ValueKey('home-start-inference-button')));
@@ -72,9 +71,7 @@ void main() {
         ),
       );
 
-      expect(find.text('步骤 2'), findsOneWidget);
-      expect(find.text('先滑卡或补一句需求'), findsOneWidget);
-      expect(find.text('至少确认 1 张卡，或补一句文字要求'), findsOneWidget);
+      expect(find.text('选择口味后生成'), findsOneWidget);
 
       await tester
           .tap(find.byKey(const ValueKey('home-start-inference-button')));

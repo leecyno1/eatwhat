@@ -47,6 +47,8 @@ void main() {
     expect(find.text('辣'), findsOneWidget);
     expect(find.text('火锅'), findsOneWidget);
     expect(find.byKey(const ValueKey('execution-home-page')), findsOneWidget);
+    expect(find.text('开吃方式'), findsOneWidget);
+    expect(find.text('暖食编辑部 · 开吃指南'), findsNothing);
     expect(find.byKey(const ValueKey('execution-open-howtocook-library')),
         findsOneWidget);
 
@@ -114,8 +116,10 @@ void main() {
 
     expect(find.byType(RecipeDetailPage), findsOneWidget);
     expect(find.text('做菜模式'), findsOneWidget);
-    expect(find.byKey(const ValueKey('recipe-cooking-mode-panel')),
-        findsOneWidget);
+    expect(
+        find.byKey(const ValueKey('recipe-cooking-mode-page')), findsOneWidget);
+    expect(
+        find.byKey(const ValueKey('recipe-cooking-page-view')), findsOneWidget);
   });
 
   testWidgets('没有明确开吃方式时会用历史偏好推荐路径', (tester) async {
@@ -271,8 +275,8 @@ void main() {
 
     expect(find.text('老地方砂锅'), findsOneWidget);
     expect(find.text('¥42'), findsOneWidget);
-    expect(find.text('支持预填购物车'), findsOneWidget);
-    expect(find.text('打开美团外卖'), findsOneWidget);
+    expect(find.text('支持快速下单'), findsOneWidget);
+    expect(find.text('去美团外卖下单'), findsOneWidget);
     expect(find.text('来源 · proxy'), findsOneWidget);
     expect(find.textContaining('命中招牌锅物'), findsOneWidget);
 
@@ -454,6 +458,8 @@ void main() {
   test('执行平台名称会统一映射为开吃路径', () {
     expect(executionPathForPlatform('meituan'), ExecutionPath.delivery);
     expect(executionPathForPlatform('eleme'), ExecutionPath.delivery);
+    expect(executionPathForPlatform('jd_delivery'), ExecutionPath.delivery);
+    expect(executionPathForPlatform('delivery'), ExecutionPath.delivery);
     expect(executionPathForPlatform('dianping'), ExecutionPath.dineIn);
     expect(executionPathForPlatform('apple_maps'), ExecutionPath.dineIn);
     expect(executionPathForPlatform('unknown'), ExecutionPath.any);

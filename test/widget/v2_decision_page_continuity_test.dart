@@ -12,7 +12,7 @@ void main() {
     await bootstrapTestEnvironment();
   });
 
-  testWidgets('DecisionPage 接收口味签名并展示 AI 收束舞台', (tester) async {
+  testWidgets('DecisionPage 接收口味签名并展示原收束舞台', (tester) async {
     final logs = <String>[];
     final previousDebugPrint = debugPrint;
     debugPrint = (String? message, {int? wrapWidth}) {
@@ -48,8 +48,9 @@ void main() {
       expect(
           find.byKey(const ValueKey('decision-stage-shell')), findsOneWidget);
       expect(find.text('正在组合你的口味签名'), findsOneWidget);
-      expect(find.textContaining('AI 生成'), findsWidgets);
-      expect(find.textContaining('资料补全'), findsWidgets);
+      expect(find.text('暖食编辑部'), findsNothing);
+      expect(find.textContaining('本地召回'), findsWidgets);
+      expect(find.textContaining('智能收束'), findsWidgets);
     } finally {
       debugPrint = previousDebugPrint;
     }

@@ -87,13 +87,14 @@ void main() {
           )
           .single;
 
-      expect(card.accentHexes, const ['0xFFF46B40', '0xFFFFAB91']);
+      expect(card.accentHexes, const ['0xFFC94B2C', '0xFFFFAB91']);
       expect(card.blurb, '把 随便 纳入口味签名');
       expect(card.examples, const ['随便', '今日签名']);
       expect(card.artKey, 'custom-art');
     });
 
-    test('can build a deck directly from the unified catalog service', () async {
+    test('can build a deck directly from the unified catalog service',
+        () async {
       final builder = HomeTasteDeckBuilder(
         tagCatalogService: _StaticCatalogService([
           _tag('db_taste_1', '辣', 'flavor'),
@@ -138,7 +139,8 @@ class _StaticCatalogService extends V2TagCatalogService {
   final List<UnifiedTagModel> tags;
 
   @override
-  Future<List<UnifiedTagModel>> loadTags({int minimumFallbackCount = 36}) async {
+  Future<List<UnifiedTagModel>> loadTags(
+      {int minimumFallbackCount = 36}) async {
     return tags;
   }
 }

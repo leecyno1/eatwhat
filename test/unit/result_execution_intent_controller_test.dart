@@ -1,4 +1,6 @@
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
+import 'package:eatwhat_app/v2/core/data/models/recommendation_resolution.dart';
+import 'package:eatwhat_app/v2/core/data/models/recommendation_telemetry_context.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_execution_intent_controller.dart';
@@ -67,6 +69,34 @@ void main() {
       );
 
       expect(intent.locationPreference, ExecutionLocationPreference.nearby);
+    });
+
+    test('preserves recommendation telemetry context and candidate position',
+        () {
+      const controller = ResultExecutionIntentController();
+      const recommendationContext = RecommendationTelemetryContext(
+        recommendationId: 'rec_shared',
+        algorithmVersion: 'hybrid_v3_0',
+        primarySource: 'unified_db',
+        resolutionStatus: RecommendationResolutionStatus.dbResolved,
+        recalledCount: 12,
+        finalCount: 5,
+        latencyMs: 180,
+        diversityScore: 0.8,
+        appliedConstraintCount: 2,
+      );
+
+      final intent = controller.buildIntent(
+        recipe: _recipe(),
+        preferredPath: ExecutionPath.cook,
+        pairings: const [],
+        displayTags: const ['家常'],
+        recommendationContext: recommendationContext,
+        recommendationPosition: 2,
+      );
+
+      expect(intent.recommendationContext, same(recommendationContext));
+      expect(intent.recommendationPosition, 2);
     });
   });
 }

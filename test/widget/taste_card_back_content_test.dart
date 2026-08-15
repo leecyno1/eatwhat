@@ -54,7 +54,8 @@ void main() {
         ),
       );
 
-      expect(find.text('翻面'), findsOneWidget);
+      expect(find.text('食材'), findsOneWidget);
+      expect(find.text('食材角色'), findsOneWidget);
       expect(
           find.byKey(
               const ValueKey('taste-card-back-layout-ingredient-card_1')),

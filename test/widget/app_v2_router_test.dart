@@ -1,10 +1,13 @@
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
+import 'package:eatwhat_app/v2/core/external/platform/meituan_delivery_order_client.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
 import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
 import 'package:eatwhat_app/v2/features/decision/decision_page.dart';
 import 'package:eatwhat_app/v2/features/details/recipe_detail_page.dart';
 import 'package:eatwhat_app/v2/features/execution/execution_home_page.dart';
+import 'package:eatwhat_app/v2/features/execution/meituan_menu_builder_page.dart';
+import 'package:eatwhat_app/v2/features/execution/meituan_order_page.dart';
 import 'package:eatwhat_app/v2/features/home/home_page.dart';
 import 'package:eatwhat_app/v2/features/result/result_page.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +23,18 @@ void main() {
       expect(
         AppV2Router.initialLocationForBootstrap('result_demo'),
         AppV2Routes.resultDemo,
+      );
+      expect(
+        AppV2Router.initialLocationForBootstrap('execution_demo'),
+        AppV2Routes.executionDemo,
+      );
+      expect(
+        AppV2Router.initialLocationForBootstrap('delivery_demo'),
+        AppV2Routes.deliveryDemo,
+      );
+      expect(
+        AppV2Router.initialLocationForBootstrap('order_demo'),
+        AppV2Routes.orderDemo,
       );
       expect(
         AppV2Router.initialLocationForBootstrap('HOME'),
@@ -39,6 +54,10 @@ void main() {
       await tester.pump(const Duration(milliseconds: 200));
 
       expect(find.byType(HomePage), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey('taste-card-stage-shell')),
+        findsOneWidget,
+      );
       expect(navigatorKey.currentState, isNotNull);
     });
 
@@ -68,6 +87,40 @@ void main() {
       await tester.pump(const Duration(milliseconds: 200));
 
       expect(find.byType(ResultPage), findsOneWidget);
+    });
+
+    testWidgets(
+        'delivery demo provides reviewable merchants without API config',
+        (tester) async {
+      final router = AppV2Router.createRouter(
+        navigatorKey: GlobalKey<NavigatorState>(),
+        debugMode: true,
+        debugBootstrap: 'delivery_demo',
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(MeituanMenuBuilderPage), findsOneWidget);
+      expect(find.text('锅气食堂（福田店）'), findsOneWidget);
+      expect(find.text('家常小馆（中心区店）'), findsOneWidget);
+    });
+
+    testWidgets('order demo provides reviewable products without API config',
+        (tester) async {
+      final router = AppV2Router.createRouter(
+        navigatorKey: GlobalKey<NavigatorState>(),
+        debugMode: true,
+        debugBootstrap: 'order_demo',
+      );
+
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(MeituanOrderPage), findsOneWidget);
+      expect(find.text('麻婆豆腐'), findsOneWidget);
+      expect(find.byKey(const ValueKey('meituan-order-flow')), findsOneWidget);
+      expect(find.text('菜单已选 2 份'), findsOneWidget);
     });
 
     testWidgets('renders decision route from route data', (tester) async {
@@ -210,8 +263,8 @@ void main() {
       await tester.pumpWidget(MaterialApp.router(routerConfig: router));
       router.go(
         AppV2Routes.executionDelivery,
-        extra: const AppV2DeliveryExecutionRouteData(
-          intent: ExecutionIntent(
+        extra: AppV2DeliveryExecutionRouteData(
+          intent: const ExecutionIntent(
             recipe: RecipeModel(
               id: 'route_delivery_1',
               name: '番茄肥牛锅',
@@ -220,27 +273,15 @@ void main() {
             pairings: [],
             sourceTags: ['热菜'],
           ),
-          snapshot: DeliveryExecutionSnapshot(
-            status: ExecutionAvailabilityStatus.unavailable,
-            providerStates: [
-              ProviderAvailability(
-                platform: 'meituan',
-                displayName: '美团外卖',
-                capabilities: ProviderCapabilityMatrix.deliveryUnavailable,
-                reason: '测试未开通',
-              ),
-            ],
-            matches: [],
-            message: '测试快照',
-          ),
+          meituanOrderClient: _RouterMeituanMerchantClient(),
+          locationResolver: _fixedLocation,
         ),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 500));
 
-      expect(find.byType(DeliveryExecutionPage), findsOneWidget);
-      expect(find.text('外卖暂时找不到'), findsOneWidget);
-      expect(find.textContaining('测试未开通'), findsWidgets);
+      expect(find.byType(MeituanMenuBuilderPage), findsOneWidget);
+      expect(find.text('生成外卖菜单'), findsOneWidget);
     });
 
     testWidgets('renders dine-in execution route from route data',
@@ -294,4 +335,27 @@ void main() {
       expect(find.text('打开大众点评'), findsOneWidget);
     });
   });
+}
+
+Future<GeoPoint> _fixedLocation() async {
+  return const GeoPoint(latitude: 39.9042, longitude: 116.4074);
+}
+
+class _RouterMeituanMerchantClient extends MeituanDeliveryOrderClient {
+  @override
+  Future<MeituanMerchantSearchResult> searchMerchantResults({
+    required String keyword,
+    required GeoPoint location,
+    int limit = 10,
+  }) async {
+    return const MeituanMerchantSearchResult(
+      hasNextPage: false,
+      merchants: [
+        MeituanDeliveryMerchant(
+          merchantId: 'router-merchant',
+          merchantName: '路由联调店',
+        ),
+      ],
+    );
+  }
 }

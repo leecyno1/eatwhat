@@ -1,4 +1,5 @@
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
+import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_execution_shortcuts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,7 +26,31 @@ void main() {
     expect(find.text('自己做'), findsOneWidget);
     expect(find.text('叫外卖'), findsOneWidget);
     expect(find.text('去堂食'), findsOneWidget);
-    expect(find.text('推荐'), findsOneWidget);
+    expect(find.text('优先'), findsOneWidget);
+    expect(
+      tester
+          .widget<Icon>(
+            find.byKey(const ValueKey('result-execution-cook-icon')),
+          )
+          .color,
+      AppPalette.inkSoft,
+    );
+    expect(
+      tester
+          .widget<Icon>(
+            find.byKey(const ValueKey('result-execution-delivery-icon')),
+          )
+          .color,
+      AppPalette.chili,
+    );
+    expect(
+      tester
+          .widget<Icon>(
+            find.byKey(const ValueKey('result-execution-dine-in-icon')),
+          )
+          .color,
+      AppPalette.inkSoft,
+    );
 
     await tester.tap(find.byKey(const ValueKey('result-execution-delivery')));
     await tester.pump();

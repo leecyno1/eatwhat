@@ -36,14 +36,24 @@ void main() {
     expect(find.text('NOW'), findsNothing);
     expect(find.text('今日推荐板'), findsOneWidget);
     expect(find.byKey(const ValueKey('result-stage-shell')), findsOneWidget);
-    expect(find.text('今晚这口，已经替你收束好了'), findsOneWidget);
-    expect(
-        find.byKey(const ValueKey('result-execution-shortcuts')),
+    expect(find.text('今晚这口，替你收好了'), findsOneWidget);
+    expect(find.byKey(const ValueKey('result-mode-single')), findsOneWidget);
+    expect(find.byKey(const ValueKey('result-mode-meal')), findsOneWidget);
+    expect(find.text('暖食编辑部'), findsNothing);
+    expect(find.byKey(const ValueKey('result-execution-shortcuts')),
         findsOneWidget);
     expect(find.byKey(const ValueKey('result-execution-cook')), findsOneWidget);
-    expect(
-        find.byKey(const ValueKey('result-execution-delivery')), findsOneWidget);
+    expect(find.byKey(const ValueKey('result-execution-delivery')),
+        findsOneWidget);
     expect(
         find.byKey(const ValueKey('result-execution-dine-in')), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('result-mode-meal')));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.byKey(const ValueKey('result-meal-plan-card')), findsOneWidget);
+    expect(find.text('这一顿这样搭'), findsOneWidget);
+    expect(find.text('主菜 · 番茄肥牛锅'), findsOneWidget);
+    expect(find.text('就吃这套'), findsOneWidget);
   });
 }

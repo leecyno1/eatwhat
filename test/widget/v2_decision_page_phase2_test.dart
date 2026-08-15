@@ -13,7 +13,7 @@ void main() {
     await bootstrapTestEnvironment();
   });
 
-  testWidgets('DecisionPage 在第二环节展示 AI 生成与资料补全状态', (tester) async {
+  testWidgets('DecisionPage 在第二环节展示本地召回与智能收束状态', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: DecisionPage(
@@ -29,6 +29,7 @@ void main() {
             historyPreferenceSummary: {'flavor_spicy': 4},
           ),
           recommendationFlowService: V2Phase2RecommendationService(
+            localRecommendationLoader: _fakeLocalRecommendations,
             aiRecommendationLoader: _fakeAiRecommendations,
             howToCookRecipeService: _fakeHowToCookService(),
           ),
@@ -39,15 +40,25 @@ void main() {
     await _pumpUntilFound(tester, find.text('口味推理完成'));
 
     expect(find.text('口味推理完成'), findsOneWidget);
-    expect(find.text('AI 生成 3 道候选'), findsOneWidget);
-    expect(find.text('资料补全 3 道正式结果'), findsOneWidget);
+    expect(find.text('本地召回 3 道候选'), findsOneWidget);
+    expect(find.text('智能收束 3 道正式结果'), findsOneWidget);
     expect(find.text('正式结果已完成收束'), findsOneWidget);
-    expect(find.textContaining('AI 已根据口味签名生成'), findsOneWidget);
+    expect(find.textContaining('AI 已在本地正式候选中完成辅助收束'), findsOneWidget);
     expect(find.text('正在确认本轮正式推荐结果'), findsOneWidget);
   });
 
   testWidgets('DecisionPage 可以通过 Phase2 服务注入结果', (tester) async {
     final service = V2Phase2RecommendationService(
+      localRecommendationLoader: (_, __, ___) async => const [
+        RecipeModel(
+          id: 'dish_service_1',
+          name: '炭火辣子鸡',
+          description: '本地正式菜谱。',
+          ingredients: ['鸡肉', '辣椒'],
+          tags: ['辣', '锅气'],
+          source: 'unified_db',
+        ),
+      ],
       aiRecommendationLoader: ({
         required tags,
         required userProfile,
@@ -84,11 +95,11 @@ void main() {
       ),
     );
 
-    await _pumpUntilFound(tester, find.text('AI 生成 1 道候选'));
+    await _pumpUntilFound(tester, find.text('本地召回 1 道候选'));
 
-    expect(find.text('AI 生成 1 道候选'), findsOneWidget);
-    expect(find.text('资料补全 1 道正式结果'), findsOneWidget);
-    expect(find.textContaining('AI 已根据口味签名生成'), findsOneWidget);
+    expect(find.text('本地召回 1 道候选'), findsOneWidget);
+    expect(find.text('智能收束 1 道正式结果'), findsOneWidget);
+    expect(find.textContaining('AI 已在本地正式候选中完成辅助收束'), findsOneWidget);
   });
 }
 
@@ -186,6 +197,39 @@ Future<List<RecipeModel>> _fakeAiRecommendations({
       ingredients: ['牛肉', '蔬菜'],
       tags: ['辣', '锅气'],
       source: 'AI Recommendation',
+    ),
+  ];
+}
+
+Future<List<RecipeModel>> _fakeLocalRecommendations(
+  TasteInferenceInput input,
+  List<String> tags,
+  int limit,
+) async {
+  return const [
+    RecipeModel(
+      id: 'dish_1',
+      name: '香辣干锅鸡',
+      description: '本地正式菜谱一。',
+      ingredients: ['鸡肉', '辣椒'],
+      tags: ['辣', '夜宵'],
+      source: 'unified_db',
+    ),
+    RecipeModel(
+      id: 'dish_2',
+      name: '番茄肥牛锅',
+      description: '本地正式菜谱二。',
+      ingredients: ['番茄', '肥牛'],
+      tags: ['热菜', '夜宵'],
+      source: 'unified_db',
+    ),
+    RecipeModel(
+      id: 'dish_3',
+      name: '麻辣冒菜',
+      description: '本地正式菜谱三。',
+      ingredients: ['牛肉', '蔬菜'],
+      tags: ['辣', '锅气'],
+      source: 'unified_db',
     ),
   ];
 }

@@ -4,15 +4,11 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('TasteCardBoardShell', () {
-    testWidgets('renders board chrome, slots, and progress dots',
-        (tester) async {
+    testWidgets('renders board chrome and requested slots', (tester) async {
       await tester.pumpWidget(
         _host(
           const TasteCardBoardShell(
-            pageCount: 4,
-            currentPage: 2,
-            progress: 0.35,
-            blendProgress: 0.4,
+            slotCount: 8,
             slotRectFor: _slotRectFor,
           ),
         ),
@@ -20,39 +16,29 @@ void main() {
 
       expect(find.byKey(const ValueKey('taste-board-corner-markers')),
           findsOneWidget);
-      expect(find.byKey(const ValueKey('taste-board-progress-dots')),
-          findsOneWidget);
       expect(find.byKey(const ValueKey('taste-board-slot-0')), findsOneWidget);
-      expect(find.byKey(const ValueKey('taste-board-slot-8')), findsOneWidget);
+      expect(find.byKey(const ValueKey('taste-board-slot-7')), findsOneWidget);
 
       final shell = find.byType(TasteCardBoardShell);
       expect(
         find.descendant(of: shell, matching: find.byType(DecoratedBox)),
-        findsAtLeastNWidgets(10),
+        findsAtLeastNWidgets(8),
       );
     });
 
-    testWidgets('keeps progress dots bounded to the provided page count',
-        (tester) async {
+    testWidgets('uses slotCount as the exact board capacity', (tester) async {
       await tester.pumpWidget(
         _host(
           const TasteCardBoardShell(
-            pageCount: 2,
-            currentPage: 1,
-            progress: 0,
-            blendProgress: 0,
+            slotCount: 3,
             slotRectFor: _slotRectFor,
           ),
         ),
       );
 
-      final progressRow =
-          find.byKey(const ValueKey('taste-board-progress-dots'));
-      expect(
-        find.descendant(
-            of: progressRow, matching: find.byType(AnimatedContainer)),
-        findsNWidgets(2),
-      );
+      expect(find.byKey(const ValueKey('taste-board-slot-0')), findsOneWidget);
+      expect(find.byKey(const ValueKey('taste-board-slot-2')), findsOneWidget);
+      expect(find.byKey(const ValueKey('taste-board-slot-3')), findsNothing);
     });
   });
 }
@@ -72,12 +58,12 @@ Widget _host(Widget child) {
 }
 
 Rect _slotRectFor(int index) {
-  final row = index ~/ 3;
-  final column = index % 3;
+  final row = index ~/ 2;
+  final column = index % 2;
   return Rect.fromLTWH(
-    18 + column * 96,
-    24 + row * 142,
-    86,
-    124,
+    18 + column * 150,
+    24 + row * 118,
+    138,
+    108,
   );
 }

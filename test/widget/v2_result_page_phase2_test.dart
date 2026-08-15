@@ -1,13 +1,17 @@
+import 'package:eatwhat_app/core/models/analytics_event.dart';
 import 'package:eatwhat_app/v2/core/data/models/ai_generation_models.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_pairing_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recommendation_resolution.dart';
+import 'package:eatwhat_app/v2/core/data/models/recommendation_telemetry_context.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
+import 'package:eatwhat_app/v2/core/external/platform/meituan_delivery_order_client.dart';
+import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
 import 'package:eatwhat_app/v2/core/services/prebuilt_dish_image_catalog_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_howtocook_recipe_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
-import 'package:eatwhat_app/v2/features/execution/execution_home_page.dart';
+import 'package:eatwhat_app/v2/core/services/v2_recommendation_telemetry_service.dart';
 import 'package:eatwhat_app/v2/features/result/result_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -89,6 +93,135 @@ void main() {
 
     expect(find.text('香辣干锅鸡'), findsWidgets);
     expect(find.text('辣味更猛，夜里更带劲。'), findsWidgets);
+  });
+
+  testWidgets('ResultPage 推荐行为漏斗共享同一个推荐批次 ID', (tester) async {
+    final telemetryEvents = <_TelemetryEvent>[];
+    final telemetry = V2RecommendationTelemetryService(
+      sink: (type, properties) async {
+        telemetryEvents.add(_TelemetryEvent(type, properties));
+      },
+    );
+    const recommendationContext = RecommendationTelemetryContext(
+      recommendationId: 'rec_widget_funnel',
+      algorithmVersion: 'hybrid_v3_0',
+      primarySource: 'unified_db',
+      resolutionStatus: RecommendationResolutionStatus.dbResolved,
+      recalledCount: 8,
+      finalCount: 2,
+      latencyMs: 160,
+      diversityScore: 0.75,
+      appliedConstraintCount: 1,
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ResultPage(
+          recommendationContext: recommendationContext,
+          recommendationTelemetryService: telemetry,
+          imageGenerator: (_) async => null,
+          nutritionLoader: (_) async => const NutritionAnalysis(
+            nutrition: NutritionInfo(
+              calories: 320,
+              protein: 22,
+              carbs: 18,
+              fat: 14,
+              fiber: 5,
+              sodium: 680,
+              sugar: 4,
+            ),
+            healthScore: 8,
+            balanceAdvice: [],
+            dietaryTags: [],
+            servingSize: '1人份',
+          ),
+          corpusPairingLoader: (_) async => const [],
+          pairingLoader: (_) async => const WinePairing(
+            name: '冰乌龙',
+            reason: '清口解腻。',
+            type: 'tea',
+            servingTemperature: '冰镇',
+            flavor: '清爽',
+          ),
+          dishIntroLoader: (_, __, ___) async => null,
+          recommendations: const [
+            RecipeModel(
+              id: 'r1',
+              name: '番茄肥牛锅',
+              description: '热一点，有锅气。',
+              ingredients: ['番茄', '肥牛'],
+            ),
+            RecipeModel(
+              id: 'r2',
+              name: '香辣干锅鸡',
+              description: '辣味更直接。',
+              ingredients: ['鸡肉', '辣椒'],
+            ),
+          ],
+          inferenceInput: const TasteInferenceInput(
+            likedTagIds: ['f_hot'],
+            likedTagLabels: ['热菜'],
+            dislikedTagIds: [],
+            dislikedTagLabels: [],
+            skippedTagIds: [],
+            skippedTagLabels: [],
+            freeformRequirement: '',
+            historyPreferenceSummary: {},
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.byKey(const ValueKey('result-candidate-r2')));
+    await tester.pump();
+
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('result-feedback-enjoyed')),
+    );
+    await tester.tap(find.byKey(const ValueKey('result-feedback-enjoyed')));
+    await tester.pump();
+
+    await tester.ensureVisible(find.text('再看看'));
+    await tester.tap(find.text('再看看'));
+    await tester.pump();
+
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('result-execution-delivery')),
+    );
+    await tester.tap(
+      find.byKey(const ValueKey('result-execution-delivery')),
+    );
+    await tester.pump();
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
+
+    expect(
+      telemetryEvents.map((event) => event.type),
+      containsAllInOrder([
+        AnalyticsEventType.recommendationShown,
+        AnalyticsEventType.recommendationClicked,
+        AnalyticsEventType.tasteFeedbackGiven,
+        AnalyticsEventType.recommendationSkipped,
+        AnalyticsEventType.recommendationClicked,
+        AnalyticsEventType.recommendationExecutionStarted,
+      ]),
+    );
+    expect(
+      telemetryEvents
+          .map((event) => event.properties['recommendation_id'])
+          .toSet(),
+      {'rec_widget_funnel'},
+    );
+    expect(
+      telemetryEvents.first.properties['candidate_ids'],
+      ['r1', 'r2'],
+    );
+    expect(
+      telemetryEvents.last.properties['execution_path'],
+      ExecutionPath.delivery.name,
+    );
   });
 
   testWidgets('ResultPage 在小屏长文案下不应出现溢出异常', (tester) async {
@@ -195,6 +328,73 @@ void main() {
     );
   });
 
+  testWidgets('ResultPage 在混合推荐时展示本地召回与 AI 辅助语义', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ResultPage(
+          imageGenerator: (_) async => null,
+          recommendations: const [
+            RecipeModel(
+              id: 'r-hybrid-1',
+              name: '番茄肥牛锅',
+              description: '来自本地正式菜谱。',
+              ingredients: ['番茄', '肥牛'],
+              source: 'unified_db',
+            ),
+          ],
+          recalledCount: 12,
+          resolutionStatus: RecommendationResolutionStatus.hybridResolved,
+          primarySource: 'hybrid',
+          aiReasonsByRecipeId: const {
+            'r-hybrid-1': 'AI 认为它最贴合本轮热汤需求。',
+          },
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(find.text('本地召回 · AI 辅助'), findsOneWidget);
+    expect(find.text('来源 本地 + AI'), findsOneWidget);
+    expect(
+      find.text('本轮先从 12 道本地正式候选中筛选，再由 AI 辅助收束。'),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('ResultPage 在 AI 降级时明确展示本地可靠推荐', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ResultPage(
+          imageGenerator: (_) async => null,
+          recommendations: const [
+            RecipeModel(
+              id: 'r-local-1',
+              name: '快手番茄蛋',
+              description: '网络异常时仍可正常执行。',
+              ingredients: ['番茄', '鸡蛋'],
+              source: 'unified_db',
+            ),
+          ],
+          recalledCount: 8,
+          resolutionStatus: RecommendationResolutionStatus.localFallback,
+          primarySource: 'local_fallback',
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+
+    expect(find.text('本地可靠推荐'), findsWidgets);
+    expect(find.text('来源 本地可靠推荐'), findsOneWidget);
+    expect(
+      find.text('AI 增强暂时不可用，已从 8 道本地候选中稳定收束。'),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('ResultPage 展示本轮结构化约束', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -236,10 +436,14 @@ void main() {
     expect(find.text('本轮约束：15 分钟内、30 元内、1 人、素食、叫外卖、附近'), findsOneWidget);
   });
 
-  testWidgets('ResultPage 展示三种开吃快捷入口并可直达外卖执行页', (tester) async {
+  testWidgets('ResultPage 展示三种开吃快捷入口并进入 API 菜单生成页', (tester) async {
+    final meituanClient = _FakeMeituanMerchantClient();
     await tester.pumpWidget(
       MaterialApp(
         home: ResultPage(
+          meituanOrderClient: meituanClient,
+          meituanLocationResolver: () async =>
+              const GeoPoint(latitude: 39.9042, longitude: 116.4074),
           imageGenerator: (_) async => null,
           recommendations: const [
             RecipeModel(
@@ -281,9 +485,9 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('result-execution-delivery')));
     await tester.pumpAndSettle();
 
-    expect(find.byType(DeliveryExecutionPage), findsOneWidget);
-    expect(find.text('叫外卖'), findsWidgets);
-    expect(find.textContaining('椒麻鸡丝凉面'), findsWidgets);
+    expect(find.text('生成外卖菜单'), findsOneWidget);
+    expect(find.textContaining('锅气食堂'), findsOneWidget);
+    expect(meituanClient.lastKeyword, '椒麻鸡丝凉面');
   });
 
   testWidgets('ResultPage 在服务异常导致空结果时展示正式中文错误语义', (tester) async {
@@ -577,6 +781,9 @@ void main() {
         findsOneWidget);
     expect(find.text('菜图暂未生成'), findsOneWidget);
 
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('result-image-retry-button')),
+    );
     await tester.tap(find.byKey(const ValueKey('result-image-retry-button')));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 1200));
@@ -859,4 +1066,35 @@ void main() {
 
     expect(find.text('青柠苏打'), findsOneWidget);
   });
+}
+
+class _FakeMeituanMerchantClient extends MeituanDeliveryOrderClient {
+  String? lastKeyword;
+
+  @override
+  Future<MeituanMerchantSearchResult> searchMerchantResults({
+    required String keyword,
+    required GeoPoint location,
+    int limit = 10,
+  }) async {
+    lastKeyword = keyword;
+    return const MeituanMerchantSearchResult(
+      hasNextPage: false,
+      merchants: [
+        MeituanDeliveryMerchant(
+          merchantId: 'merchant-1',
+          merchantName: '锅气食堂',
+          deliveryTimeMinutes: 28,
+          minimumPrice: 20,
+        ),
+      ],
+    );
+  }
+}
+
+class _TelemetryEvent {
+  const _TelemetryEvent(this.type, this.properties);
+
+  final AnalyticsEventType type;
+  final Map<String, dynamic> properties;
 }

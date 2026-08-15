@@ -14,6 +14,7 @@ void main() {
       snapshot.any((state) => state.platform == 'meituan'),
       isTrue,
     );
+    expect(snapshot.any((state) => state.platform == 'jd_delivery'), isTrue);
   });
 
   test('未配置开放平台时，外卖匹配返回平台搜索兜底入口', () async {
@@ -34,7 +35,12 @@ void main() {
     expect(result.matches, isNotEmpty);
     expect(
       result.matches.map((match) => match.platform),
-      containsAll(<String>['meituan', 'eleme']),
+      containsAll(<String>[
+        'meituan',
+        'eleme',
+        'jd_delivery',
+        'dianping',
+      ]),
     );
     expect(result.matches.first.source, 'deep_link_fallback');
     expect(Uri.decodeFull(result.matches.first.url), contains('番茄肥牛锅'));
@@ -126,6 +132,68 @@ void main() {
     );
     expect(result.matches, isNotEmpty);
     expect(result.matches.first.source, 'deep_link_fallback');
+  });
+
+  test('生产健康检查会屏蔽未配置的平台适配器', () async {
+    final service = V2ExecutionService(
+      providers: [
+        _FakePlatformProvider(
+          platform: 'meituan',
+          displayName: '美团外卖',
+          isConfigured: true,
+          capabilities: const ProviderCapabilityMatrix(
+            supportsDishSearch: true,
+            supportsPrefillCart: true,
+          ),
+          deliveryResults: const [
+            DeliveryMatchResult(
+              platform: 'meituan',
+              providerDisplayName: '美团外卖',
+              merchantId: 'mt_1',
+              merchantName: '不应被调用',
+              dishName: '番茄肥牛锅',
+              url: 'https://example.com/order',
+            ),
+          ],
+        ),
+      ],
+      providerHealthResolver: () async => {'meituan': false},
+      locationResolver: () async =>
+          const GeoPoint(latitude: 39.9042, longitude: 116.4074),
+    );
+
+    final result = await service.matchDelivery(intent: _intent());
+
+    expect(result.status, ExecutionAvailabilityStatus.partial);
+    expect(result.providerStates.single.isConfigured, isFalse);
+    expect(result.providerStates.single.reason, contains('生产适配器未配置'));
+    expect(result.matches.first.source, 'deep_link_fallback');
+  });
+
+  test('点评到店使用独立健康状态', () async {
+    final service = V2ExecutionService(
+      providers: [
+        _FakePlatformProvider(
+          platform: 'dianping',
+          displayName: '大众点评',
+          isConfigured: true,
+          capabilities: const ProviderCapabilityMatrix(
+            supportsMerchantSearch: true,
+          ),
+        ),
+      ],
+      providerHealthResolver: () async => {
+        'dianping': true,
+        'dianping_dine_in': false,
+      },
+    );
+
+    final snapshot = await service.getProviderSnapshot(
+      path: ExecutionPath.dineIn,
+    );
+
+    expect(snapshot.single.isConfigured, isFalse);
+    expect(snapshot.single.reason, contains('生产适配器未配置'));
   });
 }
 

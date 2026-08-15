@@ -1,6 +1,9 @@
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_pairing_model.dart';
+import 'package:eatwhat_app/v2/core/data/models/meal_planning_direction.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_pairing_suggestion_controller.dart';
+import 'package:eatwhat_app/v2/features/result/widgets/result_pairing_band.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -85,6 +88,56 @@ void main() {
 
       expect(pairings, hasLength(1));
       expect(pairings.single.title, '时蔬小菜');
+    });
+
+    test('completes a main dish into a full meal', () {
+      const controller = ResultPairingSuggestionController();
+
+      final meal = controller.completeMealPairings(
+        const RecipeModel(
+          id: 'dish_meal',
+          name: '番茄肥牛锅',
+          description: '热乎下饭',
+        ),
+        const [
+          PairingSuggestion(
+            category: '配菜',
+            title: '蒜蓉生菜',
+            subtitle: '清爽平衡。',
+            accent: Color(0xFF7ABF88),
+            icon: Icons.eco_rounded,
+          ),
+        ],
+      );
+
+      expect(meal.map((item) => item.category), ['配菜', '主食', '饮品']);
+      expect(meal.map((item) => item.title),
+          containsAll(['蒜蓉生菜', '一碗热米饭', '冰镇乌龙茶']));
+    });
+
+    test('健康向整餐会排除含糖饮品', () {
+      const controller = ResultPairingSuggestionController();
+
+      final meal = controller.completeMealPairings(
+        const RecipeModel(
+          id: 'dish_health',
+          name: '清蒸鱼',
+          description: '清淡高蛋白',
+        ),
+        const [
+          PairingSuggestion(
+            category: '饮品',
+            title: '冰镇可乐',
+            subtitle: '甜口气泡饮。',
+            accent: Color(0xFFF46B40),
+            icon: Icons.local_drink_rounded,
+          ),
+        ],
+        direction: MealPlanningDirection.health,
+      );
+
+      expect(meal.map((item) => item.title), isNot(contains('冰镇可乐')));
+      expect(meal.map((item) => item.title), contains('冰镇乌龙茶'));
     });
   });
 }
