@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/services/auth_service.dart';
 
 /// 登录页面
@@ -9,7 +10,8 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin {
+class _LoginScreenState extends State<LoginScreen>
+    with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -89,7 +91,7 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
       );
 
       if (result.success && mounted) {
-        Navigator.of(context).pushReplacementNamed('/home');
+        context.go('/');
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -119,11 +121,11 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
   }
 
   void _navigateToRegister() {
-    Navigator.of(context).pushNamed('/register');
+    context.push('/register');
   }
 
   void _navigateToGuestMode() {
-    Navigator.of(context).pushReplacementNamed('/home');
+    context.go('/');
   }
 
   @override
@@ -156,7 +158,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           begin: Alignment.topLeft,
                           end: Alignment.bottomRight,
                         ),
-                        borderRadius: const BorderRadius.all(Radius.circular(30)),
+                        borderRadius:
+                            const BorderRadius.all(Radius.circular(30)),
                         boxShadow: [
                           BoxShadow(
                             color: colorScheme.primary.withValues(alpha: 0.3),
@@ -229,7 +232,9 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                           hintText: '请输入密码',
                           prefixIcon: const Icon(Icons.lock_outline),
                           suffixIcon: IconButton(
-                            icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                            icon: Icon(_obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility),
                             onPressed: () {
                               setState(() {
                                 _obscurePassword = !_obscurePassword;
@@ -349,7 +354,8 @@ class _LoginScreenState extends State<LoginScreen> with TickerProviderStateMixin
                             child: Text(
                               '或',
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.onSurface.withValues(alpha: 0.6),
+                                color: colorScheme.onSurface
+                                    .withValues(alpha: 0.6),
                               ),
                             ),
                           ),

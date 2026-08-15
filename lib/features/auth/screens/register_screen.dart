@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/services/auth_service.dart';
 
 /// 注册页面
@@ -9,7 +10,8 @@ class RegisterScreen extends StatefulWidget {
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStateMixin {
+class _RegisterScreenState extends State<RegisterScreen>
+    with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -84,11 +86,13 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
         email: _emailController.text.trim(),
         password: _passwordController.text,
         confirmPassword: _confirmPasswordController.text,
-        nickname: _nicknameController.text.trim().isEmpty ? null : _nicknameController.text.trim(),
+        nickname: _nicknameController.text.trim().isEmpty
+            ? null
+            : _nicknameController.text.trim(),
       );
 
       if (result.success && mounted) {
-        // 注册成功，显示成功消息并返回登录页面
+        // 注册成功后服务端已签发吃什么登录态，直接进入首页。
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(result.message),
@@ -96,7 +100,7 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
             behavior: SnackBarBehavior.floating,
           ),
         );
-        Navigator.of(context).pop();
+        context.go('/');
       } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -126,7 +130,7 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
   }
 
   void _navigateToLogin() {
-    Navigator.of(context).pop();
+    context.pop();
   }
 
   @override
@@ -224,7 +228,8 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
                       if (value == null || value.trim().isEmpty) {
                         return '请输入邮箱';
                       }
-                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                          .hasMatch(value)) {
                         return '邮箱格式不正确';
                       }
                       return null;
@@ -259,7 +264,9 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
                       hintText: '请输入密码',
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
-                        icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                        icon: Icon(_obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility),
                         onPressed: () {
                           setState(() {
                             _obscurePassword = !_obscurePassword;
@@ -278,8 +285,11 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
                       if (value == null || value.isEmpty) {
                         return '请输入密码';
                       }
-                      if (value.length < 6) {
-                        return '密码长度至少6位';
+                      if (value.length < 8 ||
+                          !value.contains(RegExp('[a-z]')) ||
+                          !value.contains(RegExp('[A-Z]')) ||
+                          !value.contains(RegExp('[0-9]'))) {
+                        return '密码至少8位，并包含大小写字母和数字';
                       }
                       return null;
                     },
@@ -295,8 +305,9 @@ class _RegisterScreenState extends State<RegisterScreen> with TickerProviderStat
                       hintText: '请再次输入密码',
                       prefixIcon: const Icon(Icons.lock_outline),
                       suffixIcon: IconButton(
-                        icon:
-                            Icon(_obscureConfirmPassword ? Icons.visibility_off : Icons.visibility),
+                        icon: Icon(_obscureConfirmPassword
+                            ? Icons.visibility_off
+                            : Icons.visibility),
                         onPressed: () {
                           setState(() {
                             _obscureConfirmPassword = !_obscureConfirmPassword;

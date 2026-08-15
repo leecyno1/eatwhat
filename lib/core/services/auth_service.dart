@@ -1,6 +1,10 @@
 import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../config/env_config.dart';
 import '../models/user_preference.dart';
 import '../utils/password_hash_util.dart';
 import 'secure_storage_service.dart';
@@ -18,6 +22,13 @@ class AuthService {
   static String? _authToken;
   static DateTime? _sessionExpiry;
   static DateTime? _lastActivity;
+  static final Dio _dio = Dio(
+    BaseOptions(
+      connectTimeout: const Duration(seconds: 4),
+      sendTimeout: const Duration(seconds: 4),
+      receiveTimeout: const Duration(seconds: 8),
+    ),
+  );
 
   /// 获取当前用户
   static User? get currentUser => _currentUser;
@@ -26,7 +37,8 @@ class AuthService {
   static String? get authToken => _authToken;
 
   /// 检查是否已登录
-  static bool get isLoggedIn => _currentUser != null && _authToken != null && !isSessionExpired;
+  static bool get isLoggedIn =>
+      _currentUser != null && _authToken != null && !isSessionExpired;
 
   /// 检查会话是否过期
   static bool get isSessionExpired {
@@ -52,29 +64,39 @@ class AuthService {
   /// 初始化认证服务
   static Future<void> initialize() async {
     final prefs = await SharedPreferences.getInstance();
+    _resetSession();
 
     // 检查记住登录状态
     final rememberMe = prefs.getBool(_keyRememberMe) ?? false;
     if (rememberMe) {
       try {
         // 从安全存储读取用户信息
-        final userMap = await SecureStorageService.getSecureJson(_keyCurrentUser);
+        final userMap =
+            await SecureStorageService.getSecureJson(_keyCurrentUser);
         final token = await SecureStorageService.getSecureString(_keyUserToken);
 
-        if (userMap != null && token != null) {
-          _currentUser = User.fromJson(userMap);
-          _authToken = token;
+        if (token == null) {
+          await _clearStoredAuth();
+          return;
+        }
 
-          // 验证令牌并设置会话
+        if (EnvConfig.eatWhatAuthBaseUrl.isNotEmpty) {
+          final restored = await _restoreRemoteSession(token);
+          if (!restored) await _clearStoredAuth();
+          return;
+        }
+
+        if (userMap != null) {
           final tokenValidation = TokenService.validateToken(token);
           if (tokenValidation.isValid && tokenValidation.expiresAt != null) {
+            _currentUser = User.fromJson(userMap);
+            _authToken = token;
             _sessionExpiry = tokenValidation.expiresAt;
             _lastActivity = DateTime.now();
-          } else {
-            // 令牌无效，清除会话
-            await _clearStoredAuth();
+            return;
           }
         }
+        await _clearStoredAuth();
       } catch (e) {
         // 如果数据损坏，清除存储的登录信息
         await _clearStoredAuth();
@@ -90,15 +112,26 @@ class AuthService {
     required String confirmPassword,
     String? nickname,
   }) async {
+    if (EnvConfig.eatWhatAuthBaseUrl.isNotEmpty) {
+      return _registerRemote(
+        username: username,
+        email: email,
+        password: password,
+        confirmPassword: confirmPassword,
+        nickname: nickname,
+      );
+    }
     try {
       // 验证输入
-      final validation = _validateRegistration(username, email, password, confirmPassword);
+      final validation =
+          _validateRegistration(username, email, password, confirmPassword);
       if (!validation.success) {
         return validation;
       }
 
       // 验证密码强度
-      final passwordValidation = PasswordHashUtil.validatePasswordComplexity(password);
+      final passwordValidation =
+          PasswordHashUtil.validatePasswordComplexity(password);
       if (passwordValidation != null) {
         return AuthResult(success: false, message: passwordValidation);
       }
@@ -152,6 +185,13 @@ class AuthService {
     required String password,
     bool rememberMe = false,
   }) async {
+    if (EnvConfig.eatWhatAuthBaseUrl.isNotEmpty) {
+      return _loginRemote(
+        usernameOrEmail: usernameOrEmail,
+        password: password,
+        rememberMe: rememberMe,
+      );
+    }
     try {
       // 验证输入
       if (usernameOrEmail.trim().isEmpty || password.isEmpty) {
@@ -162,7 +202,8 @@ class AuthService {
       }
 
       // 查找用户
-      final user = await _getUserByUsernameOrEmail(usernameOrEmail, usernameOrEmail);
+      final user =
+          await _getUserByUsernameOrEmail(usernameOrEmail, usernameOrEmail);
       if (user == null) {
         return AuthResult(
           success: false,
@@ -200,10 +241,7 @@ class AuthService {
 
   /// 用户注销
   static Future<void> logout() async {
-    _currentUser = null;
-    _authToken = null;
-    _sessionExpiry = null;
-    _lastActivity = null;
+    _resetSession();
 
     // 清除所有存储的认证信息和令牌
     await _clearStoredAuth();
@@ -232,7 +270,8 @@ class AuthService {
       _currentUser = updatedUser;
 
       // 更新安全存储中的用户信息
-      await SecureStorageService.setSecureJson(_keyCurrentUser, updatedUser.toJson());
+      await SecureStorageService.setSecureJson(
+          _keyCurrentUser, updatedUser.toJson());
 
       return AuthResult(
         success: true,
@@ -342,8 +381,11 @@ class AuthService {
       return AuthResult(success: false, message: '邮箱格式不正确');
     }
 
-    if (password.length < 6) {
-      return AuthResult(success: false, message: '密码长度至少6位');
+    if (password.length < 8 ||
+        !password.contains(RegExp('[a-z]')) ||
+        !password.contains(RegExp('[A-Z]')) ||
+        !password.contains(RegExp('[0-9]'))) {
+      return AuthResult(success: false, message: '密码至少8位，并包含大小写字母和数字');
     }
 
     if (password != confirmPassword) {
@@ -364,7 +406,8 @@ class AuthService {
   }
 
   /// 设置当前用户
-  static Future<void> _setCurrentUser(User user, {bool rememberMe = false}) async {
+  static Future<void> _setCurrentUser(User user,
+      {bool rememberMe = false}) async {
     _currentUser = user;
 
     // 生成JWT令牌对
@@ -383,8 +426,187 @@ class AuthService {
     }
   }
 
+  static Future<AuthResult> _registerRemote({
+    required String username,
+    required String email,
+    required String password,
+    required String confirmPassword,
+    String? nickname,
+  }) async {
+    final validation = _validateRegistration(
+      username,
+      email,
+      password,
+      confirmPassword,
+    );
+    if (!validation.success) return validation;
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        _authUrl('/api/v1/auth/register'),
+        data: {
+          'username': username.trim(),
+          'email': email.trim(),
+          'password': password,
+          if (nickname?.trim().isNotEmpty == true) 'nickname': nickname!.trim(),
+        },
+      );
+      return _acceptRemoteSession(
+        response.data,
+        rememberMe: true,
+        successMessage: '注册成功',
+      );
+    } on DioException catch (error) {
+      return AuthResult(success: false, message: _remoteError(error, '注册失败'));
+    }
+  }
+
+  static Future<AuthResult> _loginRemote({
+    required String usernameOrEmail,
+    required String password,
+    required bool rememberMe,
+  }) async {
+    if (usernameOrEmail.trim().isEmpty || password.isEmpty) {
+      return AuthResult(success: false, message: '用户名/邮箱和密码不能为空');
+    }
+    try {
+      final response = await _dio.post<Map<String, dynamic>>(
+        _authUrl('/api/v1/auth/login'),
+        data: {
+          'account': usernameOrEmail.trim(),
+          'password': password,
+        },
+      );
+      return _acceptRemoteSession(
+        response.data,
+        rememberMe: rememberMe,
+        successMessage: '登录成功',
+      );
+    } on DioException catch (error) {
+      return AuthResult(success: false, message: _remoteError(error, '登录失败'));
+    }
+  }
+
+  static Future<AuthResult> _acceptRemoteSession(
+    Map<String, dynamic>? payload, {
+    required bool rememberMe,
+    required String successMessage,
+  }) async {
+    final json = payload ?? const <String, dynamic>{};
+    final token = json['accessToken']?.toString() ?? '';
+    final expiresAt = DateTime.tryParse(json['expiresAt']?.toString() ?? '');
+    final user = _remoteUser(json['user']);
+    if (token.isEmpty || user == null || expiresAt == null) {
+      return AuthResult(success: false, message: '吃什么登录服务返回格式错误');
+    }
+    final now = DateTime.now();
+    _currentUser = user;
+    _authToken = token;
+    _sessionExpiry = expiresAt;
+    _lastActivity = now;
+    if (rememberMe) {
+      await _storeRemoteSession(user, token);
+    } else {
+      await _clearStoredAuth(resetSession: false);
+    }
+    return AuthResult(success: true, message: successMessage, user: user);
+  }
+
+  static Future<bool> _restoreRemoteSession(String token) async {
+    try {
+      final response = await _dio.get<Map<String, dynamic>>(
+        _authUrl('/api/v1/auth/session'),
+        options: Options(
+          headers: {'Authorization': 'Bearer $token'},
+        ),
+      );
+      final user = _remoteUser(response.data?['user']);
+      final expiresAt = _jwtExpiryWithoutVerification(token);
+      if (user == null ||
+          expiresAt == null ||
+          !expiresAt.isAfter(DateTime.now())) {
+        return false;
+      }
+      _currentUser = user;
+      _authToken = token;
+      _sessionExpiry = expiresAt;
+      _lastActivity = DateTime.now();
+      await _storeRemoteSession(user, token);
+      return true;
+    } on DioException {
+      return false;
+    }
+  }
+
+  static User? _remoteUser(dynamic rawUser) {
+    if (rawUser is! Map) return null;
+    final json = Map<String, dynamic>.from(rawUser);
+    final id = json['id']?.toString().trim() ?? '';
+    final username = json['username']?.toString().trim() ?? '';
+    final email = json['email']?.toString().trim() ?? '';
+    final createdAt = DateTime.tryParse(json['createdAt']?.toString() ?? '');
+    final lastLoginAt =
+        DateTime.tryParse(json['lastLoginAt']?.toString() ?? '');
+    if (id.isEmpty ||
+        username.isEmpty ||
+        email.isEmpty ||
+        createdAt == null ||
+        lastLoginAt == null) {
+      return null;
+    }
+    return User(
+      id: id,
+      username: username,
+      email: email,
+      nickname: json['nickname']?.toString().trim().isNotEmpty == true
+          ? json['nickname'].toString().trim()
+          : username,
+      passwordHash: '',
+      createdAt: createdAt,
+      lastLoginAt: lastLoginAt,
+      userPreference: UserPreference(userId: id),
+    );
+  }
+
+  static DateTime? _jwtExpiryWithoutVerification(String token) {
+    try {
+      final parts = token.split('.');
+      if (parts.length != 3) return null;
+      final payload = json.decode(
+        utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))),
+      );
+      if (payload is! Map || payload['exp'] is! num) return null;
+      return DateTime.fromMillisecondsSinceEpoch(
+        (payload['exp'] as num).toInt() * 1000,
+      );
+    } on Object {
+      return null;
+    }
+  }
+
+  static Future<void> _storeRemoteSession(User user, String token) async {
+    await SecureStorageService.setSecureJson(_keyCurrentUser, user.toJson());
+    await SecureStorageService.setSecureString(_keyUserToken, token);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_keyRememberMe, true);
+  }
+
+  static String _authUrl(String path) {
+    return '${EnvConfig.eatWhatAuthBaseUrl.replaceFirst(RegExp(r'/+$'), '')}$path';
+  }
+
+  static String _remoteError(DioException error, String fallback) {
+    final data = error.response?.data;
+    if (data is Map && data['error'] is Map) {
+      final message =
+          (data['error'] as Map)['message']?.toString().trim() ?? '';
+      if (message.isNotEmpty) return message;
+    }
+    return fallback;
+  }
+
   /// 清除存储的认证信息
-  static Future<void> _clearStoredAuth() async {
+  static Future<void> _clearStoredAuth({bool resetSession = true}) async {
+    if (resetSession) _resetSession();
     // 清除安全存储中的敏感信息
     await SecureStorageService.removeSecureString(_keyCurrentUser);
     await SecureStorageService.removeSecureString(_keyUserToken);
@@ -394,7 +616,8 @@ class AuthService {
   }
 
   /// 获取用户通过用户名或邮箱
-  static Future<User?> _getUserByUsernameOrEmail(String username, String email) async {
+  static Future<User?> _getUserByUsernameOrEmail(
+      String username, String email) async {
     final prefs = await SharedPreferences.getInstance();
     final usersJson = prefs.getString(_keyUsers);
 
@@ -487,6 +710,14 @@ class AuthService {
   static Future<bool> refreshSession() async {
     if (!isLoggedIn || _currentUser == null) return false;
 
+    if (EnvConfig.eatWhatAuthBaseUrl.isNotEmpty) {
+      final token = _authToken;
+      if (token == null) return false;
+      final restored = await _restoreRemoteSession(token);
+      if (!restored) await logout();
+      return restored;
+    }
+
     try {
       final newTokenPair = await TokenService.refreshToken();
       if (newTokenPair != null) {
@@ -521,7 +752,7 @@ class AuthService {
 
     // 检查是否需要刷新
     if (shouldRefreshSession) {
-      return await refreshSession();
+      return refreshSession();
     }
 
     // 检查是否已过期
@@ -542,6 +773,7 @@ class AuthService {
   /// 延长会话
   static Future<bool> extendSession({Duration? extension}) async {
     if (!isLoggedIn || _sessionExpiry == null) return false;
+    if (EnvConfig.eatWhatAuthBaseUrl.isNotEmpty) return false;
 
     final extensionDuration = extension ?? const Duration(hours: 1);
     final newExpiry = _sessionExpiry!.add(extensionDuration);
@@ -570,6 +802,13 @@ class AuthService {
       timeRemaining: sessionTimeRemaining,
       shouldRefresh: shouldRefreshSession,
     );
+  }
+
+  static void _resetSession() {
+    _currentUser = null;
+    _authToken = null;
+    _sessionExpiry = null;
+    _lastActivity = null;
   }
 }
 
@@ -649,7 +888,8 @@ class User {
       passwordHash: json['passwordHash'],
       avatar: json['avatar'],
       createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
       lastLoginAt: DateTime.parse(json['lastLoginAt']),
       userPreference: UserPreference.fromJson(json['userPreference']),
     );

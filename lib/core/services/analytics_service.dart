@@ -6,8 +6,14 @@ import 'metrics_service.dart';
 /// 埋点服务核心类
 /// 支持多种埋点模式：本地日志、Firebase Analytics、Sentry、自建服务器
 class AnalyticsService {
-  static final AnalyticsService _instance = AnalyticsService._internal();
   factory AnalyticsService() => _instance;
+
+  AnalyticsService._internal() {
+    _sessionId = _generateSessionId();
+    _startFlushTimer();
+  }
+
+  static final AnalyticsService _instance = AnalyticsService._internal();
 
   // 当前埋点模式
   AnalyticsMode _currentMode = AnalyticsMode.local;
@@ -24,12 +30,6 @@ class AnalyticsService {
   // 事件队列（批处理用）
   final List<AnalyticsEvent> _eventQueue = [];
   static const int _batchSize = 10;
-  static const Duration _flushInterval = Duration(seconds: 5);
-
-  AnalyticsService._internal() {
-    _sessionId = _generateSessionId();
-    _startFlushTimer();
-  }
 
   /// 生成会话ID
   String _generateSessionId() {
@@ -73,6 +73,8 @@ class AnalyticsService {
   Future<void> trackEvent(
     String eventName, {
     Map<String, dynamic>? properties,
+    bool recordMetrics = true,
+    bool anonymous = false,
   }) async {
     // 获取事件类型枚举
     AnalyticsEventType? eventType;
@@ -87,10 +89,13 @@ class AnalyticsService {
     final event = AnalyticsEvent(
       name: eventName,
       type: eventType ?? AnalyticsEventType.appLaunch,
-      properties: _sanitizeProperties(properties),
-      userId: _userId,
-      sessionId: _sessionId,
-      pageName: currentPage,
+      properties: _sanitizeProperties(
+        properties,
+        includeSession: !anonymous,
+      ),
+      userId: anonymous ? null : _userId,
+      sessionId: anonymous ? null : _sessionId,
+      pageName: anonymous ? null : currentPage,
     );
 
     _eventQueue.add(event);
@@ -103,7 +108,9 @@ class AnalyticsService {
     _logEvent(event);
 
     // 同时记录到指标系统
-    await _recordToMetrics(eventName);
+    if (recordMetrics && !anonymous) {
+      await _recordToMetrics(eventName);
+    }
   }
 
   /// 记录到指标系统
@@ -130,7 +137,8 @@ class AnalyticsService {
       'page_view',
       properties: {
         'page_name': pageName,
-        'previous_page': _pageStack.length > 1 ? _pageStack[_pageStack.length - 2] : null,
+        'previous_page':
+            _pageStack.length > 1 ? _pageStack[_pageStack.length - 2] : null,
         'page_stack_depth': _pageStack.length,
       },
     );
@@ -185,9 +193,7 @@ class AnalyticsService {
     switch (_currentMode) {
       case AnalyticsMode.local:
         // 本地模式：输出到控制台/日志
-        for (final event in eventsToFlush) {
-          _logEvent(event);
-        }
+        eventsToFlush.forEach(_logEvent);
         break;
       case AnalyticsMode.firebase:
         // Firebase Analytics 集成占位
@@ -216,20 +222,22 @@ class AnalyticsService {
   /// 记录事件到日志
   void _logEvent(AnalyticsEvent event) {
     final map = event.toMap();
-    final message = '[Analytics] ${event.name}: ${_formatProperties(map['properties'])}';
+    final message =
+        '[Analytics] ${event.name}: ${_formatProperties(map['properties'])}';
     _log(message);
   }
 
   /// 格式化属性
   String _formatProperties(Map<String, dynamic>? properties) {
     if (properties == null || properties.isEmpty) return '{}';
-    return properties.entries
-        .map((e) => '${e.key}=${e.value}')
-        .join(', ');
+    return properties.entries.map((e) => '${e.key}=${e.value}').join(', ');
   }
 
   /// 清理敏感数据
-  Map<String, dynamic>? _sanitizeProperties(Map<String, dynamic>? properties) {
+  Map<String, dynamic>? _sanitizeProperties(
+    Map<String, dynamic>? properties, {
+    required bool includeSession,
+  }) {
     if (properties == null) return null;
 
     const sensitiveKeys = [
@@ -253,7 +261,7 @@ class AnalyticsService {
 
     // 添加通用属性
     sanitized['_timestamp'] = DateTime.now().toIso8601String();
-    sanitized['_session_id'] = _sessionId;
+    if (includeSession) sanitized['_session_id'] = _sessionId;
 
     return sanitized;
   }

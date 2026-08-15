@@ -25,8 +25,34 @@ class EnvConfig {
         String.fromEnvironment('EXECUTION_PROXY_BASE_URL'),
     'EXECUTION_PROXY_AUTH_TOKEN':
         String.fromEnvironment('EXECUTION_PROXY_AUTH_TOKEN'),
+    'EXECUTION_PROXY_HEALTH_PATH':
+        String.fromEnvironment('EXECUTION_PROXY_HEALTH_PATH'),
     'MEITUAN_DELIVERY_MATCH_PATH':
         String.fromEnvironment('MEITUAN_DELIVERY_MATCH_PATH'),
+    'MEITUAN_MERCHANT_SEARCH_PATH':
+        String.fromEnvironment('MEITUAN_MERCHANT_SEARCH_PATH'),
+    'MEITUAN_PRODUCT_SEARCH_PATH':
+        String.fromEnvironment('MEITUAN_PRODUCT_SEARCH_PATH'),
+    'MEITUAN_ORDER_PREVIEW_PATH':
+        String.fromEnvironment('MEITUAN_ORDER_PREVIEW_PATH'),
+    'MEITUAN_ORDER_SUBMIT_PATH':
+        String.fromEnvironment('MEITUAN_ORDER_SUBMIT_PATH'),
+    'MEITUAN_OAUTH_STATUS_PATH':
+        String.fromEnvironment('MEITUAN_OAUTH_STATUS_PATH'),
+    'MEITUAN_OAUTH_AUTHORIZE_PATH':
+        String.fromEnvironment('MEITUAN_OAUTH_AUTHORIZE_PATH'),
+    'MEITUAN_PAYMENT_SUCCESS_URL':
+        String.fromEnvironment('MEITUAN_PAYMENT_SUCCESS_URL'),
+    'MEITUAN_PAYMENT_FAILURE_URL':
+        String.fromEnvironment('MEITUAN_PAYMENT_FAILURE_URL'),
+    'ELEME_DELIVERY_MATCH_PATH':
+        String.fromEnvironment('ELEME_DELIVERY_MATCH_PATH'),
+    'DIANPING_DELIVERY_MATCH_PATH':
+        String.fromEnvironment('DIANPING_DELIVERY_MATCH_PATH'),
+    'DIANPING_DINE_IN_MATCH_PATH':
+        String.fromEnvironment('DIANPING_DINE_IN_MATCH_PATH'),
+    'JD_DELIVERY_MATCH_PATH': String.fromEnvironment('JD_DELIVERY_MATCH_PATH'),
+    'EATWHAT_AUTH_BASE_URL': String.fromEnvironment('EATWHAT_AUTH_BASE_URL'),
     'PASSWORD_SALT': String.fromEnvironment('PASSWORD_SALT'),
     'JWT_SECRET': String.fromEnvironment('JWT_SECRET'),
     'ENCRYPTION_KEY': String.fromEnvironment('ENCRYPTION_KEY'),
@@ -113,9 +139,72 @@ class EnvConfig {
   static String get executionProxyAuthToken =>
       _readEnv('EXECUTION_PROXY_AUTH_TOKEN');
 
+  static String get eatWhatAuthBaseUrl => _readEnv('EATWHAT_AUTH_BASE_URL');
+
+  static String get executionProxyHealthPath => _readEnv(
+        'EXECUTION_PROXY_HEALTH_PATH',
+        fallback: '/health',
+      );
+
   static String get meituanDeliveryMatchPath => _readEnv(
         'MEITUAN_DELIVERY_MATCH_PATH',
         fallback: '/v2/execution/meituan/delivery-match',
+      );
+
+  static String get meituanMerchantSearchPath => _readEnv(
+        'MEITUAN_MERCHANT_SEARCH_PATH',
+        fallback: '/api/v1/delivery/merchants/search',
+      );
+
+  static String get meituanProductSearchPath => _readEnv(
+        'MEITUAN_PRODUCT_SEARCH_PATH',
+        fallback: '/api/v1/delivery/products/search',
+      );
+
+  static String get meituanOrderPreviewPath => _readEnv(
+        'MEITUAN_ORDER_PREVIEW_PATH',
+        fallback: '/api/v1/delivery/order-previews',
+      );
+
+  static String get meituanOrderSubmitPath => _readEnv(
+        'MEITUAN_ORDER_SUBMIT_PATH',
+        fallback: '/api/v1/delivery/orders',
+      );
+
+  static String get meituanOAuthStatusPath => _readEnv(
+        'MEITUAN_OAUTH_STATUS_PATH',
+        fallback: '/api/v1/delivery/oauth/status',
+      );
+
+  static String get meituanOAuthAuthorizePath => _readEnv(
+        'MEITUAN_OAUTH_AUTHORIZE_PATH',
+        fallback: '/api/v1/delivery/oauth/authorize',
+      );
+
+  static String get meituanPaymentSuccessUrl =>
+      _readEnv('MEITUAN_PAYMENT_SUCCESS_URL');
+
+  static String get meituanPaymentFailureUrl =>
+      _readEnv('MEITUAN_PAYMENT_FAILURE_URL');
+
+  static String get elemeDeliveryMatchPath => _readEnv(
+        'ELEME_DELIVERY_MATCH_PATH',
+        fallback: '/v2/execution/eleme/delivery-match',
+      );
+
+  static String get dianpingDeliveryMatchPath => _readEnv(
+        'DIANPING_DELIVERY_MATCH_PATH',
+        fallback: '/v2/execution/dianping/delivery-match',
+      );
+
+  static String get dianpingDineInMatchPath => _readEnv(
+        'DIANPING_DINE_IN_MATCH_PATH',
+        fallback: '/v2/execution/dianping/dine-in-match',
+      );
+
+  static String get jdDeliveryMatchPath => _readEnv(
+        'JD_DELIVERY_MATCH_PATH',
+        fallback: '/v2/execution/jd-delivery/delivery-match',
       );
 
   // 安全配置
