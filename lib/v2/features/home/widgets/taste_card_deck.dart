@@ -3,10 +3,9 @@ import 'dart:math' as math;
 
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
+import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/taste_card_board_shell.dart';
-import 'package:eatwhat_app/v2/features/home/widgets/taste_card_deck_motion_layers.dart';
-import 'package:eatwhat_app/v2/features/home/widgets/taste_grid_card_face.dart';
-import 'package:flutter/foundation.dart';
+import 'package:eatwhat_app/v2/features/home/widgets/taste_minimal_card_face.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -23,8 +22,7 @@ class TasteCardDeck extends StatefulWidget {
     required this.onVoiceStart,
     required this.onVoiceEnd,
     required this.isListening,
-    required this.showFlipHint,
-    required this.onFirstFlip,
+    this.onFirstFlip,
   });
 
   final List<TasteDeckCard> cards;
@@ -37,74 +35,53 @@ class TasteCardDeck extends StatefulWidget {
   final VoidCallback onVoiceStart;
   final VoidCallback onVoiceEnd;
   final bool isListening;
-  final bool showFlipHint;
-  final VoidCallback onFirstFlip;
+  final VoidCallback? onFirstFlip;
 
   @override
   State<TasteCardDeck> createState() => _TasteCardDeckState();
 }
 
-class _TasteCardDeckState extends State<TasteCardDeck>
-    with TickerProviderStateMixin {
+class _TasteCardDeckState extends State<TasteCardDeck> {
   static const double _pageTriggerDistance = 96;
   static const double _pageSnapCommitDistance = 82;
   static const double _pageDragSoftZoneStart = 34;
   static const double _pageDragSoftZoneEnd = 118;
-  static const double _pageCommitDistance = 34;
+  static const double _pageCommitDistance = 28;
   static const Duration _pageCommitDuration = Duration(milliseconds: 140);
-  static const Duration _dealDuration = Duration(milliseconds: 520);
+  static const double _focusedPreviewDistance = 42;
+  static const double _focusedTriggerDistance = 88;
+  static const double _focusedCommitOffset = 280;
+  static const Duration _focusedCommitDuration = Duration(milliseconds: 220);
+  static const Duration _focusedCommitApplyDelay = Duration(milliseconds: 180);
   double _horizontalDrag = 0;
   double _horizontalRawDrag = 0;
   bool _isPageCommitting = false;
   int _pageCommitDirection = 0;
-  int _lastPageCommitDirection = -1;
   int _pagePreviewDirection = 0;
   Timer? _pageCommitTimer;
-  late final AnimationController _dealController;
-  late final AnimationController _pageBlendController;
-  List<TasteDeckCard> _outgoingCards = const [];
-
-  @override
-  void initState() {
-    super.initState();
-    _dealController = AnimationController(
-      vsync: this,
-      duration: _dealDuration,
-    )..forward();
-    _pageBlendController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 260),
-    )..addStatusListener((status) {
-        if (status == AnimationStatus.completed && mounted) {
-          setState(() {
-            _outgoingCards = const [];
-          });
-        }
-      });
-  }
+  TasteDeckCard? _focusedCard;
+  double _focusedVerticalDrag = 0;
+  TasteCardReaction? _focusedPreviewReaction;
+  TasteCardReaction? _focusedCommittingReaction;
+  Timer? _focusedCommitTimer;
 
   @override
   void didUpdateWidget(covariant TasteCardDeck oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.session.currentPageNumber !=
         widget.session.currentPageNumber) {
-      _outgoingCards = List<TasteDeckCard>.unmodifiable(oldWidget.cards);
-      _pageBlendController
-        ..stop()
-        ..value = 0
-        ..forward();
-      _dealController
-        ..stop()
-        ..value = 0
-        ..forward();
+      _focusedCommitTimer?.cancel();
+      _focusedCard = null;
+      _focusedVerticalDrag = 0;
+      _focusedPreviewReaction = null;
+      _focusedCommittingReaction = null;
     }
   }
 
   @override
   void dispose() {
     _pageCommitTimer?.cancel();
-    _dealController.dispose();
-    _pageBlendController.dispose();
+    _focusedCommitTimer?.cancel();
     super.dispose();
   }
 
@@ -122,13 +99,13 @@ class _TasteCardDeckState extends State<TasteCardDeck>
     return GestureDetector(
       key: const ValueKey('taste-grid-board'),
       behavior: HitTestBehavior.opaque,
-      onHorizontalDragUpdate: _isPageCommitting
+      onVerticalDragUpdate: _isPageCommitting
           ? null
           : (details) {
               setState(() {
-                _horizontalRawDrag += details.delta.dx;
+                _horizontalRawDrag += details.delta.dy;
                 _horizontalDrag =
-                    _applyPageDampedDrag(_horizontalDrag, details.delta.dx);
+                    _applyPageDampedDrag(_horizontalDrag, details.delta.dy);
                 final previewDirection = _resolvePagePreviewDirection(
                     _horizontalRawDrag, _horizontalDrag);
                 if (previewDirection != _pagePreviewDirection) {
@@ -137,7 +114,7 @@ class _TasteCardDeckState extends State<TasteCardDeck>
                 }
               });
             },
-      onHorizontalDragEnd: _isPageCommitting
+      onVerticalDragEnd: _isPageCommitting
           ? null
           : (details) {
               final flingVelocity = details.primaryVelocity ?? 0;
@@ -152,7 +129,6 @@ class _TasteCardDeckState extends State<TasteCardDeck>
                       ? (flingVelocity == 0 ? _horizontalDrag : flingVelocity)
                       : _horizontalRawDrag;
                   _pageCommitDirection = dragSource > 0 ? 1 : -1;
-                  _lastPageCommitDirection = _pageCommitDirection;
                   _pagePreviewDirection = 0;
                 });
                 widget.onPagePreviewDirection?.call(0);
@@ -190,126 +166,28 @@ class _TasteCardDeckState extends State<TasteCardDeck>
                 // Keep a tiny host transform so implicit animation frames continue
                 // during commit, allowing timer-driven page advance to settle in tests.
                 transform: Matrix4.translationValues(
-                  displayedHorizontalOffset * 0.001,
                   0,
+                  displayedHorizontalOffset * 0.001,
                   0,
                 ),
                 child: Stack(
                   children: [
                     Positioned.fill(
-                      child: AnimatedBuilder(
-                        animation: _pageBlendController,
-                        builder: (context, _) {
-                          final blendProgress = _outgoingCards.isEmpty
-                              ? 0.0
-                              : Curves.easeOutCubic
-                                  .transform(_pageBlendController.value);
-                          return Transform.translate(
-                            offset: Offset(displayedHorizontalOffset * 0.34, 0),
-                            child: TasteCardBoardShell(
-                              pageCount: widget.session.totalPageCount,
-                              currentPage: widget.session.currentPageNumber,
-                              progress:
-                                  (_horizontalDrag.abs() / _pageTriggerDistance)
-                                      .clamp(0, 1),
-                              blendProgress: blendProgress,
-                              slotRectFor: (index) =>
-                                  _slotRectFor(index, constraints.biggest),
-                            ),
-                          );
-                        },
+                      child: Transform.translate(
+                        offset: Offset(0, displayedHorizontalOffset * 0.34),
+                        child: TasteCardBoardShell(
+                          slotCount: TasteDeckSessionState.pageSize,
+                          slotRectFor: (index) =>
+                              _slotRectFor(index, constraints.biggest),
+                        ),
                       ),
                     ),
-                    if (_outgoingCards.isNotEmpty)
-                      Positioned.fill(
-                        child: IgnorePointer(
-                          child: AnimatedBuilder(
-                            animation: _pageBlendController,
-                            builder: (context, _) {
-                              final progress = Curves.easeOutCubic
-                                  .transform(_pageBlendController.value);
-                              final direction = _lastPageCommitDirection == 0
-                                  ? -1
-                                  : _lastPageCommitDirection;
-                              return Opacity(
-                                opacity: (1 - progress) * 0.78,
-                                child: Stack(
-                                  children: List.generate(
-                                      TasteDeckSessionState.pageSize, (index) {
-                                    final rect = _slotRectFor(
-                                        index, constraints.biggest);
-                                    final card = index < _outgoingCards.length
-                                        ? _outgoingCards[index]
-                                        : null;
-                                    if (card == null) {
-                                      return const SizedBox.shrink();
-                                    }
-                                    final row = index ~/ 4;
-                                    final rowSpeed = switch (row) {
-                                      0 => 1.12,
-                                      1 => 1.0,
-                                      _ => 0.9,
-                                    };
-                                    final driftX = direction *
-                                        (6 + progress * 22) *
-                                        rowSpeed;
-                                    final driftY = progress * (2 + row);
-                                    final shrink = 1 - progress * 0.03;
-                                    return Positioned(
-                                      left: rect.left,
-                                      top: rect.top,
-                                      width: rect.width,
-                                      height: rect.height,
-                                      child: Transform(
-                                        alignment: Alignment.center,
-                                        transform: Matrix4.identity()
-                                          ..translate(driftX, driftY)
-                                          ..scale(shrink),
-                                        child: TasteOutgoingPageGhostCard(
-                                          card: card,
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                                ),
-                              );
-                            },
-                          ),
-                        ),
-                      ),
-                    if (_horizontalDrag.abs() >= 16 || _isPageCommitting)
-                      Positioned.fill(
-                        child: IgnorePointer(
-                          child: DecoratedBox(
-                            decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                begin: displayedHorizontalOffset >= 0
-                                    ? Alignment.centerLeft
-                                    : Alignment.centerRight,
-                                end: displayedHorizontalOffset >= 0
-                                    ? Alignment.centerRight
-                                    : Alignment.centerLeft,
-                                colors: [
-                                  Colors.white.withValues(alpha: 0.12),
-                                  Colors.white.withValues(alpha: 0),
-                                ],
-                                stops: const [0, 0.42],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
                     ...List.generate(TasteDeckSessionState.pageSize, (index) {
                       final rect = _slotRectFor(index, constraints.biggest);
-                      final rowIndex = index ~/ 4;
                       final card = index < widget.cards.length
                           ? widget.cards[index]
                           : null;
-                      final rowSpeedFactor = switch (rowIndex) {
-                        0 => 1.08,
-                        1 => 1.0,
-                        _ => 0.92,
-                      };
+                      final rowIndex = index ~/ 2;
 
                       return Positioned(
                         key: ValueKey('taste-grid-slot-$index'),
@@ -318,19 +196,16 @@ class _TasteCardDeckState extends State<TasteCardDeck>
                         width: rect.width,
                         height: rect.height,
                         child: Transform.translate(
-                          offset: Offset(
-                            displayedHorizontalOffset * rowSpeedFactor,
-                            0,
-                          ),
+                          offset: Offset(0, displayedHorizontalOffset),
                           child: Padding(
-                            key: index % 4 == 0
+                            key: index % 2 == 0
                                 ? ValueKey('taste-grid-row-$rowIndex')
                                 : null,
                             padding: EdgeInsets.zero,
                             child: AnimatedSwitcher(
-                              duration: const Duration(milliseconds: 240),
-                              switchInCurve: Curves.easeOutCubic,
-                              switchOutCurve: Curves.easeInCubic,
+                              duration: AppMotion.standard,
+                              switchInCurve: AppMotion.enter,
+                              switchOutCurve: AppMotion.enter,
                               layoutBuilder: (currentChild, previousChildren) {
                                 return Stack(
                                   fit: StackFit.expand,
@@ -341,37 +216,34 @@ class _TasteCardDeckState extends State<TasteCardDeck>
                                 );
                               },
                               transitionBuilder: (child, animation) {
-                                final slide = Tween<Offset>(
-                                  begin: const Offset(0, -0.22),
-                                  end: Offset.zero,
-                                ).animate(animation);
                                 return FadeTransition(
                                   opacity: animation,
-                                  child: SlideTransition(
-                                    position: slide,
-                                    child: child,
-                                  ),
+                                  child: child,
                                 );
                               },
                               child: card == null
                                   ? const SizedBox.shrink()
-                                  : TasteDealEntryCard(
+                                  : _TasteGridCard(
                                       key: ValueKey(
-                                          'taste-card-deal-entry-$index-${card.id}'),
-                                      index: index,
-                                      animation: _dealController,
-                                      child: _TasteGridCard(
-                                        key: ValueKey(
-                                            'taste-grid-card-${card.id}'),
-                                        card: card,
-                                        reaction: widget.session
-                                            .pageReactionFor(card.id),
-                                        onReact: (reaction) =>
-                                            widget.onReact(card, reaction),
-                                        onPreviewReaction:
-                                            widget.onReactionPreview,
-                                        onFirstFlip: widget.onFirstFlip,
+                                          'taste-grid-card-${card.id}'),
+                                      card: card,
+                                      reaction: widget.session
+                                          .pageReactionFor(card.id),
+                                      onReact: (reaction) =>
+                                          widget.onReact(card, reaction),
+                                      onPreviewReaction:
+                                          widget.onReactionPreview,
+                                      onFirstFlip: widget.onFirstFlip,
+                                      onFocus: () => _focusCard(card),
+                                      onFocusDragUpdate: (offset) =>
+                                          _updateFocusedDragFromLongPress(
+                                        card,
+                                        offset,
                                       ),
+                                      onFocusDragEnd: () =>
+                                          _finishFocusedDrag(card),
+                                      onFocusDragCancel: () =>
+                                          _cancelFocusedDrag(card),
                                     ),
                             ),
                           ),
@@ -388,73 +260,52 @@ class _TasteCardDeckState extends State<TasteCardDeck>
               _isPageCommitting)
             Positioned.fill(
               child: IgnorePointer(
-                child: Center(
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      TastePageDealFan(
-                        key: const ValueKey('taste-page-deal-fan'),
-                        progress: _isPageCommitting ? 1 : pageChangeProgress,
-                        direction: (_isPageCommitting
-                                ? _pageCommitDirection > 0
-                                : (_horizontalRawDrag == 0
-                                    ? _horizontalDrag > 0
-                                    : _horizontalRawDrag > 0))
-                            ? 1
-                            : -1,
-                      ),
-                      AnimatedOpacity(
-                        duration: const Duration(milliseconds: 120),
-                        opacity: _isPageCommitting ? 1 : pageChangeProgress,
-                        child: Container(
-                          key: _isPageCommitting
-                              ? const ValueKey('taste-page-commit-indicator')
-                              : null,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.78),
-                            borderRadius: BorderRadius.circular(999),
-                          ),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Icon(
-                                (_isPageCommitting
-                                        ? _pageCommitDirection > 0
-                                        : _horizontalDrag > 0)
-                                    ? Icons.arrow_back_rounded
-                                    : Icons.arrow_forward_rounded,
-                                size: 16,
-                                color: AppColors.textPrimary,
+                child: Align(
+                  alignment: (_isPageCommitting
+                          ? _pageCommitDirection > 0
+                          : _horizontalDrag > 0)
+                      ? Alignment.topCenter
+                      : Alignment.bottomCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.all(18),
+                    child: AnimatedOpacity(
+                      duration: AppMotion.press,
+                      opacity: _isPageCommitting ? 1 : pageChangeProgress,
+                      child: Container(
+                        key: _isPageCommitting
+                            ? const ValueKey('taste-page-commit-indicator')
+                            : null,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 14,
+                          vertical: 9,
+                        ),
+                        decoration: AppDecorations.card(
+                          radius: AppRadii.sm,
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              (_isPageCommitting
+                                      ? _pageCommitDirection > 0
+                                      : _horizontalDrag > 0)
+                                  ? Icons.keyboard_arrow_down_rounded
+                                  : Icons.keyboard_arrow_up_rounded,
+                              size: 18,
+                              color: AppPalette.ink,
+                            ),
+                            const SizedBox(width: 6),
+                            Text(
+                              _isPageCommitting ? '正在切换' : '继续滚动',
+                              style: AppType.label.copyWith(
+                                color: AppPalette.ink,
                               ),
-                              const SizedBox(width: 6),
-                              Text(
-                                _isPageCommitting ? '已锁定换一版' : '换一版口味',
-                                style: const TextStyle(
-                                  color: AppColors.textPrimary,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                       ),
-                    ],
+                    ),
                   ),
-                ),
-              ),
-            ),
-          if (widget.showFlipHint)
-            const Positioned(
-              left: 24,
-              right: 24,
-              top: 12,
-              child: IgnorePointer(
-                child: TasteFlipHintPill(
-                  key: ValueKey('taste-flip-hint-pill'),
                 ),
               ),
             ),
@@ -468,7 +319,7 @@ class _TasteCardDeckState extends State<TasteCardDeck>
                   vertical: 8,
                 ),
                 decoration: BoxDecoration(
-                  color: const Color(0xFFF46B40).withValues(alpha: 0.92),
+                  color: const Color(0xFFC94B2C).withValues(alpha: 0.92),
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: const Row(
@@ -525,42 +376,162 @@ class _TasteCardDeckState extends State<TasteCardDeck>
                 ),
               ),
             ),
+          if (_focusedCard case final TasteDeckCard focusedCard)
+            Positioned.fill(
+              child: _TasteCardFocusOverlay(
+                card: focusedCard,
+                reaction: widget.session.pageReactionFor(focusedCard.id),
+                verticalDrag: _focusedVerticalDrag,
+                previewReaction: _focusedPreviewReaction,
+                committingReaction: _focusedCommittingReaction,
+                triggerDistance: _focusedTriggerDistance,
+                commitOffset: _focusedCommitOffset,
+                commitDuration: _focusedCommitDuration,
+                onVerticalDragUpdate: _updateFocusedDragBy,
+                onVerticalDragEnd: () => _finishFocusedDrag(focusedCard),
+                onVerticalDragCancel: () => _cancelFocusedDrag(focusedCard),
+                onDismiss: _dismissFocusedCard,
+              ),
+            ),
         ],
       ),
     );
   }
 
-  Rect _slotRectFor(int index, Size size) {
-    const columnCount = 4;
-    const rowCount = 4;
-    const columnGap = 5.0;
-    const rowGap = 5.0;
-    final rowIndex = index ~/ columnCount;
-    final columnIndex = index % columnCount;
-    final rowPadding = _rowPaddingFor(rowIndex);
-    final rowHeight = (size.height - rowGap * (rowCount - 1)) / rowCount;
-    final rowTop = rowIndex * (rowHeight + rowGap);
-    final usableWidth = size.width - rowPadding.left - rowPadding.right;
-    final cellWidth =
-        (usableWidth - columnGap * (columnCount - 1)) / columnCount;
-    final left = rowPadding.left + columnIndex * (cellWidth + columnGap);
-
-    return Rect.fromLTWH(left, rowTop, cellWidth, rowHeight);
+  void _focusCard(TasteDeckCard card) {
+    if (_focusedCard?.id == card.id) return;
+    _focusedCommitTimer?.cancel();
+    setState(() {
+      _focusedCard = card;
+      _focusedVerticalDrag = 0;
+      _focusedPreviewReaction = null;
+      _focusedCommittingReaction = null;
+      _horizontalDrag = 0;
+      _horizontalRawDrag = 0;
+      _pagePreviewDirection = 0;
+    });
+    widget.onPagePreviewDirection?.call(0);
   }
 
-  EdgeInsets _rowPaddingFor(int rowIndex) {
-    switch (rowIndex) {
-      case 0:
-        return const EdgeInsets.only(left: 4, right: 1);
-      case 1:
-        return const EdgeInsets.only(left: 1, right: 3);
-      case 2:
-        return const EdgeInsets.only(left: 3, right: 1);
-      case 3:
-        return const EdgeInsets.only(left: 1, right: 4);
-      default:
-        return EdgeInsets.zero;
+  void _dismissFocusedCard() {
+    if (_focusedCard == null) return;
+    _focusedCommitTimer?.cancel();
+    widget.onReactionPreview?.call(null);
+    HapticFeedback.selectionClick();
+    setState(() {
+      _focusedCard = null;
+      _focusedVerticalDrag = 0;
+      _focusedPreviewReaction = null;
+      _focusedCommittingReaction = null;
+    });
+  }
+
+  void _updateFocusedDragFromLongPress(
+    TasteDeckCard card,
+    double offset,
+  ) {
+    if (_focusedCard?.id != card.id) return;
+    _setFocusedDrag(offset);
+  }
+
+  void _updateFocusedDragBy(double delta) {
+    _setFocusedDrag(_focusedVerticalDrag + delta);
+  }
+
+  void _setFocusedDrag(double value) {
+    if (_focusedCard == null || _focusedCommittingReaction != null) return;
+    final nextReaction = _resolveFocusedPreviewReaction(value);
+    if (nextReaction != null && nextReaction != _focusedPreviewReaction) {
+      HapticFeedback.selectionClick();
     }
+    if (nextReaction != _focusedPreviewReaction) {
+      widget.onReactionPreview?.call(nextReaction);
+    }
+    setState(() {
+      _focusedVerticalDrag = value;
+      _focusedPreviewReaction = nextReaction;
+    });
+  }
+
+  void _finishFocusedDrag(TasteDeckCard card) {
+    if (_focusedCard?.id != card.id || _focusedCommittingReaction != null) {
+      return;
+    }
+    final reaction = _resolveFocusedReaction(_focusedVerticalDrag);
+    if (reaction == null) {
+      widget.onReactionPreview?.call(null);
+      setState(() {
+        _focusedVerticalDrag = 0;
+        _focusedPreviewReaction = null;
+      });
+      return;
+    }
+
+    HapticFeedback.mediumImpact();
+    widget.onReactionPreview?.call(null);
+    _focusedCommitTimer?.cancel();
+    setState(() {
+      _focusedPreviewReaction = reaction;
+      _focusedCommittingReaction = reaction;
+    });
+    _focusedCommitTimer = Timer(_focusedCommitApplyDelay, () {
+      if (!mounted || _focusedCard?.id != card.id) return;
+      final submittedCard = _focusedCard!;
+      setState(() {
+        _focusedCard = null;
+        _focusedVerticalDrag = 0;
+        _focusedPreviewReaction = null;
+        _focusedCommittingReaction = null;
+      });
+      widget.onReact(submittedCard, reaction);
+    });
+  }
+
+  void _cancelFocusedDrag(TasteDeckCard card) {
+    if (_focusedCard?.id != card.id || _focusedCommittingReaction != null) {
+      return;
+    }
+    widget.onReactionPreview?.call(null);
+    setState(() {
+      _focusedVerticalDrag = 0;
+      _focusedPreviewReaction = null;
+    });
+  }
+
+  TasteCardReaction? _resolveFocusedPreviewReaction(double dragValue) {
+    if (dragValue <= -_focusedPreviewDistance) {
+      return TasteCardReaction.liked;
+    }
+    if (dragValue >= _focusedPreviewDistance) {
+      return TasteCardReaction.disliked;
+    }
+    return null;
+  }
+
+  TasteCardReaction? _resolveFocusedReaction(double dragValue) {
+    if (dragValue <= -_focusedTriggerDistance) {
+      return TasteCardReaction.liked;
+    }
+    if (dragValue >= _focusedTriggerDistance) {
+      return TasteCardReaction.disliked;
+    }
+    return null;
+  }
+
+  Rect _slotRectFor(int index, Size size) {
+    const columnCount = 2;
+    const rowCount = 4;
+    const columnGap = 8.0;
+    const rowGap = 8.0;
+    final rowIndex = index ~/ columnCount;
+    final columnIndex = index % columnCount;
+    final rowHeight = (size.height - rowGap * (rowCount - 1)) / rowCount;
+    final rowTop = rowIndex * (rowHeight + rowGap);
+    final cellWidth =
+        (size.width - columnGap * (columnCount - 1)) / columnCount;
+    final left = columnIndex * (cellWidth + columnGap);
+
+    return Rect.fromLTWH(left, rowTop, cellWidth, rowHeight);
   }
 
   bool _shouldCommitPage(double dragValue) {
@@ -604,6 +575,175 @@ class _TasteCardDeckState extends State<TasteCardDeck>
   }
 }
 
+class _TasteCardFocusOverlay extends StatelessWidget {
+  const _TasteCardFocusOverlay({
+    required this.card,
+    required this.reaction,
+    required this.verticalDrag,
+    required this.previewReaction,
+    required this.committingReaction,
+    required this.triggerDistance,
+    required this.commitOffset,
+    required this.commitDuration,
+    required this.onVerticalDragUpdate,
+    required this.onVerticalDragEnd,
+    required this.onVerticalDragCancel,
+    required this.onDismiss,
+  });
+
+  final TasteDeckCard card;
+  final TasteCardReaction? reaction;
+  final double verticalDrag;
+  final TasteCardReaction? previewReaction;
+  final TasteCardReaction? committingReaction;
+  final double triggerDistance;
+  final double commitOffset;
+  final Duration commitDuration;
+  final ValueChanged<double> onVerticalDragUpdate;
+  final VoidCallback onVerticalDragEnd;
+  final VoidCallback onVerticalDragCancel;
+  final VoidCallback onDismiss;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      key: const ValueKey('taste-card-focus-overlay'),
+      behavior: HitTestBehavior.opaque,
+      onTap: onDismiss,
+      onLongPress: () {},
+      child: DecoratedBox(
+        decoration: const BoxDecoration(color: AppSurfaces.scrim),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            const horizontalInset = 24.0;
+            const verticalInset = 24.0;
+            const cardAspectRatio = 0.78;
+            final availableWidth = math.max(
+              0.0,
+              constraints.maxWidth - horizontalInset * 2,
+            );
+            final availableHeight = math.max(
+              0.0,
+              constraints.maxHeight - verticalInset * 2,
+            );
+            final targetWidth = math.min(
+              math.min(availableWidth, 420.0),
+              availableHeight * cardAspectRatio,
+            );
+            final targetHeight = math.min(
+              availableHeight,
+              targetWidth / cardAspectRatio,
+            );
+            final isCommitting = committingReaction != null;
+            final activeReaction = committingReaction ?? previewReaction;
+            final dragProgress = (verticalDrag.abs() / triggerDistance)
+                .clamp(0.0, 1.0)
+                .toDouble();
+            final displayOffset = isCommitting
+                ? (committingReaction == TasteCardReaction.liked
+                    ? -commitOffset
+                    : commitOffset)
+                : verticalDrag.clamp(-140.0, 140.0) * 0.62;
+            final displayTilt = isCommitting
+                ? (committingReaction == TasteCardReaction.liked
+                    ? -0.055
+                    : 0.055)
+                : (verticalDrag / 1800).clamp(-0.045, 0.045).toDouble();
+            final displayScale = isCommitting ? 0.96 : 1 + dragProgress * 0.025;
+
+            return Center(
+              child: AnimatedOpacity(
+                duration: isCommitting ? commitDuration : AppMotion.fast,
+                curve: AppMotion.enter,
+                opacity: isCommitting ? 0 : 1,
+                child: AnimatedContainer(
+                  duration: isCommitting ? commitDuration : AppMotion.fast,
+                  curve: AppMotion.enter,
+                  transform: Matrix4.identity()
+                    ..translate(0.0, displayOffset)
+                    ..rotateZ(displayTilt)
+                    ..scale(displayScale),
+                  transformAlignment: Alignment.center,
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.94, end: 1),
+                    duration: AppMotion.standard,
+                    curve: AppMotion.enter,
+                    builder: (context, value, child) {
+                      return Opacity(
+                        opacity: value.clamp(0.0, 1.0),
+                        child: Transform.scale(
+                          scale: value,
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: Semantics(
+                      label: '${card.label}详情',
+                      explicitChildNodes: true,
+                      child: GestureDetector(
+                        behavior: HitTestBehavior.opaque,
+                        onTap: () {},
+                        onLongPress: () {},
+                        onVerticalDragUpdate: isCommitting
+                            ? null
+                            : (details) =>
+                                onVerticalDragUpdate(details.delta.dy),
+                        onVerticalDragEnd:
+                            isCommitting ? null : (_) => onVerticalDragEnd(),
+                        onVerticalDragCancel:
+                            isCommitting ? null : onVerticalDragCancel,
+                        child: SizedBox(
+                          key: ValueKey('taste-card-focus-surface-${card.id}'),
+                          width: targetWidth,
+                          height: targetHeight,
+                          child: Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              Positioned.fill(
+                                child: TasteMinimalCardFace(
+                                  card: card,
+                                  reaction: reaction,
+                                  dragReaction:
+                                      reaction == null ? activeReaction : null,
+                                  dragProgress: dragProgress,
+                                  isCommitting: isCommitting,
+                                  isFlipped: true,
+                                ),
+                              ),
+                              Positioned(
+                                top: 12,
+                                right: 12,
+                                child: Material(
+                                  color: AppPalette.surface,
+                                  shape: const CircleBorder(),
+                                  child: IconButton(
+                                    key: const ValueKey(
+                                        'taste-card-focus-close'),
+                                    tooltip: '关闭详情',
+                                    onPressed: onDismiss,
+                                    icon: const Icon(Icons.close_rounded),
+                                    color: AppColors.textPrimary,
+                                    iconSize: 21,
+                                    visualDensity: VisualDensity.compact,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
 class _TasteGridCard extends StatefulWidget {
   const _TasteGridCard({
     super.key,
@@ -611,21 +751,28 @@ class _TasteGridCard extends StatefulWidget {
     required this.reaction,
     required this.onReact,
     this.onPreviewReaction,
-    required this.onFirstFlip,
+    this.onFirstFlip,
+    required this.onFocus,
+    required this.onFocusDragUpdate,
+    required this.onFocusDragEnd,
+    required this.onFocusDragCancel,
   });
 
   final TasteDeckCard card;
   final TasteCardReaction? reaction;
   final ValueChanged<TasteCardReaction> onReact;
   final ValueChanged<TasteCardReaction?>? onPreviewReaction;
-  final VoidCallback onFirstFlip;
+  final VoidCallback? onFirstFlip;
+  final VoidCallback onFocus;
+  final ValueChanged<double> onFocusDragUpdate;
+  final VoidCallback onFocusDragEnd;
+  final VoidCallback onFocusDragCancel;
 
   @override
   State<_TasteGridCard> createState() => _TasteGridCardState();
 }
 
-class _TasteGridCardState extends State<_TasteGridCard>
-    with SingleTickerProviderStateMixin {
+class _TasteGridCardState extends State<_TasteGridCard> {
   static const double _triggerDistance = 70;
   static const double _previewDistance = 36;
   static const double _snapCommitDistance = 58;
@@ -637,29 +784,12 @@ class _TasteGridCardState extends State<_TasteGridCard>
   double _verticalDrag = 0;
   TasteCardReaction? _previewReaction;
   TasteCardReaction? _committingReaction;
-  bool _isFlipped = false;
   bool _hasReportedFlip = false;
   Timer? _commitTimer;
-  late final AnimationController _idleController;
-
-  @override
-  void initState() {
-    super.initState();
-    _idleController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2400),
-    );
-    if (!kDebugMode ||
-        WidgetsBinding.instance.runtimeType.toString() !=
-            'AutomatedTestWidgetsFlutterBinding') {
-      _idleController.repeat(reverse: true);
-    }
-  }
 
   @override
   void dispose() {
     _commitTimer?.cancel();
-    _idleController.dispose();
     super.dispose();
   }
 
@@ -672,11 +802,7 @@ class _TasteGridCardState extends State<_TasteGridCard>
       _previewReaction = null;
       widget.onPreviewReaction?.call(null);
       _committingReaction = null;
-      _isFlipped = false;
       _hasReportedFlip = false;
-    }
-    if (oldWidget.reaction != widget.reaction && widget.reaction != null) {
-      _isFlipped = false;
     }
   }
 
@@ -702,18 +828,13 @@ class _TasteGridCardState extends State<_TasteGridCard>
 
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: isCommitting
+      onTap: isCommitting ? null : _focus,
+      onLongPressStart: isCommitting ? null : (_) => _focus(),
+      onLongPressMoveUpdate: isCommitting
           ? null
-          : () {
-              HapticFeedback.lightImpact();
-              setState(() {
-                _isFlipped = !_isFlipped;
-              });
-              if (_isFlipped && !_hasReportedFlip) {
-                _hasReportedFlip = true;
-                widget.onFirstFlip();
-              }
-            },
+          : (details) => widget.onFocusDragUpdate(details.offsetFromOrigin.dy),
+      onLongPressEnd: isCommitting ? null : (_) => widget.onFocusDragEnd(),
+      onLongPressCancel: isCommitting ? null : widget.onFocusDragCancel,
       onVerticalDragUpdate: reaction != null || isCommitting
           ? null
           : (details) {
@@ -761,44 +882,38 @@ class _TasteGridCardState extends State<_TasteGridCard>
               });
               widget.onPreviewReaction?.call(null);
             },
-      child: AnimatedBuilder(
-        animation: _idleController,
-        builder: (context, _) {
-          final idle = math.sin(_idleController.value * math.pi * 2);
-          final idleLift = reaction == null && !isCommitting ? idle * 1.2 : 0.0;
-          final idleTilt =
-              reaction == null && !isCommitting ? idle * 0.004 : 0.0;
-
-          return AnimatedOpacity(
-            duration: isCommitting
-                ? _commitDuration
-                : const Duration(milliseconds: 90),
-            curve: isCommitting ? Curves.easeOutQuart : Curves.easeOut,
-            opacity: displayOpacity,
-            child: AnimatedContainer(
-              duration: isCommitting
-                  ? _commitDuration
-                  : const Duration(milliseconds: 70),
-              curve: isCommitting ? Curves.easeOutQuart : Curves.linear,
-              transform: Matrix4.identity()
-                ..translate(0.0, displayOffset + idleLift)
-                ..rotateZ(displayTilt + idleTilt)
-                ..scale(displayScale),
-              transformAlignment: Alignment.center,
-              child: TasteGridCardFace(
-                card: widget.card,
-                reaction: reaction,
-                dragReaction: reaction == null ? displayedReaction : null,
-                dragProgress:
-                    (_verticalDrag.abs() / _triggerDistance).clamp(0, 1),
-                isCommitting: isCommitting,
-                isFlipped: _isFlipped,
-              ),
-            ),
-          );
-        },
+      child: AnimatedOpacity(
+        duration: isCommitting ? _commitDuration : AppMotion.press,
+        curve: AppMotion.enter,
+        opacity: displayOpacity,
+        child: AnimatedContainer(
+          duration: isCommitting ? _commitDuration : AppMotion.press,
+          curve: AppMotion.enter,
+          transform: Matrix4.identity()
+            ..translate(0.0, displayOffset)
+            ..rotateZ(displayTilt)
+            ..scale(displayScale),
+          transformAlignment: Alignment.center,
+          child: TasteMinimalCardFace(
+            card: widget.card,
+            reaction: reaction,
+            dragReaction: reaction == null ? displayedReaction : null,
+            dragProgress: (_verticalDrag.abs() / _triggerDistance).clamp(0, 1),
+            isCommitting: isCommitting,
+            isFlipped: false,
+          ),
+        ),
       ),
     );
+  }
+
+  void _focus() {
+    HapticFeedback.lightImpact();
+    if (!_hasReportedFlip) {
+      _hasReportedFlip = true;
+      widget.onFirstFlip?.call();
+    }
+    widget.onFocus();
   }
 
   TasteCardReaction? _resolvePreviewReaction(double dragValue) {

@@ -39,6 +39,9 @@ class _AppV2State extends State<AppV2> {
   }
 
   Future<void> _checkInitialStatus() async {
+    if (EnvConfig.debugMode) {
+      return;
+    }
     final coldStartService = ColdStartService();
 
     // 检查是否已完成冷启动问卷

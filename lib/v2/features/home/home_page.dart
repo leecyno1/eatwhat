@@ -1,21 +1,22 @@
 import 'dart:async';
-import 'dart:math';
-import 'dart:ui';
 
+import 'package:eatwhat_app/core/config/env_config.dart';
+import 'package:eatwhat_app/v2/core/data/models/meal_planning_direction.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
 import 'package:eatwhat_app/v2/core/data/repositories/tag_repository_v2.dart';
 import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
 import 'package:eatwhat_app/v2/core/services/v2_favorites_service.dart';
+import 'package:eatwhat_app/v2/core/services/v2_meal_habit_learning_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_speech_input_service.dart';
 import 'package:eatwhat_app/v2/features/favorites/favorites_page.dart';
 import 'package:eatwhat_app/v2/features/home/controllers/home_recent_success_controller.dart';
 import 'package:eatwhat_app/v2/features/home/controllers/home_taste_deck_builder.dart';
+import 'package:eatwhat_app/v2/features/home/widgets/bubble_ocean.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/floating_editorial_background.dart';
-import 'package:eatwhat_app/v2/features/home/widgets/home_action_surfaces.dart';
+import 'package:eatwhat_app/v2/features/home/widgets/fresh_physical_preference_stage.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/home_overlays.dart';
-import 'package:eatwhat_app/v2/features/home/widgets/taste_card_deck.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/taste_signature_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -26,58 +27,24 @@ import '../../core/theme/app_tokens.dart';
 
 typedef HomeDecisionPageBuilder = Widget Function(TasteInferenceInput input);
 
-const _quickConstraintPhrases = <String>[
-  '15 分钟内',
-  '30 元内',
-  '1 人',
-  '2-3 人',
-  '在家做',
-  '叫外卖',
-  '去店里',
-  '附近',
-  '素食',
-  '清真',
-  '不要辣',
-];
-
-const _quickConstraintSpecs = <String, TasteStructuredConstraints>{
-  '15 分钟内': TasteStructuredConstraints(maxTimeMinutes: 15),
-  '30 元内': TasteStructuredConstraints(maxBudgetYuan: 30),
-  '1 人': TasteStructuredConstraints(partySize: 1),
-  '2-3 人': TasteStructuredConstraints(partySize: 3),
-  '在家做': TasteStructuredConstraints(
-    executionPreference: TasteExecutionPreference.cook,
-  ),
-  '叫外卖': TasteStructuredConstraints(
-    executionPreference: TasteExecutionPreference.delivery,
-  ),
-  '去店里': TasteStructuredConstraints(
-    executionPreference: TasteExecutionPreference.dineIn,
-  ),
-  '附近': TasteStructuredConstraints(
-    locationPreference: TasteLocationPreference.nearby,
-  ),
-  '素食': TasteStructuredConstraints(dietaryRestrictions: ['素食']),
-  '清真': TasteStructuredConstraints(dietaryRestrictions: ['清真']),
-};
-
 class HomePage extends StatefulWidget {
   const HomePage({
     super.key,
     this.speechInputService,
     this.decisionPageBuilder,
+    this.initialCards,
   });
 
   final V2SpeechInputService? speechInputService;
   final HomeDecisionPageBuilder? decisionPageBuilder;
+  final List<TasteDeckCard>? initialCards;
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
+class _HomePageState extends State<HomePage> {
   static const _guideSeenKey = 'v2_home_generation_guide_seen';
-  static const _flipHintSeenKey = 'v2_home_flip_hint_seen';
 
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
@@ -87,10 +54,8 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   final V2FavoritesService _favorites = V2FavoritesService.instance;
   final V2PreferenceFeedbackService _feedback =
       V2PreferenceFeedbackService.instance;
-  late final AnimationController _entranceController;
-  late final AnimationController _headerMotionController;
-  late final AnimationController _legendBreathController;
-  late final AnimationController _legendCueController;
+  final V2MealHabitLearningService _habitLearning =
+      V2MealHabitLearningService.instance;
   late final V2SpeechInputService _speechInputService;
 
   Timer? _transitionCueTimer;
@@ -98,13 +63,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool _isTransitioning = false;
   bool _isLoadingDeck = true;
   bool _isListening = false;
-  bool _showFlipHint = false;
-  int _lastPageDirection = -1;
-  int _pageAnimationSerial = 0;
+  bool _hasChosenPlanningDirection = false;
   String _liveTranscript = '';
-  _LegendCue _activeLegendCue = _LegendCue.none;
-  _LegendCue _previewLegendCue = _LegendCue.none;
+  String? _tasteCategory;
   TasteDeckSessionState? _session;
+  MealPlanningDirection _planningDirection = MealPlanningDirection.balanced;
+  MealHabitSnapshot? _habitSnapshot;
   Map<String, int> _historyScores = const {};
   List<String> _recentRecipeIds = const [];
 
@@ -112,41 +76,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _controller.addListener(_handleRequirementChanged);
-    _entranceController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 900),
-    )..forward();
-    _headerMotionController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 320),
-    );
-    _legendBreathController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 2200),
-    );
-    _legendCueController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 520),
-    )..addStatusListener((status) {
-        if (status != AnimationStatus.completed || !mounted) return;
-        setState(() {
-          _activeLegendCue = _LegendCue.none;
-        });
-        _legendCueController.value = 0;
-      });
-    final isWidgetTestBinding = WidgetsBinding.instance.runtimeType
-        .toString()
-        .contains('TestWidgetsFlutterBinding');
-    if (!isWidgetTestBinding) {
-      _legendBreathController.repeat();
-    } else {
-      _legendBreathController.value = 0.35;
-    }
     _speechInputService =
         widget.speechInputService ?? V2SpeechInputServiceImpl();
-    unawaited(_speechInputService.initialize());
-    _restoreHintStates();
-    _prepareDeck();
+    final initialCards = widget.initialCards;
+    if (initialCards != null && initialCards.isNotEmpty) {
+      _session = TasteDeckSessionState.initial(
+        deck: initialCards,
+        cardDeckSeed: 0,
+      );
+      _isLoadingDeck = false;
+      unawaited(_loadInitialHistoryContext());
+    } else {
+      _prepareDeck();
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showFirstUseGuideIfNeeded();
     });
@@ -158,12 +100,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     if (!(_transitionCueCompleter?.isCompleted ?? true)) {
       _transitionCueCompleter?.complete();
     }
-    _controller.removeListener(_handleRequirementChanged);
-    _entranceController.dispose();
-    _headerMotionController.dispose();
-    _legendBreathController.dispose();
-    _legendCueController.dispose();
-    _controller.dispose();
+    _controller
+      ..removeListener(_handleRequirementChanged)
+      ..dispose();
     _focusNode.dispose();
     super.dispose();
   }
@@ -173,66 +112,75 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     setState(() {});
   }
 
-  void _triggerLegendCue(_LegendCue cue) {
-    setState(() {
-      _activeLegendCue = cue;
-    });
-    _legendCueController
-      ..stop()
-      ..value = 0
-      ..forward();
-  }
-
-  void _setPreviewLegendCue(_LegendCue cue) {
-    if (_previewLegendCue == cue) return;
-    setState(() {
-      _previewLegendCue = cue;
-    });
-  }
-
-  _LegendCue get _effectiveCue {
-    return _activeLegendCue != _LegendCue.none
-        ? _activeLegendCue
-        : _previewLegendCue;
-  }
-
-  double _stageCueIntensity(double focus) {
-    if (_activeLegendCue != _LegendCue.none) {
-      return (0.18 + focus * 0.82).clamp(0.0, 1.0);
-    }
-    if (_previewLegendCue != _LegendCue.none) {
-      return 0.62;
-    }
-    if (_isListening) {
-      return 0.58;
-    }
-    return 0;
-  }
-
-  Future<void> _prepareDeck() async {
-    final historyScores = await _feedback.getTagScores();
-    final recentRecipeIds = await _feedback.getRecentRecipeIds(limit: 5);
-    final favoriteTagIds = await _favorites.getFavoriteTagIds();
+  void _prepareDeck() {
     final seed = DateTime.now().millisecondsSinceEpoch.remainder(1 << 31);
-
     final fallbackCards = HomeTasteDeckBuilder(
+      tagRepository: TagRepositoryV2(),
+    ).buildDeck(
+      seed: seed,
+      historyScores: const {},
+      favoriteTagIds: const {},
+    );
+    _session = TasteDeckSessionState.initial(
+      deck: fallbackCards,
+      cardDeckSeed: seed,
+    );
+    _isLoadingDeck = false;
+    unawaited(_hydrateDeck(seed));
+  }
+
+  Future<void> _hydrateDeck(int seed) async {
+    Map<String, int> historyScores = const {};
+    List<String> recentRecipeIds = const [];
+    Set<String> favoriteTagIds = const {};
+    var habitSnapshot = const MealHabitSnapshot(
+      recommendedDirection: MealPlanningDirection.balanced,
+      evidenceCount: 0,
+      confidence: 0,
+      insight: '还没有足够历史，先从均衡开始',
+    );
+
+    try {
+      historyScores = await _feedback.getTagScores();
+    } catch (_) {}
+    try {
+      recentRecipeIds = await _feedback.getRecentRecipeIds(limit: 5);
+    } catch (_) {}
+    try {
+      favoriteTagIds = await _favorites.getFavoriteTagIds();
+    } catch (_) {}
+    try {
+      habitSnapshot = await _habitLearning.buildSnapshot(
+        tagScores: historyScores,
+      );
+    } catch (_) {}
+
+    if (!mounted) return;
+    final personalizedCards = HomeTasteDeckBuilder(
       tagRepository: TagRepositoryV2(),
     ).buildDeck(
       seed: seed,
       historyScores: historyScores,
       favoriteTagIds: favoriteTagIds,
     );
-
-    if (!mounted) return;
     setState(() {
       _historyScores = historyScores;
       _recentRecipeIds = recentRecipeIds;
-      _session = TasteDeckSessionState.initial(
-        deck: fallbackCards,
-        cardDeckSeed: seed,
-      );
-      _isLoadingDeck = false;
+      _habitSnapshot = habitSnapshot;
+      if (!_hasChosenPlanningDirection) {
+        _planningDirection = habitSnapshot.recommendedDirection;
+      }
+      final currentSession = _session;
+      if (currentSession != null &&
+          currentSession.reviewedCount == 0 &&
+          currentSession.freeformRequirement.trim().isEmpty) {
+        _session = TasteDeckSessionState.initial(
+          deck: personalizedCards,
+          cardDeckSeed: seed,
+        );
+      }
     });
+
     final catalogCards = await _deckBuilder.buildDeckFromCatalog(
       seed: seed,
       historyScores: historyScores,
@@ -255,16 +203,35 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     });
   }
 
-  Future<void> _restoreHintStates() async {
-    final prefs = await SharedPreferences.getInstance();
-    final hasSeenFlipHint = prefs.getBool(_flipHintSeenKey) ?? false;
+  Future<void> _loadInitialHistoryContext() async {
+    Map<String, int> historyScores = const {};
+    List<String> recentRecipeIds = const [];
+    var habitSnapshot = const MealHabitSnapshot(
+      recommendedDirection: MealPlanningDirection.balanced,
+      evidenceCount: 0,
+      confidence: 0,
+      insight: '还没有足够历史，先从均衡开始',
+    );
+    try {
+      historyScores = await _feedback.getTagScores();
+      recentRecipeIds = await _feedback.getRecentRecipeIds(limit: 5);
+      habitSnapshot = await _habitLearning.buildSnapshot(
+        tagScores: historyScores,
+      );
+    } catch (_) {}
     if (!mounted) return;
     setState(() {
-      _showFlipHint = !hasSeenFlipHint;
+      _historyScores = historyScores;
+      _recentRecipeIds = recentRecipeIds;
+      _habitSnapshot = habitSnapshot;
+      if (!_hasChosenPlanningDirection) {
+        _planningDirection = habitSnapshot.recommendedDirection;
+      }
     });
   }
 
   Future<void> _showFirstUseGuideIfNeeded() async {
+    if (EnvConfig.debugMode) return;
     final prefs = await SharedPreferences.getInstance();
     final hasSeenGuide = prefs.getBool(_guideSeenKey) ?? false;
     if (hasSeenGuide || !mounted) return;
@@ -291,58 +258,50 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     await prefs.setBool(_guideSeenKey, true);
   }
 
-  Future<void> _handleReaction(
-    TasteDeckCard card,
-    TasteCardReaction reaction,
-  ) async {
+  void _handleBubbleSelectionChanged(BubbleSelectionState selection) {
     final session = _session;
     if (session == null) return;
-
-    if (reaction == TasteCardReaction.liked) {
-      unawaited(_feedback.recordPositiveTag(card.id));
-      _triggerLegendCue(_LegendCue.like);
-    } else if (reaction == TasteCardReaction.disliked) {
-      unawaited(_feedback.recordNegativeTag(card.id));
-      _triggerLegendCue(_LegendCue.dislike);
-    }
-
-    setState(() {
-      _session = session.recordReaction(card, reaction);
-    });
-  }
-
-  void _advancePage() {
-    final session = _session;
-    if (session == null) return;
-    setState(() {
-      _session = session.advancePage();
-      _pageAnimationSerial += 1;
-    });
-    _headerMotionController
-      ..stop()
-      ..value = 0
-      ..forward();
-  }
-
-  void _handlePageAdvanceDirection(int direction) {
-    setState(() {
-      _lastPageDirection = direction == 0 ? -1 : direction.sign;
-    });
-    _triggerLegendCue(_LegendCue.refresh);
-  }
-
-  void _handleCardPreview(TasteCardReaction? reaction) {
-    final cue = switch (reaction) {
-      TasteCardReaction.liked => _LegendCue.like,
-      TasteCardReaction.disliked => _LegendCue.dislike,
-      TasteCardReaction.skipped => _LegendCue.none,
-      null => _LegendCue.none,
+    final labelsById = <String, String>{
+      for (final card in session.deck) card.id: card.label,
+      for (var index = 0; index < selection.likedIds.length; index++)
+        selection.likedIds[index]: index < selection.likedLabels.length
+            ? selection.likedLabels[index]
+            : selection.likedIds[index],
+      for (var index = 0; index < selection.blockedIds.length; index++)
+        selection.blockedIds[index]: index < selection.blockedLabels.length
+            ? selection.blockedLabels[index]
+            : selection.blockedIds[index],
     };
-    _setPreviewLegendCue(cue);
+    setState(() {
+      _session = session.copyWith(
+        likedTagIds: List<String>.from(selection.likedIds),
+        dislikedTagIds: List<String>.from(selection.blockedIds),
+        tagLabelsById: labelsById,
+      );
+    });
   }
 
-  void _handlePagePreview(int direction) {
-    _setPreviewLegendCue(direction == 0 ? _LegendCue.none : _LegendCue.refresh);
+  void _handlePlanningDirectionChanged(MealPlanningDirection direction) {
+    setState(() {
+      _planningDirection = direction;
+      _hasChosenPlanningDirection = true;
+    });
+  }
+
+  void _handleCategoryChanged(String? category) {
+    setState(() {
+      _tasteCategory = category;
+    });
+  }
+
+  void _handleStructuredConstraintsChanged(
+    TasteStructuredConstraints constraints,
+  ) {
+    final session = _session;
+    if (session == null) return;
+    setState(() {
+      _session = session.copyWith(structuredConstraints: constraints);
+    });
   }
 
   void _showSignature() {
@@ -361,16 +320,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     });
   }
 
-  Future<void> _handleFirstFlip() async {
-    if (!_showFlipHint) return;
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setBool(_flipHintSeenKey, true);
-    if (!mounted) return;
-    setState(() {
-      _showFlipHint = false;
-    });
-  }
-
   Future<void> _startVoiceCapture() async {
     if (_isListening) return;
     final ready = await _speechInputService.initialize();
@@ -386,8 +335,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       _isListening = true;
       _liveTranscript = '';
     });
-    _triggerLegendCue(_LegendCue.voice);
-
     await _speechInputService.startListening(
       onResult: (transcript, _) {
         if (!mounted || transcript.trim().isEmpty) return;
@@ -420,54 +367,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  void _appendConstraintPhrase(String phrase) {
-    final session = _session;
-    final current = _controller.text.trim();
-    final parts = current
-        .split(RegExp(r'[，,、]+'))
-        .map((part) => part.trim())
-        .where((part) => part.isNotEmpty)
-        .toList();
-    if (!parts.contains(phrase)) {
-      parts.add(phrase);
-    }
-    final nextText = parts.join('，');
-    _controller.value = TextEditingValue(
-      text: nextText,
-      selection: TextSelection.collapsed(offset: nextText.length),
-    );
-    final spec = _quickConstraintSpecs[phrase];
-    if (session == null || spec == null) return;
-    late final TasteDeckSessionState nextSession;
-    setState(() {
-      nextSession = session.copyWith(
-        structuredConstraints: _mergeStructuredConstraints(
-          session.structuredConstraints,
-          spec,
-        ),
-      );
-      _session = nextSession;
-    });
-  }
-
-  TasteStructuredConstraints _mergeStructuredConstraints(
-    TasteStructuredConstraints current,
-    TasteStructuredConstraints next,
-  ) {
-    final restrictions = {
-      ...current.dietaryRestrictions,
-      ...next.dietaryRestrictions,
-    }.toList();
-    return current.copyWith(
-      maxTimeMinutes: next.maxTimeMinutes,
-      maxBudgetYuan: next.maxBudgetYuan,
-      partySize: next.partySize,
-      dietaryRestrictions: restrictions,
-      executionPreference: next.executionPreference,
-      locationPreference: next.locationPreference,
-    );
-  }
-
   Future<void> _submitGeneration() async {
     final session = _session;
     if (_isTransitioning || session == null) return;
@@ -477,7 +376,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
     if (!nextSession.canStartInference) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('先滑几张卡，或者补一句今天想吃的')),
+        const SnackBar(content: Text('先选几个偏好，或者补一句今天想吃的')),
       );
       return;
     }
@@ -485,11 +384,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     final input = TasteInferenceInput.fromSession(
       nextSession,
       historyPreferenceSummary: _historyScores,
+      planningDirection: _planningDirection,
     );
 
     setState(() {
       _session = nextSession;
     });
+    unawaited(_habitLearning.recordDirection(_planningDirection));
     await _openDecisionFlow(input);
   }
 
@@ -499,13 +400,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       return;
     }
 
-    final input = _recentSuccessController.buildInput(
+    final baseInput = _recentSuccessController.buildInput(
       session: session,
       historyScores: _historyScores,
       recentRecipeIds: _recentRecipeIds,
     );
-    if (input == null) return;
+    if (baseInput == null) return;
 
+    final input = baseInput.copyWith(planningDirection: _planningDirection);
+    unawaited(_habitLearning.recordDirection(_planningDirection));
     await _openDecisionFlow(input);
   }
 
@@ -520,15 +423,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       if (!mounted) return;
 
       if (widget.decisionPageBuilder != null) {
-        await Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (_) => widget.decisionPageBuilder!.call(input),
+        unawaited(
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => widget.decisionPageBuilder!.call(input),
+            ),
           ),
         );
       } else {
-        await context.push(
-          AppV2Routes.decision,
-          extra: AppV2DecisionRouteData(input: input),
+        unawaited(
+          context.push(
+            AppV2Routes.decision,
+            extra: AppV2DecisionRouteData(input: input),
+          ),
         );
       }
     } catch (_) {
@@ -561,6 +468,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return completer.future;
   }
 
+  void _removeTasteSelection(String id, {required bool liked}) {
+    final session = _session;
+    if (session == null) return;
+    setState(() {
+      _session = session.copyWith(
+        likedTagIds: liked
+            ? session.likedTagIds.where((item) => item != id).toList()
+            : session.likedTagIds,
+        dislikedTagIds: liked
+            ? session.dislikedTagIds
+            : session.dislikedTagIds.where((item) => item != id).toList(),
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final session = _session;
@@ -571,14 +493,30 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           const FloatingEditorialBackground(),
           SafeArea(
             child: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 4, 8, 6),
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 10),
               child: Column(
                 children: [
+                  _FreshHomeHeader(
+                    likedCount: session?.likedTagIds.length ?? 0,
+                    blockedCount: session?.dislikedTagIds.length ?? 0,
+                    onShowSignature: _showSignature,
+                    onOpenFavorites: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<void>(
+                          builder: (_) => const FavoritesPageV2(),
+                        ),
+                      );
+                    },
+                    onOpenRecent: _submitRecentSuccessRecommendation,
+                  ),
+                  const SizedBox(height: 7),
                   Expanded(
                     child: _buildMainStage(session),
                   ),
-                  const SizedBox(height: 6),
-                  _buildBottomControlPanel(session),
+                  if (session?.faceStage != TasteDeckFaceStage.signature) ...[
+                    const SizedBox(height: 7),
+                    _buildBottomControlPanel(),
+                  ],
                 ],
               ),
             ),
@@ -592,177 +530,110 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildBottomControlPanel(TasteDeckSessionState? session) {
+  Widget _buildBottomControlPanel() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(8, 7, 8, 8),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.62)),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withValues(alpha: 0.72),
-            const Color(0xFFFFEEE8).withValues(alpha: 0.38),
-          ],
-        ),
+      height: 58,
+      padding: const EdgeInsets.all(6),
+      decoration: AppDecorations.floating(
+        color: Colors.white.withValues(alpha: 0.88),
+        borderColor: AppPalette.gardenBorder,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Row(
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: _BottomNavTile(
-                  icon: Icons.favorite_rounded,
-                  label: '收藏',
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const FavoritesPageV2(),
-                      ),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: _BottomNavTile(
-                  icon: Icons.history_rounded,
-                  label: '吃过',
-                  onTap: _submitRecentSuccessRecommendation,
-                ),
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: _BottomNavTile(
-                  icon: Icons.tune_rounded,
-                  label: '限制',
-                  onTap: () => _appendConstraintPhrase('15 分钟内'),
-                ),
-              ),
-              const SizedBox(width: 6),
-              Expanded(
-                child: _BottomNavTile(
-                  icon: Icons.auto_awesome_rounded,
-                  label: '签名',
-                  onTap: _showSignature,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          _buildRequirementPanel(),
+          Expanded(child: _buildRequirementPanel()),
+          const SizedBox(width: 7),
+          _buildGenerateButton(),
         ],
+      ),
+    );
+  }
+
+  Widget _buildGenerateButton() {
+    final session = _session;
+    final canStart = session != null &&
+        session
+            .copyWith(freeformRequirement: _controller.text.trim())
+            .canStartInference;
+    final selectionCount = session == null
+        ? 0
+        : session.likedTagIds.length + session.dislikedTagIds.length;
+    return SizedBox(
+      width: 124,
+      height: 46,
+      child: FilledButton.icon(
+        key: const ValueKey('home-start-inference-button'),
+        onPressed: canStart && !_isTransitioning ? _submitGeneration : null,
+        icon: const Icon(Icons.auto_awesome_rounded, size: 17),
+        label: Text(
+          selectionCount == 0 ? '生成建议' : '生成 · $selectionCount',
+          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
+        ),
+        style: FilledButton.styleFrom(
+          backgroundColor: AppPalette.garden,
+          disabledBackgroundColor: AppPalette.gardenBorder,
+          foregroundColor: Colors.white,
+          disabledForegroundColor: AppPalette.gardenInk.withValues(alpha: 0.46),
+          elevation: canStart ? 5 : 0,
+          shadowColor: AppPalette.garden.withValues(alpha: 0.3),
+        ),
       ),
     );
   }
 
   Widget _buildRequirementPanel() {
     return Container(
-      padding: const EdgeInsets.fromLTRB(9, 5, 9, 6),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.54)),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [
-            Colors.white.withValues(alpha: 0.78),
-            const Color(0xFFFFEEE8).withValues(alpha: 0.46),
-          ],
-        ),
+      height: 46,
+      padding: const EdgeInsets.symmetric(horizontal: 11),
+      decoration: AppDecorations.card(
+        color: AppPalette.gardenSoft.withValues(alpha: 0.68),
+        borderColor: AppPalette.gardenBorder,
       ),
       child: Row(
         children: [
           Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        key: const ValueKey('home-requirement-input'),
-                        controller: _controller,
-                        focusNode: _focusNode,
-                        textInputAction: TextInputAction.done,
-                        minLines: 1,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w700,
-                          height: 1.1,
-                        ),
-                        decoration: InputDecoration(
-                          isDense: true,
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.zero,
-                          hintText: '今天想怎么吃',
-                          hintStyle: TextStyle(
-                            color:
-                                AppColors.textPrimary.withValues(alpha: 0.42),
-                            fontSize: 13,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        onSubmitted: (_) => _showSignature(),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Container(
-                      key: const ValueKey('home-requirement-mode-pill'),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 7,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.52),
-                        borderRadius: BorderRadius.circular(999),
-                        border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.58),
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.keyboard_alt_rounded,
-                            size: 11,
-                            color:
-                                AppColors.textPrimary.withValues(alpha: 0.46),
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '输入/长按',
-                            style: TextStyle(
-                              color:
-                                  AppColors.textPrimary.withValues(alpha: 0.46),
-                              fontSize: 8.6,
-                              fontWeight: FontWeight.w900,
-                              letterSpacing: 0.4,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
+            child: TextField(
+              key: const ValueKey('home-requirement-input'),
+              controller: _controller,
+              focusNode: _focusNode,
+              textInputAction: TextInputAction.done,
+              minLines: 1,
+              style: const TextStyle(
+                fontSize: 13.5,
+                fontWeight: FontWeight.w600,
+                height: 1.2,
+              ),
+              decoration: InputDecoration(
+                isDense: true,
+                border: InputBorder.none,
+                contentPadding: EdgeInsets.zero,
+                hintText: '补充忌口或今天特别想吃的',
+                hintStyle: TextStyle(
+                  color: AppColors.textPrimary.withValues(alpha: 0.42),
+                  fontSize: 12.5,
+                  fontWeight: FontWeight.w500,
                 ),
-                const SizedBox(height: 5),
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
-                      for (final phrase in _quickConstraintPhrases) ...[
-                        _RequirementConstraintChip(
-                          label: phrase,
-                          onTap: () => _appendConstraintPhrase(phrase),
-                        ),
-                        const SizedBox(width: 5),
-                      ],
-                    ],
-                  ),
-                ),
-              ],
+              ),
+              onSubmitted: (_) => _submitGeneration(),
+            ),
+          ),
+          const SizedBox(width: 7),
+          GestureDetector(
+            key: const ValueKey('home-requirement-mode-pill'),
+            behavior: HitTestBehavior.opaque,
+            onLongPressStart: (_) => _startVoiceCapture(),
+            onLongPressEnd: (_) => _finishVoiceCapture(),
+            child: SizedBox(
+              width: 32,
+              height: 32,
+              child: Icon(
+                _isListening
+                    ? Icons.graphic_eq_rounded
+                    : Icons.mic_none_rounded,
+                size: 18,
+                color: _isListening
+                    ? AppPalette.garden
+                    : AppColors.textPrimary.withValues(alpha: 0.54),
+              ),
             ),
           ),
         ],
@@ -771,613 +642,232 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   }
 
   Widget _buildMainStage(TasteDeckSessionState? session) {
-    final effectiveCue = _effectiveCue;
-    final canStartInference = session != null &&
-        session
-            .copyWith(freeformRequirement: _controller.text.trim())
-            .canStartInference;
-    final readySelectionCount = session == null
-        ? 0
-        : session.likedTagIds.length + session.dislikedTagIds.length;
-    return Container(
+    return SizedBox(
       key: const ValueKey('taste-card-stage-shell'),
       width: double.infinity,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.68),
-          width: 0.9,
-        ),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x1818100D),
-            blurRadius: 22,
-            offset: Offset(0, 10),
+      child: Stack(
+        children: [
+          Positioned.fill(
+            child: AnimatedSwitcher(
+              duration: AppMotion.standard,
+              switchInCurve: AppMotion.enter,
+              switchOutCurve: AppMotion.enter,
+              child: _isLoadingDeck || session == null
+                  ? const Center(
+                      key: ValueKey('taste-physical-loading'),
+                      child: CircularProgressIndicator(
+                        color: AppPalette.garden,
+                      ),
+                    )
+                  : session.faceStage == TasteDeckFaceStage.signature
+                      ? Container(
+                          key: const ValueKey('taste-signature-stage'),
+                          padding: const EdgeInsets.all(8),
+                          decoration: AppDecorations.card(
+                            color: Colors.white.withValues(alpha: 0.88),
+                            borderColor: AppPalette.gardenBorder,
+                            radius: AppRadii.lg,
+                          ),
+                          child: TasteSignaturePanel(
+                            session: session.copyWith(
+                              freeformRequirement: _controller.text.trim(),
+                            ),
+                            onBack: _showDeck,
+                            onStartInference: _submitGeneration,
+                            onRemoveLiked: (id) =>
+                                _removeTasteSelection(id, liked: true),
+                            onRemoveDisliked: (id) =>
+                                _removeTasteSelection(id, liked: false),
+                          ),
+                        )
+                      : FreshPhysicalPreferenceStage(
+                          key: const ValueKey(
+                            'fresh-physical-preference-stage',
+                          ),
+                          session: session,
+                          isLoading: _isLoadingDeck,
+                          planningDirection: _planningDirection,
+                          habitSnapshot: _habitSnapshot,
+                          category: _tasteCategory,
+                          structuredConstraints: session.structuredConstraints,
+                          onPlanningDirectionChanged:
+                              _handlePlanningDirectionChanged,
+                          onCategoryChanged: _handleCategoryChanged,
+                          onStructuredConstraintsChanged:
+                              _handleStructuredConstraintsChanged,
+                          onSelectionChanged: _handleBubbleSelectionChanged,
+                        ),
+            ),
           ),
+          if (_isListening)
+            Positioned.fill(
+              child: IgnorePointer(
+                child: HomeVoiceStageOverlay(
+                  transcript: _liveTranscript,
+                ),
+              ),
+            ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(28),
-        child: Stack(
-          children: [
-            Positioned.fill(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Colors.white.withValues(alpha: 0.34),
-                        const Color(0xFFFDE8DE).withValues(alpha: 0.24),
-                        const Color(0xFFFFF7F2).withValues(alpha: 0.18),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            Positioned.fill(
-              child: AnimatedBuilder(
-                animation: Listenable.merge([
-                  _headerMotionController,
-                  _legendCueController,
-                ]),
-                builder: (context, _) {
-                  final burst = Curves.easeOutCubic
-                      .transform(_headerMotionController.value);
-                  final focus = sin(_legendCueController.value * pi);
-                  return _StageResponseOverlay(
-                    cue: effectiveCue,
-                    intensity: _stageCueIntensity(focus),
-                    horizontalDirection: _lastPageDirection,
-                    burst: burst,
-                  );
-                },
-              ),
-            ),
-            if (_isLoadingDeck || session == null)
-              const Center(child: CircularProgressIndicator())
-            else
-              Padding(
-                padding: const EdgeInsets.fromLTRB(6, 6, 6, 6),
-                child: session.faceStage == TasteDeckFaceStage.signature
-                    ? TasteSignaturePanel(
-                        session: session.copyWith(
-                          freeformRequirement: _controller.text.trim(),
-                        ),
-                        onBack: _showDeck,
-                        onStartInference: _submitGeneration,
-                      )
-                    : AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 260),
-                        switchInCurve: Curves.easeOutCubic,
-                        switchOutCurve: Curves.easeInCubic,
-                        transitionBuilder: (child, animation) {
-                          final slide = Tween<Offset>(
-                            begin: const Offset(0.08, 0),
-                            end: Offset.zero,
-                          ).animate(animation);
-                          return FadeTransition(
-                            opacity: animation,
-                            child: SlideTransition(
-                              position: slide,
-                              child: child,
-                            ),
-                          );
-                        },
-                        child: TasteCardDeck(
-                          key: ValueKey(
-                            'taste-grid-page-${session.currentPageNumber}-$_pageAnimationSerial',
-                          ),
-                          cards: session.currentPageCards,
-                          session: session,
-                          onReact: _handleReaction,
-                          onReactionPreview: _handleCardPreview,
-                          onAdvancePage: _advancePage,
-                          onPageAdvanceDirection: _handlePageAdvanceDirection,
-                          onPagePreviewDirection: _handlePagePreview,
-                          onVoiceStart: _startVoiceCapture,
-                          onVoiceEnd: _finishVoiceCapture,
-                          isListening: _isListening,
-                          showFlipHint: _showFlipHint,
-                          onFirstFlip: () {
-                            unawaited(_handleFirstFlip());
-                          },
-                        ),
-                      ),
-              ),
-            if (!_isLoadingDeck &&
-                session != null &&
-                session.faceStage == TasteDeckFaceStage.deck)
-              Positioned(
-                left: 12,
-                top: 10,
-                child: _StageCornerMetrics(session: session),
-              ),
-            if (!_isLoadingDeck &&
-                session != null &&
-                session.faceStage == TasteDeckFaceStage.deck)
-              Positioned(
-                right: 12,
-                top: 10,
-                child: _StageSignatureCornerButton(
-                  onPressed: _showSignature,
-                  isListening: _isListening,
-                ),
-              ),
-            if (_isListening)
-              Positioned.fill(
-                child: IgnorePointer(
-                  child: HomeVoiceStageOverlay(
-                    transcript: _liveTranscript,
-                  ),
-                ),
-              ),
-            if (!_isLoadingDeck &&
-                session != null &&
-                session.faceStage == TasteDeckFaceStage.deck &&
-                canStartInference)
-              Positioned(
-                left: 18,
-                right: 18,
-                bottom: 18,
-                child: IgnorePointer(
-                  ignoring: _isListening,
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: HomeStartInferenceButton(
-                      canStartInference: canStartInference,
-                      readySelectionCount: readySelectionCount,
-                      onPressed: _submitGeneration,
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
     );
   }
 }
 
-class _RequirementConstraintChip extends StatelessWidget {
-  const _RequirementConstraintChip({
-    required this.label,
-    required this.onTap,
+class _FreshHomeHeader extends StatelessWidget {
+  const _FreshHomeHeader({
+    required this.likedCount,
+    required this.blockedCount,
+    required this.onShowSignature,
+    required this.onOpenFavorites,
+    required this.onOpenRecent,
   });
 
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      key: ValueKey('home-constraint-chip-$label'),
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(999),
-        onTap: onTap,
-        child: Ink(
-          height: 25,
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.54),
-            borderRadius: BorderRadius.circular(999),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.6)),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(
-                _iconForLabel(label),
-                size: 12,
-                color: const Color(0xFFF46B40),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  color: AppColors.textPrimary.withValues(alpha: 0.66),
-                  fontSize: 9.6,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  IconData _iconForLabel(String label) {
-    if (label.contains('分钟')) return Icons.timer_rounded;
-    if (label.contains('元')) return Icons.payments_rounded;
-    if (label.contains('人')) return Icons.group_rounded;
-    if (label.contains('在家')) return Icons.soup_kitchen_rounded;
-    if (label.contains('外卖')) return Icons.delivery_dining_rounded;
-    if (label.contains('店')) return Icons.storefront_rounded;
-    if (label.contains('附近')) return Icons.near_me_rounded;
-    if (label.contains('素')) return Icons.eco_rounded;
-    if (label.contains('清真')) return Icons.verified_rounded;
-    return Icons.tune_rounded;
-  }
-}
-
-class _BottomNavTile extends StatelessWidget {
-  const _BottomNavTile({
-    required this.icon,
-    required this.label,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: onTap,
-        child: Ink(
-          height: 34,
-          decoration: BoxDecoration(
-            color: Colors.white.withValues(alpha: 0.52),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.58)),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                icon,
-                size: 14,
-                color: const Color(0xFFF46B40),
-              ),
-              const SizedBox(height: 1),
-              Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: AppColors.textPrimary.withValues(alpha: 0.66),
-                  fontSize: 9,
-                  fontWeight: FontWeight.w900,
-                  height: 1,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _StageCornerMetrics extends StatelessWidget {
-  const _StageCornerMetrics({
-    required this.session,
-  });
-
-  final TasteDeckSessionState session;
+  final int likedCount;
+  final int blockedCount;
+  final VoidCallback onShowSignature;
+  final VoidCallback onOpenFavorites;
+  final VoidCallback onOpenRecent;
 
   @override
   Widget build(BuildContext context) {
     return Row(
-      key: const ValueKey('taste-stage-corner-metrics'),
-      mainAxisSize: MainAxisSize.min,
       children: [
-        _StageMetricChip(
-          label: '${session.currentPageNumber}/${session.totalPageCount}',
-          tone: _MetricTone.neutral,
+        const Text(
+          '吃什么',
+          style: TextStyle(
+            color: AppPalette.gardenInk,
+            fontSize: 22,
+            fontWeight: FontWeight.w900,
+            height: 1,
+            letterSpacing: -1.1,
+          ),
         ),
-        const SizedBox(width: 4),
-        _StageMetricChip(
-          label: '选 ${session.likedTagIds.length}',
-          tone: _MetricTone.warm,
+        const SizedBox(width: 10),
+        Expanded(
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: _HeaderSelectionSummary(
+              likedCount: likedCount,
+              blockedCount: blockedCount,
+              onTap: onShowSignature,
+            ),
+          ),
         ),
-        const SizedBox(width: 4),
-        _StageMetricChip(
-          label: '排 ${session.dislikedTagIds.length}',
-          tone: _MetricTone.cool,
+        _HeaderAction(
+          key: const ValueKey('home-favorites-button'),
+          icon: Icons.favorite_border_rounded,
+          tooltip: '收藏',
+          onTap: onOpenFavorites,
+        ),
+        const SizedBox(width: 8),
+        _HeaderAction(
+          key: const ValueKey('home-recent-button'),
+          icon: Icons.history_rounded,
+          tooltip: '吃过',
+          onTap: onOpenRecent,
         ),
       ],
     );
   }
 }
 
-class _StageSignatureCornerButton extends StatelessWidget {
-  const _StageSignatureCornerButton({
-    required this.onPressed,
-    required this.isListening,
+class _HeaderAction extends StatelessWidget {
+  const _HeaderAction({
+    super.key,
+    required this.icon,
+    required this.tooltip,
+    required this.onTap,
   });
 
-  final VoidCallback onPressed;
-  final bool isListening;
+  final IconData icon;
+  final String tooltip;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return TextButton.icon(
-      key: const ValueKey('taste-signature-button'),
-      onPressed: onPressed,
-      style: TextButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-        minimumSize: Size.zero,
-        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-        backgroundColor: Colors.white.withValues(alpha: 0.62),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(999),
-          side: BorderSide(color: Colors.white.withValues(alpha: 0.58)),
+    return Tooltip(
+      message: tooltip,
+      child: Material(
+        color: Colors.white.withValues(alpha: 0.84),
+        shape: const CircleBorder(
+          side: BorderSide(color: AppPalette.gardenBorder),
         ),
-      ),
-      icon: Icon(
-        isListening ? Icons.mic_rounded : Icons.auto_awesome_rounded,
-        size: 12,
-        color: const Color(0xFFF46B40),
-      ),
-      label: const Text(
-        '签名',
-        style: TextStyle(
-          fontSize: 10,
-          fontWeight: FontWeight.w900,
-          color: AppColors.textPrimary,
-        ),
-      ),
-    );
-  }
-}
-
-enum _LegendCue {
-  none,
-  like,
-  dislike,
-  refresh,
-  voice,
-}
-
-enum _MetricTone {
-  neutral,
-  warm,
-  cool,
-}
-
-class _StageMetricChip extends StatelessWidget {
-  const _StageMetricChip({
-    required this.label,
-    required this.tone,
-  });
-
-  final String label;
-  final _MetricTone tone;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = switch (tone) {
-      _MetricTone.neutral => (
-          background: Colors.white.withValues(alpha: 0.56),
-          foreground: AppColors.textPrimary.withValues(alpha: 0.66),
-        ),
-      _MetricTone.warm => (
-          background: const Color(0xFFF46B40).withValues(alpha: 0.14),
-          foreground: const Color(0xFFF46B40),
-        ),
-      _MetricTone.cool => (
-          background: const Color(0xFF6E6973).withValues(alpha: 0.1),
-          foreground: const Color(0xFF6E6973),
-        ),
-    };
-
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-      decoration: BoxDecoration(
-        color: colors.background,
-        borderRadius: BorderRadius.circular(999),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.54),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.white.withValues(alpha: 0.14),
-            blurRadius: 6,
-            offset: const Offset(0, 2),
+        child: InkWell(
+          customBorder: const CircleBorder(),
+          onTap: onTap,
+          child: SizedBox(
+            width: 36,
+            height: 36,
+            child: Icon(icon, size: 18, color: AppPalette.gardenInk),
           ),
-        ],
-      ),
-      child: Text(
-        label,
-        style: TextStyle(
-          color: colors.foreground,
-          fontSize: 10,
-          fontWeight: FontWeight.w800,
-          letterSpacing: 0.3,
         ),
       ),
     );
   }
 }
 
-class _StageResponseOverlay extends StatelessWidget {
-  const _StageResponseOverlay({
-    required this.cue,
-    required this.intensity,
-    required this.horizontalDirection,
-    required this.burst,
+class _HeaderSelectionSummary extends StatelessWidget {
+  const _HeaderSelectionSummary({
+    required this.likedCount,
+    required this.blockedCount,
+    required this.onTap,
   });
 
-  final _LegendCue cue;
-  final double intensity;
-  final int horizontalDirection;
-  final double burst;
+  final int likedCount;
+  final int blockedCount;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    if (intensity <= 0) {
-      return const SizedBox.shrink(
-        key: ValueKey('taste-stage-response-overlay'),
-      );
-    }
-
-    final clamped = intensity.clamp(0.0, 1.0);
-    final directional = horizontalDirection == 0 ? -1 : horizontalDirection;
-    final lateralShift = burst * 22 * directional;
-
-    return IgnorePointer(
-      child: Container(
-        key: const ValueKey('taste-stage-response-overlay'),
-        decoration: BoxDecoration(
-          gradient: switch (cue) {
-            _LegendCue.like => LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  const Color(0xFFF46B40)
-                      .withValues(alpha: 0.16 + clamped * 0.2),
-                  const Color(0xFFFFC7B4)
-                      .withValues(alpha: 0.08 + clamped * 0.14),
-                  Colors.transparent,
-                ],
-                stops: const [0, 0.36, 0.82],
+    return Material(
+      key: const ValueKey('taste-signature-button'),
+      color: Colors.white.withValues(alpha: 0.78),
+      borderRadius: AppRadii.capsule,
+      child: InkWell(
+        key: const ValueKey('taste-entity-selection-summary'),
+        onTap: onTap,
+        borderRadius: AppRadii.capsule,
+        child: Container(
+          height: 34,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            borderRadius: AppRadii.capsule,
+            border: Border.all(color: AppPalette.gardenBorder),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.favorite_rounded,
+                size: 14,
+                color: AppPalette.herb,
               ),
-            _LegendCue.dislike => LinearGradient(
-                begin: Alignment.bottomCenter,
-                end: Alignment.topCenter,
-                colors: [
-                  const Color(0xFF6A626B)
-                      .withValues(alpha: 0.18 + clamped * 0.18),
-                  const Color(0xFFB6B0B8)
-                      .withValues(alpha: 0.08 + clamped * 0.1),
-                  Colors.transparent,
-                ],
-                stops: const [0, 0.32, 0.82],
-              ),
-            _LegendCue.refresh => LinearGradient(
-                begin: directional > 0
-                    ? Alignment.centerLeft
-                    : Alignment.centerRight,
-                end: directional > 0
-                    ? Alignment.centerRight
-                    : Alignment.centerLeft,
-                colors: [
-                  const Color(0xFF8A7CF7)
-                      .withValues(alpha: 0.12 + clamped * 0.14),
-                  const Color(0xFFCAD3FF)
-                      .withValues(alpha: 0.08 + clamped * 0.1),
-                  Colors.transparent,
-                ],
-                stops: const [0, 0.42, 0.9],
-              ),
-            _LegendCue.voice => RadialGradient(
-                radius: 0.86,
-                colors: [
-                  const Color(0xFF45A6D8)
-                      .withValues(alpha: 0.16 + clamped * 0.14),
-                  const Color(0xFFAEE4FF)
-                      .withValues(alpha: 0.08 + clamped * 0.08),
-                  Colors.transparent,
-                ],
-                stops: const [0, 0.36, 1],
-              ),
-            _ => const LinearGradient(
-                colors: [Colors.transparent, Colors.transparent],
-              ),
-          },
-        ),
-        child: Stack(
-          children: [
-            if (cue == _LegendCue.like)
-              Align(
-                alignment: Alignment.topCenter,
-                child: FractionallySizedBox(
-                  widthFactor: 0.92,
-                  heightFactor: 0.48,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: RadialGradient(
-                        center: const Alignment(0, -0.6),
-                        radius: 1,
-                        colors: [
-                          Colors.white.withValues(alpha: 0.1 + clamped * 0.08),
-                          Colors.transparent,
-                        ],
-                      ),
-                    ),
-                  ),
+              const SizedBox(width: 3),
+              Text(
+                '$likedCount',
+                style: const TextStyle(
+                  color: AppPalette.gardenInk,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
-            if (cue == _LegendCue.dislike)
-              Align(
-                alignment: Alignment.bottomCenter,
-                child: FractionallySizedBox(
-                  widthFactor: 0.96,
-                  heightFactor: 0.44,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: RadialGradient(
-                        center: const Alignment(0, 0.9),
-                        radius: 1,
-                        colors: [
-                          Colors.black.withValues(alpha: 0.05 + clamped * 0.06),
-                          Colors.transparent,
-                        ],
-                      ),
-                    ),
-                  ),
+              const SizedBox(width: 7),
+              const Icon(
+                Icons.block_rounded,
+                size: 13,
+                color: AppPalette.tomato,
+              ),
+              const SizedBox(width: 3),
+              Text(
+                '$blockedCount',
+                style: const TextStyle(
+                  color: AppPalette.gardenInk,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w900,
                 ),
               ),
-            if (cue == _LegendCue.refresh)
-              Transform.translate(
-                offset: Offset(lateralShift, 0),
-                child: Align(
-                  alignment: directional > 0
-                      ? Alignment.centerLeft
-                      : Alignment.centerRight,
-                  child: FractionallySizedBox(
-                    widthFactor: 0.36,
-                    heightFactor: 1,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: directional > 0
-                              ? Alignment.centerLeft
-                              : Alignment.centerRight,
-                          end: directional > 0
-                              ? Alignment.centerRight
-                              : Alignment.centerLeft,
-                          colors: [
-                            Colors.white.withValues(alpha: 0.02),
-                            const Color(0xFFD9E1FF)
-                                .withValues(alpha: 0.1 + clamped * 0.12),
-                            Colors.transparent,
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            if (cue == _LegendCue.voice)
-              Align(
-                child: FractionallySizedBox(
-                  widthFactor: 0.7,
-                  heightFactor: 0.7,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      gradient: RadialGradient(
-                        radius: 1,
-                        colors: [
-                          Colors.white.withValues(alpha: 0.04 + clamped * 0.05),
-                          Colors.transparent,
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );

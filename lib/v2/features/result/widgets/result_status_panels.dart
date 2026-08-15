@@ -1,5 +1,6 @@
 import 'package:eatwhat_app/v2/core/data/models/recommendation_resolution.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
+import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
 
 class RecommendationExplanationCard extends StatelessWidget {
@@ -25,13 +26,7 @@ class RecommendationExplanationCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        color: Colors.white.withValues(alpha: 0.4),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.72),
-        ),
-      ),
+      decoration: AppDecorations.card(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -99,6 +94,14 @@ class RecommendationExplanationCard extends StatelessWidget {
         return candidateCount > 0
             ? '本轮先从 $candidateCount 道 HowToCook 候选里收束出这道菜。'
             : '这道菜来自 HowToCook 菜谱的优先召回。';
+      case RecommendationResolutionStatus.hybridResolved:
+        return candidateCount > 0
+            ? '本轮先从 $candidateCount 道本地正式候选中筛选，再由 AI 辅助收束。'
+            : '这道菜来自本地正式菜谱，并由 AI 辅助解释。';
+      case RecommendationResolutionStatus.localFallback:
+        return candidateCount > 0
+            ? 'AI 增强暂时不可用，已从 $candidateCount 道本地候选中稳定收束。'
+            : 'AI 增强暂时不可用，当前使用本地可靠推荐。';
       case RecommendationResolutionStatus.aiResolved:
         return candidateCount > 0
             ? '本轮由 AI 直接生成 $candidateCount 道候选，HowToCook 只补充图片和做法。'
@@ -130,10 +133,14 @@ class EmptyRecommendationState extends StatelessWidget {
     final badge = switch (primarySource?.trim()) {
       'error' => '推荐服务异常',
       'ai' => 'AI 未生成结果',
+      'hybrid' => '本地 + AI',
+      'local_fallback' => '已切换本地推荐',
       'unified_db' => '本地候选为空',
       _ => switch (resolutionStatus) {
           RecommendationResolutionStatus.aiResolved => 'AI 未生成结果',
           RecommendationResolutionStatus.dbResolved => '本地候选为空',
+          RecommendationResolutionStatus.hybridResolved => '本地 + AI',
+          RecommendationResolutionStatus.localFallback => '已切换本地推荐',
           RecommendationResolutionStatus.empty => '本轮未命中',
         },
     };
@@ -142,13 +149,7 @@ class EmptyRecommendationState extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.fromLTRB(20, 22, 20, 22),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(28),
-          color: Colors.white.withValues(alpha: 0.48),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.78),
-          ),
-        ),
+        decoration: AppDecorations.card(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -191,22 +192,9 @@ class EmptyRecommendationState extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 18),
-            FilledButton.tonal(
+            FilledButton(
               key: const ValueKey('result-empty-reselect-button'),
               onPressed: onReselect,
-              style: FilledButton.styleFrom(
-                backgroundColor: Colors.white.withValues(alpha: 0.76),
-                foregroundColor: AppColors.textPrimary,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(999),
-                ),
-                textStyle: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w800,
-                ),
-              ),
               child: const Text('返回重选口味'),
             ),
           ],

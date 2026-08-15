@@ -11,12 +11,19 @@ import '../game/bubble_game.dart';
 
 class BubbleSelectionState {
   const BubbleSelectionState({
-    required this.labels,
-    required this.ids,
+    required this.likedLabels,
+    required this.likedIds,
+    required this.blockedLabels,
+    required this.blockedIds,
   });
 
-  final List<String> labels;
-  final List<String> ids;
+  final List<String> likedLabels;
+  final List<String> likedIds;
+  final List<String> blockedLabels;
+  final List<String> blockedIds;
+
+  List<String> get labels => likedLabels;
+  List<String> get ids => likedIds;
 }
 
 class BubbleOcean extends StatefulWidget {
@@ -24,10 +31,18 @@ class BubbleOcean extends StatefulWidget {
     super.key,
     this.showDecisionButton = true,
     this.onSelectionChanged,
+    this.category,
+    this.initialLikedTags = const {},
+    this.initialBlockedTags = const {},
+    this.onInteracted,
   });
 
   final bool showDecisionButton;
   final ValueChanged<BubbleSelectionState>? onSelectionChanged;
+  final String? category;
+  final Map<String, String> initialLikedTags;
+  final Map<String, String> initialBlockedTags;
+  final VoidCallback? onInteracted;
 
   @override
   State<BubbleOcean> createState() => _BubbleOceanState();
@@ -41,15 +56,31 @@ class _BubbleOceanState extends State<BubbleOcean> {
   @override
   void initState() {
     super.initState();
-    _game = BubbleGame();
-    _game.selectionCount.addListener(_notifySelectionChanged);
+    _game = BubbleGame(
+      initialCategory: widget.category,
+      initialLikedTags: widget.initialLikedTags,
+      initialBlockedTags: widget.initialBlockedTags,
+    );
+    _game.selectionRevision.addListener(_notifySelectionChanged);
     _game.swipeFeedback.addListener(_handleSwipeFeedback);
+  }
+
+  @override
+  void didUpdateWidget(covariant BubbleOcean oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _game.syncSelections(
+      likedTags: widget.initialLikedTags,
+      blockedTags: widget.initialBlockedTags,
+    );
+    if (oldWidget.category != widget.category) {
+      _game.setCategory(widget.category);
+    }
   }
 
   @override
   void dispose() {
     _feedbackClearTimer?.cancel();
-    _game.selectionCount.removeListener(_notifySelectionChanged);
+    _game.selectionRevision.removeListener(_notifySelectionChanged);
     _game.swipeFeedback.removeListener(_handleSwipeFeedback);
     super.dispose();
   }
@@ -59,8 +90,10 @@ class _BubbleOceanState extends State<BubbleOcean> {
     if (callback == null) return;
     callback(
       BubbleSelectionState(
-        labels: List.unmodifiable(_game.selectedItems),
-        ids: List.unmodifiable(_game.selectedTagIds),
+        likedLabels: List.unmodifiable(_game.selectedItems),
+        likedIds: List.unmodifiable(_game.selectedTagIds),
+        blockedLabels: List.unmodifiable(_game.blockedItems),
+        blockedIds: List.unmodifiable(_game.blockedTagIds),
       ),
     );
   }
@@ -84,131 +117,138 @@ class _BubbleOceanState extends State<BubbleOcean> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        GameWidget(
-          game: _game,
-          errorBuilder: (context, error) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, color: Colors.red, size: 48),
-                  const SizedBox(height: 16),
-                  Text(
-                    '游戏加载失败',
-                    style: TextStyle(color: Colors.grey[600]),
-                  ),
-                ],
-              ),
-            );
-          },
-          loadingBuilder: (context) {
-            return const Center(
-              child: CircularProgressIndicator(
-                color: AppColors.sunsetOrange,
-              ),
-            );
-          },
-        ),
-        if (widget.showDecisionButton)
-          Positioned(
-            bottom: 30,
-            left: 0,
-            right: 0,
-            child: ValueListenableBuilder<int>(
-              valueListenable: _game.selectionCount,
-              builder: (context, count, child) {
-                if (count == 0) return const SizedBox.shrink();
+    return Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: (_) => widget.onInteracted?.call(),
+      child: Stack(
+        children: [
+          GameWidget(
+            key: const ValueKey('taste-physics-ocean'),
+            game: _game,
+            errorBuilder: (context, error) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(Icons.error_outline,
+                        color: Colors.red, size: 48),
+                    const SizedBox(height: 16),
+                    Text(
+                      '游戏加载失败',
+                      style: TextStyle(color: Colors.grey[600]),
+                    ),
+                  ],
+                ),
+              );
+            },
+            loadingBuilder: (context) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: AppColors.sunsetOrange,
+                ),
+              );
+            },
+          ),
+          if (widget.showDecisionButton)
+            Positioned(
+              bottom: 30,
+              left: 0,
+              right: 0,
+              child: ValueListenableBuilder<int>(
+                valueListenable: _game.selectionCount,
+                builder: (context, count, child) {
+                  if (count == 0) return const SizedBox.shrink();
 
-                return Center(
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween(begin: 0, end: 1),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.elasticOut,
-                    builder: (context, value, child) {
-                      return Transform.scale(
-                        scale: value,
-                        child: child,
-                      );
-                    },
-                    child: GestureDetector(
-                      onTap: () {
-                        if (_game.selectedItems.isEmpty) return;
-
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => DecisionPage(
-                              selectedTagLabels: List.from(_game.selectedItems),
-                              selectedTagIds: List.from(_game.selectedTagIds),
-                            ),
-                          ),
+                  return Center(
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween(begin: 0, end: 1),
+                      duration: const Duration(milliseconds: 300),
+                      curve: Curves.elasticOut,
+                      builder: (context, value, child) {
+                        return Transform.scale(
+                          scale: value,
+                          child: child,
                         );
                       },
-                      onLongPress: () {
-                        final tags = <SelectedTag>[];
-                        for (final id in _game.selectedTagIds) {
-                          tags.add(
-                            SelectedTag(
-                              id: id,
-                              label: _game.selectedTagIdToLabel[id] ?? id,
+                      child: GestureDetector(
+                        onTap: () {
+                          if (_game.selectedItems.isEmpty) return;
+
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => DecisionPage(
+                                selectedTagLabels:
+                                    List.from(_game.selectedItems),
+                                selectedTagIds: List.from(_game.selectedTagIds),
+                              ),
                             ),
                           );
-                        }
-                        SelectedTagsSheet.show(context, tags: tags);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 16,
-                        ),
-                        decoration: BoxDecoration(
-                          gradient: AppColors.primaryGradient,
-                          borderRadius: BorderRadius.circular(30),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.sunsetOrange.withValues(
-                                alpha: 0.4,
+                        },
+                        onLongPress: () {
+                          final tags = <SelectedTag>[];
+                          for (final id in _game.selectedTagIds) {
+                            tags.add(
+                              SelectedTag(
+                                id: id,
+                                label: _game.selectedTagIdToLabel[id] ?? id,
                               ),
-                              blurRadius: 20,
-                              offset: const Offset(0, 10),
+                            );
+                          }
+                          SelectedTagsSheet.show(context, tags: tags);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 32,
+                            vertical: 16,
+                          ),
+                          decoration: BoxDecoration(
+                            gradient: AppColors.primaryGradient,
+                            borderRadius: BorderRadius.circular(30),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.sunsetOrange.withValues(
+                                  alpha: 0.4,
+                                ),
+                                blurRadius: 20,
+                                offset: const Offset(0, 10),
+                              ),
+                            ],
+                          ),
+                          child: Text(
+                            '决定 ($count)',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
                             ),
-                          ],
-                        ),
-                        child: Text(
-                          '决定 ($count)',
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
+            ),
+          Positioned(
+            top: 52,
+            left: 0,
+            right: 0,
+            child: IgnorePointer(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 220),
+                switchInCurve: Curves.easeOutCubic,
+                switchOutCurve: Curves.easeInCubic,
+                child: _feedback == null
+                    ? const SizedBox.shrink()
+                    : _SwipeFeedbackChip(
+                        key: ValueKey(_feedback!.nonce),
+                        event: _feedback!,
+                      ),
+              ),
             ),
           ),
-        Positioned(
-          top: 52,
-          left: 0,
-          right: 0,
-          child: IgnorePointer(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 220),
-              switchInCurve: Curves.easeOutCubic,
-              switchOutCurve: Curves.easeInCubic,
-              child: _feedback == null
-                  ? const SizedBox.shrink()
-                  : _SwipeFeedbackChip(
-                      key: ValueKey(_feedback!.nonce),
-                      event: _feedback!,
-                    ),
-            ),
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
@@ -224,9 +264,9 @@ class _SwipeFeedbackChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final accent =
-        event.positive ? const Color(0xFFF56A3D) : const Color(0xFF7D8EA3);
-    final title = event.positive ? '已收进偏爱' : '先划走这味';
-    final subtitle = event.positive ? '系统会提高这类口味的出现权重' : '先把它们压到背景层，避免打扰你';
+        event.positive ? const Color(0xFF2F9848) : const Color(0xFFD84A3A);
+    final title = event.positive ? '已放进餐盘' : '已加入拉黑';
+    final subtitle = event.positive ? '历史学习会提高这类口味的权重' : '本轮推荐会避开这类信号';
 
     return Center(
       child: TweenAnimationBuilder<double>(

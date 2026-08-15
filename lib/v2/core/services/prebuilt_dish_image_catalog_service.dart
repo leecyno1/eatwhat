@@ -61,23 +61,33 @@ class PrebuiltDishImageCatalogService {
     final entries = _entries ?? const <DishImageManifestEntry>[];
     if (entries.isEmpty) return null;
 
-    final byId =
-        entries.where((entry) => entry.dishId == recipe.dishId).toList();
-    if (byId.isNotEmpty) return byId.first;
-
     final normalizedName = _normalize(recipe.name);
     if (normalizedName.isEmpty) return null;
 
-    for (final entry in entries) {
-      if (_normalize(entry.dishName) == normalizedName) {
+    final byId =
+        entries.where((entry) => entry.dishId == recipe.dishId).toList();
+    for (final entry in byId) {
+      if (_entryMatchesName(entry, normalizedName)) {
         return entry;
       }
-      if (entry.aliases.any((alias) => _normalize(alias) == normalizedName)) {
+    }
+
+    for (final entry in entries) {
+      if (_entryMatchesName(entry, normalizedName)) {
         return entry;
       }
     }
 
     return null;
+  }
+
+  bool _entryMatchesName(
+    DishImageManifestEntry entry,
+    String normalizedRecipeName,
+  ) {
+    if (_normalize(entry.dishName) == normalizedRecipeName) return true;
+    return entry.aliases
+        .any((alias) => _normalize(alias) == normalizedRecipeName);
   }
 
   Future<String?> _loadRemote() async {

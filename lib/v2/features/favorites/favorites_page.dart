@@ -131,7 +131,7 @@ class _FavoritesPageV2State extends State<FavoritesPageV2>
     if (_favoriteTagIds.isEmpty) {
       return _empty(
         title: '还没有收藏偏好',
-        subtitle: '在气泡页长按“决定”按钮，可以把当前选择的偏好收藏起来。',
+        subtitle: '在实体池选择偏好后，打开顶部托盘即可查看和保存口味组合。',
       );
     }
 

@@ -1,16 +1,18 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
 import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
 import 'package:eatwhat_app/v2/core/services/v2_execution_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
+import 'package:eatwhat_app/v2/core/services/v2_recommendation_telemetry_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:eatwhat_app/v2/features/details/howtocook_library_page.dart';
 import 'package:eatwhat_app/v2/features/details/recipe_detail_page.dart';
 import 'package:eatwhat_app/v2/features/execution/controllers/execution_completion_controller.dart'
     as execution_completion;
+import 'package:eatwhat_app/v2/features/execution/meituan_menu_builder_page.dart';
+import 'package:eatwhat_app/v2/features/execution/meituan_order_page.dart';
 import 'package:eatwhat_app/v2/features/execution/widgets/execution_completion_feedback_panel.dart';
 import 'package:eatwhat_app/v2/features/execution/widgets/execution_widgets.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/floating_editorial_background.dart';
@@ -33,6 +35,8 @@ class ExecutionHomePage extends StatefulWidget {
 class _ExecutionHomePageState extends State<ExecutionHomePage> {
   static final V2PreferenceFeedbackService _feedback =
       V2PreferenceFeedbackService.instance;
+  static final V2RecommendationTelemetryService _recommendationTelemetry =
+      V2RecommendationTelemetryService.instance;
 
   ExecutionPath _learnedPreferredPath = ExecutionPath.any;
 
@@ -53,6 +57,7 @@ class _ExecutionHomePageState extends State<ExecutionHomePage> {
 
   Future<void> _openRecipeDetail(BuildContext context) async {
     unawaited(_feedback.recordExecutionPathChosen(ExecutionPath.cook));
+    _recordExecutionStarted(ExecutionPath.cook);
     final routeData = AppV2RecipeDetailRouteData(
       recipe: widget.intent.recipe,
       startInCookingMode: true,
@@ -88,7 +93,11 @@ class _ExecutionHomePageState extends State<ExecutionHomePage> {
 
   Future<void> _openDelivery(BuildContext context) async {
     unawaited(_feedback.recordExecutionPathChosen(ExecutionPath.delivery));
-    final routeData = AppV2DeliveryExecutionRouteData(intent: widget.intent);
+    _recordExecutionStarted(ExecutionPath.delivery);
+    final intent = widget.intent.copyWith(
+      preferredPath: ExecutionPath.delivery,
+    );
+    final routeData = AppV2DeliveryExecutionRouteData(intent: intent);
     if (GoRouter.maybeOf(context) != null) {
       await context.push(AppV2Routes.executionDelivery, extra: routeData);
       return;
@@ -96,14 +105,18 @@ class _ExecutionHomePageState extends State<ExecutionHomePage> {
     if (!context.mounted) return;
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => DeliveryExecutionPage(intent: widget.intent),
+        builder: (_) => MeituanMenuBuilderPage(intent: intent),
       ),
     );
   }
 
   Future<void> _openDineIn(BuildContext context) async {
     unawaited(_feedback.recordExecutionPathChosen(ExecutionPath.dineIn));
-    final routeData = AppV2DineInExecutionRouteData(intent: widget.intent);
+    _recordExecutionStarted(ExecutionPath.dineIn);
+    final intent = widget.intent.copyWith(
+      preferredPath: ExecutionPath.dineIn,
+    );
+    final routeData = AppV2DineInExecutionRouteData(intent: intent);
     if (GoRouter.maybeOf(context) != null) {
       await context.push(AppV2Routes.executionDineIn, extra: routeData);
       return;
@@ -111,7 +124,20 @@ class _ExecutionHomePageState extends State<ExecutionHomePage> {
     if (!context.mounted) return;
     await Navigator.of(context).push(
       MaterialPageRoute<void>(
-        builder: (_) => DineInExecutionPage(intent: widget.intent),
+        builder: (_) => DineInExecutionPage(intent: intent),
+      ),
+    );
+  }
+
+  void _recordExecutionStarted(ExecutionPath path) {
+    final recommendationContext = widget.intent.recommendationContext;
+    if (recommendationContext == null) return;
+    unawaited(
+      _recommendationTelemetry.recordExecutionStarted(
+        context: recommendationContext,
+        recipeId: widget.intent.recipe.id,
+        position: widget.intent.recommendationPosition ?? 0,
+        executionPath: path.name,
       ),
     );
   }
@@ -160,145 +186,129 @@ class _ExecutionHomePageState extends State<ExecutionHomePage> {
                   Expanded(
                     child: Container(
                       key: const ValueKey('execution-home-page'),
-                      decoration: executionGlassBoxDecoration(),
+                      decoration: AppDecorations.card(radius: AppRadii.lg),
                       child: ClipRRect(
-                        borderRadius: BorderRadius.circular(40),
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                              child: BackdropFilter(
-                                filter:
-                                    ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-                                child: const SizedBox.expand(),
+                        borderRadius: AppRadii.panel,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(22, 22, 22, 22),
+                          child: ListView(
+                            padding: EdgeInsets.zero,
+                            children: [
+                              Text(
+                                '这道 ${widget.intent.recipe.name}，你想怎么完成？',
+                                style: AppType.display.copyWith(
+                                  fontSize: 28,
+                                ),
                               ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(22, 22, 22, 22),
-                              child: ListView(
-                                padding: EdgeInsets.zero,
+                              const SizedBox(height: 10),
+                              Text(
+                                '想动手就看步骤，想省心就找外卖，想出门就看看附近有什么同款。',
+                                style: AppType.body.copyWith(
+                                  color: AppPalette.ink.withValues(alpha: 0.64),
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Wrap(
+                                spacing: 10,
+                                runSpacing: 10,
                                 children: [
-                                  Text(
-                                    '这道 ${widget.intent.recipe.name}，你想怎么完成？',
-                                    style: AppType.display.copyWith(
-                                      fontSize: 28,
+                                  if (widget.intent.locationPreference ==
+                                      ExecutionLocationPreference.nearby)
+                                    ExecutionCapsule(
+                                      label: '附近优先',
+                                      background: AppPalette.rice
+                                          .withValues(alpha: 0.56),
+                                      foreground: AppColors.textPrimary,
                                     ),
-                                  ),
-                                  const SizedBox(height: 10),
-                                  Text(
-                                    '想动手就看步骤，想省心就找外卖，想出门就看看附近有什么同款。',
-                                    style: AppType.body.copyWith(
-                                      color: AppPalette.ink
-                                          .withValues(alpha: 0.64),
-                                      fontWeight: FontWeight.w600,
+                                  for (final pairing
+                                      in widget.intent.pairings.take(3))
+                                    ExecutionCapsule(
+                                      label:
+                                          '${pairing.category} · ${pairing.title}',
+                                      background: AppPalette.rice
+                                          .withValues(alpha: 0.5),
+                                      foreground: AppColors.textPrimary,
                                     ),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Wrap(
-                                    spacing: 10,
-                                    runSpacing: 10,
-                                    children: [
-                                      if (widget.intent.locationPreference ==
-                                          ExecutionLocationPreference.nearby)
-                                        ExecutionCapsule(
-                                          label: '附近优先',
-                                          background: AppPalette.rice
-                                              .withValues(alpha: 0.56),
-                                          foreground: AppColors.textPrimary,
-                                        ),
-                                      for (final pairing
-                                          in widget.intent.pairings.take(3))
-                                        ExecutionCapsule(
-                                          label:
-                                              '${pairing.category} · ${pairing.title}',
-                                          background: AppPalette.rice
-                                              .withValues(alpha: 0.5),
-                                          foreground: AppColors.textPrimary,
-                                        ),
-                                    ],
-                                  ),
-                                  if (widget.intent.sourceTags.isNotEmpty) ...[
-                                    const SizedBox(height: 10),
-                                    Wrap(
-                                      spacing: 10,
-                                      runSpacing: 10,
-                                      children: [
-                                        for (final tag
-                                            in widget.intent.sourceTags.take(6))
-                                          ExecutionCapsule(
-                                            label: tag,
-                                            background: AppPalette.rice
-                                                .withValues(alpha: 0.42),
-                                            foreground: AppColors.textPrimary,
-                                          ),
-                                      ],
-                                    ),
-                                  ],
-                                  const SizedBox(height: 22),
-                                  SizedBox(
-                                    child: Column(
-                                      children: [
-                                        SizedBox(
-                                          height: 124,
-                                          child: ExecutionPathCard(
-                                            title: '自己做',
-                                            subtitle:
-                                                '看食材、步骤和小技巧，按自己的节奏把这道菜做出来。',
-                                            accent: const Color(0xFFF78A3D),
-                                            icon: Icons.soup_kitchen_rounded,
-                                            isRecommended:
-                                                recommendedPath == '自己做',
-                                            onTap: () =>
-                                                _openRecipeDetail(context),
-                                          ),
-                                        ),
-                                        const SizedBox(height: 10),
-                                        Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: TextButton.icon(
-                                            key: const ValueKey(
-                                              'execution-open-howtocook-library',
-                                            ),
-                                            onPressed: () =>
-                                                _openHowToCookLibrary(context),
-                                            icon: const Icon(
-                                              Icons.menu_book_rounded,
-                                              size: 18,
-                                            ),
-                                            label: const Text('看看更多可做菜谱'),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  SizedBox(
-                                    height: 124,
-                                    child: ExecutionPathCard(
-                                      title: '叫外卖',
-                                      subtitle: '找附近能送到的同款或相近菜品，少纠结，直接下单。',
-                                      accent: const Color(0xFF2D9CDB),
-                                      icon: Icons.delivery_dining_rounded,
-                                      isRecommended: recommendedPath == '叫外卖',
-                                      onTap: () => _openDelivery(context),
-                                    ),
-                                  ),
-                                  const SizedBox(height: 12),
-                                  SizedBox(
-                                    height: 124,
-                                    child: ExecutionPathCard(
-                                      title: '去堂食',
-                                      subtitle: '看看附近哪家店做得稳，再按距离、评分和人均来决定。',
-                                      accent: const Color(0xFF8E3B46),
-                                      icon: Icons.storefront_rounded,
-                                      isRecommended: recommendedPath == '去堂食',
-                                      onTap: () => _openDineIn(context),
-                                    ),
-                                  ),
                                 ],
                               ),
-                            ),
-                          ],
+                              if (widget.intent.sourceTags.isNotEmpty) ...[
+                                const SizedBox(height: 10),
+                                Wrap(
+                                  spacing: 10,
+                                  runSpacing: 10,
+                                  children: [
+                                    for (final tag
+                                        in widget.intent.sourceTags.take(6))
+                                      ExecutionCapsule(
+                                        label: tag,
+                                        background: AppPalette.rice
+                                            .withValues(alpha: 0.42),
+                                        foreground: AppColors.textPrimary,
+                                      ),
+                                  ],
+                                ),
+                              ],
+                              const SizedBox(height: 22),
+                              SizedBox(
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height: 124,
+                                      child: ExecutionPathCard(
+                                        title: '自己做',
+                                        subtitle: '看食材、步骤和小技巧，按自己的节奏把这道菜做出来。',
+                                        accent: AppPalette.chili,
+                                        icon: Icons.soup_kitchen_rounded,
+                                        isRecommended: recommendedPath == '自己做',
+                                        onTap: () => _openRecipeDetail(context),
+                                      ),
+                                    ),
+                                    const SizedBox(height: 10),
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: TextButton.icon(
+                                        key: const ValueKey(
+                                          'execution-open-howtocook-library',
+                                        ),
+                                        onPressed: () =>
+                                            _openHowToCookLibrary(context),
+                                        icon: const Icon(
+                                          Icons.menu_book_rounded,
+                                          size: 18,
+                                        ),
+                                        label: const Text('看看更多可做菜谱'),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              SizedBox(
+                                height: 124,
+                                child: ExecutionPathCard(
+                                  title: '叫外卖',
+                                  subtitle: '找附近能送到的同款或相近菜品，少纠结，直接下单。',
+                                  accent: AppPalette.herb,
+                                  icon: Icons.delivery_dining_rounded,
+                                  isRecommended: recommendedPath == '叫外卖',
+                                  onTap: () => _openDelivery(context),
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              SizedBox(
+                                height: 124,
+                                child: ExecutionPathCard(
+                                  title: '去堂食',
+                                  subtitle: '看看附近哪家店做得稳，再按距离、评分和人均来决定。',
+                                  accent: AppPalette.grape,
+                                  icon: Icons.storefront_rounded,
+                                  isRecommended: recommendedPath == '去堂食',
+                                  onTap: () => _openDineIn(context),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -353,7 +363,7 @@ class _DeliveryExecutionPageState extends State<DeliveryExecutionPage> {
   Widget build(BuildContext context) {
     return ExecutionAsyncScaffold<DeliveryExecutionSnapshot>(
       title: '叫外卖',
-      accent: const Color(0xFF2D9CDB),
+      accent: AppPalette.herb,
       future: _future,
       onRefresh: widget.snapshot == null ? _refresh : null,
       builder: (context, snapshot) {
@@ -405,21 +415,24 @@ class _DeliveryExecutionPageState extends State<DeliveryExecutionPage> {
                       title: match.merchantName,
                       subtitle:
                           '${match.dishName} · ${match.providerDisplayName}',
-                      accent: const Color(0xFF2D9CDB),
+                      accent: AppPalette.herb,
                       note: match.note,
                       metadata: [
                         if (match.price != null)
                           '¥${match.price!.amount.toStringAsFixed(0)}',
                         if (match.deliveryTimeMinutes != null)
                           '${match.deliveryTimeMinutes} 分钟送达',
-                        match.supportsPrefillCart ? '支持预填购物车' : '暂不支持预填购物车',
+                        if (_usesMeituanOrderingFlow(match))
+                          'EatWhat 内选菜'
+                        else
+                          match.supportsPrefillCart ? '支持快速下单' : '平台内继续选择',
                       ],
-                      actionLabel: match.url.trim().isEmpty
+                      actionLabel: !_canOpenDeliveryMatch(match)
                           ? '暂不可跳转'
                           : _deliveryActionLabel(match),
-                      onTap: match.url.trim().isEmpty
+                      onTap: !_canOpenDeliveryMatch(match)
                           ? null
-                          : () => _openExternalLink(match.url),
+                          : () => _openDeliveryMatch(match),
                     );
                   },
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
@@ -431,9 +444,7 @@ class _DeliveryExecutionPageState extends State<DeliveryExecutionPage> {
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
                 child: ExecutionCompletionFeedbackPanel(
                   intent: widget.intent,
-                  platform: snapshot.matches.isNotEmpty
-                      ? snapshot.matches.first.platform
-                      : 'meituan',
+                  platform: 'delivery',
                 ),
               ),
             ],
@@ -443,18 +454,49 @@ class _DeliveryExecutionPageState extends State<DeliveryExecutionPage> {
     );
   }
 
-  Future<void> _openExternalLink(String rawUrl) async {
-    final uri = Uri.tryParse(rawUrl);
-    if (uri == null) return;
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
+  Future<void> _openDeliveryMatch(DeliveryMatchResult match) async {
+    if (_usesMeituanOrderingFlow(match)) {
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => MeituanOrderPage(
+            intent: widget.intent,
+            match: match,
+          ),
+        ),
+      );
+      return;
+    }
+    final urls = [match.url, if (match.fallbackUrl != null) match.fallbackUrl!];
+    for (final rawUrl in urls) {
+      final uri = Uri.tryParse(rawUrl);
+      if (uri == null) continue;
+      if (await launchUrl(uri, mode: LaunchMode.externalApplication)) return;
+    }
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${match.providerDisplayName}暂时无法打开')),
+    );
   }
 
   String _deliveryActionLabel(DeliveryMatchResult match) {
+    if (_usesMeituanOrderingFlow(match)) return '选菜并下单';
     final provider = _providerActionName(
       platform: match.platform,
       displayName: match.providerDisplayName,
     );
+    if (match.supportsPrefillCart) return '去$provider下单';
+    if (match.source == 'deep_link_fallback') return '去$provider搜索';
     return '打开$provider';
+  }
+
+  bool _canOpenDeliveryMatch(DeliveryMatchResult match) {
+    return _usesMeituanOrderingFlow(match) || match.url.trim().isNotEmpty;
+  }
+
+  bool _usesMeituanOrderingFlow(DeliveryMatchResult match) {
+    return match.platform == 'meituan' &&
+        match.source == 'meituan_open_api' &&
+        match.merchantId.trim().isNotEmpty;
   }
 }
 
@@ -488,7 +530,7 @@ class _DineInExecutionPageState extends State<DineInExecutionPage> {
   Widget build(BuildContext context) {
     return ExecutionAsyncScaffold<DineInExecutionSnapshot>(
       title: '去堂食',
-      accent: const Color(0xFF8E3B46),
+      accent: AppPalette.grape,
       future: _future,
       builder: (context, snapshot) {
         if (snapshot.status == ExecutionAvailabilityStatus.unavailable) {
@@ -527,7 +569,7 @@ class _DineInExecutionPageState extends State<DineInExecutionPage> {
                       title: match.merchantName,
                       subtitle:
                           '${match.matchedDishName} · ${match.providerDisplayName}',
-                      accent: const Color(0xFF8E3B46),
+                      accent: AppPalette.grape,
                       note: match.note,
                       metadata: [
                         if (match.rating != null)
@@ -557,9 +599,7 @@ class _DineInExecutionPageState extends State<DineInExecutionPage> {
                 padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
                 child: ExecutionCompletionFeedbackPanel(
                   intent: widget.intent,
-                  platform: snapshot.matches.isNotEmpty
-                      ? snapshot.matches.first.platform
-                      : 'dianping',
+                  platform: 'dine_in',
                 ),
               ),
             ],
@@ -594,6 +634,7 @@ String _providerActionName({
     'meituan' => '美团外卖',
     'eleme' => '饿了么',
     'dianping' => '大众点评',
+    'jd' || 'jd_delivery' => '京东外卖（秒送）',
     'apple_maps' => 'Apple 地图',
     _ => '平台',
   };

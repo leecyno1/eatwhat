@@ -506,8 +506,9 @@ Future<void> showTimerSheet(
   BuildContext context, {
   required String title,
   required int minutes,
+  VoidCallback? onCompleted,
 }) async {
-  await showModalBottomSheet<void>(
+  final completed = await showModalBottomSheet<bool>(
     context: context,
     showDragHandle: true,
     backgroundColor: AppColors.lightBackground,
@@ -518,6 +519,7 @@ Future<void> showTimerSheet(
       return _TimerSheet(title: title, minutes: minutes);
     },
   );
+  if (completed == true) onCompleted?.call();
 }
 
 class _TimerSheet extends StatefulWidget {
@@ -560,7 +562,11 @@ class _TimerSheetState extends State<_TimerSheet> {
       }
       if (_remainingSeconds <= 1) {
         timer.cancel();
-        setState(() => _running = false);
+        setState(() {
+          _remainingSeconds = 0;
+          _running = false;
+        });
+        Navigator.of(context).pop(true);
         return;
       }
       setState(() => _remainingSeconds -= 1);

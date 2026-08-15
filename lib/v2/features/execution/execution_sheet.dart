@@ -1,4 +1,5 @@
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
+import 'package:eatwhat_app/v2/core/data/models/recommendation_telemetry_context.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
 import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
@@ -16,6 +17,8 @@ class ExecutionSheet {
     List<PairingSelection> pairings = const [],
     List<String> sourceTags = const [],
     TasteStructuredConstraints? structuredConstraints,
+    RecommendationTelemetryContext? recommendationContext,
+    int? recommendationPosition,
   }) async {
     final resolvedRecipe = recipe ??
         RecipeModel(
@@ -44,6 +47,8 @@ class ExecutionSheet {
       sourceTags: sourceTags.isNotEmpty ? sourceTags : resolvedRecipe.tags,
       preferredPath: preferredPath,
       locationPreference: executionLocationPreference,
+      recommendationContext: recommendationContext,
+      recommendationPosition: recommendationPosition,
     );
 
     if (GoRouter.maybeOf(context) != null) {

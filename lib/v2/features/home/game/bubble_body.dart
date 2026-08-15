@@ -1,19 +1,36 @@
 // ignore_for_file: unused_field, unused_local_variable, unused_element, unused_element_parameter, deprecated_member_use, curly_braces_in_flow_control_structures
 
+import 'dart:async';
 import 'dart:math';
+import 'dart:ui' as ui;
+
+import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame/text.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vibration/vibration.dart';
-import 'bubble_game.dart';
+
 import 'bubble_data_manager.dart';
+import 'bubble_game.dart';
+import 'taste_entity_visual_catalog.dart';
 
 enum _BubbleVisualLayer { foreground, middle, background }
 
 class BubbleBody extends BodyComponent<BubbleGame>
     with TapCallbacks, DragCallbacks {
+  static const _malformedAssetIds = {
+    'c_american',
+    'c_bbq',
+    'c_halal',
+    'c_hotpot',
+    'c_italian',
+    'c_mexican',
+  };
+
   final BubbleData data;
   final double radius;
   final Vector2 initialPosition;
@@ -23,15 +40,22 @@ class BubbleBody extends BodyComponent<BubbleGame>
 
   // Drag handling
   Vector2? _dragStartPos;
+  final Vector2 _dragDistance = Vector2.zero();
   bool _isDragging = false;
-  late final double _depthFactor = 0.72 + (data.id.hashCode.abs() % 24) / 100;
+  bool _isCollecting = false;
+  double _collectionElapsed = 0;
+  Vector2? _collectionStart;
+  Vector2? _collectionTarget;
+  Sprite? _entitySprite;
+  TextPaint? _entityLabelPaint;
+  late final double _depthFactor = (radius / 2.2).clamp(0.58, 1.0);
   late final double _driftPhase = (data.id.hashCode.abs() % 360) * (pi / 180.0);
 
   String get text => data.label;
 
   _BubbleVisualLayer get _visualLayer {
-    if (radius >= 2.4) return _BubbleVisualLayer.foreground;
-    if (radius >= 1.8) return _BubbleVisualLayer.middle;
+    if (radius >= 1.85) return _BubbleVisualLayer.foreground;
+    if (radius >= 1.48) return _BubbleVisualLayer.middle;
     return _BubbleVisualLayer.background;
   }
 
@@ -42,21 +66,95 @@ class BubbleBody extends BodyComponent<BubbleGame>
   });
 
   @override
+  Future<void> onLoad() async {
+    await super.onLoad();
+    priority = (radius * 100).round();
+    _entityLabelPaint = TextPaint(
+      style: GoogleFonts.notoSansSc(
+        color: const Color(0xFF173D2A),
+        fontSize: radius * 0.27 + 0.08,
+        fontWeight: FontWeight.w800,
+        height: 1,
+        letterSpacing: 0.04,
+      ),
+    );
+    if (_malformedAssetIds.contains(data.id)) return;
+    try {
+      final image = await game.images.load(data.assetName);
+      final region = await _centeredEntityRegion(image);
+      _entitySprite = Sprite(
+        image,
+        srcPosition: region.position,
+        srcSize: region.size,
+      );
+    } catch (error) {
+      debugPrint('Preference entity asset failed: ${data.assetName}: $error');
+    }
+  }
+
+  Future<({Vector2 position, Vector2 size})> _centeredEntityRegion(
+    ui.Image image,
+  ) async {
+    final byteData = await image.toByteData();
+    final width = image.width;
+    final height = image.height;
+    var cropBottom = height.toDouble();
+
+    if (byteData != null) {
+      final pixels = byteData.buffer.asUint8List();
+      final opaqueByRow = List<int>.filled(height, 0);
+      for (var index = 0; index < width * height; index++) {
+        if (pixels[index * 4 + 3] > 28) {
+          opaqueByRow[index ~/ width]++;
+        }
+      }
+
+      final valleyStart = (height * 0.55).round();
+      final valleyEnd = (height * 0.93).round();
+      var valleyY = valleyStart;
+      for (var y = valleyStart + 1; y <= valleyEnd; y++) {
+        if (opaqueByRow[y] < opaqueByRow[valleyY]) valleyY = y;
+      }
+      var maxAfterValley = 0;
+      for (var y = valleyY + 1; y < height; y++) {
+        maxAfterValley = max(maxAfterValley, opaqueByRow[y]);
+      }
+      final hasTrailingEntity = opaqueByRow[valleyY] < width * 0.45 &&
+          maxAfterValley > opaqueByRow[valleyY] + width * 0.16;
+      if (hasTrailingEntity) cropBottom = valleyY + 1.0;
+    }
+
+    final baseSide = min(width.toDouble(), cropBottom);
+    const cropRatio = 0.72;
+    const cropTopRatio = 0.05;
+    final cropSide = baseSide * cropRatio;
+    final baseLeft = (width - baseSide) / 2;
+    final baseTop = (cropBottom - baseSide) / 2;
+    return (
+      position: Vector2(
+        baseLeft + (baseSide - cropSide) / 2,
+        baseTop + baseSide * cropTopRatio,
+      ),
+      size: Vector2.all(cropSide),
+    );
+  }
+
+  @override
   Body createBody() {
     // Use CircleShape for physics collision to keep it smooth
     // Even if visual is hexagon/star, circle physics feels better for bubbles
     final shape = CircleShape()..radius = radius;
 
     final fixtureDef = FixtureDef(shape)
-      ..restitution = 0.6 // Bounciness
-      ..density = 1.0
-      ..friction = 0.3;
+      ..restitution = 0.42
+      ..density = 0.88 + _depthFactor * 0.28
+      ..friction = 0.18;
 
     final bodyDef = BodyDef(
       position: initialPosition,
       type: BodyType.dynamic,
-      angularDamping: 0.8, // Reduce spinning
-      linearDamping: 0.8, // Reduce movement speed slightly
+      angularDamping: 4.2,
+      linearDamping: 1.15,
     );
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);
@@ -81,22 +179,19 @@ class BubbleBody extends BodyComponent<BubbleGame>
     _jellyVelocity += force * dt;
     _jellyScale += _jellyVelocity * dt;
 
-    // Logic for "Selected" (Anti-gravity / Rising)
-    if (isSelected) {
-      // Apply upward force to counteract gravity and rise
-      // Gravity is usually (0, 10). We want net force up.
-      // Force = Mass * Acceleration.
-      // To hover/rise, we need F_y < 0.
-      final gravity = world.gravity;
-      // Apply force opposite to gravity + extra lift
-      body.applyForce(Vector2(0, -40) * body.mass); // Stronger lift
-      body.linearDamping = 2.0; // Stabilize movement
-
-      // Check if off-screen (top) -> Explosion
-      final screenTop = game.camera.visibleWorldRect.top;
-      if (body.position.y < screenTop - 2) {
-        game.handleBubbleExplosion(this);
-        removeFromParent();
+    if (_isCollecting) {
+      _collectionElapsed += dt;
+      final start = _collectionStart;
+      final target = _collectionTarget;
+      if (start != null && target != null) {
+        final t = (_collectionElapsed / 0.36).clamp(0.0, 1.0);
+        final eased = 1 - pow(1 - t, 3).toDouble();
+        body.setTransform(
+            start + (target - start) * eased, body.angle * (1 - t));
+        if (t >= 1) {
+          game.handleBubbleExplosion(this);
+          removeFromParent();
+        }
       }
     }
     // Logic for "Rejected" (Heavy gravity / Falling)
@@ -111,8 +206,20 @@ class BubbleBody extends BodyComponent<BubbleGame>
         removeFromParent(); // Remove when off screen
       }
     } else {
-      // Normal state
-      body.linearDamping = 0.8;
+      body.linearDamping = 1.15;
+      final drift = sin(_animationTime * 0.72 + _driftPhase) * body.mass * 0.24;
+      final displacement =
+          (initialPosition.y - body.position.y).clamp(-7.0, 7.0).toDouble();
+      final buoyancyRatio = 0.62 + (1 - _depthFactor) * 0.20;
+      final verticalForce =
+          -world.gravity.y * buoyancyRatio + displacement * 0.52;
+      body.applyForce(Vector2(drift, verticalForce) * body.mass);
+    }
+
+    if (!_isDragging && !isRejected) {
+      final uprightAngle = atan2(sin(body.angle), cos(body.angle));
+      body.angularVelocity +=
+          (-uprightAngle * 8.5 - body.angularVelocity * 2.4) * dt;
     }
   }
 
@@ -124,19 +231,21 @@ class BubbleBody extends BodyComponent<BubbleGame>
 
   void _handleSelection() {
     game.toggleSelection(this);
-    game.emitSwipeFeedback(label: text, positive: true);
+    game.emitSwipeFeedback(label: text, positive: isSelected);
+    _collectToTray();
 
     // Trigger Jelly effect
     _jellyVelocity = 15.0; // Initial impulse for scale
 
     // Haptic feedback
     HapticFeedback.mediumImpact();
-    try {
-      Vibration.vibrate(duration: 50);
-    } catch (_) {}
-
-    // Visual pop effect (physics impulse)
-    body.applyLinearImpulse(Vector2(0, -20) * body.mass);
+    if (!kIsWeb &&
+        (defaultTargetPlatform == TargetPlatform.android ||
+            defaultTargetPlatform == TargetPlatform.iOS)) {
+      unawaited(
+        Vibration.vibrate(duration: 50).catchError((Object _) {}),
+      );
+    }
 
     // Update usage count for memory system
     if (isSelected) {
@@ -144,11 +253,32 @@ class BubbleBody extends BodyComponent<BubbleGame>
     }
   }
 
+  void _collectToTray() {
+    if (_isCollecting) return;
+    final viewport = game.camera.visibleWorldRect;
+    _isCollecting = true;
+    _collectionElapsed = 0;
+    _collectionStart = body.position.clone();
+    _collectionTarget = Vector2(
+      viewport.right - radius - 1.1,
+      viewport.top + radius + 0.8,
+    );
+    body
+      ..setType(BodyType.kinematic)
+      ..linearVelocity = Vector2.zero()
+      ..angularVelocity = 0;
+  }
+
   @override
   void onDragStart(DragStartEvent event) {
     super.onDragStart(event);
     _dragStartPos = event.localPosition;
+    _dragDistance.setZero();
     _isDragging = true;
+    body
+      ..setType(BodyType.kinematic)
+      ..linearVelocity = Vector2.zero()
+      ..angularVelocity = 0;
   }
 
   @override
@@ -157,42 +287,37 @@ class BubbleBody extends BodyComponent<BubbleGame>
     _isDragging = false;
 
     if (_dragStartPos == null) return;
+    body.setType(BodyType.dynamic);
 
-    // Calculate drag delta
-    // Note: event.localPosition is not available in DragEnd,
-    // we need to track update or just use velocity if available,
-    // but simpler is to check velocity of body which might have been affected by drag?
-    // Actually, DragCallbacks in Flame provides delta in onDragUpdate.
-    // Let's use a simpler approach: check velocity or just use swipe direction if we tracked it.
+    if (_dragDistance.y < -54) {
+      if (!isSelected) _handleSelection();
+    } else if (_dragDistance.y > 54) {
+      game.rejectBubble(this);
+      game.emitSwipeFeedback(label: text, positive: false);
+      HapticFeedback.heavyImpact();
+    } else {
+      final throwVelocity = event.velocity / BubbleGame.worldScale;
+      if (throwVelocity.length > 18) {
+        throwVelocity.normalize();
+        throwVelocity.scale(18);
+      }
+      body
+        ..linearVelocity = throwVelocity
+        ..angularVelocity = (_dragDistance.x / 42).clamp(-4.5, 4.5);
+    }
+    _dragStartPos = null;
   }
 
   @override
   void onDragUpdate(DragUpdateEvent event) {
     if (!_isDragging) return;
 
-    // Move body with drag
-    // body.setTransform(event.localStartPosition + event.delta, body.angle);
-    // Direct transform setting breaks physics usually. Better to apply force.
-
-    // Simple gesture detection
-    final deltaY = event.localDelta.y;
-    final deltaX = event.localDelta.x;
-
-    if (deltaY < -5) {
-      // Swipe Up -> Select
-      if (!isSelected) _handleSelection();
-      _isDragging = false; // Stop processing drag
-    } else if (deltaY > 5) {
-      // Swipe Down -> Reject
-      isRejected = true;
-      isSelected = false; // Deselect if selected
-      game.emitSwipeFeedback(label: text, positive: false);
-
-      // Haptic
-      HapticFeedback.heavyImpact();
-
-      _isDragging = false;
-    }
+    _dragDistance.add(event.canvasDelta);
+    final worldDelta = event.canvasDelta / BubbleGame.worldScale;
+    body.setTransform(
+      body.position + worldDelta,
+      body.angle + event.canvasDelta.x * 0.006,
+    );
   }
 
   @override
@@ -201,6 +326,10 @@ class BubbleBody extends BodyComponent<BubbleGame>
 
     if (isRejected) {
       canvas.scale(0.8, 1.2);
+    } else if (_isCollecting) {
+      final t = (_collectionElapsed / 0.36).clamp(0.0, 1.0);
+      final scale = 1 - t * 0.38;
+      canvas.scale(scale, scale);
     } else {
       canvas.scale(_jellyScale, _jellyScale);
     }
@@ -214,12 +343,222 @@ class BubbleBody extends BodyComponent<BubbleGame>
           0.028,
     );
 
-    _drawClayBubble(canvas);
-    _drawSignatureSeal(canvas);
-    _drawGhostGlyph(canvas);
-    _drawLabelGlassTag(canvas);
+    _drawFreshEntity(canvas);
 
     canvas.restore();
+  }
+
+  void _drawFreshEntity(Canvas canvas) {
+    final r = radius;
+    final sprite = _entitySprite;
+    final layerAlpha = switch (_visualLayer) {
+      _BubbleVisualLayer.foreground => 1.0,
+      _BubbleVisualLayer.middle => 0.94,
+      _BubbleVisualLayer.background => 0.90,
+    };
+    final shellColor = _entityShellColor;
+    final shadowPaint = Paint()
+      ..color = const Color(0xFF173D25).withValues(alpha: 0.14 * layerAlpha)
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
+    canvas.drawOval(
+      Rect.fromCenter(
+        center: Offset(0, r * 0.72),
+        width: r * 1.44,
+        height: r * 0.34,
+      ),
+      shadowPaint,
+    );
+
+    final shellRect = Rect.fromCircle(center: Offset.zero, radius: r * 0.93);
+    canvas.drawCircle(
+      Offset.zero,
+      r * 0.93,
+      Paint()
+        ..shader = RadialGradient(
+          center: const Alignment(-0.42, -0.56),
+          radius: 1.12,
+          colors: [
+            Colors.white.withValues(alpha: 0.96 * layerAlpha),
+            shellColor.withValues(alpha: 0.31 * layerAlpha),
+            shellColor.withValues(alpha: 0.15 * layerAlpha),
+          ],
+          stops: const [0, 0.62, 1],
+        ).createShader(shellRect),
+    );
+
+    final artworkCenter = Offset(0, -r * 0.07);
+    final artworkRadius = r * 0.66;
+    canvas.save();
+    canvas.clipPath(
+      Path()
+        ..addOval(
+            Rect.fromCircle(center: artworkCenter, radius: artworkRadius)),
+    );
+    if (sprite != null) {
+      sprite.render(
+        canvas,
+        position: Vector2(artworkCenter.dx, artworkCenter.dy),
+        size: Vector2.all(artworkRadius * 1.98),
+        anchor: Anchor.center,
+        overridePaint: Paint()
+          ..color = Colors.white.withValues(
+            alpha: (isRejected ? 0.42 : 1) * layerAlpha,
+          ),
+      );
+    } else {
+      canvas.translate(artworkCenter.dx, artworkCenter.dy);
+      canvas.scale(0.72);
+      if (_malformedAssetIds.contains(data.id)) {
+        _drawMalformedArtwork(canvas, r);
+      } else if (!_drawSpecificFood(canvas)) {
+        _drawConceptGlyph(canvas, r);
+      }
+    }
+    canvas.restore();
+
+    canvas.drawCircle(
+      artworkCenter,
+      artworkRadius,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = r * 0.025
+        ..color = Colors.white.withValues(alpha: 0.78 * layerAlpha),
+    );
+
+    if (sprite == null) {
+      _drawEntityLabel(canvas, r, layerAlpha);
+    }
+
+    final rimPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = isSelected ? r * 0.075 : r * 0.025
+      ..color = (isSelected ? const Color(0xFF2F9848) : Colors.white)
+          .withValues(alpha: isSelected ? 0.98 : 0.72 * layerAlpha);
+    canvas.drawCircle(Offset.zero, r * 0.93, rimPaint);
+
+    canvas.drawArc(
+      Rect.fromCircle(center: Offset.zero, radius: r * 0.84),
+      pi * 1.06,
+      pi * 0.62,
+      false,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeCap = StrokeCap.round
+        ..strokeWidth = r * 0.045
+        ..color = Colors.white.withValues(alpha: 0.52 * layerAlpha),
+    );
+
+    if (isSelected) _drawSelectionBadge(canvas, r);
+  }
+
+  Color get _entityShellColor => switch (data.type) {
+        BubbleType.ingredient => const Color(0xFF8ACB87),
+        BubbleType.flavor => const Color(0xFFF3A86A),
+        BubbleType.cuisine => const Color(0xFF78B7A0),
+        BubbleType.scene => const Color(0xFF91AEDD),
+        BubbleType.staple => const Color(0xFFE8C576),
+        BubbleType.dietary => const Color(0xFF73BE91),
+        BubbleType.fortune => const Color(0xFFE9A4B2),
+        BubbleType.meta => const Color(0xFFC7A6DB),
+      };
+
+  void _drawMalformedArtwork(Canvas canvas, double r) {
+    final glyph = switch (data.id) {
+      'c_american' => '🍔',
+      'c_bbq' => '🍢',
+      'c_halal' => '☪',
+      'c_hotpot' => '🍲',
+      'c_italian' => '🍕',
+      'c_mexican' => '🌮',
+      _ => '🍽️',
+    };
+    final painter = TextPainter(
+      text: TextSpan(
+        text: glyph,
+        style: TextStyle(
+          fontSize: r * (data.id == 'c_halal' ? 0.84 : 0.96),
+          height: 1,
+          color: data.id == 'c_halal' ? const Color(0xFF176B43) : null,
+          fontWeight: FontWeight.w800,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    painter.paint(
+      canvas,
+      Offset(-painter.width / 2, -painter.height / 2),
+    );
+  }
+
+  void _drawEntityLabel(Canvas canvas, double r, double alpha) {
+    final compact = _compactLabel;
+    final textPaint = _entityLabelPaint;
+    if (textPaint == null) return;
+    final labelWidth = (textPaint.toTextPainter(compact).width + r * 0.32)
+        .clamp(r * 0.92, r * 1.48)
+        .toDouble();
+    final labelRect = RRect.fromRectAndRadius(
+      Rect.fromCenter(
+        center: Offset(0, r * 0.59),
+        width: labelWidth,
+        height: r * 0.38,
+      ),
+      Radius.circular(r * 0.19),
+    );
+    canvas.drawRRect(
+      labelRect.shift(Offset(0, r * 0.035)),
+      Paint()..color = const Color(0xFF173D25).withValues(alpha: 0.08 * alpha),
+    );
+    canvas.drawRRect(
+      labelRect,
+      Paint()..color = Colors.white.withValues(alpha: 0.90 * alpha),
+    );
+    textPaint.render(
+      canvas,
+      compact,
+      Vector2(0, labelRect.outerRect.center.dy),
+      anchor: Anchor.center,
+    );
+  }
+
+  void _drawSelectionBadge(Canvas canvas, double r) {
+    final badgeCenter = Offset(r * 0.62, -r * 0.62);
+    canvas.drawCircle(
+      badgeCenter,
+      r * 0.22,
+      Paint()..color = const Color(0xFF2F9848),
+    );
+    final checkPainter = TextPainter(
+      text: TextSpan(
+        text: String.fromCharCode(Icons.check_rounded.codePoint),
+        style: TextStyle(
+          fontSize: r * 0.27,
+          fontFamily: Icons.check_rounded.fontFamily,
+          package: Icons.check_rounded.fontPackage,
+          color: Colors.white,
+        ),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    checkPainter.paint(
+      canvas,
+      badgeCenter - Offset(checkPainter.width / 2, checkPainter.height / 2),
+    );
+  }
+
+  void _drawConceptGlyph(Canvas canvas, double r) {
+    final concept = TasteEntityVisualCatalog.conceptFor(text);
+    final painter = TextPainter(
+      text: TextSpan(
+        text: concept.glyph,
+        style: TextStyle(fontSize: r * 1.16, height: 1),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    painter.paint(
+      canvas,
+      Offset(-painter.width / 2, -painter.height / 2),
+    );
   }
 
   void _drawClayBubble(Canvas canvas) {
@@ -559,7 +898,11 @@ class BubbleBody extends BodyComponent<BubbleGame>
   }
 
   void _drawLabelGlassTag(Canvas canvas) {
-    if (_visualLayer == _BubbleVisualLayer.background && !isSelected) return;
+    if (_visualLayer == _BubbleVisualLayer.background &&
+        !isSelected &&
+        !_malformedAssetIds.contains(data.id)) {
+      return;
+    }
 
     final tagLabel = _compactLabel;
     final density = switch (_visualLayer) {
@@ -571,7 +914,7 @@ class BubbleBody extends BodyComponent<BubbleGame>
       text: TextSpan(
         text: tagLabel,
         style: GoogleFonts.notoSansSc(
-          color: const Color(0xFF2F211B).withValues(
+          color: const Color(0xFF173D25).withValues(
             alpha: (isSelected ? 0.92 : 0.82) * density,
           ),
           fontSize: radius * 0.19 * density,
@@ -610,10 +953,9 @@ class BubbleBody extends BodyComponent<BubbleGame>
           end: Alignment.bottomCenter,
           colors: [
             Colors.white
-                .withValues(alpha: (isSelected ? 0.72 : 0.56) * density),
-            data.primaryColor.withValues(
-              alpha: (isSelected ? 0.18 : 0.12) * density,
-            ),
+                .withValues(alpha: (isSelected ? 0.92 : 0.82) * density),
+            const Color(0xFFDFF1DC)
+                .withValues(alpha: (isSelected ? 0.72 : 0.48) * density),
           ],
         ).createShader(tagRect.outerRect),
     );
@@ -1093,6 +1435,32 @@ class BubbleBody extends BodyComponent<BubbleGame>
         return true;
       case '便宜':
         _drawCoin(canvas, r);
+        return true;
+
+      // --- Fortune ---
+      case '恋爱运':
+        _drawHeart(canvas, r);
+        return true;
+      case '财运':
+        _drawCoin(canvas, r);
+        return true;
+      case '事业运':
+        _drawGift(canvas, r);
+        return true;
+      case '健康运':
+        _drawLeaf(canvas, r);
+        return true;
+      case '社交运':
+        _drawCheers(canvas, r);
+        return true;
+      case '奇遇运':
+        _drawDice(canvas, r);
+        return true;
+      case '专注运':
+        _drawCoin(canvas, r);
+        return true;
+      case '平静运':
+        _drawLeaf(canvas, r);
         return true;
     }
     return false;

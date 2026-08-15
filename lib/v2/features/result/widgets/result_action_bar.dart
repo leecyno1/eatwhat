@@ -1,7 +1,5 @@
-import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
 class ResultTagChip extends StatelessWidget {
   const ResultTagChip({
@@ -19,18 +17,10 @@ class ResultTagChip extends StatelessWidget {
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: AppPalette.rice.withValues(alpha: 0.46),
+        color: AppPalette.surfaceMuted,
         borderRadius: AppRadii.capsule,
-        border: Border.all(
-          color: AppPalette.rice.withValues(alpha: 0.72),
-        ),
       ),
-      child: Text(
-        label,
-        style: AppType.label.copyWith(
-          color: AppColors.textPrimary.withValues(alpha: 0.74),
-        ),
-      ),
+      child: Text(label, style: AppType.label),
     );
   }
 }
@@ -39,121 +29,130 @@ class ResultActionBar extends StatelessWidget {
   const ResultActionBar({
     super.key,
     required this.onReroll,
-    required this.onConfirm,
     required this.onOpenSimilarRecipes,
     required this.onOpenRecipe,
   });
 
   final VoidCallback onReroll;
-  final VoidCallback onConfirm;
   final VoidCallback onOpenSimilarRecipes;
   final VoidCallback onOpenRecipe;
 
   @override
   Widget build(BuildContext context) {
     return Row(
+      key: const ValueKey('result-secondary-actions'),
       children: [
         Expanded(
-          child: ResultActionButton(
+          child: _SecondaryAction(
             icon: Icons.refresh_rounded,
-            color: AppColors.textPrimary,
-            onTap: onReroll,
             label: '再看看',
+            onTap: onReroll,
           ),
         ),
-        const SizedBox(width: AppSpacing.sm),
+        const SizedBox(width: AppSpacing.xs),
         Expanded(
-          child: ResultActionButton(
-            key: const ValueKey('execution-entry-button'),
-            icon: Icons.alt_route_rounded,
-            color: AppColors.freshLime,
-            isPrimary: true,
-            onTap: onConfirm,
-            label: '就吃这个',
-          ),
-        ),
-        const SizedBox(width: AppSpacing.sm),
-        Expanded(
-          child: ResultActionButton(
+          child: _SecondaryAction(
             key: const ValueKey('result-open-howtocook-library'),
             icon: Icons.view_carousel_rounded,
-            color: AppColors.textPrimary,
+            label: '同类菜',
             onTap: onOpenSimilarRecipes,
-            label: '同源做法',
           ),
         ),
-        const SizedBox(width: AppSpacing.sm),
+        const SizedBox(width: AppSpacing.xs),
         Expanded(
-          child: ResultActionButton(
+          child: _SecondaryAction(
             icon: Icons.menu_book_rounded,
-            color: AppColors.textPrimary,
+            label: '看菜谱',
             onTap: onOpenRecipe,
-            label: '菜谱',
           ),
         ),
       ],
-    ).animate().fadeIn().scale(delay: 200.ms);
+    );
   }
 }
 
-class ResultActionButton extends StatelessWidget {
-  const ResultActionButton({
+class ResultPrimaryConfirmBar extends StatelessWidget {
+  const ResultPrimaryConfirmBar({
     super.key,
-    required this.icon,
-    required this.color,
-    required this.onTap,
-    required this.label,
-    this.isPrimary = false,
+    required this.onConfirm,
+    this.confirmLabel = '就吃这个',
   });
 
-  final IconData icon;
-  final Color color;
-  final VoidCallback onTap;
-  final String label;
-  final bool isPrimary;
+  final VoidCallback onConfirm;
+  final String confirmLabel;
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xs,
-          vertical: AppSpacing.sm,
-        ),
-        decoration: BoxDecoration(
-          borderRadius: AppRadii.panel,
-          color: isPrimary ? color : AppPalette.rice.withValues(alpha: 0.46),
-          border: isPrimary
-              ? null
-              : Border.all(color: AppPalette.rice.withValues(alpha: 0.74)),
-          boxShadow: isPrimary
-              ? [
-                  BoxShadow(
-                    color: color.withValues(alpha: 0.28),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
+    return Container(
+      key: const ValueKey('result-primary-confirm-bar'),
+      padding: const EdgeInsets.all(AppSpacing.xs),
+      decoration: AppDecorations.floating(radius: AppRadii.md),
+      child: FilledButton.icon(
+        key: const ValueKey('execution-entry-button'),
+        onPressed: onConfirm,
+        icon: const Icon(Icons.arrow_forward_rounded, size: 19),
+        label: Text(confirmLabel),
+      ),
+    );
+  }
+}
+
+class _SecondaryAction extends StatefulWidget {
+  const _SecondaryAction({
+    super.key,
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+
+  @override
+  State<_SecondaryAction> createState() => _SecondaryActionState();
+}
+
+class _SecondaryActionState extends State<_SecondaryAction> {
+  bool _pressed = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: widget.label,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapDown: (_) => setState(() => _pressed = true),
+        onTapCancel: () => setState(() => _pressed = false),
+        onTapUp: (_) {
+          setState(() => _pressed = false);
+          widget.onTap();
+        },
+        child: AnimatedScale(
+          duration: AppMotion.press,
+          curve: AppMotion.enter,
+          scale: _pressed ? 0.97 : 1,
+          child: Container(
+            height: 48,
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
+            decoration: AppDecorations.card(radius: AppRadii.sm),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(widget.icon, size: 17, color: AppPalette.inkSoft),
+                const SizedBox(width: 6),
+                Flexible(
+                  child: Text(
+                    widget.label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppType.label.copyWith(color: AppPalette.ink),
                   ),
-                ]
-              : null,
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              color: isPrimary ? AppPalette.rice : AppColors.textPrimary,
-              size: isPrimary ? 28 : 24,
+                ),
+              ],
             ),
-            const SizedBox(height: AppSpacing.xs),
-            Text(
-              label,
-              style: AppType.label.copyWith(
-                color: isPrimary ? AppPalette.rice : AppColors.textPrimary,
-                fontSize: 13,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );

@@ -3,18 +3,32 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:math';
+
+import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
 import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sensors_plus/sensors_plus.dart';
-import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
+
 import 'bubble_body.dart';
-import 'wall_body.dart';
 import 'bubble_data_manager.dart';
+import 'wall_body.dart';
 
 class BubbleGame extends Forge2DGame {
-  BubbleGame() : super(gravity: Vector2(0, 10), zoom: 1.0);
+  static const int visibleBubbleCount = 32;
+
+  BubbleGame({
+    String? initialCategory,
+    Map<String, String> initialLikedTags = const {},
+    Map<String, String> initialBlockedTags = const {},
+  })  : _category = initialCategory,
+        super(gravity: Vector2(0, 2.8), zoom: 1.0) {
+    _replaceSelections(
+      likedTags: initialLikedTags,
+      blockedTags: initialBlockedTags,
+    );
+  }
 
   @override
   Color backgroundColor() => const Color(0x00FFFFFF);
@@ -24,11 +38,66 @@ class BubbleGame extends Forge2DGame {
       V2PreferenceFeedbackService.instance;
   StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
   final ValueNotifier<int> selectionCount = ValueNotifier(0);
+  final ValueNotifier<int> selectionRevision = ValueNotifier(0);
   final ValueNotifier<SwipeFeedbackEvent?> swipeFeedback =
       ValueNotifier<SwipeFeedbackEvent?>(null);
   final List<String> selectedItems = [];
   final List<String> selectedTagIds = [];
   final Map<String, String> selectedTagIdToLabel = {};
+  final List<String> blockedItems = [];
+  final List<String> blockedTagIds = [];
+  final Map<String, String> blockedTagIdToLabel = {};
+  String? _category;
+  bool _isLoaded = false;
+  double _gravityX = 0;
+  double _gravityY = 2.8;
+
+  String? get category => _category;
+  int get totalTagCount => _dataManager.totalTagCount;
+  int get visibleCategoryCount => _dataManager.countForCategory(_category);
+
+  void syncSelections({
+    required Map<String, String> likedTags,
+    required Map<String, String> blockedTags,
+  }) {
+    final unchanged = selectedTagIds.length == likedTags.length &&
+        blockedTagIds.length == blockedTags.length &&
+        selectedTagIds.every(
+          (id) => likedTags[id] == selectedTagIdToLabel[id],
+        ) &&
+        blockedTagIds.every(
+          (id) => blockedTags[id] == blockedTagIdToLabel[id],
+        );
+    if (unchanged) return;
+
+    _replaceSelections(likedTags: likedTags, blockedTags: blockedTags);
+    selectionCount.value = selectedTagIds.length;
+    if (_isLoaded) _reloadBubbles();
+  }
+
+  void _replaceSelections({
+    required Map<String, String> likedTags,
+    required Map<String, String> blockedTags,
+  }) {
+    selectedTagIds
+      ..clear()
+      ..addAll(likedTags.keys);
+    selectedItems
+      ..clear()
+      ..addAll(likedTags.values);
+    selectedTagIdToLabel
+      ..clear()
+      ..addAll(likedTags);
+    blockedTagIds
+      ..clear()
+      ..addAll(blockedTags.keys);
+    blockedItems
+      ..clear()
+      ..addAll(blockedTags.values);
+    blockedTagIdToLabel
+      ..clear()
+      ..addAll(blockedTags);
+  }
 
   void emitSwipeFeedback({
     required String label,
@@ -42,18 +111,42 @@ class BubbleGame extends Forge2DGame {
   }
 
   void toggleSelection(BubbleBody bubble) {
-    bubble.isSelected = !bubble.isSelected;
-    if (bubble.isSelected) {
-      selectionCount.value++;
+    if (bubble.isSelected) return;
+    bubble.isSelected = true;
+    blockedItems.remove(bubble.text);
+    blockedTagIds.remove(bubble.data.id);
+    blockedTagIdToLabel.remove(bubble.data.id);
+    if (!selectedItems.contains(bubble.text)) {
       selectedItems.add(bubble.text);
-      selectedTagIds.add(bubble.data.id);
-      selectedTagIdToLabel[bubble.data.id] = bubble.text;
-    } else {
-      selectionCount.value--;
-      selectedItems.remove(bubble.text);
-      selectedTagIds.remove(bubble.data.id);
-      selectedTagIdToLabel.remove(bubble.data.id);
     }
+    if (!selectedTagIds.contains(bubble.data.id)) {
+      selectedTagIds.add(bubble.data.id);
+    }
+    selectedTagIdToLabel[bubble.data.id] = bubble.text;
+    unawaited(_feedback.recordPositiveTag(bubble.data.id, delta: 2));
+    _notifySelectionChanged();
+  }
+
+  void rejectBubble(BubbleBody bubble) {
+    bubble.isSelected = false;
+    bubble.isRejected = true;
+    selectedItems.remove(bubble.text);
+    selectedTagIds.remove(bubble.data.id);
+    selectedTagIdToLabel.remove(bubble.data.id);
+    if (!blockedItems.contains(bubble.text)) {
+      blockedItems.add(bubble.text);
+    }
+    if (!blockedTagIds.contains(bubble.data.id)) {
+      blockedTagIds.add(bubble.data.id);
+    }
+    blockedTagIdToLabel[bubble.data.id] = bubble.text;
+    unawaited(_feedback.recordNegativeTag(bubble.data.id, delta: 2));
+    _notifySelectionChanged();
+  }
+
+  void _notifySelectionChanged() {
+    selectionCount.value = selectedTagIds.length;
+    selectionRevision.value += 1;
   }
 
   // Scale factor: 1 meter = 10 pixels (adjust as needed)
@@ -72,6 +165,7 @@ class BubbleGame extends Forge2DGame {
     // Initialize data manager
     _dataManager = BubbleDataManager();
     await _dataManager.initialize();
+    _isLoaded = true;
 
     // Set camera zoom
     camera.viewfinder.zoom = worldScale;
@@ -89,7 +183,7 @@ class BubbleGame extends Forge2DGame {
 
     // Listen to accelerometer with error handling
     // Use default gravity first, then try to listen to accelerometer
-    world.gravity = Vector2(0, 10);
+    world.gravity = Vector2(0, 2.8);
     _initAccelerometer();
   }
 
@@ -110,14 +204,11 @@ class BubbleGame extends Forge2DGame {
       _accelerometerSubscription = accelerometerEventStream().listen(
         (event) {
           // Update gravity based on tilt
-          final clampedX = event.x.clamp(-10.0, 10.0);
-          final clampedY = event.y.clamp(-10.0, 10.0);
-
-          if (clampedX.abs() < 0.1 && clampedY.abs() < 0.1) {
-            world.gravity = Vector2(0, 10);
-          } else {
-            world.gravity = Vector2(-clampedX * 2, clampedY * 2);
-          }
+          final targetX = (-event.x * 0.58).clamp(-4.8, 4.8);
+          final targetY = (2.8 + event.y * 0.12).clamp(1.4, 5.2);
+          _gravityX += (targetX - _gravityX) * 0.14;
+          _gravityY += (targetY - _gravityY) * 0.14;
+          world.gravity = Vector2(_gravityX, _gravityY);
         },
         onError: (error) {
           // Accelerometer not available
@@ -130,84 +221,103 @@ class BubbleGame extends Forge2DGame {
     }
   }
 
-  void _addBubbles({int count = 22}) {
+  void _addBubbles({int count = visibleBubbleCount}) {
     final rand = Random();
-    final bubbles = _dataManager.getInitialBubbles(count);
+    final existingIds = world.children
+        .whereType<BubbleBody>()
+        .map((bubble) => bubble.data.id)
+        .toSet();
+    final bubbles = _dataManager.getInitialBubbles(
+      count,
+      category: _category,
+      excludedTagIds: {
+        ...existingIds,
+        ...selectedTagIds,
+        ...blockedTagIds,
+      },
+    );
+
+    final visibleWidth = max(size.x / worldScale, 8.0);
+    final visibleHeight = max(size.y / worldScale, 12.0);
+
+    const topInset = 1.9;
+    const bottomInset = 2.6;
+    final placements = <({Vector2 center, double radius})>[];
 
     for (var i = 0; i < bubbles.length; i++) {
       final data = bubbles[i];
-
-      final tier = i % 5;
-      final baseRadius = switch (tier) {
-        0 => 2.55 + rand.nextDouble() * 0.35,
-        1 => 2.15 + rand.nextDouble() * 0.30,
-        2 => 1.90 + rand.nextDouble() * 0.24,
-        3 => 1.60 + rand.nextDouble() * 0.22,
-        _ => 1.35 + rand.nextDouble() * 0.18,
+      final tierRadius = switch (i % 8) {
+        0 || 5 => 2.06 + rand.nextDouble() * 0.20,
+        1 || 3 || 6 => 1.62 + rand.nextDouble() * 0.20,
+        _ => 1.28 + rand.nextDouble() * 0.22,
       };
-      final radius = baseRadius * data.sizeMultiplier;
+      final radius = (tierRadius * (0.94 + data.sizeMultiplier * 0.06))
+          .clamp(1.24, 2.24)
+          .toDouble();
 
-      final x = 1.4 + rand.nextDouble() * 11.6;
-      final y = 1.6 + rand.nextDouble() * 12.8;
+      Vector2? chosen;
+      var bestClearance = -double.infinity;
+      Vector2? bestCandidate;
+      for (var attempt = 0; attempt < 72; attempt++) {
+        final candidate = Vector2(
+          radius +
+              0.35 +
+              rand.nextDouble() * max(0.1, visibleWidth - radius * 2 - 0.7),
+          topInset +
+              radius +
+              rand.nextDouble() *
+                  max(
+                    0.1,
+                    visibleHeight - topInset - bottomInset - radius * 2,
+                  ),
+        );
+        var clearance = double.infinity;
+        for (final placed in placements) {
+          final gap = candidate.distanceTo(placed.center) -
+              (radius + placed.radius) * 0.84;
+          clearance = min(clearance, gap);
+        }
+        if (clearance > bestClearance) {
+          bestClearance = clearance;
+          bestCandidate = candidate;
+        }
+        if (clearance >= 0) {
+          chosen = candidate;
+          break;
+        }
+      }
+      chosen ??= bestCandidate ?? Vector2(visibleWidth / 2, visibleHeight / 2);
+      placements.add((center: chosen, radius: radius));
 
       world.add(BubbleBody(
         data: data,
         radius: radius,
-        initialPosition: Vector2(x, y),
+        initialPosition: chosen,
       ));
     }
   }
 
   void handleBubbleExplosion(BubbleBody bubble) {
-    unawaited(_feedback.recordPositiveTag(bubble.data.id, delta: 2));
-    // 1. Remove the exploded bubble (already handled in body, but safe to ensure)
     if (bubble.parent != null) bubble.removeFromParent();
-
-    // 2. Spawn related bubbles (Explosion effect)
-    // Get 5-8 new bubbles related to this one
-    final relatedBubbles =
-        _dataManager.getRelatedBubbles(bubble.data, count: 6);
-
-    final rand = Random();
-    for (var data in relatedBubbles) {
-      // Spawn at the top, raining down
-      final x = 2.0 + rand.nextDouble() * 10.0;
-      final y = 0.0; // Top of screen
-
-      // Slightly smaller for sub-bubbles
-      final radius = (1.5 + rand.nextDouble() * 0.5) * data.sizeMultiplier;
-
-      final newBody = BubbleBody(
-        data: data,
-        radius: radius,
-        initialPosition: Vector2(x, y),
-      );
-
-      world.add(newBody);
-
-      // Give them a downward impulse
-      // We can't apply impulse immediately before body is created in world,
-      // but BubbleBody.createBody handles creation.
-      // We can add a post-add callback or just let gravity do it.
-    }
+    _addBubbles(count: 1);
   }
 
   void handleBubbleRejection(BubbleBody bubble) {
-    unawaited(_feedback.recordNegativeTag(bubble.data.id, delta: 2));
-    // Just ensure replenishment happens
-    // The update loop handles this automatically when count drops
+    _addBubbles(count: 1);
   }
 
-  @override
-  void update(double dt) {
-    super.update(dt);
+  void setCategory(String? category) {
+    if (_category == category) return;
+    _category = category;
+    if (!_isLoaded) return;
+    _reloadBubbles();
+  }
 
-    // Replenishment Logic
-    // Check if we need to add more bubbles
-    final currentBubbleCount = world.children.whereType<BubbleBody>().length;
-    if (currentBubbleCount < 18) {
-      _addBubbles(count: 4);
+  void _reloadBubbles() {
+    for (final bubble in world.children.whereType<BubbleBody>().toList()) {
+      bubble.removeFromParent();
     }
+    _addBubbles();
   }
 
   @override
@@ -220,6 +330,7 @@ class BubbleGame extends Forge2DGame {
     // Remove old boundaries
     world.children
         .whereType<WallBody>()
+        .toList()
         .forEach((wall) => wall.removeFromParent());
 
     // Calculate world size in meters
@@ -255,6 +366,7 @@ class BubbleGame extends Forge2DGame {
   void onDispose() {
     _accelerometerSubscription?.cancel();
     selectionCount.dispose();
+    selectionRevision.dispose();
     swipeFeedback.dispose();
   }
 }
@@ -287,8 +399,8 @@ class DiscardZoneIndicator extends PositionComponent
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          const Color(0xFFE8DCC6).withOpacity(0.0),
-          const Color(0xFFE8DCC6).withOpacity(0.8),
+          const Color(0xFFEAF5E7).withOpacity(0.0),
+          const Color(0xFFDCEED8).withOpacity(0.72),
         ],
         stops: const [0.0, 1.0],
       ).createShader(Rect.fromLTWH(0, height - 150, width, 150));
@@ -298,13 +410,12 @@ class DiscardZoneIndicator extends PositionComponent
     // Draw "discard" text
     final textPainter = TextPainter(
       text: TextSpan(
-        text: 'discard',
+        text: '下滑拉黑',
         style: TextStyle(
-          color: const Color(0xFF8D7B68).withOpacity(0.6),
-          fontSize: 18,
-          fontWeight: FontWeight.w500,
-          fontFamily: 'Rounded',
-          letterSpacing: 1.2,
+          color: const Color(0xFF315A3B).withOpacity(0.66),
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.4,
         ),
       ),
       textDirection: TextDirection.ltr,

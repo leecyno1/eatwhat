@@ -24,8 +24,20 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>meituanwaimai</string>
+		<string>dianping</string>
+	</array>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>用于长按语音输入今天想吃的口味和要求。</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSAllowsLocalNetworking</key>
+		<true/>
+	</dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>用于搜索当前位置附近可配送的美团门店和菜品。</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>用于将你的语音转换成文字，并与卡牌偏好一起生成菜品推荐。</string>
 	<key>UILaunchStoryboardName</key>

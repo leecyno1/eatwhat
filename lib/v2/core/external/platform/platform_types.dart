@@ -1,4 +1,5 @@
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
+import 'package:eatwhat_app/v2/core/data/models/recommendation_telemetry_context.dart';
 
 class GeoPoint {
   const GeoPoint({
@@ -64,6 +65,8 @@ class ExecutionIntent {
     required this.sourceTags,
     this.preferredPath = ExecutionPath.any,
     this.locationPreference = ExecutionLocationPreference.any,
+    this.recommendationContext,
+    this.recommendationPosition,
   });
 
   final RecipeModel recipe;
@@ -71,6 +74,30 @@ class ExecutionIntent {
   final List<String> sourceTags;
   final ExecutionPath preferredPath;
   final ExecutionLocationPreference locationPreference;
+  final RecommendationTelemetryContext? recommendationContext;
+  final int? recommendationPosition;
+
+  ExecutionIntent copyWith({
+    RecipeModel? recipe,
+    List<PairingSelection>? pairings,
+    List<String>? sourceTags,
+    ExecutionPath? preferredPath,
+    ExecutionLocationPreference? locationPreference,
+    RecommendationTelemetryContext? recommendationContext,
+    int? recommendationPosition,
+  }) {
+    return ExecutionIntent(
+      recipe: recipe ?? this.recipe,
+      pairings: pairings ?? this.pairings,
+      sourceTags: sourceTags ?? this.sourceTags,
+      preferredPath: preferredPath ?? this.preferredPath,
+      locationPreference: locationPreference ?? this.locationPreference,
+      recommendationContext:
+          recommendationContext ?? this.recommendationContext,
+      recommendationPosition:
+          recommendationPosition ?? this.recommendationPosition,
+    );
+  }
 }
 
 class ProviderCapabilityMatrix {
@@ -163,6 +190,7 @@ class DeliveryMatchResult {
     required this.merchantName,
     required this.dishName,
     required this.url,
+    this.fallbackUrl,
     this.productId,
     this.price,
     this.deliveryTimeMinutes,
@@ -179,6 +207,7 @@ class DeliveryMatchResult {
   final String merchantName;
   final String dishName;
   final String url;
+  final String? fallbackUrl;
   final String? productId;
   final Money? price;
   final int? deliveryTimeMinutes;

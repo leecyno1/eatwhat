@@ -1,5 +1,6 @@
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
+import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/taste_card_copy_helpers.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/taste_card_style_helpers.dart';
 import 'package:flutter/material.dart';
@@ -22,47 +23,14 @@ class TasteDealEntryCard extends StatelessWidget {
       animation: animation,
       child: child,
       builder: (context, builtChild) {
-        final row = index ~/ 3;
-        final column = index % 3;
-        final laneBias = (column - 1).toDouble();
-        final rowBias = (row - 1).toDouble();
-        final start = (row * 0.09 + column * 0.035).clamp(0.0, 0.6);
-        final end = (start + 0.42).clamp(0.42, 1.0);
+        final start = (index * 0.012).clamp(0.0, 0.18);
+        final end = (start + 0.34).clamp(0.34, 1.0);
         final raw = ((animation.value - start) / (end - start)).clamp(0.0, 1.0);
-        final eased = Curves.easeOutBack.transform(raw);
-        final settle = Curves.easeOutCubic.transform(raw);
-
-        final dx = (1 - settle) * laneBias * 16;
-        final dy = (1 - settle) * (22 + row * 6);
-        final tilt =
-            (1 - settle) * laneBias * 0.08 + (1 - settle) * rowBias * 0.015;
-        final scale = 0.88 + eased * 0.12;
-        final opacity = 0.08 + settle * 0.92;
-        final glow = (1 - settle) * 0.2;
+        final settle = AppMotion.enter.transform(raw);
 
         return Opacity(
-          opacity: opacity.clamp(0, 1),
-          child: Transform(
-            transform: Matrix4.identity()
-              ..setEntry(3, 2, 0.001)
-              ..translate(dx, dy)
-              ..rotateZ(tilt)
-              ..scale(scale),
-            alignment: Alignment.center,
-            child: DecoratedBox(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: const Color(0xFFF46B40).withValues(alpha: glow),
-                    blurRadius: 18,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-              ),
-              child: builtChild,
-            ),
-          ),
+          opacity: settle,
+          child: builtChild,
         );
       },
     );
@@ -80,7 +48,7 @@ class TasteOutgoingPageGhostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = card.accentHexes.map(tasteCardParseHexColor).toList();
-    final accentA = colors.isNotEmpty ? colors.first : const Color(0xFFF46B40);
+    final accentA = colors.isNotEmpty ? colors.first : const Color(0xFFC94B2C);
     final accentB =
         colors.length > 1 ? colors[1] : accentA.withValues(alpha: 0.62);
     return Container(
@@ -163,7 +131,7 @@ class TasteFlipHintPill extends StatelessWidget {
           ),
           boxShadow: [
             BoxShadow(
-              color: const Color(0xFFF46B40).withValues(alpha: 0.08),
+              color: const Color(0xFFC94B2C).withValues(alpha: 0.08),
               blurRadius: 16,
               offset: const Offset(0, 8),
             ),
@@ -193,12 +161,12 @@ class TasteFlipHintPill extends StatelessWidget {
               height: 18,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: const Color(0xFFF46B40).withValues(alpha: 0.12),
+                color: const Color(0xFFC94B2C).withValues(alpha: 0.12),
               ),
               child: const Icon(
                 Icons.flip_rounded,
                 size: 10,
-                color: Color(0xFFF46B40),
+                color: Color(0xFFC94B2C),
               ),
             ),
           ],

@@ -1,5 +1,6 @@
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
+import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
 
 class TasteSignaturePanel extends StatelessWidget {
@@ -8,11 +9,15 @@ class TasteSignaturePanel extends StatelessWidget {
     required this.session,
     required this.onBack,
     required this.onStartInference,
+    required this.onRemoveLiked,
+    required this.onRemoveDisliked,
   });
 
   final TasteDeckSessionState session;
   final VoidCallback onBack;
   final VoidCallback onStartInference;
+  final ValueChanged<String> onRemoveLiked;
+  final ValueChanged<String> onRemoveDisliked;
 
   @override
   Widget build(BuildContext context) {
@@ -33,17 +38,9 @@ class TasteSignaturePanel extends StatelessWidget {
             containerPadding,
             containerPadding,
           ),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(34),
-            border: Border.all(color: Colors.white.withValues(alpha: 0.82)),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Colors.white.withValues(alpha: 0.7),
-                const Color(0xFFFFF1EA).withValues(alpha: 0.48),
-              ],
-            ),
+          decoration: AppDecorations.card(
+            color: AppPalette.surface,
+            radius: AppRadii.lg,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -58,7 +55,7 @@ class TasteSignaturePanel extends StatelessWidget {
                         style: TextStyle(
                           color: AppColors.textPrimary,
                           fontSize: titleSize,
-                          fontWeight: FontWeight.w800,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
                       SizedBox(height: compact ? 6 : 8),
@@ -67,7 +64,7 @@ class TasteSignaturePanel extends StatelessWidget {
                         style: TextStyle(
                           color: AppColors.textPrimary.withValues(alpha: 0.64),
                           fontSize: summarySize,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w400,
                           height: 1.5,
                         ),
                       ),
@@ -82,22 +79,27 @@ class TasteSignaturePanel extends StatelessWidget {
                       SizedBox(height: compact ? 14 : 18),
                       _SignatureGroup(
                         title: '喜欢',
+                        ids: session.likedTagIds,
                         items: session.likedTagLabels,
-                        accent: const Color(0xFFF46B40),
+                        accent: const Color(0xFFC94B2C),
                         compact: compact,
+                        onRemove: onRemoveLiked,
                       ),
                       SizedBox(height: sectionGap),
                       _SignatureGroup(
                         title: '不要',
+                        ids: session.dislikedTagIds,
                         items: session.dislikedTagLabels,
-                        accent: const Color(0xFF6D6A75),
+                        accent: const Color(0xFF8B695F),
                         compact: compact,
+                        onRemove: onRemoveDisliked,
                       ),
                       SizedBox(height: sectionGap),
                       _SignatureGroup(
                         title: '略过',
+                        ids: session.skippedTagIds,
                         items: session.skippedTagLabels,
-                        accent: const Color(0xFF2D9CDB),
+                        accent: const Color(0xFF667C79),
                         compact: compact,
                       ),
                       if (session.freeformRequirement.trim().isNotEmpty) ...[
@@ -105,7 +107,8 @@ class TasteSignaturePanel extends StatelessWidget {
                         Text(
                           '补充要求',
                           style: TextStyle(
-                            color: AppColors.textPrimary.withValues(alpha: 0.45),
+                            color:
+                                AppColors.textPrimary.withValues(alpha: 0.45),
                             fontSize: compact ? 10 : 11,
                             fontWeight: FontWeight.w800,
                             letterSpacing: 1.2,
@@ -134,29 +137,28 @@ class TasteSignaturePanel extends StatelessWidget {
                       onPressed: onBack,
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.textPrimary,
-                        side: BorderSide(
-                          color: Colors.white.withValues(alpha: 0.8),
-                        ),
+                        side: const BorderSide(color: AppPalette.divider),
                         padding: EdgeInsets.symmetric(
                           vertical: buttonVerticalPadding,
                         ),
                       ),
-                      child: const Text('回到卡组'),
+                      child: const Text('返回实体池'),
                     ),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: FilledButton(
                       key: const ValueKey('start-inference-button'),
-                      onPressed: onStartInference,
+                      onPressed:
+                          session.canStartInference ? onStartInference : null,
                       style: FilledButton.styleFrom(
-                        backgroundColor: const Color(0xFFF46B40),
+                        backgroundColor: AppPalette.chili,
                         foregroundColor: Colors.white,
                         padding: EdgeInsets.symmetric(
                           vertical: buttonVerticalPadding,
                         ),
                       ),
-                      child: const Text('开始推理'),
+                      child: const Text('生成推荐'),
                     ),
                   ),
                 ],
@@ -193,28 +195,22 @@ class _SignatureSummaryBand extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-      decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.44),
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.6),
-        ),
-      ),
+      decoration: AppDecorations.card(color: AppPalette.surfaceMuted),
       child: Wrap(
         spacing: 8,
         runSpacing: 8,
         children: [
           _SignatureMetricChip(
             label: '喜欢 $likedCount',
-            color: const Color(0xFFF46B40),
+            color: const Color(0xFFC94B2C),
           ),
           _SignatureMetricChip(
             label: '排除 $dislikedCount',
-            color: const Color(0xFF6D6A75),
+            color: const Color(0xFF8B695F),
           ),
           _SignatureMetricChip(
             label: '补充 $requirementCount',
-            color: const Color(0xFF2D9CDB),
+            color: const Color(0xFF667C79),
           ),
         ],
       ),
@@ -254,15 +250,19 @@ class _SignatureMetricChip extends StatelessWidget {
 class _SignatureGroup extends StatelessWidget {
   const _SignatureGroup({
     required this.title,
+    required this.ids,
     required this.items,
     required this.accent,
     required this.compact,
+    this.onRemove,
   });
 
   final String title;
+  final List<String> ids;
   final List<String> items;
   final Color accent;
   final bool compact;
+  final ValueChanged<String>? onRemove;
 
   @override
   Widget build(BuildContext context) {
@@ -283,23 +283,41 @@ class _SignatureGroup extends StatelessWidget {
           spacing: compact ? 6 : 8,
           runSpacing: compact ? 6 : 8,
           children: [
-            for (final item in items)
+            for (var index = 0; index < items.length; index++)
               Container(
                 padding: EdgeInsets.symmetric(
-                  horizontal: compact ? 10 : 12,
+                  horizontal: compact ? 9 : 11,
                   vertical: compact ? 6 : 8,
                 ),
                 decoration: BoxDecoration(
                   color: accent.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(999),
                 ),
-                child: Text(
-                  item,
-                  style: TextStyle(
-                    color: accent,
-                    fontSize: compact ? 12 : 13,
-                    fontWeight: FontWeight.w700,
-                  ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      items[index],
+                      style: TextStyle(
+                        color: accent,
+                        fontSize: compact ? 12 : 13,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (onRemove != null && index < ids.length) ...[
+                      const SizedBox(width: 4),
+                      InkWell(
+                        key: ValueKey('remove-taste-${ids[index]}'),
+                        onTap: () => onRemove!.call(ids[index]),
+                        borderRadius: BorderRadius.circular(99),
+                        child: Icon(
+                          Icons.close_rounded,
+                          size: compact ? 15 : 16,
+                          color: accent.withValues(alpha: 0.72),
+                        ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
             if (items.isEmpty)

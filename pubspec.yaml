@@ -77,6 +77,7 @@ dependencies:
   # 基础依赖 - 已更新版本
   shared_preferences: ^2.3.2
   crypto: ^3.0.6
+  cryptography: ^2.7.0
   http: ^1.4.0
   location: ^8.0.1
   flutter_secure_storage: ^9.2.2
@@ -199,6 +200,7 @@ flutter:
     - assets/images/
     - assets/images/card_game/
     - assets/images/prebuilt_dishes/
+    - assets/images/preference_entities/
     - assets/icons/
     - assets/data/
     - assets/data/howtocook_complete_recipes.db

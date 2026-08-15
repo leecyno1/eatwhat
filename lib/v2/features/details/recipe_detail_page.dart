@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:eatwhat_app/v2/core/data/models/howtocook_recipe_detail.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
@@ -40,6 +41,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
       V2RecipeExecutionProgressService.instance;
   final V2PreferenceFeedbackService _feedbackService =
       V2PreferenceFeedbackService.instance;
+  final PageController _cookingPageController = PageController();
   late RecipeModel _recipe;
   late final V2HowToCookRecipeService _howToCookRecipeService;
   bool _loadingHowToCookDetail = false;
@@ -50,6 +52,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
   Set<int> _completedStepIndexes = const {};
   Set<int> _completedShoppingIndexes = const {};
   late bool _cookingMode;
+  int _activeCookingStepIndex = 0;
 
   @override
   void initState() {
@@ -61,18 +64,24 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
     _bootstrapHowToCookDetail();
   }
 
+  @override
+  void dispose() {
+    _cookingPageController.dispose();
+    super.dispose();
+  }
+
   Future<void> _bootstrapHowToCookDetail() async {
     setState(() => _loadingHowToCookDetail = true);
-    final hasUnifiedRecipeBody = _isHowToCookRecipe(_recipe) &&
+    final hasAuthoritativeHowToCookBody = _isHowToCookSource(_recipe) &&
         _recipe.ingredients.isNotEmpty &&
         _recipe.steps.isNotEmpty;
-    final detail = hasUnifiedRecipeBody
+    final detail = hasAuthoritativeHowToCookBody
         ? null
         : await _howToCookRecipeService.findBestDetailForRecipe(_recipe);
-    final enriched = hasUnifiedRecipeBody
+    final enriched = hasAuthoritativeHowToCookBody
         ? _recipe.copyWith(source: 'HowToCook')
         : detail == null
-            ? await _howToCookRecipeService.enrichRecipe(_recipe)
+            ? _recipe
             : _recipe.copyWith(
                 description: detail.description.trim().isNotEmpty
                     ? detail.description.trim()
@@ -106,10 +115,17 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
       _selectedServings = detail?.servings ?? _selectedServings;
       _completedStepIndexes =
           _clampedCompletedStepIndexes(completedStepIndexes, enriched.steps);
+      _activeCookingStepIndex = _firstIncompleteStepIndex(
+        enriched.steps,
+        _completedStepIndexes,
+      );
       _completedShoppingIndexes = _clampedShoppingIndexes(
           completedShoppingIndexes, enriched.ingredients);
       _loadingHowToCookDetail = false;
     });
+    if (_cookingMode) {
+      _scheduleCookingPageJump(_activeCookingStepIndex);
+    }
     final related = await _howToCookRecipeService.getRelatedRecipes(enriched);
     if (!mounted) return;
     setState(() {
@@ -117,9 +133,9 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
     });
   }
 
-  bool _isHowToCookRecipe(RecipeModel recipe) {
+  bool _isHowToCookSource(RecipeModel recipe) {
     final source = recipe.source.trim().toLowerCase();
-    return source == 'howtocook' || source == 'unified_db';
+    return source == 'howtocook';
   }
 
   Future<void> _openHowToCookLibrary() async {
@@ -166,6 +182,9 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+    if (_cookingMode) {
+      return _buildCookingScaffold(context);
+    }
     return Scaffold(
       backgroundColor: AppColors.lightBackground,
       bottomNavigationBar: _buildBottomBar(context),
@@ -186,15 +205,9 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                   RecipeCookBriefSection(
                     recipe: _recipe,
                     completedStepIndexes: _completedStepIndexes,
-                    onStartCooking: () {
-                      setState(() => _cookingMode = true);
-                    },
+                    onStartCooking: _enterCookingMode,
                     onOpenShoppingList: _showShoppingList,
                   ),
-                  if (_cookingMode) ...[
-                    const SizedBox(height: 16),
-                    _buildCookingModePanel(),
-                  ],
                   const SizedBox(height: 24),
                   RecipeIngredientsSection(
                     ingredients: _scaledIngredients(),
@@ -251,62 +264,43 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
         ),
         child: Row(
           children: [
-            if (_cookingMode)
-              Expanded(
-                child: FilledButton.icon(
-                  key: const ValueKey('recipe-cooking-complete-button'),
-                  onPressed: _recordCookingCompleted,
-                  icon: const Icon(Icons.check_circle_rounded),
-                  label: const Text('完成这次做菜'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.sunsetOrange,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                  ),
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: () => ExecutionSheet.show(
+                  context,
+                  dishName: _recipe.name,
                 ),
-              )
-            else ...[
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => ExecutionSheet.show(
-                    context,
-                    dishName: _recipe.name,
+                icon: const Icon(Icons.alt_route_rounded),
+                label: const Text('更多方式'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.sunsetOrange,
+                  side: BorderSide(
+                    color: AppColors.sunsetOrange.withValues(alpha: 0.35),
                   ),
-                  icon: const Icon(Icons.alt_route_rounded),
-                  label: const Text('更多方式'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.sunsetOrange,
-                    side: BorderSide(
-                      color: AppColors.sunsetOrange.withValues(alpha: 0.35),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: FilledButton.icon(
-                  key: const ValueKey('recipe-start-cooking-button'),
-                  onPressed: () => setState(() => _cookingMode = true),
-                  icon: const Icon(Icons.soup_kitchen_rounded),
-                  label: const Text('开始做菜'),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.sunsetOrange,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(14),
-                    ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: FilledButton.icon(
+                key: const ValueKey('recipe-start-cooking-button'),
+                onPressed: _enterCookingMode,
+                icon: const Icon(Icons.soup_kitchen_rounded),
+                label: const Text('开始做菜'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.sunsetOrange,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 12),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(14),
                   ),
                 ),
               ),
-            ],
+            ),
           ],
         ),
       ),
@@ -332,71 +326,412 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
     );
   }
 
-  Widget _buildCookingModePanel() {
+  Widget _buildCookingScaffold(BuildContext context) {
+    final steps = _recipe.steps;
     final completedCount =
-        _recipe.steps.asMap().keys.where(_completedStepIndexes.contains).length;
-    return Container(
-      key: const ValueKey('recipe-cooking-mode-panel'),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.sunsetOrange.withValues(alpha: 0.1),
-        borderRadius: BorderRadius.circular(22),
-        border: Border.all(
-          color: AppColors.sunsetOrange.withValues(alpha: 0.24),
+        steps.asMap().keys.where(_completedStepIndexes.contains).length;
+    final activeIndex =
+        steps.isEmpty ? 0 : _activeCookingStepIndex.clamp(0, steps.length - 1);
+    final isLastStep = steps.isNotEmpty && activeIndex == steps.length - 1;
+
+    return Scaffold(
+      key: const ValueKey('recipe-cooking-mode-page'),
+      backgroundColor: AppColors.lightBackground,
+      body: SafeArea(
+        child: Stack(
+          children: [
+            if (steps.isEmpty)
+              Center(
+                child: Text(
+                  _loadingHowToCookDetail ? '正在准备烹饪步骤…' : '这道菜暂时没有可执行步骤。',
+                  style: const TextStyle(
+                    color: AppColors.textSecondary,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              )
+            else
+              Scrollbar(
+                controller: _cookingPageController,
+                thumbVisibility: true,
+                interactive: false,
+                thickness: 3,
+                radius: const Radius.circular(999),
+                child: PageView.builder(
+                  key: const ValueKey('recipe-cooking-page-view'),
+                  controller: _cookingPageController,
+                  scrollDirection: Axis.vertical,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: steps.length,
+                  onPageChanged: (index) {
+                    setState(() => _activeCookingStepIndex = index);
+                  },
+                  itemBuilder: (context, index) {
+                    return _buildCookingStepPage(index, steps[index]);
+                  },
+                ),
+              ),
+            Positioned(
+              top: 12,
+              left: 16,
+              right: 16,
+              child: _buildCookingHeader(
+                activeIndex: activeIndex,
+                stepCount: steps.length,
+                completedCount: completedCount,
+              ),
+            ),
+            if (steps.isNotEmpty)
+              Positioned(
+                left: 20,
+                right: 20,
+                bottom: 16,
+                child: _buildCookingFloatingButton(
+                  activeIndex: activeIndex,
+                  isLastStep: isLastStep,
+                ),
+              ),
+          ],
         ),
       ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: AppColors.sunsetOrange.withValues(alpha: 0.18),
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.soup_kitchen_rounded,
-              color: AppColors.sunsetOrange,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    );
+  }
+
+  Widget _buildCookingHeader({
+    required int activeIndex,
+    required int stepCount,
+    required int completedCount,
+  }) {
+    final progress = stepCount == 0 ? 0.0 : (activeIndex + 1) / stepCount;
+    return Material(
+      color: Colors.white.withValues(alpha: 0.94),
+      elevation: 4,
+      shadowColor: Colors.black.withValues(alpha: 0.08),
+      borderRadius: BorderRadius.circular(20),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(8, 8, 16, 10),
+        child: Column(
+          children: [
+            Row(
               children: [
-                const Text(
-                  '做菜模式',
-                  style: TextStyle(
-                    color: AppColors.textPrimary,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w900,
+                IconButton(
+                  key: const ValueKey('recipe-cooking-close-button'),
+                  tooltip: '退出做菜模式',
+                  onPressed: () => setState(() => _cookingMode = false),
+                  icon: const Icon(Icons.close_rounded),
+                ),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        '做菜模式',
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        stepCount == 0
+                            ? '正在准备步骤'
+                            : '第 ${activeIndex + 1} / $stepCount 步 · 完成 $completedCount/$stepCount',
+                        key: const ValueKey('recipe-cooking-progress'),
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 6),
-                Text(
-                  '先备料，再按步骤勾选；遇到等待时间可以直接点计时。',
-                  style: TextStyle(
-                    color: AppColors.textSecondary.withValues(alpha: 0.92),
-                    fontSize: 13,
-                    height: 1.35,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  '当前进度：完成 $completedCount/${_recipe.steps.length}',
-                  style: const TextStyle(
-                    color: AppColors.sunsetOrange,
-                    fontWeight: FontWeight.w800,
+                Flexible(
+                  child: Text(
+                    _recipe.name,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      color: AppColors.sunsetOrange,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                    ),
                   ),
                 ),
               ],
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: LinearProgressIndicator(
+                value: progress,
+                minHeight: 3,
+                borderRadius: BorderRadius.circular(999),
+                backgroundColor: AppColors.sunsetOrange.withValues(alpha: 0.12),
+                valueColor:
+                    const AlwaysStoppedAnimation(AppColors.sunsetOrange),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCookingStepPage(int index, String step) {
+    final timerLabel = cookingTimerLabelForStep(step);
+    final isCompleted = _completedStepIndexes.contains(index);
+    final isLastStep = index == _recipe.steps.length - 1;
+    return Container(
+      key: ValueKey('recipe-cooking-step-page-$index'),
+      padding: const EdgeInsets.fromLTRB(28, 128, 36, 118),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppColors.sunsetOrange.withValues(alpha: 0.12),
+            AppColors.lightBackground,
+            Colors.white,
+          ],
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Text(
+                '步骤 ${index + 1}',
+                style: const TextStyle(
+                  color: AppColors.sunsetOrange,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              const Spacer(),
+              if (isCompleted)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+                  decoration: BoxDecoration(
+                    color: AppColors.freshLime.withValues(alpha: 0.18),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: const Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.check_circle_rounded,
+                        size: 17,
+                        color: AppColors.freshLime,
+                      ),
+                      SizedBox(width: 6),
+                      Text(
+                        '已完成',
+                        style: TextStyle(
+                          color: AppColors.textPrimary,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+          const SizedBox(height: 28),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: AutoSizeText(
+                step,
+                key: ValueKey('recipe-cooking-step-text-$index'),
+                maxLines: 9,
+                minFontSize: 22,
+                style: const TextStyle(
+                  color: AppColors.textPrimary,
+                  fontSize: 34,
+                  height: 1.42,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: -0.6,
+                ),
+              ),
+            ),
+          ),
+          if (timerLabel != null) ...[
+            const SizedBox(height: 24),
+            OutlinedButton.icon(
+              key: ValueKey('recipe-cooking-timer-$index'),
+              onPressed: () => _openCookingTimer(index, timerLabel),
+              icon: const Icon(Icons.timer_rounded),
+              label: Text(
+                isLastStep ? '$timerLabel，结束后完成本步骤' : '$timerLabel，结束后自动进入下一步',
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.sunsetOrange,
+                backgroundColor: Colors.white.withValues(alpha: 0.78),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+                side: BorderSide(
+                  color: AppColors.sunsetOrange.withValues(alpha: 0.28),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            ),
+          ],
+          const SizedBox(height: 22),
+          Row(
+            children: [
+              Icon(
+                isLastStep
+                    ? Icons.flag_rounded
+                    : Icons.keyboard_double_arrow_up_rounded,
+                size: 20,
+                color: AppColors.textSecondary,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                isLastStep ? '完成最后一步即可开吃' : '向上滑动，或点击下方“下一步”',
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 13,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
           ),
         ],
       ),
-    ).animate().fadeIn(delay: 250.ms).slideY(begin: 0.08);
+    );
+  }
+
+  Widget _buildCookingFloatingButton({
+    required int activeIndex,
+    required bool isLastStep,
+  }) {
+    return Material(
+      color: Colors.transparent,
+      elevation: 10,
+      shadowColor: AppColors.sunsetOrange.withValues(alpha: 0.3),
+      borderRadius: BorderRadius.circular(20),
+      child: SizedBox(
+        height: 60,
+        child: FilledButton.icon(
+          key: ValueKey(
+            isLastStep
+                ? 'recipe-cooking-complete-button'
+                : 'recipe-cooking-next-step-button',
+          ),
+          onPressed: isLastStep
+              ? () => _finishCooking(activeIndex)
+              : _advanceCookingStep,
+          icon: Icon(
+            isLastStep
+                ? Icons.check_circle_rounded
+                : Icons.keyboard_arrow_down_rounded,
+          ),
+          label: Text(isLastStep ? '完成这次做菜' : '下一步'),
+          style: FilledButton.styleFrom(
+            backgroundColor: AppColors.sunsetOrange,
+            foregroundColor: Colors.white,
+            textStyle: const TextStyle(
+              fontSize: 17,
+              fontWeight: FontWeight.w900,
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _advanceCookingStep({bool fromTimer = false}) async {
+    if (_recipe.steps.isEmpty) return;
+    final currentIndex = _activeCookingStepIndex;
+    _completeCookingStep(currentIndex);
+    if (currentIndex >= _recipe.steps.length - 1 ||
+        !_cookingPageController.hasClients) {
+      return;
+    }
+    await HapticFeedback.selectionClick();
+    await _cookingPageController.animateToPage(
+      currentIndex + 1,
+      duration: Duration(milliseconds: fromTimer ? 900 : 480),
+      curve: Curves.easeInOutCubic,
+    );
+  }
+
+  Future<void> _finishCooking(int index) async {
+    _completeCookingStep(index);
+    await HapticFeedback.mediumImpact();
+    await _recordCookingCompleted();
+  }
+
+  Future<void> _openCookingTimer(int index, String timerLabel) async {
+    final minutes = int.tryParse(
+          RegExp(r'(\d+)').firstMatch(timerLabel)?.group(1) ?? '',
+        ) ??
+        0;
+    await showTimerSheet(
+      context,
+      title: '步骤 ${index + 1}',
+      minutes: minutes,
+      onCompleted: () {
+        if (!mounted || _activeCookingStepIndex != index) return;
+        _advanceCookingStep(fromTimer: true);
+      },
+    );
+  }
+
+  void _completeCookingStep(int index) {
+    if (_completedStepIndexes.contains(index)) return;
+    final next = Set<int>.from(_completedStepIndexes)..add(index);
+    setState(() => _completedStepIndexes = next);
+    _progressService.saveCompletedStepIndexes(_recipe.id, next);
+  }
+
+  void _scheduleCookingPageJump(int index) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted ||
+          _recipe.steps.isEmpty ||
+          !_cookingPageController.hasClients) {
+        return;
+      }
+      final lastIndex = _recipe.steps.length - 1;
+      final targetIndex = index < 0
+          ? 0
+          : index > lastIndex
+              ? lastIndex
+              : index;
+      _cookingPageController.jumpToPage(targetIndex);
+    });
+  }
+
+  void _enterCookingMode() {
+    final targetIndex = _firstIncompleteStepIndex(
+      _recipe.steps,
+      _completedStepIndexes,
+    );
+    setState(() {
+      _cookingMode = true;
+      _activeCookingStepIndex = targetIndex;
+    });
+    _scheduleCookingPageJump(targetIndex);
+  }
+
+  int _firstIncompleteStepIndex(
+    List<String> steps,
+    Set<int> completedIndexes,
+  ) {
+    for (var index = 0; index < steps.length; index += 1) {
+      if (!completedIndexes.contains(index)) return index;
+    }
+    return steps.isEmpty ? 0 : steps.length - 1;
   }
 
   Widget _buildAppBar(BuildContext context) {
@@ -454,10 +789,21 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
     late final Set<int> next;
     setState(() {
       next = Set<int>.from(_completedStepIndexes);
-      if (!next.add(index)) {
+      final completed = next.add(index);
+      if (!completed) {
         next.remove(index);
       }
       _completedStepIndexes = next;
+      if (completed && index == _activeCookingStepIndex) {
+        for (var candidate = index + 1;
+            candidate < _recipe.steps.length;
+            candidate += 1) {
+          if (!next.contains(candidate)) {
+            _activeCookingStepIndex = candidate;
+            break;
+          }
+        }
+      }
     });
     _progressService.saveCompletedStepIndexes(_recipe.id, next);
   }

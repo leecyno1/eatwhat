@@ -174,7 +174,7 @@ class TasteDeckSessionState {
     );
   }
 
-  static const int pageSize = 16;
+  static const int pageSize = 8;
 
   final List<TasteDeckCard> deck;
   final int cardDeckSeed;
@@ -227,6 +227,7 @@ class TasteDeckSessionState {
   bool get canStartInference =>
       likedTagIds.isNotEmpty ||
       dislikedTagIds.isNotEmpty ||
+      !structuredConstraints.isEmpty ||
       freeformRequirement.trim().isNotEmpty;
 
   List<String> get likedTagLabels => _labelsFor(likedTagIds);

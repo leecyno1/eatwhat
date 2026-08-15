@@ -1,5 +1,6 @@
 import 'package:eatwhat_app/v2/core/data/models/ai_generation_models.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
+import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_enrichment_controller.dart';
 import 'package:flutter/material.dart';
 
@@ -17,13 +18,7 @@ class NutritionSummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(28),
-        color: Colors.white.withValues(alpha: 0.42),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.74),
-        ),
-      ),
+      decoration: AppDecorations.card(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -159,12 +154,9 @@ class NutritionMetric extends StatelessWidget {
     return Container(
       width: 118,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(18),
-        color: Colors.white.withValues(alpha: 0.54),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.72),
-        ),
+      decoration: AppDecorations.card(
+        color: AppPalette.surfaceMuted,
+        radius: AppRadii.sm,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

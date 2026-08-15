@@ -13,6 +13,7 @@ class ExecutionAsyncScaffold<T> extends StatelessWidget {
     required this.future,
     required this.builder,
     this.onRefresh,
+    this.errorBuilder,
   });
 
   final String title;
@@ -20,6 +21,7 @@ class ExecutionAsyncScaffold<T> extends StatelessWidget {
   final Future<T> future;
   final Widget Function(BuildContext context, T snapshot) builder;
   final VoidCallback? onRefresh;
+  final Widget Function(BuildContext context, Object error)? errorBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -44,16 +46,15 @@ class ExecutionAsyncScaffold<T> extends StatelessWidget {
                         onPressed: () => Navigator.of(context).pop(),
                         icon: const Icon(Icons.arrow_back_ios_new_rounded),
                       ),
+                      const SizedBox(width: AppSpacing.xs),
+                      Expanded(child: Text(title, style: AppType.section)),
                       if (onRefresh != null)
                         IconButton(
                           key: const ValueKey('execution-refresh-button'),
+                          tooltip: '刷新',
                           onPressed: onRefresh,
                           icon: const Icon(Icons.refresh_rounded),
                         ),
-                      Text(
-                        title,
-                        style: AppType.title.copyWith(color: accent),
-                      ),
                     ],
                   ),
                 ),
@@ -62,13 +63,16 @@ class ExecutionAsyncScaffold<T> extends StatelessWidget {
                     future: future,
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
+                        if (errorBuilder != null) {
+                          return errorBuilder!(context, snapshot.error!);
+                        }
                         return const ExecutionUnavailableState(
                           title: '暂时连接不上',
                           description: '附近服务没有及时返回结果，稍后再试一次。',
                         );
                       }
                       if (!snapshot.hasData) {
-                        return const Center(child: CircularProgressIndicator());
+                        return const ExecutionLoadingState();
                       }
                       return builder(context, snapshot.data as T);
                     },
@@ -83,15 +87,47 @@ class ExecutionAsyncScaffold<T> extends StatelessWidget {
   }
 }
 
+class ExecutionLoadingState extends StatelessWidget {
+  const ExecutionLoadingState({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.md,
+        ),
+        decoration: AppDecorations.card(),
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            SizedBox.square(
+              dimension: 18,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+            SizedBox(width: AppSpacing.sm),
+            Text('正在读取附近服务', style: AppType.label),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class ExecutionUnavailableState extends StatelessWidget {
   const ExecutionUnavailableState({
     super.key,
     required this.title,
     required this.description,
+    this.actionLabel,
+    this.onAction,
   });
 
   final String title;
   final String description;
+  final String? actionLabel;
+  final VoidCallback? onAction;
 
   @override
   Widget build(BuildContext context) {
@@ -108,11 +144,8 @@ class ExecutionUnavailableState extends StatelessWidget {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(
-                      title,
-                      textAlign: TextAlign.center,
-                      style: AppType.section,
-                    ),
+                    Text(title,
+                        textAlign: TextAlign.center, style: AppType.title),
                     const SizedBox(height: AppSpacing.xs),
                     Text(
                       description,
@@ -122,6 +155,13 @@ class ExecutionUnavailableState extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
+                    if (actionLabel != null && onAction != null) ...[
+                      const SizedBox(height: AppSpacing.md),
+                      FilledButton(
+                        onPressed: onAction,
+                        child: Text(actionLabel!),
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -437,15 +477,8 @@ class ExecutionPathCard extends StatelessWidget {
         borderRadius: AppRadii.panel,
         child: Ink(
           decoration: executionGlassBoxDecoration().copyWith(
-            border: Border.all(color: accent.withValues(alpha: 0.28)),
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                accent.withValues(alpha: 0.14),
-                AppPalette.rice.withValues(alpha: 0.5),
-              ],
-            ),
+            border: Border.all(color: AppPalette.divider),
+            color: AppPalette.surface,
           ),
           child: Padding(
             padding: const EdgeInsets.all(AppSpacing.md),
@@ -455,7 +488,7 @@ class ExecutionPathCard extends StatelessWidget {
                   width: 56,
                   height: 56,
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
+                    borderRadius: BorderRadius.circular(AppRadii.sm),
                     color: accent.withValues(alpha: 0.14),
                   ),
                   child: Icon(icon, color: accent),
@@ -472,8 +505,8 @@ class ExecutionPathCard extends StatelessWidget {
                             child: Text(
                               title,
                               style: AppType.section.copyWith(
-                                fontSize: 22,
-                                color: accent,
+                                fontSize: 20,
+                                color: AppPalette.ink,
                               ),
                             ),
                           ),
@@ -543,26 +576,5 @@ class ExecutionCapsule extends StatelessWidget {
 }
 
 BoxDecoration executionGlassBoxDecoration() {
-  return BoxDecoration(
-    borderRadius: AppRadii.hero,
-    border: Border.all(
-      color: AppPalette.rice.withValues(alpha: 0.82),
-      width: 1.1,
-    ),
-    gradient: LinearGradient(
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
-      colors: [
-        AppPalette.rice.withValues(alpha: 0.66),
-        AppPalette.rice.withValues(alpha: 0.34),
-      ],
-    ),
-    boxShadow: [
-      BoxShadow(
-        color: const Color(0x331A120E).withValues(alpha: 0.16),
-        blurRadius: 34,
-        offset: const Offset(0, 18),
-      ),
-    ],
-  );
+  return AppDecorations.card();
 }

@@ -1,6 +1,10 @@
+import 'package:eatwhat_app/features/auth/screens/login_screen.dart';
+import 'package:eatwhat_app/features/auth/screens/register_screen.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recommendation_resolution.dart';
+import 'package:eatwhat_app/v2/core/data/models/recommendation_telemetry_context.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
+import 'package:eatwhat_app/v2/core/external/platform/meituan_delivery_order_client.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
 import 'package:eatwhat_app/v2/core/services/v2_howtocook_recipe_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_phase2_recommendation_service.dart';
@@ -8,6 +12,8 @@ import 'package:eatwhat_app/v2/features/decision/decision_page.dart';
 import 'package:eatwhat_app/v2/features/details/howtocook_library_page.dart';
 import 'package:eatwhat_app/v2/features/details/recipe_detail_page.dart';
 import 'package:eatwhat_app/v2/features/execution/execution_home_page.dart';
+import 'package:eatwhat_app/v2/features/execution/meituan_menu_builder_page.dart';
+import 'package:eatwhat_app/v2/features/execution/meituan_order_page.dart';
 import 'package:eatwhat_app/v2/features/favorites/favorites_page.dart';
 import 'package:eatwhat_app/v2/features/home/home_page.dart';
 import 'package:eatwhat_app/v2/features/result/result_page.dart';
@@ -29,6 +35,10 @@ class AppV2Routes {
   static const String favorites = '/favorites';
   static const String howtocookLibrary = '/howtocook';
   static const String executionDemo = '/execution-demo';
+  static const String deliveryDemo = '/delivery-demo';
+  static const String orderDemo = '/order-demo';
+  static const String login = '/login';
+  static const String register = '/register';
 }
 
 class AppV2DecisionRouteData {
@@ -54,6 +64,7 @@ class AppV2ResultRouteData {
     this.aiSummary,
     this.resolutionStatus,
     this.primarySource,
+    this.recommendationContext,
   });
 
   final List<RecipeModel> recommendations;
@@ -65,6 +76,7 @@ class AppV2ResultRouteData {
   final String? aiSummary;
   final RecommendationResolutionStatus? resolutionStatus;
   final String? primarySource;
+  final RecommendationTelemetryContext? recommendationContext;
 }
 
 class AppV2RecipeDetailRouteData {
@@ -103,10 +115,14 @@ class AppV2DeliveryExecutionRouteData {
   const AppV2DeliveryExecutionRouteData({
     required this.intent,
     this.snapshot,
+    this.meituanOrderClient,
+    this.locationResolver,
   });
 
   final ExecutionIntent intent;
   final DeliveryExecutionSnapshot? snapshot;
+  final MeituanDeliveryOrderClient? meituanOrderClient;
+  final Future<GeoPoint> Function()? locationResolver;
 }
 
 class AppV2DineInExecutionRouteData {
@@ -128,6 +144,12 @@ class AppV2Router {
         return AppV2Routes.decisionDemo;
       case 'result_demo':
         return AppV2Routes.resultDemo;
+      case 'execution_demo':
+        return AppV2Routes.executionDemo;
+      case 'delivery_demo':
+        return AppV2Routes.deliveryDemo;
+      case 'order_demo':
+        return AppV2Routes.orderDemo;
       case 'home':
       default:
         return AppV2Routes.home;
@@ -149,6 +171,16 @@ class AppV2Router {
           path: AppV2Routes.home,
           name: 'v2_home',
           builder: (context, state) => const HomePage(),
+        ),
+        GoRoute(
+          path: AppV2Routes.login,
+          name: 'v2_login',
+          builder: (context, state) => const LoginScreen(),
+        ),
+        GoRoute(
+          path: AppV2Routes.register,
+          name: 'v2_register',
+          builder: (context, state) => const RegisterScreen(),
         ),
         GoRoute(
           path: AppV2Routes.decision,
@@ -183,6 +215,7 @@ class AppV2Router {
               aiSummary: data.aiSummary,
               resolutionStatus: data.resolutionStatus,
               primarySource: data.primarySource,
+              recommendationContext: data.recommendationContext,
             );
           },
         ),
@@ -220,9 +253,10 @@ class AppV2Router {
             if (data is! AppV2DeliveryExecutionRouteData) {
               return const HomePage();
             }
-            return DeliveryExecutionPage(
+            return MeituanMenuBuilderPage(
               intent: data.intent,
-              snapshot: data.snapshot,
+              client: data.meituanOrderClient,
+              locationResolver: data.locationResolver,
             );
           },
         ),
@@ -290,7 +324,176 @@ class AppV2Router {
             intent: demoExecutionIntent,
           ),
         ),
+        GoRoute(
+          path: AppV2Routes.deliveryDemo,
+          name: 'v2_delivery_demo',
+          builder: (context, state) => MeituanMenuBuilderPage(
+            intent: demoExecutionIntent.copyWith(
+              preferredPath: ExecutionPath.delivery,
+            ),
+            client: _DemoMeituanDeliveryOrderClient(),
+            locationResolver: _demoLocationResolver,
+            paymentLauncher: (_) async => true,
+          ),
+        ),
+        GoRoute(
+          path: AppV2Routes.orderDemo,
+          name: 'v2_order_demo',
+          builder: (context, state) => MeituanOrderPage(
+            intent: demoExecutionIntent.copyWith(
+              preferredPath: ExecutionPath.delivery,
+            ),
+            match: const DeliveryMatchResult(
+              platform: 'meituan',
+              providerDisplayName: '美团外卖',
+              merchantId: 'demo-guoqi-canteen',
+              merchantName: '锅气食堂（福田店）',
+              dishName: '麻婆豆腐',
+              url: '',
+              source: 'meituan_open_api_demo',
+              price: Money(amount: 20),
+              deliveryTimeMinutes: 32,
+            ),
+            client: _DemoMeituanDeliveryOrderClient(),
+            locationResolver: _demoLocationResolver,
+            paymentLauncher: (_) async => true,
+          ),
+        ),
       ],
+    );
+  }
+}
+
+Future<GeoPoint> _demoLocationResolver() async {
+  return const GeoPoint(latitude: 22.5431, longitude: 114.0579);
+}
+
+class _DemoMeituanDeliveryOrderClient extends MeituanDeliveryOrderClient {
+  @override
+  Future<MeituanMerchantSearchResult> searchMerchantResults({
+    required String keyword,
+    required GeoPoint location,
+    int limit = 10,
+  }) async {
+    return const MeituanMerchantSearchResult(
+      hasNextPage: false,
+      merchants: [
+        MeituanDeliveryMerchant(
+          merchantId: 'demo-guoqi-canteen',
+          merchantName: '锅气食堂（福田店）',
+          address: '福华路 88 号 · 美团专送',
+          rating: 4.8,
+          deliveryTimeMinutes: 32,
+          shippingFee: 3,
+          minimumPrice: 20,
+        ),
+        MeituanDeliveryMerchant(
+          merchantId: 'demo-home-kitchen',
+          merchantName: '家常小馆（中心区店）',
+          address: '金田路 126 号 · 品牌专送',
+          rating: 4.7,
+          deliveryTimeMinutes: 38,
+          shippingFee: 2,
+          minimumPrice: 18,
+        ),
+      ],
+    );
+  }
+
+  @override
+  Future<MeituanProductSearchResult> searchProducts({
+    required String merchantId,
+    required GeoPoint location,
+    String keyword = '',
+  }) async {
+    return const MeituanProductSearchResult(
+      merchantName: '锅气食堂（福田店）',
+      products: [
+        MeituanDeliveryProduct(
+          productId: 'demo-mapotofu',
+          name: '麻婆豆腐',
+          categoryName: '招牌热菜',
+          description: '嫩豆腐、牛肉末和豆瓣酱，麻辣下饭。',
+          monthlySales: 866,
+          attributes: [
+            MeituanDeliveryAttribute(
+              name: '辣度',
+              values: [
+                MeituanDeliveryAttributeValue(id: 1, label: '微辣'),
+                MeituanDeliveryAttributeValue(id: 2, label: '中辣'),
+              ],
+            ),
+          ],
+          skus: [
+            MeituanDeliverySku(
+              skuId: 'demo-mapotofu-standard',
+              price: 26,
+              specification: '标准份',
+              stock: -1,
+              boxPrice: 1,
+            ),
+          ],
+        ),
+        MeituanDeliveryProduct(
+          productId: 'demo-rice',
+          name: '东北米饭',
+          categoryName: '主食',
+          description: '粒粒分明，适合拌麻婆豆腐汤汁。',
+          attributes: [],
+          skus: [
+            MeituanDeliverySku(
+              skuId: 'demo-rice-standard',
+              price: 3,
+              specification: '一碗',
+              stock: -1,
+            ),
+          ],
+        ),
+        MeituanDeliveryProduct(
+          productId: 'demo-cucumber',
+          name: '凉拌黄瓜',
+          categoryName: '清爽小菜',
+          description: '蒜香清爽，平衡麻辣口感。',
+          attributes: [],
+          skus: [
+            MeituanDeliverySku(
+              skuId: 'demo-cucumber-standard',
+              price: 9,
+              specification: '一份',
+              stock: -1,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  @override
+  Future<MeituanOrderPreview> previewOrder(
+    MeituanDeliveryOrderRequest request,
+  ) async {
+    return const MeituanOrderPreview(
+      previewToken: 'demo-preview-token',
+      total: 33,
+      shippingFee: 3,
+      boxFee: 1,
+      merchantName: '锅气食堂（福田店）',
+    );
+  }
+
+  @override
+  Future<MeituanSubmittedOrder> submitOrder(
+    MeituanDeliveryOrderRequest request, {
+    required String previewToken,
+    String? verifyCode,
+    String? paymentSuccessUrl,
+    String? paymentFailureUrl,
+  }) async {
+    return const MeituanSubmittedOrder(
+      status: 'payment_required',
+      orderId: 'demo-order',
+      paymentUrl: 'https://example.com/demo-payment',
+      requiresVerification: false,
     );
   }
 }

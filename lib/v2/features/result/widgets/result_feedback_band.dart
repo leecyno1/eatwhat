@@ -19,11 +19,7 @@ class ResultFeedbackBand extends StatelessWidget {
     return Container(
       key: const ValueKey('result-feedback-band'),
       padding: const EdgeInsets.all(AppSpacing.sm),
-      decoration: BoxDecoration(
-        color: AppPalette.rice.withValues(alpha: 0.48),
-        borderRadius: AppRadii.panel,
-        border: Border.all(color: AppPalette.rice.withValues(alpha: 0.74)),
-      ),
+      decoration: AppDecorations.card(),
       child: Row(
         children: [
           Expanded(
@@ -76,15 +72,14 @@ class _FeedbackButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 180),
+        duration: AppMotion.fast,
+        curve: AppMotion.enter,
         padding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.sm,
           vertical: AppSpacing.sm,
         ),
         decoration: BoxDecoration(
-          color: selected
-              ? AppColors.sunsetOrange
-              : Colors.white.withValues(alpha: 0.52),
+          color: selected ? AppColors.sunsetOrange : AppPalette.surfaceMuted,
           borderRadius: AppRadii.card,
           border: Border.all(
             color: selected

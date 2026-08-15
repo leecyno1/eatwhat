@@ -1,32 +1,36 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:eatwhat_app/core/services/unified_recipe_database_service.dart';
 import 'package:eatwhat_app/v2/core/data/models/ai_generation_models.dart';
 import 'package:eatwhat_app/v2/core/data/models/dish_model.dart';
+import 'package:eatwhat_app/v2/core/data/models/meal_planning_direction.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_pairing_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recommendation_resolution.dart';
+import 'package:eatwhat_app/v2/core/data/models/recommendation_telemetry_context.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
+import 'package:eatwhat_app/v2/core/external/platform/meituan_delivery_order_client.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
 import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
 import 'package:eatwhat_app/v2/core/services/generation_service.dart';
 import 'package:eatwhat_app/v2/core/services/prebuilt_dish_image_catalog_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_favorites_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_howtocook_recipe_service.dart';
+import 'package:eatwhat_app/v2/core/services/v2_phase2_recommendation_service.dart';
+import 'package:eatwhat_app/v2/core/services/v2_platform_jump_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
+import 'package:eatwhat_app/v2/core/services/v2_recommendation_telemetry_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:eatwhat_app/v2/features/details/howtocook_library_page.dart';
 import 'package:eatwhat_app/v2/features/details/recipe_detail_page.dart';
-import 'package:eatwhat_app/v2/features/execution/execution_home_page.dart';
 import 'package:eatwhat_app/v2/features/execution/execution_sheet.dart';
+import 'package:eatwhat_app/v2/features/execution/meituan_menu_builder_page.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/floating_editorial_background.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_choice_controller.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_choice_state_coordinator.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_enrichment_controller.dart';
-import 'package:eatwhat_app/v2/features/result/controllers/result_execution_intent_controller.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_feedback_controller.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_image_state_controller.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_pairing_suggestion_controller.dart';
@@ -35,12 +39,13 @@ import 'package:eatwhat_app/v2/features/result/widgets/result_candidate_rail.dar
 import 'package:eatwhat_app/v2/features/result/widgets/result_execution_shortcuts.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_feedback_band.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_hero_media.dart';
+import 'package:eatwhat_app/v2/features/result/widgets/result_meal_plan_card.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_nutrition_summary.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_pairing_band.dart';
+import 'package:eatwhat_app/v2/features/result/widgets/result_recommendation_mode_tabs.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_status_panels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:go_router/go_router.dart';
 
 typedef RecipeImageGenerator = Future<String?> Function(RecipeModel recipe);
@@ -68,6 +73,8 @@ class ResultPage extends StatefulWidget {
     this.aiSummary,
     this.resolutionStatus,
     this.primarySource,
+    this.recommendationContext,
+    this.recommendationTelemetryService,
     this.imageGenerator,
     this.nutritionLoader,
     this.pairingLoader,
@@ -75,6 +82,9 @@ class ResultPage extends StatefulWidget {
     this.imageCatalogService,
     this.dishIntroLoader,
     this.howToCookRecipeService,
+    this.platformJumpService,
+    this.meituanOrderClient,
+    this.meituanLocationResolver,
   });
 
   final List<RecipeModel> recommendations;
@@ -86,6 +96,8 @@ class ResultPage extends StatefulWidget {
   final String? aiSummary;
   final RecommendationResolutionStatus? resolutionStatus;
   final String? primarySource;
+  final RecommendationTelemetryContext? recommendationContext;
+  final V2RecommendationTelemetryService? recommendationTelemetryService;
   final RecipeImageGenerator? imageGenerator;
   final NutritionLoader? nutritionLoader;
   final PairingLoader? pairingLoader;
@@ -93,6 +105,9 @@ class ResultPage extends StatefulWidget {
   final PrebuiltDishImageCatalogService? imageCatalogService;
   final DishIntroLoader? dishIntroLoader;
   final V2HowToCookRecipeService? howToCookRecipeService;
+  final V2PlatformJumpService? platformJumpService;
+  final MeituanDeliveryOrderClient? meituanOrderClient;
+  final Future<GeoPoint> Function()? meituanLocationResolver;
 
   @override
   State<ResultPage> createState() => _ResultPageState();
@@ -100,8 +115,6 @@ class ResultPage extends StatefulWidget {
 
 class _ResultPageState extends State<ResultPage> {
   late final ResultChoiceController _choiceController;
-  final ResultExecutionIntentController _executionIntentController =
-      const ResultExecutionIntentController();
   final ResultFeedbackController _feedbackController = ResultFeedbackController(
     recordRecipeChosen: V2PreferenceFeedbackService.instance.recordRecipeChosen,
     recordPositiveTag: V2PreferenceFeedbackService.instance.recordPositiveTag,
@@ -118,11 +131,16 @@ class _ResultPageState extends State<ResultPage> {
       ResultImageStateController();
   late final PrebuiltDishImageCatalogService _imageCatalog;
   late final V2HowToCookRecipeService _howToCookRecipeService;
+  late final V2PlatformJumpService _platformJumpService;
+  late final V2RecommendationTelemetryService _recommendationTelemetry;
+  late final RecommendationTelemetryContext _recommendationContext;
   final V2FavoritesService _favorites = V2FavoritesService.instance;
   final V2PreferenceFeedbackService _feedback =
       V2PreferenceFeedbackService.instance;
   final GenerationService _generation = GenerationService.instance;
   List<PairingSuggestion> _pairings = const [];
+  ResultRecommendationMode _recommendationMode =
+      ResultRecommendationMode.single;
   bool _isFavorited = false;
   bool _isGeneratingImage = false;
   ResultFeedbackSelection? _feedbackSelection;
@@ -146,6 +164,10 @@ class _ResultPageState extends State<ResultPage> {
     switch (source) {
       case 'unified_db':
         return 'HowToCook 菜谱';
+      case 'hybrid':
+        return '本地 + AI';
+      case 'local_fallback':
+        return '本地可靠推荐';
       case 'ai':
         return 'AI 生成';
       case 'empty':
@@ -163,6 +185,10 @@ class _ResultPageState extends State<ResultPage> {
     switch (_resolvedStatus) {
       case RecommendationResolutionStatus.dbResolved:
         return 'HowToCook 优先';
+      case RecommendationResolutionStatus.hybridResolved:
+        return '本地召回 · AI 辅助';
+      case RecommendationResolutionStatus.localFallback:
+        return '本地可靠推荐';
       case RecommendationResolutionStatus.aiResolved:
         return 'AI 生成推荐';
       case RecommendationResolutionStatus.empty:
@@ -181,6 +207,33 @@ class _ResultPageState extends State<ResultPage> {
     };
   }
 
+  bool get _isMealMode => _recommendationMode == ResultRecommendationMode.meal;
+
+  List<PairingSuggestion> get _mealPairings {
+    final recipe = _choiceController.currentChoice;
+    if (recipe == null) return const [];
+    return _pairingSuggestionController.completeMealPairings(
+      recipe,
+      _pairings,
+      direction: widget.inferenceInput?.planningDirection ??
+          MealPlanningDirection.balanced,
+    );
+  }
+
+  String get _executionKeyword {
+    final recipe = _choiceController.currentChoice;
+    if (recipe == null) return '';
+    if (!_isMealMode) return recipe.name;
+    return [recipe.name, ..._mealPairings.map((pairing) => pairing.title)]
+        .join(' ');
+  }
+
+  void _setRecommendationMode(ResultRecommendationMode mode) {
+    if (_recommendationMode == mode) return;
+    HapticFeedback.selectionClick();
+    setState(() => _recommendationMode = mode);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -188,7 +241,34 @@ class _ResultPageState extends State<ResultPage> {
         widget.imageCatalogService ?? PrebuiltDishImageCatalogService.instance;
     _howToCookRecipeService =
         widget.howToCookRecipeService ?? V2HowToCookRecipeService.instance;
+    _platformJumpService =
+        widget.platformJumpService ?? const V2PlatformJumpService();
     _choiceController = ResultChoiceController(widget.recommendations);
+    _recommendationTelemetry = widget.recommendationTelemetryService ??
+        V2RecommendationTelemetryService.instance;
+    _recommendationContext = widget.recommendationContext ??
+        RecommendationTelemetryContext(
+          recommendationId: _recommendationTelemetry.createRecommendationId(
+            algorithmVersion: V2Phase2RecommendationService.algorithmVersion,
+          ),
+          algorithmVersion: V2Phase2RecommendationService.algorithmVersion,
+          primarySource: widget.primarySource ?? 'unified_db',
+          resolutionStatus: _resolvedStatus,
+          recalledCount: widget.recalledCount,
+          finalCount: widget.recommendations.length,
+          latencyMs: 0,
+          diversityScore: 0,
+          appliedConstraintCount:
+              (widget.inferenceInput?.structuredConstraints.labels.length ??
+                      0) +
+                  (widget.inferenceInput?.dislikedTagLabels.length ?? 0),
+        );
+    unawaited(
+      _recommendationTelemetry.recordExposure(
+        context: _recommendationContext,
+        recipeIds: widget.recommendations.map((recipe) => recipe.id).toList(),
+      ),
+    );
     if (_choiceController.hasCurrentChoice) {
       _refreshCurrentChoiceState();
     }
@@ -208,8 +288,20 @@ class _ResultPageState extends State<ResultPage> {
     final recipe = _choiceController.currentChoice;
     if (recipe == null) return;
     await _favorites.toggleFavoriteDish(recipe.dishId);
+    final isFavorited = await _favorites.isDishFavorited(recipe.dishId);
     await HapticFeedback.lightImpact();
-    await _refreshFavoriteState();
+    if (!mounted) return;
+    setState(() {
+      _isFavorited = isFavorited;
+    });
+    unawaited(
+      _recommendationTelemetry.recordFavoriteToggled(
+        context: _recommendationContext,
+        recipeId: recipe.id,
+        position: _positionFor(recipe),
+        isFavorited: isFavorited,
+      ),
+    );
   }
 
   Future<void> _maybeGenerateImageForCurrentChoice({bool force = false}) async {
@@ -316,10 +408,20 @@ class _ResultPageState extends State<ResultPage> {
   }
 
   void _reroll() {
+    final currentChoice = _choiceController.currentChoice;
     final nextChoice = _choiceController.nextChoice();
-    if (nextChoice == null) return;
+    if (currentChoice == null || nextChoice == null) return;
     unawaited(HapticFeedback.mediumImpact());
-    _selectChoice(nextChoice);
+    unawaited(
+      _recommendationTelemetry.recordReroll(
+        context: _recommendationContext,
+        fromRecipeId: currentChoice.id,
+        toRecipeId: nextChoice.id,
+        fromPosition: _positionFor(currentChoice),
+        toPosition: _positionFor(nextChoice),
+      ),
+    );
+    _selectChoice(nextChoice, action: 'reroll');
   }
 
   Future<void> _loadPairingsForCurrentChoice() async {
@@ -429,9 +531,27 @@ class _ResultPageState extends State<ResultPage> {
     _loadNutritionForCurrentChoice();
   }
 
-  void _selectChoice(RecipeModel recipe) {
+  int _positionFor(RecipeModel recipe) {
+    final index = _choiceController.availableChoices.indexWhere(
+      (candidate) => candidate.id == recipe.id,
+    );
+    return index < 0 ? 0 : index;
+  }
+
+  void _selectChoice(
+    RecipeModel recipe, {
+    String action = 'candidate_tap',
+  }) {
     if (!_choiceController.select(recipe)) return;
     HapticFeedback.selectionClick();
+    unawaited(
+      _recommendationTelemetry.recordSelection(
+        context: _recommendationContext,
+        recipeId: recipe.id,
+        position: _positionFor(recipe),
+        action: action,
+      ),
+    );
     final selectionState = _choiceStateCoordinator.prepareSelection(
       recipeId: recipe.id,
       enrichmentController: _enrichmentController,
@@ -452,6 +572,14 @@ class _ResultPageState extends State<ResultPage> {
       tagIds: widget.inferenceInput?.likedTagIds ?? const [],
       selection: selection,
     );
+    unawaited(
+      _recommendationTelemetry.recordTasteFeedback(
+        context: _recommendationContext,
+        recipeId: currentChoice.id,
+        position: _positionFor(currentChoice),
+        isPositive: selection == ResultFeedbackSelection.enjoyed,
+      ),
+    );
     await HapticFeedback.selectionClick();
     if (!mounted) return;
     setState(() {
@@ -471,10 +599,18 @@ class _ResultPageState extends State<ResultPage> {
     if (currentChoice == null) return;
     HapticFeedback.mediumImpact();
     _feedback.recordRecipeChosen(currentChoice.id);
+    unawaited(
+      _recommendationTelemetry.recordSelection(
+        context: _recommendationContext,
+        recipeId: currentChoice.id,
+        position: _positionFor(currentChoice),
+        action: 'confirm',
+      ),
+    );
     ExecutionSheet.show(
       context,
       recipe: currentChoice,
-      pairings: _pairings
+      pairings: (_isMealMode ? _mealPairings : _pairings)
           .map(
             (pairing) => PairingSelection(
               category: pairing.category,
@@ -485,19 +621,8 @@ class _ResultPageState extends State<ResultPage> {
           .toList(),
       sourceTags: _displayTags,
       structuredConstraints: widget.inferenceInput?.structuredConstraints,
-    );
-  }
-
-  ExecutionIntent _executionIntentFor(
-    RecipeModel recipe,
-    ExecutionPath preferredPath,
-  ) {
-    return _executionIntentController.buildIntent(
-      recipe: recipe,
-      preferredPath: preferredPath,
-      pairings: _pairings,
-      displayTags: _displayTags,
-      structuredConstraints: widget.inferenceInput?.structuredConstraints,
+      recommendationContext: _recommendationContext,
+      recommendationPosition: _positionFor(currentChoice),
     );
   }
 
@@ -507,6 +632,14 @@ class _ResultPageState extends State<ResultPage> {
     unawaited(HapticFeedback.mediumImpact());
     unawaited(_feedback.recordRecipeChosen(recipe.id));
     unawaited(_feedback.recordExecutionPathChosen(path));
+    unawaited(
+      _recommendationTelemetry.recordExecutionStarted(
+        context: _recommendationContext,
+        recipeId: recipe.id,
+        position: _positionFor(recipe),
+        executionPath: path.name,
+      ),
+    );
 
     switch (path) {
       case ExecutionPath.cook:
@@ -516,38 +649,39 @@ class _ResultPageState extends State<ResultPage> {
         );
         return;
       case ExecutionPath.delivery:
-        final intent = _executionIntentFor(recipe, ExecutionPath.delivery);
-        if (!mounted) return;
-        if (GoRouter.maybeOf(context) != null) {
-          await context.push(
-            AppV2Routes.executionDelivery,
-            extra: AppV2DeliveryExecutionRouteData(intent: intent),
-          );
-          return;
-        }
-        if (!mounted) return;
         await Navigator.of(context).push(
           MaterialPageRoute<void>(
-            builder: (_) => DeliveryExecutionPage(intent: intent),
+            builder: (_) => MeituanMenuBuilderPage(
+              intent: ExecutionIntent(
+                recipe: recipe,
+                pairings: (_isMealMode ? _mealPairings : _pairings)
+                    .map(
+                      (pairing) => PairingSelection(
+                        category: pairing.category,
+                        title: pairing.title,
+                        subtitle: pairing.subtitle,
+                      ),
+                    )
+                    .toList(),
+                sourceTags: _displayTags,
+                preferredPath: ExecutionPath.delivery,
+                recommendationContext: _recommendationContext,
+                recommendationPosition: _positionFor(recipe),
+              ),
+              client: widget.meituanOrderClient,
+              locationResolver: widget.meituanLocationResolver,
+            ),
           ),
         );
         return;
       case ExecutionPath.dineIn:
-        final intent = _executionIntentFor(recipe, ExecutionPath.dineIn);
-        if (!mounted) return;
-        if (GoRouter.maybeOf(context) != null) {
-          await context.push(
-            AppV2Routes.executionDineIn,
-            extra: AppV2DineInExecutionRouteData(intent: intent),
+        final opened =
+            await _platformJumpService.openDianpingDineIn(_executionKeyword);
+        if (!opened && mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('暂时无法打开附近餐馆')),
           );
-          return;
         }
-        if (!mounted) return;
-        await Navigator.of(context).push(
-          MaterialPageRoute<void>(
-            builder: (_) => DineInExecutionPage(intent: intent),
-          ),
-        );
         return;
       case ExecutionPath.any:
         _confirm();
@@ -632,6 +766,9 @@ class _ResultPageState extends State<ResultPage> {
     final currentChoice = _choiceController.currentChoice;
     final viewportHeight = MediaQuery.sizeOf(context).height;
     final heroMediaHeight = viewportHeight < 700 ? 188.0 : 268.0;
+    final reduceMotion = MediaQuery.disableAnimationsOf(context);
+    final contentTransitionDuration =
+        reduceMotion ? AppMotion.fast : AppMotion.standard;
     final nutrition = currentChoice == null
         ? null
         : _enrichmentController.nutritionFor(currentChoice.id);
@@ -643,36 +780,37 @@ class _ResultPageState extends State<ResultPage> {
         : _enrichmentController.nutritionStateFor(currentChoice.id);
     return Scaffold(
       backgroundColor: AppColors.lightBackground,
+      bottomNavigationBar: currentChoice == null
+          ? null
+          : SafeArea(
+              top: false,
+              minimum: const EdgeInsets.fromLTRB(
+                AppSpacing.lg,
+                AppSpacing.xs,
+                AppSpacing.lg,
+                AppSpacing.sm,
+              ),
+              child: ResultPrimaryConfirmBar(
+                onConfirm: _confirm,
+                confirmLabel: _isMealMode ? '就吃这套' : '就吃这个',
+              ),
+            ),
       body: Stack(
         children: [
-          const FloatingEditorialBackground(),
+          const Positioned.fill(child: FloatingEditorialBackground()),
           SafeArea(
             child: Padding(
               padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg - 2,
-                AppSpacing.sm,
-                AppSpacing.lg - 2,
+                AppSpacing.lg,
+                AppSpacing.md,
+                AppSpacing.lg,
                 AppSpacing.lg,
               ),
               child: Column(
                 children: [
                   Row(
                     children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 14,
-                          vertical: 9,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppSurfaces.glassSoft,
-                          borderRadius: AppRadii.capsule,
-                          border: AppSurfaces.glassBorder,
-                        ),
-                        child: const Text(
-                          '今日推荐板',
-                          style: AppType.microLabel,
-                        ),
-                      ),
+                      const Text('今日推荐板', style: AppType.microLabel),
                       const Spacer(),
                       _HeaderCircleButton(
                         icon: Icons.arrow_back_ios_new_rounded,
@@ -694,326 +832,316 @@ class _ResultPageState extends State<ResultPage> {
                   Expanded(
                     child: Container(
                       key: const ValueKey('result-stage-shell'),
-                      decoration: BoxDecoration(
-                        borderRadius: AppRadii.hero,
-                        border: AppSurfaces.glassBorder,
-                        gradient: LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [
-                            Colors.white.withValues(alpha: 0.66),
-                            Colors.white.withValues(alpha: 0.34),
-                          ],
-                        ),
-                        boxShadow: [
-                          ...AppSurfaces.softShadow(
-                            const Color(0x33A14D33).withValues(alpha: 0.14),
-                          ),
-                        ],
-                      ),
+                      decoration: AppDecorations.card(radius: AppRadii.lg),
                       child: ClipRRect(
-                        borderRadius: AppRadii.hero,
-                        child: Stack(
-                          children: [
-                            Positioned.fill(
-                              child: BackdropFilter(
-                                filter:
-                                    ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-                                child: const SizedBox.expand(),
+                        borderRadius: AppRadii.panel,
+                        child: Padding(
+                          padding: const EdgeInsets.fromLTRB(
+                            AppSpacing.xl,
+                            AppSpacing.xl,
+                            AppSpacing.xl,
+                            AppSpacing.xl,
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                '今晚这口，替你收好了',
+                                style: AppType.title,
                               ),
-                            ),
-                            Positioned.fill(
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  gradient: RadialGradient(
-                                    center: const Alignment(0.82, -0.6),
-                                    radius: 1.15,
-                                    colors: [
-                                      AppPalette.chili.withValues(
-                                        alpha: 0.12,
-                                      ),
-                                      Colors.transparent,
-                                    ],
+                              const SizedBox(height: AppSpacing.xs),
+                              Text(
+                                widget.aiSummary?.trim().isNotEmpty == true
+                                    ? widget.aiSummary!.trim()
+                                    : '基于你刚刚的口味表达和偏好轨迹，先把选择缩成一口更像你的答案。',
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: AppColors.textPrimary.withValues(
+                                    alpha: 0.58,
                                   ),
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  height: 1.45,
                                 ),
                               ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(
-                                AppSpacing.xl - 2,
-                                AppSpacing.lg,
-                                AppSpacing.xl - 2,
-                                AppSpacing.xl - 2,
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    '今晚这口，已经替你收束好了',
-                                    style: AppType.title,
-                                  ),
-                                  const SizedBox(height: AppSpacing.xs),
-                                  Text(
-                                    widget.aiSummary?.trim().isNotEmpty == true
-                                        ? widget.aiSummary!.trim()
-                                        : '基于你刚刚的口味表达和偏好轨迹，先把选择缩成一口更像你的答案。',
-                                    maxLines: 2,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      color: AppColors.textPrimary.withValues(
-                                        alpha: 0.58,
-                                      ),
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.45,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 18),
-                                  Expanded(
-                                    child: currentChoice == null
-                                        ? EmptyRecommendationState(
-                                            tags: _displayTags,
-                                            resolutionStatus: _resolvedStatus,
-                                            primarySource: widget.primarySource,
-                                            onReselect:
-                                                _returnToPreferenceSelection,
-                                          )
-                                        : SingleChildScrollView(
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                ResultExecutionShortcuts(
-                                                  preferredPath: _preferredPath,
-                                                  onCook: () =>
-                                                      _openExecutionShortcut(
-                                                    ExecutionPath.cook,
-                                                  ),
-                                                  onDelivery: () =>
-                                                      _openExecutionShortcut(
-                                                    ExecutionPath.delivery,
-                                                  ),
-                                                  onDineIn: () =>
-                                                      _openExecutionShortcut(
-                                                    ExecutionPath.dineIn,
-                                                  ),
-                                                )
-                                                    .animate()
-                                                    .fadeIn(delay: 80.ms)
-                                                    .slideY(
-                                                      begin: 0.08,
-                                                      end: 0,
-                                                      delay: 80.ms,
-                                                    ),
-                                                if (_choiceController
+                              const SizedBox(height: AppSpacing.lg),
+                              Expanded(
+                                child: currentChoice == null
+                                    ? EmptyRecommendationState(
+                                        tags: _displayTags,
+                                        resolutionStatus: _resolvedStatus,
+                                        primarySource: widget.primarySource,
+                                        onReselect:
+                                            _returnToPreferenceSelection,
+                                      )
+                                    : SingleChildScrollView(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            ResultRecommendationModeTabs(
+                                              value: _recommendationMode,
+                                              onChanged: _setRecommendationMode,
+                                            ),
+                                            if (!_isMealMode &&
+                                                _choiceController
                                                         .availableChoices
                                                         .length >
                                                     1) ...[
-                                                  const SizedBox(height: 14),
-                                                  ResultCandidateRail(
-                                                    key: const ValueKey(
-                                                      'result-candidate-rail',
-                                                    ),
-                                                    currentChoiceId:
-                                                        currentChoice.id,
-                                                    choices: _choiceController
-                                                        .availableChoices,
-                                                    aiReasonsByRecipeId: widget
-                                                        .aiReasonsByRecipeId,
-                                                    onSelect: _selectChoice,
-                                                  ),
-                                                ],
-                                                const SizedBox(height: 16),
-                                                AnimatedSwitcher(
-                                                  duration: const Duration(
-                                                    milliseconds: 420,
-                                                  ),
-                                                  child: ResultHeroMedia(
-                                                    key: ValueKey(
-                                                        currentChoice.id),
-                                                    recipe: currentChoice,
-                                                    isGeneratingImage:
-                                                        _isGeneratingImage,
-                                                    imageLoadState:
-                                                        _imageStateController
-                                                            .stateFor(
-                                                      currentChoice.id,
-                                                    ),
-                                                    imageSource:
-                                                        _imageStateController
-                                                            .sourceFor(
-                                                      currentChoice.id,
-                                                    ),
-                                                    onRetryImage: () =>
-                                                        _maybeGenerateImageForCurrentChoice(
-                                                      force: true,
-                                                    ),
-                                                    height: heroMediaHeight,
-                                                  ),
+                                              const SizedBox(height: 12),
+                                              ResultCandidateRail(
+                                                key: const ValueKey(
+                                                  'result-candidate-rail',
                                                 ),
-                                                const SizedBox(height: 16),
-                                                Wrap(
-                                                  spacing: 8,
-                                                  runSpacing: 8,
-                                                  children: [
-                                                    ResultTagChip(
-                                                      label:
-                                                          _displayResolutionLabel,
-                                                    ),
-                                                    ResultTagChip(
-                                                      label: _displayPrimarySourceLabel ==
-                                                              '推荐结果'
-                                                          ? _displayPrimarySourceLabel
-                                                          : '来源 $_displayPrimarySourceLabel',
-                                                    ),
-                                                    for (final tag
-                                                        in _displayTags.take(3))
-                                                      ResultTagChip(label: tag),
-                                                  ],
-                                                ).animate().fadeIn().slideX(),
-                                                const SizedBox(height: 18),
-                                                Text(
-                                                  currentChoice.name,
-                                                  style: const TextStyle(
-                                                    color:
-                                                        AppColors.textPrimary,
-                                                    fontSize: 38,
-                                                    fontWeight: FontWeight.w800,
-                                                    fontFamily:
-                                                        'SF Pro Rounded',
-                                                    height: 1.02,
-                                                  ),
-                                                ).animate().fadeIn().slideY(
-                                                      begin: 0.15,
-                                                      end: 0,
-                                                    ),
-                                                const SizedBox(height: 10),
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      _buildDishIntroduction(),
-                                                      key: const ValueKey(
-                                                        'result-hero-intro',
-                                                      ),
-                                                      style: TextStyle(
-                                                        color: AppColors
-                                                            .textPrimary
-                                                            .withValues(
-                                                          alpha: 0.72,
-                                                        ),
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        height: 1.45,
-                                                      ),
-                                                    ),
-                                                    if (_enrichmentController
-                                                        .isIntroLoading(
-                                                      currentChoice.id,
-                                                    )) ...[
-                                                      const SizedBox(height: 8),
-                                                      Text(
-                                                        '正在整理这道 HowToCook 菜谱简介',
-                                                        style: TextStyle(
-                                                          color: AppColors
-                                                              .textPrimary
-                                                              .withValues(
-                                                            alpha: 0.42,
-                                                          ),
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ],
-                                                ).animate().fadeIn().slideY(
-                                                      begin: 0.15,
-                                                      end: 0,
-                                                      delay: 100.ms,
-                                                    ),
-                                                const SizedBox(height: 18),
-                                                PairingBand(
-                                                  key: const ValueKey(
-                                                    'result-pairing-band',
-                                                  ),
-                                                  pairings: _pairings,
-                                                  loadState: pairingState,
-                                                )
-                                                    .animate()
-                                                    .fadeIn(
-                                                      delay: 140.ms,
-                                                    )
-                                                    .slideY(
-                                                      begin: 0.08,
-                                                      end: 0,
-                                                      delay: 140.ms,
-                                                    ),
-                                                const SizedBox(height: 22),
-                                                NutritionSummaryCard(
-                                                  key: const ValueKey(
-                                                    'result-nutrition-card',
-                                                  ),
-                                                  data: nutrition,
-                                                  loadState: nutritionState,
+                                                currentChoiceId:
+                                                    currentChoice.id,
+                                                choices: _choiceController
+                                                    .availableChoices,
+                                                recalledCount:
+                                                    widget.recalledCount,
+                                                aiReasonsByRecipeId:
+                                                    widget.aiReasonsByRecipeId,
+                                                onSelect: _selectChoice,
+                                              ),
+                                            ],
+                                            if (!_isMealMode) ...[
+                                              const SizedBox(height: 14),
+                                              ResultExecutionShortcuts(
+                                                preferredPath: _preferredPath,
+                                                onCook: () =>
+                                                    _openExecutionShortcut(
+                                                  ExecutionPath.cook,
                                                 ),
-                                                const SizedBox(height: 18),
-                                                RecommendationExplanationCard(
-                                                  key: const ValueKey(
-                                                    'result-explanation-card',
+                                                onDelivery: () =>
+                                                    _openExecutionShortcut(
+                                                  ExecutionPath.delivery,
+                                                ),
+                                                onDineIn: () =>
+                                                    _openExecutionShortcut(
+                                                  ExecutionPath.dineIn,
+                                                ),
+                                              ),
+                                            ],
+                                            const SizedBox(height: 14),
+                                            AnimatedSwitcher(
+                                              duration:
+                                                  contentTransitionDuration,
+                                              reverseDuration:
+                                                  contentTransitionDuration,
+                                              switchInCurve: AppMotion.enter,
+                                              switchOutCurve: AppMotion.enter,
+                                              transitionBuilder:
+                                                  (child, animation) {
+                                                final fade = FadeTransition(
+                                                  opacity: animation,
+                                                  child: child,
+                                                );
+                                                if (reduceMotion) {
+                                                  return fade;
+                                                }
+                                                return ScaleTransition(
+                                                  scale: Tween<double>(
+                                                    begin: 0.97,
+                                                    end: 1,
+                                                  ).animate(
+                                                    CurvedAnimation(
+                                                      parent: animation,
+                                                      curve: AppMotion.enter,
+                                                    ),
                                                   ),
-                                                  resolutionStatus:
-                                                      _resolvedStatus,
-                                                  primarySource:
-                                                      widget.primarySource,
-                                                  recalledCount:
-                                                      widget.recalledCount,
-                                                  recallLabels: _displayTags,
-                                                  constraintLabels: widget
+                                                  child: fade,
+                                                );
+                                              },
+                                              child: _isMealMode
+                                                  ? ResultMealPlanCard(
+                                                      key: ValueKey(
+                                                        'meal-${currentChoice.id}',
+                                                      ),
+                                                      mainDish: currentChoice,
+                                                      pairings: _mealPairings,
+                                                      partySize: widget
                                                           .inferenceInput
                                                           ?.structuredConstraints
-                                                          .labels ??
-                                                      const [],
-                                                  reason:
-                                                      _buildRecommendationSubtitle(),
+                                                          .partySize,
+                                                    )
+                                                  : ResultHeroMedia(
+                                                      key: ValueKey(
+                                                        'single-${currentChoice.id}',
+                                                      ),
+                                                      recipe: currentChoice,
+                                                      isGeneratingImage:
+                                                          _isGeneratingImage,
+                                                      imageLoadState:
+                                                          _imageStateController
+                                                              .stateFor(
+                                                        currentChoice.id,
+                                                      ),
+                                                      imageSource:
+                                                          _imageStateController
+                                                              .sourceFor(
+                                                        currentChoice.id,
+                                                      ),
+                                                      onRetryImage: () =>
+                                                          _maybeGenerateImageForCurrentChoice(
+                                                        force: true,
+                                                      ),
+                                                      height: heroMediaHeight,
+                                                    ),
+                                            ),
+                                            if (_isMealMode) ...[
+                                              const SizedBox(height: 14),
+                                              ResultExecutionShortcuts(
+                                                preferredPath: _preferredPath,
+                                                onCook: () =>
+                                                    _openExecutionShortcut(
+                                                  ExecutionPath.cook,
                                                 ),
-                                                const SizedBox(height: 16),
-                                                ResultFeedbackBand(
-                                                  selection: _feedbackSelection,
-                                                  onEnjoyed: () =>
-                                                      _recordResultFeedback(
-                                                    ResultFeedbackSelection
-                                                        .enjoyed,
-                                                  ),
-                                                  onNotForMe: () =>
-                                                      _recordResultFeedback(
-                                                    ResultFeedbackSelection
-                                                        .notForMe,
-                                                  ),
+                                                onDelivery: () =>
+                                                    _openExecutionShortcut(
+                                                  ExecutionPath.delivery,
                                                 ),
-                                                const SizedBox(height: 22),
-                                                ResultActionBar(
-                                                  onReroll: _reroll,
-                                                  onConfirm: _confirm,
-                                                  onOpenSimilarRecipes: () =>
-                                                      _openHowToCookLibrary(
-                                                    currentChoice,
-                                                  ),
-                                                  onOpenRecipe: () =>
-                                                      _openRecipeDetail(
-                                                    currentChoice,
-                                                  ),
+                                                onDineIn: () =>
+                                                    _openExecutionShortcut(
+                                                  ExecutionPath.dineIn,
                                                 ),
+                                              ),
+                                            ],
+                                            const SizedBox(height: 16),
+                                            Wrap(
+                                              spacing: 8,
+                                              runSpacing: 8,
+                                              children: [
+                                                ResultTagChip(
+                                                  label:
+                                                      _displayResolutionLabel,
+                                                ),
+                                                ResultTagChip(
+                                                  label: _displayPrimarySourceLabel ==
+                                                          '推荐结果'
+                                                      ? _displayPrimarySourceLabel
+                                                      : '来源 $_displayPrimarySourceLabel',
+                                                ),
+                                                for (final tag
+                                                    in _displayTags.take(3))
+                                                  ResultTagChip(label: tag),
                                               ],
                                             ),
-                                          ),
-                                  ),
-                                ],
+                                            const SizedBox(height: 18),
+                                            Text(
+                                              currentChoice.name,
+                                              style: AppType.display,
+                                            ),
+                                            const SizedBox(height: 10),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  _buildDishIntroduction(),
+                                                  key: const ValueKey(
+                                                    'result-hero-intro',
+                                                  ),
+                                                  style: TextStyle(
+                                                    color: AppColors.textPrimary
+                                                        .withValues(
+                                                      alpha: 0.72,
+                                                    ),
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    height: 1.45,
+                                                  ),
+                                                ),
+                                                if (_enrichmentController
+                                                    .isIntroLoading(
+                                                  currentChoice.id,
+                                                )) ...[
+                                                  const SizedBox(height: 8),
+                                                  Text(
+                                                    '正在整理这道 HowToCook 菜谱简介',
+                                                    style: TextStyle(
+                                                      color: AppColors
+                                                          .textPrimary
+                                                          .withValues(
+                                                        alpha: 0.42,
+                                                      ),
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w700,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ],
+                                            ),
+                                            if (!_isMealMode) ...[
+                                              const SizedBox(height: 18),
+                                              PairingBand(
+                                                key: const ValueKey(
+                                                  'result-pairing-band',
+                                                ),
+                                                pairings: _pairings,
+                                                loadState: pairingState,
+                                              ),
+                                            ],
+                                            const SizedBox(height: 22),
+                                            NutritionSummaryCard(
+                                              key: const ValueKey(
+                                                'result-nutrition-card',
+                                              ),
+                                              data: nutrition,
+                                              loadState: nutritionState,
+                                            ),
+                                            const SizedBox(height: 18),
+                                            RecommendationExplanationCard(
+                                              key: const ValueKey(
+                                                'result-explanation-card',
+                                              ),
+                                              resolutionStatus: _resolvedStatus,
+                                              primarySource:
+                                                  widget.primarySource,
+                                              recalledCount:
+                                                  widget.recalledCount,
+                                              recallLabels: _displayTags,
+                                              constraintLabels: widget
+                                                      .inferenceInput
+                                                      ?.structuredConstraints
+                                                      .labels ??
+                                                  const [],
+                                              reason:
+                                                  _buildRecommendationSubtitle(),
+                                            ),
+                                            const SizedBox(height: 16),
+                                            ResultFeedbackBand(
+                                              selection: _feedbackSelection,
+                                              onEnjoyed: () =>
+                                                  _recordResultFeedback(
+                                                ResultFeedbackSelection.enjoyed,
+                                              ),
+                                              onNotForMe: () =>
+                                                  _recordResultFeedback(
+                                                ResultFeedbackSelection
+                                                    .notForMe,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 22),
+                                            ResultActionBar(
+                                              onReroll: _reroll,
+                                              onOpenSimilarRecipes: () =>
+                                                  _openHowToCookLibrary(
+                                                currentChoice,
+                                              ),
+                                              onOpenRecipe: () =>
+                                                  _openRecipeDetail(
+                                                currentChoice,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 4),
+                                          ],
+                                        ),
+                                      ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -1120,17 +1248,15 @@ class _HeaderCircleButton extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(999),
+        borderRadius: AppRadii.small,
         onTap: onTap,
         child: Ink(
           width: 40,
           height: 40,
           decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: Colors.white.withValues(alpha: 0.5),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.72),
-            ),
+            color: AppPalette.surface,
+            borderRadius: AppRadii.small,
+            border: Border.all(color: AppPalette.divider),
           ),
           child: Icon(
             icon,

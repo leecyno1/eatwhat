@@ -1,18 +1,13 @@
 import 'dart:math';
 
 import 'package:eatwhat_app/core/data/taste_visual_mapping.dart';
+import 'package:eatwhat_app/v2/core/data/repositories/tag_repository_v2.dart';
 import 'package:eatwhat_app/v2/core/data/schema/unified_tag_model.dart';
 import 'package:eatwhat_app/v2/core/services/v2_favorites_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
-import 'package:eatwhat_app/v2/core/services/v2_tag_catalog_service.dart';
 import 'package:flutter/material.dart';
 
 class BubbleDataManager {
-  BubbleDataManager({
-    V2TagCatalogService? tagCatalogService,
-  }) : _tagCatalogService = tagCatalogService ?? V2TagCatalogService.instance;
-
-  final V2TagCatalogService _tagCatalogService;
   final Random _random = Random();
   final V2FavoritesService _favorites = V2FavoritesService.instance;
   final V2PreferenceFeedbackService _feedback =
@@ -21,16 +16,49 @@ class BubbleDataManager {
   Map<String, int> _tagScores = {};
   List<UnifiedTagModel> _allTags = const [];
 
+  static const Map<String, Set<String>> categoryGroups = {
+    'ingredient_dietary': {'ingredient', 'dietary'},
+    'flavor_staple': {'flavor', 'staple'},
+    'cuisine': {'cuisine'},
+    'scene_fun': {'scene', 'meta', 'fortune'},
+  };
+
   Future<void> initialize() async {
-    // Prepare favorites (stored via SharedPreferences, no explicit init needed)
-    _favoriteTagIds = await _favorites.getFavoriteTagIds();
-    _tagScores = await _feedback.getTagScores();
-    _allTags = await _tagCatalogService.loadTags();
+    try {
+      _favoriteTagIds = await _favorites.getFavoriteTagIds();
+    } catch (_) {}
+    try {
+      _tagScores = await _feedback.getTagScores();
+    } catch (_) {}
+    // The approved entity artwork is a stable one-to-one set for these 102
+    // product preferences. Database tags are resolved later by label during
+    // recommendation, so raw database IDs must not enter the visual asset pool.
+    _allTags = TagRepositoryV2().getAllTags();
   }
 
-  List<BubbleData> getInitialBubbles(int count) {
-    final List<UnifiedTagModel> allTags = _allTags;
+  int get totalTagCount => _allTags.length;
+
+  int countForCategory(String? category) {
+    if (category == null || category.isEmpty) return _allTags.length;
+    return _allTags.where((tag) => _matchesCategory(tag, category)).length;
+  }
+
+  List<BubbleData> getInitialBubbles(
+    int count, {
+    String? category,
+    Set<String> excludedTagIds = const {},
+  }) {
+    final allTags = _allTags
+        .where(
+          (tag) =>
+              (category == null ||
+                  category.isEmpty ||
+                  _matchesCategory(tag, category)) &&
+              !excludedTagIds.contains(tag.id),
+        )
+        .toList();
     if (allTags.isEmpty || count <= 0) return const [];
+    final targetCount = count.clamp(0, allTags.length);
     final List<BubbleData> bubbles = [];
     final Set<String> usedIds = {};
 
@@ -40,15 +68,27 @@ class BubbleDataManager {
     //
     // This is an in-memory call; favorites are persisted by SharedPreferences.
     for (final id in _favoriteTagIds) {
-      if (bubbles.length >= count) break;
+      if (bubbles.length >= targetCount) break;
       if (usedIds.contains(id)) continue;
-      final tag = allTags.firstWhere(
-        (t) => t.id == id,
-        orElse: () => allTags[_random.nextInt(allTags.length)],
-      );
+      final matches = allTags.where((tag) => tag.id == id);
+      if (matches.isEmpty) continue;
+      final tag = matches.first;
       if (usedIds.contains(tag.id)) continue;
       bubbles.add(_buildBubbleData(tag));
       usedIds.add(tag.id);
+    }
+
+    // Keep the three signature entities from concept 4 visible on first load.
+    if (category == null || category.isEmpty) {
+      for (final label in const ['低碳', '辣', '鸡蛋']) {
+        if (bubbles.length >= targetCount) break;
+        final matches = allTags.where((tag) => tag.label == label);
+        if (matches.isEmpty) continue;
+        final tag = matches.first;
+        if (usedIds.add(tag.id)) {
+          bubbles.add(_buildBubbleData(tag));
+        }
+      }
     }
 
     // Ensure variety: Pick one from each category first
@@ -64,21 +104,21 @@ class BubbleDataManager {
     ];
 
     for (final cat in categories) {
+      if (bubbles.length >= targetCount) break;
       final catTags = allTags.where((t) => t.category == cat).toList();
       if (catTags.isNotEmpty) {
         final tag = _pickWeighted(catTags);
-        bubbles.add(_buildBubbleData(tag));
-        usedIds.add(tag.id);
+        if (usedIds.add(tag.id)) {
+          bubbles.add(_buildBubbleData(tag));
+        }
       }
     }
 
     // Fill the rest
-    while (bubbles.length < count) {
+    while (bubbles.length < targetCount) {
       final tag = _pickWeighted(allTags);
-      // Avoid duplicates if possible, but allow if count > total tags
-      if (!usedIds.contains(tag.id) || bubbles.length >= allTags.length) {
+      if (usedIds.add(tag.id)) {
         bubbles.add(_buildBubbleData(tag));
-        usedIds.add(tag.id);
       }
     }
 
@@ -86,6 +126,12 @@ class BubbleDataManager {
     bubbles.shuffle(_random);
 
     return bubbles;
+  }
+
+  bool _matchesCategory(UnifiedTagModel tag, String category) {
+    final grouped = categoryGroups[category];
+    if (grouped != null) return grouped.contains(tag.category);
+    return tag.category == category;
   }
 
   List<BubbleData> getRelatedBubbles(BubbleData source, {int count = 5}) {
@@ -186,6 +232,8 @@ class BubbleData {
   String get id => tag.id;
   String get label => tag.label;
   String get iconName => tag.iconAsset;
+  String get assetName => 'preference_entities/$id.png';
+  String get assetPath => 'assets/images/$assetName';
   TasteVisualSpec get visualSpec => TasteVisualMapping.guess(label);
 
   BubbleType get type {

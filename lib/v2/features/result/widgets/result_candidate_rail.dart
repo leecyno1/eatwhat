@@ -1,5 +1,5 @@
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
-import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
+import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
 
 class ResultCandidateRail extends StatelessWidget {
@@ -7,12 +7,14 @@ class ResultCandidateRail extends StatelessWidget {
     super.key,
     required this.currentChoiceId,
     required this.choices,
+    this.recalledCount = 0,
     required this.aiReasonsByRecipeId,
     required this.onSelect,
   });
 
   final String currentChoiceId;
   final List<RecipeModel> choices;
+  final int recalledCount;
   final Map<String, String> aiReasonsByRecipeId;
   final ValueChanged<RecipeModel> onSelect;
 
@@ -25,20 +27,14 @@ class ResultCandidateRail extends StatelessWidget {
           children: [
             const Text(
               '候选菜品',
-              style: TextStyle(
-                color: AppColors.textPrimary,
-                fontSize: 16,
-                fontWeight: FontWeight.w800,
-              ),
+              style: AppType.section,
             ),
             const Spacer(),
             Text(
-              '${choices.length} 个候选',
-              style: TextStyle(
-                color: AppColors.textPrimary.withValues(alpha: 0.46),
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
-              ),
+              recalledCount > choices.length
+                  ? '召回 $recalledCount · 精选 ${choices.length}'
+                  : '${choices.length} 个候选',
+              style: AppType.microLabel,
             ),
           ],
         ),
@@ -56,30 +52,21 @@ class ResultCandidateRail extends StatelessWidget {
                 key: ValueKey('result-candidate-${recipe.id}'),
                 onTap: () => onSelect(recipe),
                 child: AnimatedContainer(
-                  duration: const Duration(milliseconds: 220),
-                  width: 160,
+                  duration: AppMotion.fast,
+                  curve: AppMotion.enter,
+                  width: 156,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 9),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(22),
+                    borderRadius: AppRadii.small,
                     color: isActive
-                        ? Colors.white.withValues(alpha: 0.76)
-                        : Colors.white.withValues(alpha: 0.46),
+                        ? AppPalette.positiveSurface
+                        : AppPalette.surfaceMuted,
                     border: Border.all(
                       color: isActive
-                          ? AppColors.sunsetOrange.withValues(alpha: 0.32)
-                          : Colors.white.withValues(alpha: 0.68),
+                          ? AppPalette.chili.withValues(alpha: 0.34)
+                          : AppPalette.divider,
                     ),
-                    boxShadow: isActive
-                        ? [
-                            BoxShadow(
-                              color: AppColors.sunsetOrange
-                                  .withValues(alpha: 0.14),
-                              blurRadius: 18,
-                              offset: const Offset(0, 10),
-                            ),
-                          ]
-                        : null,
                   ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -90,9 +77,8 @@ class ResultCandidateRail extends StatelessWidget {
                             '0${index + 1}',
                             style: TextStyle(
                               color: isActive
-                                  ? AppColors.sunsetOrange
-                                  : AppColors.textPrimary
-                                      .withValues(alpha: 0.34),
+                                  ? AppPalette.chili
+                                  : AppPalette.inkMuted,
                               fontSize: 10,
                               fontWeight: FontWeight.w900,
                               letterSpacing: 1.2,
@@ -100,11 +86,10 @@ class ResultCandidateRail extends StatelessWidget {
                           ),
                           const Spacer(),
                           if (isActive)
-                            Text(
+                            const Text(
                               '当前',
                               style: TextStyle(
-                                color: AppColors.sunsetOrange
-                                    .withValues(alpha: 0.74),
+                                color: AppPalette.chili,
                                 fontSize: 9,
                                 fontWeight: FontWeight.w900,
                                 letterSpacing: 1,
@@ -118,7 +103,7 @@ class ResultCandidateRail extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          color: AppColors.textPrimary,
+                          color: AppPalette.ink,
                           fontSize: 13,
                           fontWeight: FontWeight.w800,
                         ),
@@ -129,9 +114,8 @@ class ResultCandidateRail extends StatelessWidget {
                           aiReasonsByRecipeId[recipe.id] ?? recipe.description,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color:
-                                AppColors.textPrimary.withValues(alpha: 0.52),
+                          style: const TextStyle(
+                            color: AppPalette.inkSoft,
                             fontSize: 10.5,
                             fontWeight: FontWeight.w600,
                             height: 1.25,

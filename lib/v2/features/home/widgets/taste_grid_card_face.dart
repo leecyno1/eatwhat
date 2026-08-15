@@ -35,7 +35,7 @@ class TasteGridCardFace extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = card.accentHexes.map(tasteCardParseHexColor).toList();
-    final accentA = colors.isNotEmpty ? colors.first : const Color(0xFFF46B40);
+    final accentA = colors.isNotEmpty ? colors.first : const Color(0xFFC94B2C);
     final accentB =
         colors.length > 1 ? colors[1] : accentA.withValues(alpha: 0.72);
     final activeReaction = reaction ?? dragReaction;
@@ -449,7 +449,7 @@ class _StampVisualSpec {
   ) {
     switch (reaction) {
       case TasteCardReaction.liked:
-        const color = Color(0xFFF46B40);
+        const color = Color(0xFFC94B2C);
         return _StampVisualSpec(
           label: '战利品',
           color: color,
@@ -473,7 +473,7 @@ class _StampVisualSpec {
           ),
         );
       case TasteCardReaction.disliked:
-        const color = Color(0xFF6A626B);
+        const color = Color(0xFF8B695F);
         return _StampVisualSpec(
           label: '封印',
           color: color,
@@ -1576,7 +1576,7 @@ class _CardTitleBlock extends StatelessWidget {
 Color _reactionColor(TasteCardReaction? reaction, Color accent) {
   switch (reaction) {
     case TasteCardReaction.liked:
-      return const Color(0xFFF46B40);
+      return const Color(0xFFC94B2C);
     case TasteCardReaction.disliked:
       return const Color(0xFF6F6770);
     case TasteCardReaction.skipped:

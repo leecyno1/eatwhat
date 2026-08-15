@@ -103,75 +103,32 @@ class HomeStartInferenceButton extends StatelessWidget {
       key: const ValueKey('home-start-inference-button'),
       onPressed: canStartInference ? onPressed : null,
       style: FilledButton.styleFrom(
-        backgroundColor: const Color(0xFFF46B40),
-        disabledBackgroundColor: Colors.white.withValues(alpha: 0.34),
+        backgroundColor: AppPalette.chili,
+        disabledBackgroundColor: AppPalette.surfaceMuted,
         disabledForegroundColor: AppColors.textPrimary.withValues(alpha: 0.42),
         foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(
-          horizontal: 18,
-          vertical: 14,
-        ),
-        elevation: 10,
+        minimumSize: const Size.fromHeight(44),
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        elevation: 6,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(999),
+          borderRadius: AppRadii.capsule,
         ),
       ),
       child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 10,
-              vertical: 7,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.18),
-              borderRadius: BorderRadius.circular(999),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.18),
-              ),
-            ),
+          Flexible(
             child: Text(
-              canStartInference ? '已收集 $readySelectionCount 项' : '步骤 2',
+              canStartInference ? '生成推荐 · $readySelectionCount 项' : '选择口味后生成',
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w800,
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
               ),
             ),
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  canStartInference ? '下一步：查看今日推荐' : '先滑卡或补一句需求',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  canStartInference
-                      ? '由 AI 生成菜单，补全图片和做法'
-                      : '至少确认 1 张卡，或补一句文字要求',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w700,
-                    color: canStartInference
-                        ? Colors.white.withValues(alpha: 0.86)
-                        : AppColors.textPrimary.withValues(alpha: 0.48),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 8),
           const Icon(Icons.arrow_forward_rounded, size: 18),
         ],
       ),
@@ -206,14 +163,14 @@ class HomeAppetitePreviewCard extends StatelessWidget {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
               colors: [
-                const Color(0xFFFFF7F0).withValues(alpha: 0.9),
-                const Color(0xFFFFDFCA).withValues(alpha: 0.68),
-                const Color(0xFFFFFDF8).withValues(alpha: 0.84),
+                const Color(0xFFFFF9F1).withValues(alpha: 0.9),
+                const Color(0xFFE8C7B8).withValues(alpha: 0.68),
+                const Color(0xFFFFFCF7).withValues(alpha: 0.84),
               ],
             ),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFFF46B40).withValues(alpha: 0.14),
+                color: const Color(0xFFC94B2C).withValues(alpha: 0.14),
                 blurRadius: 14,
                 offset: const Offset(0, 8),
               ),

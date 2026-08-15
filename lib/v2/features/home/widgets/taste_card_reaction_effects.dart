@@ -77,8 +77,8 @@ class TasteReactionImpactPulse extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final pulseColor = switch (reaction) {
-      TasteCardReaction.liked => const Color(0xFFF46B40),
-      TasteCardReaction.disliked => const Color(0xFF6A626B),
+      TasteCardReaction.liked => const Color(0xFFC94B2C),
+      TasteCardReaction.disliked => const Color(0xFF8B695F),
       TasteCardReaction.skipped => accent,
     };
 

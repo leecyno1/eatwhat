@@ -45,20 +45,21 @@ class _FloatingEditorialBackgroundState
       builder: (context, child) {
         final phase = _controller.value * math.pi * 2;
         return Stack(
+          key: const ValueKey('warm-palette-motion-background'),
           fit: StackFit.expand,
           children: [
-            Container(
-              decoration: const BoxDecoration(
+            const DecoratedBox(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFFFFF5EC),
-                    Color(0xFFFFD7BE),
-                    Color(0xFFF6C4B7),
-                    Color(0xFFFFF7F0),
+                    Color(0xFFF9FCF7),
+                    Color(0xFFEAF5E7),
+                    Color(0xFFDCEFD9),
+                    Color(0xFFF8FBF5),
                   ],
-                  stops: [0.0, 0.34, 0.72, 1.0],
+                  stops: [0, 0.34, 0.72, 1],
                 ),
               ),
             ),
@@ -67,10 +68,7 @@ class _FloatingEditorialBackgroundState
               right: -30,
               child: const _BlurOrb(
                 size: 220,
-                colors: [
-                  Color(0x88FF7B54),
-                  Color(0x44FFB88C),
-                ],
+                colors: [Color(0x665FB96C), Color(0x337FCB78)],
               ),
             ),
             Positioned(
@@ -78,10 +76,7 @@ class _FloatingEditorialBackgroundState
               bottom: 120 + math.cos(phase * 0.9) * 22,
               child: const _BlurOrb(
                 size: 250,
-                colors: [
-                  Color(0x55FFD6C6),
-                  Color(0x33F65A32),
-                ],
+                colors: [Color(0x55D9EFAE), Color(0x334F9D69)],
               ),
             ),
             Positioned(
@@ -104,7 +99,7 @@ class _FloatingEditorialBackgroundState
                 child: const _FloatingCard(
                   width: 110,
                   height: 144,
-                  color: Color(0x35A62612),
+                  color: Color(0x28498F5B),
                 ),
               ),
             ),
@@ -116,10 +111,7 @@ class _FloatingEditorialBackgroundState
 }
 
 class _BlurOrb extends StatelessWidget {
-  const _BlurOrb({
-    required this.size,
-    required this.colors,
-  });
+  const _BlurOrb({required this.size, required this.colors});
 
   final double size;
   final List<Color> colors;
@@ -132,9 +124,7 @@ class _BlurOrb extends StatelessWidget {
         height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          gradient: RadialGradient(
-            colors: colors,
-          ),
+          gradient: RadialGradient(colors: colors),
         ),
       ),
     );
@@ -161,9 +151,7 @@ class _FloatingCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(26),
-          border: Border.all(
-            color: Colors.white.withValues(alpha: 0.3),
-          ),
+          border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
           boxShadow: [
             BoxShadow(
               color: const Color(0x331E1010).withValues(alpha: 0.12),

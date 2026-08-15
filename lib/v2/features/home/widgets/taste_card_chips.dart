@@ -41,7 +41,7 @@ class TasteCardReactionChip extends StatelessWidget {
   Color _backgroundColor() {
     switch (reaction) {
       case TasteCardReaction.liked:
-        return const Color(0xFFF46B40);
+        return const Color(0xFFC94B2C);
       case TasteCardReaction.disliked:
         return const Color(0xFFE9E4E1);
       case TasteCardReaction.skipped:

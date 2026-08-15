@@ -28,7 +28,7 @@ class HomeTasteDeckBuilder {
     required int seed,
     required Map<String, int> historyScores,
     required Set<String> favoriteTagIds,
-    int maxCards = 36,
+    int maxCards = 24,
   }) async {
     List<TasteSignal> signals;
     try {
@@ -61,7 +61,7 @@ class HomeTasteDeckBuilder {
     required int seed,
     required Map<String, int> historyScores,
     required Set<String> favoriteTagIds,
-    int maxCards = 36,
+    int maxCards = 24,
     List<UnifiedTagModel>? tagsOverride,
     List<TasteSignal>? signalsOverride,
   }) {
@@ -72,7 +72,13 @@ class HomeTasteDeckBuilder {
                 (_tagRepository ?? TagRepositoryV2()).getAllTags())
             .map(_signalFromTag)
             .toList();
-    final tags = signals.map(_cardFromSignal).toList();
+    final cardsByLabel = <String, TasteDeckCard>{};
+    for (final signal in signals) {
+      final card = _cardFromSignal(signal);
+      if (card == null) continue;
+      cardsByLabel.putIfAbsent(card.label, () => card);
+    }
+    final tags = cardsByLabel.values.toList();
 
     final scored = tags.map((card) {
       final historyScore = historyScores[card.id] ?? 0;
@@ -131,27 +137,49 @@ class HomeTasteDeckBuilder {
     );
   }
 
-  TasteDeckCard _cardFromSignal(TasteSignal signal) {
+  TasteDeckCard? _cardFromSignal(TasteSignal signal) {
     final tag = signal.tag;
     final artSpec = signal.artSpec;
+    final label = _localizedLabel(tag.label);
+    if (label == null) return null;
     final colors = tag.visual.colors.isEmpty
-        ? const ['0xFFF46B40', '0xFFFFAB91']
+        ? const ['0xFFC94B2C', '0xFFFFAB91']
         : tag.visual.colors;
     return TasteDeckCard(
       id: tag.id,
-      label: tag.label,
+      label: label,
       category: tag.category,
       accentHexes: colors.take(2).toList(),
       iconName: tag.iconAsset,
-      blurb: cardBlurbFor(tag.category, tag.label),
+      blurb: cardBlurbFor(tag.category, label),
       backTitle: cardBackTitleFor(tag.category),
-      examples: cardBackExamplesFor(tag.category, tag.label),
+      examples: cardBackExamplesFor(tag.category, label),
       artKey: artSpec.artKey,
       surfacePattern: artSpec.surfacePattern,
       motionPreset: artSpec.motionPreset,
       symbolLayout: artSpec.symbolLayout,
       headlineStyle: artSpec.headlineStyle,
     );
+  }
+
+  String? _localizedLabel(String rawLabel) {
+    final label = rawLabel.trim();
+    if (label.isEmpty) return null;
+    const translations = {
+      'aquatic': '水产',
+      'breakfast': '早餐',
+      'condiment': '调料',
+      'dessert': '甜品',
+      'drink': '饮品',
+      'meat_dish': '荤菜',
+      'semi-finished': '半成品',
+      'soup': '汤羹',
+      'staple': '主食',
+      'vegetable_dish': '素菜',
+    };
+    final localized = translations[label.toLowerCase()];
+    if (localized != null) return localized;
+    return RegExp(r'[\u3400-\u9FFF]').hasMatch(label) ? label : null;
   }
 
   bool _wouldCreateCategoryRun(List<TasteDeckCard> deck, String category) {

@@ -10,6 +10,7 @@ class AppSpacing {
   static const double lg = 20;
   static const double xl = 24;
   static const double xxl = 32;
+  static const double xxxl = 40;
 }
 
 class AppRadii {
@@ -37,21 +38,21 @@ class AppType {
     fontSize: 32,
     fontWeight: FontWeight.w900,
     height: 1.08,
-    color: AppPalette.ink,
+    color: AppPalette.gardenInk,
   );
 
   static const TextStyle title = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.w800,
     height: 1.12,
-    color: AppPalette.ink,
+    color: AppPalette.gardenInk,
   );
 
   static const TextStyle section = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w800,
     height: 1.2,
-    color: AppPalette.ink,
+    color: AppPalette.gardenInk,
   );
 
   static const TextStyle body = TextStyle(
@@ -80,10 +81,17 @@ class AppType {
 class AppPalette {
   const AppPalette._();
 
+  static const Color garden = Color(0xFF2F9B4F);
+  static const Color gardenDeep = Color(0xFF20783B);
+  static const Color gardenInk = Color(0xFF123D2D);
+  static const Color gardenSoft = Color(0xFFE7F5E8);
+  static const Color gardenMist = Color(0xFFF4FAF3);
+  static const Color gardenBorder = Color(0xFFD3E7D5);
+  static const Color tomato = Color(0xFFE4513F);
   static const Color chili = Color(0xFFF45B33);
   static const Color chiliDeep = Color(0xFFD9431F);
   static const Color yolk = Color(0xFFFFB545);
-  static const Color herb = Color(0xFF4F9D69);
+  static const Color herb = garden;
   static const Color leaf = Color(0xFF7ABF88);
   static const Color broth = Color(0xFFFFF5E6);
   static const Color cream = Color(0xFFFFFBF6);
@@ -95,6 +103,12 @@ class AppPalette {
   static const Color night = Color(0xFF1C1C1E);
   static const Color grape = Color(0xFF8A7CF7);
   static const Color ocean = Color(0xFF45A6D8);
+  static const Color canvas = gardenMist;
+  static const Color surface = Color(0xFFFFFEFA);
+  static const Color surfaceMuted = Color(0xFFEEF7ED);
+  static const Color divider = gardenBorder;
+  static const Color positiveSurface = gardenSoft;
+  static const Color negativeSurface = Color(0xFFFFE8E2);
 
   static const LinearGradient appetiteGradient = LinearGradient(
     colors: [chili, yolk],
@@ -104,6 +118,12 @@ class AppPalette {
 
   static const LinearGradient warmSurfaceGradient = LinearGradient(
     colors: [cream, Color(0xFFFFEEE8)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient gardenGradient = LinearGradient(
+    colors: [Color(0xFF39A85A), gardenDeep],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -132,5 +152,46 @@ class AppSurfaces {
         offset: const Offset(0, 16),
       ),
     ];
+  }
+}
+
+class AppMotion {
+  const AppMotion._();
+
+  static const Duration press = Duration(milliseconds: 140);
+  static const Duration fast = Duration(milliseconds: 180);
+  static const Duration standard = Duration(milliseconds: 240);
+  static const Duration page = Duration(milliseconds: 300);
+
+  static const Curve enter = Cubic(0.23, 1, 0.32, 1);
+  static const Curve move = Cubic(0.77, 0, 0.175, 1);
+  static const Curve sheet = Cubic(0.32, 0.72, 0, 1);
+}
+
+class AppDecorations {
+  const AppDecorations._();
+
+  static BoxDecoration card({
+    Color color = AppSurfaces.glass,
+    Color borderColor = AppPalette.rice,
+    double radius = AppRadii.md,
+  }) {
+    return BoxDecoration(
+      color: color,
+      borderRadius: BorderRadius.circular(radius),
+      border: Border.all(color: borderColor),
+    );
+  }
+
+  static BoxDecoration floating({
+    Color color = AppSurfaces.glass,
+    Color borderColor = AppPalette.rice,
+    double radius = AppRadii.lg,
+  }) {
+    return card(
+      color: color,
+      borderColor: borderColor,
+      radius: radius,
+    ).copyWith(boxShadow: AppSurfaces.softShadow());
   }
 }
