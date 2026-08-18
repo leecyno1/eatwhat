@@ -34,7 +34,6 @@ class V2MealHabitLearningService {
     'd_vegetarian',
     'd_light',
     'd_low_carb',
-    'd_high_protein',
   };
 
   static const _experienceSignals = {

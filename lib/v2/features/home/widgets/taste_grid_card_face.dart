@@ -974,13 +974,10 @@ String _preferenceRuleFor(TasteDeckCard card) {
   switch (card.id) {
     case 'd_low_carb':
       return '减主食 加蛋白';
-    case 'd_high_protein':
-      return '蛋白优先';
     case 'd_vegetarian':
       return '素食过滤';
     case 'd_light':
     case 's_healthy':
-    case 'ft_health':
       return '低负担';
     case 'm_cheap':
       return '预算优先';

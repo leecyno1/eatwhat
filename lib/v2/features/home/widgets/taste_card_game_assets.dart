@@ -57,14 +57,12 @@ String tasteGameCardArtAsset(TasteDeckCard card) {
     'st_porridge' => '$_assetRoot/art_porridge.png',
     'st_dumpling' => '$_assetRoot/art_dumpling.png',
     'd_low_carb' => '$_assetRoot/art_low_carb.png',
-    'd_high_protein' => '$_assetRoot/art_high_protein.png',
     'd_vegetarian' => '$_assetRoot/art_vegetarian.png',
-    'd_light' || 's_healthy' || 'ft_health' => '$_assetRoot/art_healthy.png',
+    'd_light' || 's_healthy' => '$_assetRoot/art_healthy.png',
     'm_cheap' => '$_assetRoot/art_cheap.png',
     'm_random' => '$_assetRoot/art_random.png',
     'm_surprise' => '$_assetRoot/art_surprise.png',
-    's_date' || 'ft_love' => '$_assetRoot/art_date.png',
-    's_breakfast' => '$_assetRoot/art_breakfast.png',
+    's_date' => '$_assetRoot/art_date.png',
     's_snack' => '$_assetRoot/art_late_snack.png',
     's_party' => '$_assetRoot/art_party.png',
     's_solo' => '$_assetRoot/art_solo.png',
@@ -74,16 +72,13 @@ String tasteGameCardArtAsset(TasteDeckCard card) {
     'c_cantonese' || 'c_hongkong' => '$_assetRoot/art_cantonese.png',
     'c_japanese' => '$_assetRoot/art_japanese.png',
     'c_vietnamese' => '$_assetRoot/art_vietnamese.png',
-    'c_thai' || 'c_southeast_asia' => '$_assetRoot/art_thai.png',
+    'c_thai' => '$_assetRoot/art_thai.png',
     'c_hotpot' => '$_assetRoot/art_hotpot.png',
     'c_bbq' => '$_assetRoot/art_bbq.png',
     'c_western' ||
-    'c_french' ||
-    'c_italian' ||
-    'c_american' =>
+    'c_french' =>
       '$_assetRoot/art_western.png',
     'ft_wealth' => '$_assetRoot/art_wealth.png',
-    'ft_calm' => '$_assetRoot/art_calm.png',
     _ => null,
   };
   if (idAsset != null) {

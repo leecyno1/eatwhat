@@ -23,7 +23,7 @@ void main() {
         .map((tag) => tag.label)
         .toList();
 
-    expect(tags.length, greaterThanOrEqualTo(100));
+    expect(tags.length, greaterThanOrEqualTo(90));
     expect(missing, isEmpty);
     expect(TasteEntityVisualCatalog.conceptFor('低碳').glyph, '🥑');
     expect(TasteEntityVisualCatalog.conceptFor('辣').glyph, '🌶️');
@@ -44,15 +44,15 @@ void main() {
     expect(BubbleGame.visibleBubbleCount, 32);
   });
 
-  test('四组筛选覆盖全部 102 个圆形实体', () async {
+  test('四组筛选覆盖全部 94 个实体', () async {
     final manager = BubbleDataManager();
     await manager.initialize();
 
-    expect(manager.countForCategory('ingredient_dietary'), 25);
+    expect(manager.countForCategory('ingredient_dietary'), 24);
     expect(manager.countForCategory('flavor_staple'), 23);
-    expect(manager.countForCategory('cuisine'), 29);
-    expect(manager.countForCategory('scene_fun'), 25);
-    expect(manager.totalTagCount, 102);
+    expect(manager.countForCategory('cuisine'), 26);
+    expect(manager.countForCategory('scene_fun'), 21);
+    expect(manager.totalTagCount, 94);
   });
 
   test('实体资源路径由标签 ID 稳定映射', () async {

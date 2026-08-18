@@ -88,13 +88,6 @@ class TagArtRegistryV2 {
       symbolLayout: 'crest',
       headlineStyle: 'editorial',
     ),
-    's_breakfast': TagArtSpec(
-      artKey: 'sunrise-checkin',
-      surfacePattern: 'sunbeam',
-      motionPreset: 'rise',
-      symbolLayout: 'corner',
-      headlineStyle: 'airy',
-    ),
     's_dinner': TagArtSpec(
       artKey: 'night-table',
       surfacePattern: 'moon-arc',
@@ -144,13 +137,6 @@ class TagArtRegistryV2 {
       symbolLayout: 'medallion',
       headlineStyle: 'poster',
     ),
-    'ft_love': TagArtSpec(
-      artKey: 'rose-signal',
-      surfacePattern: 'petals',
-      motionPreset: 'float',
-      symbolLayout: 'orbit',
-      headlineStyle: 'signature',
-    ),
     'ft_wealth': TagArtSpec(
       artKey: 'gold-altar',
       surfacePattern: 'coin',
@@ -164,13 +150,6 @@ class TagArtRegistryV2 {
       motionPreset: 'rise',
       symbolLayout: 'vertical',
       headlineStyle: 'stencil',
-    ),
-    'ft_calm': TagArtSpec(
-      artKey: 'quiet-water',
-      surfacePattern: 'ripples',
-      motionPreset: 'drift',
-      symbolLayout: 'corner',
-      headlineStyle: 'airy',
     ),
   };
 

@@ -596,15 +596,6 @@ class TagRepositoryV2 {
               shapeType: 'circle',
               colors: ['0xFFFF9800', '0xFFF57C00'],
               particleEffect: 'steam')),
-      _buildTag(
-          'c_southeast_asia',
-          '东南亚',
-          'cuisine',
-          'wb_sunny',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFFEB3B', '0xFFFDD835'],
-              particleEffect: 'none')),
 
       // Western
       _buildTag(
@@ -624,24 +615,6 @@ class TagRepositoryV2 {
           VisualConfig(
               shapeType: 'circle',
               colors: ['0xFF5C6BC0', '0xFF3F51B5'],
-              particleEffect: 'none')),
-      _buildTag(
-          'c_italian',
-          '意餐',
-          'cuisine',
-          'local_pizza',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFF4CAF50', '0xFF388E3C'],
-              particleEffect: 'none')),
-      _buildTag(
-          'c_american',
-          '美式',
-          'cuisine',
-          'fastfood',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFF44336', '0xFFD32F2F'],
               particleEffect: 'none')),
       _buildTag(
           'c_mexican',
@@ -683,15 +656,6 @@ class TagRepositoryV2 {
               particleEffect: 'none')),
 
       // --- Scenes (场景) ---
-      _buildTag(
-          's_breakfast',
-          '早餐',
-          'scene',
-          'wb_sunny',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFFE082', '0xFFFFD54F'],
-              particleEffect: 'glow')),
       _buildTag(
           's_lunch',
           '午餐',
@@ -838,15 +802,6 @@ class TagRepositoryV2 {
               shapeType: 'circle',
               colors: ['0xFF4DB6AC', '0xFF26A69A'],
               particleEffect: 'none')),
-      _buildTag(
-          'd_high_protein',
-          '高蛋白',
-          'dietary',
-          'fitness_center',
-          VisualConfig(
-              shapeType: 'squircle',
-              colors: ['0xFFE57373', '0xFFEF5350'],
-              particleEffect: 'none')),
 
       // --- Meta/Fun (趣味) ---
       _buildTag(
@@ -879,15 +834,6 @@ class TagRepositoryV2 {
 
       // --- Fortune (占卜) ---
       _buildTag(
-          'ft_love',
-          '恋爱运',
-          'fortune',
-          'favorite',
-          VisualConfig(
-              shapeType: 'star',
-              colors: ['0xFFFF80AB', '0xFFFF4081'],
-              particleEffect: 'sparkle')),
-      _buildTag(
           'ft_wealth',
           '财运',
           'fortune',
@@ -905,15 +851,6 @@ class TagRepositoryV2 {
               shapeType: 'squircle',
               colors: ['0xFF42A5F5', '0xFF1E88E5'],
               particleEffect: 'glow')),
-      _buildTag(
-          'ft_health',
-          '健康运',
-          'fortune',
-          'self_improvement',
-          VisualConfig(
-              shapeType: 'leaf',
-              colors: ['0xFF66BB6A', '0xFF43A047'],
-              particleEffect: 'none')),
       _buildTag(
           'ft_social',
           '社交运',
@@ -941,15 +878,6 @@ class TagRepositoryV2 {
               shapeType: 'drop',
               colors: ['0xFF7E57C2', '0xFF5E35B1'],
               particleEffect: 'glow')),
-      _buildTag(
-          'ft_calm',
-          '平静运',
-          'fortune',
-          'spa',
-          VisualConfig(
-              shapeType: 'drop',
-              colors: ['0xFF81D4FA', '0xFF4FC3F7'],
-              particleEffect: 'bubble')),
     ];
   }
 
