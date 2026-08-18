@@ -1,7 +1,12 @@
 # 003 — Simplify the taste-board page motion
 
-- **Status**: TODO
-- **Commit**: 4e9e89b
+- **Status**: OBSOLETE
+- **Commit**: superseded by the alpha-silhouette physical entity stage (018f70f)
+
+> The horizontal card deck this plan targeted was removed when the home stage
+> was rebuilt around physical entities; its dead widget files
+> (taste_card_deck / board_shell / minimal_card_face / deck_motion_layers)
+> and their tests have been deleted.
 - **Severity**: MEDIUM
 - **Category**: Cohesion & tokens
 - **Estimated scope**: 4 files, large

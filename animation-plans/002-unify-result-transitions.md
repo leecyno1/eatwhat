@@ -1,7 +1,7 @@
 # 002 — Unify result state transitions
 
-- **Status**: TODO
-- **Commit**: 4e9e89b
+- **Status**: DONE
+- **Commit**: verified on 018f70f (implementation landed before plan review)
 - **Severity**: HIGH
 - **Category**: Easing & duration
 - **Estimated scope**: 3 files, medium

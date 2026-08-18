@@ -1,7 +1,7 @@
 # 001 — Replace the slot-machine recommendation motion
 
-- **Status**: TODO
-- **Commit**: 4e9e89b
+- **Status**: DONE
+- **Commit**: verified on 018f70f (implementation landed before plan review)
 - **Severity**: HIGH
 - **Category**: Purpose & frequency
 - **Estimated scope**: 1 file, medium
