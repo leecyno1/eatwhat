@@ -9,7 +9,9 @@ class WallBody extends BodyComponent {
   @override
   Body createBody() {
     final shape = EdgeShape()..set(start, end);
-    final fixtureDef = FixtureDef(shape, friction: 0.3);
+    final fixtureDef = FixtureDef(shape)
+      ..friction = 0.62
+      ..restitution = 0.0;
     final bodyDef = BodyDef(
       position: Vector2.zero(),
       type: BodyType.static,

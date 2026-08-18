@@ -46,4 +46,48 @@ void main() {
       expect(bubble.shapeType, 'pot');
     });
   });
+
+  group('BubbleData sizeMultiplier', () {
+    test('零历史时不放大', () {
+      final bubble = BubbleData(tag: makeTag(label: '辣', category: 'flavor'));
+
+      expect(bubble.usageCount, 0);
+      expect(bubble.sizeMultiplier, 1.0);
+    });
+
+    test('历史越多越大且单调递增', () {
+      final cold = BubbleData(
+        tag: makeTag(label: '辣', category: 'flavor'),
+        usageCount: 1,
+      );
+      final warm = BubbleData(
+        tag: makeTag(label: '辣', category: 'flavor'),
+        usageCount: 10,
+      );
+      final hot = BubbleData(
+        tag: makeTag(label: '辣', category: 'flavor'),
+        usageCount: 50,
+      );
+
+      expect(cold.sizeMultiplier, greaterThan(1.0));
+      expect(warm.sizeMultiplier, greaterThan(cold.sizeMultiplier));
+      expect(hot.sizeMultiplier, greaterThan(warm.sizeMultiplier));
+      // 10 次历史约在 1.31x 附近。
+      expect(warm.sizeMultiplier, closeTo(1.31, 0.02));
+    });
+
+    test('超高频封顶 1.6x', () {
+      final veteran = BubbleData(
+        tag: makeTag(label: '辣', category: 'flavor'),
+        usageCount: 500,
+      );
+      final legendary = BubbleData(
+        tag: makeTag(label: '辣', category: 'flavor'),
+        usageCount: 10000,
+      );
+
+      expect(veteran.sizeMultiplier, lessThanOrEqualTo(1.6));
+      expect(legendary.sizeMultiplier, 1.6);
+    });
+  });
 }

@@ -336,10 +336,12 @@ class BubbleData {
   // Memory system: usage count
   int usageCount;
 
-  // Dynamic size multiplier based on usage
+  // Dynamic size multiplier based on usage. Frequently chosen entities
+  // grow visibly larger (capped at 1.6x so veterans don't get a screen full
+  // of giants).
+  // 1 use ≈ 1.09x · 10 uses ≈ 1.31x · 50 uses ≈ 1.51x · 100+ uses ≈ 1.6x
   double get sizeMultiplier {
     if (usageCount <= 0) return 1.0;
-    // Logarithmic growth: 10 uses = 1.5x, 100 uses = 2.0x
-    return 1.0 + (log(usageCount + 1) / log(10)) * 0.5;
+    return 1.0 + (log(usageCount + 1) / log(10) * 0.3).clamp(0.0, 0.6);
   }
 }

@@ -18,12 +18,16 @@ import 'wall_body.dart';
 class BubbleGame extends Forge2DGame {
   static const int visibleBubbleCount = 32;
 
+  /// Realistic downward gravity in world units so entities pile up and
+  /// settle like real objects instead of floating like bubbles.
+  static const double gravityY = 9.8;
+
   BubbleGame({
     String? initialCategory,
     Map<String, String> initialLikedTags = const {},
     Map<String, String> initialBlockedTags = const {},
   })  : _category = initialCategory,
-        super(gravity: Vector2(0, 2.8), zoom: 1.0) {
+        super(gravity: Vector2(0, gravityY), zoom: 1.0) {
     _replaceSelections(
       likedTags: initialLikedTags,
       blockedTags: initialBlockedTags,
@@ -50,7 +54,7 @@ class BubbleGame extends Forge2DGame {
   String? _category;
   bool _isLoaded = false;
   double _gravityX = 0;
-  double _gravityY = 2.8;
+  double _gravityY = gravityY;
 
   String? get category => _category;
   int get totalTagCount => _dataManager.totalTagCount;
@@ -149,14 +153,10 @@ class BubbleGame extends Forge2DGame {
     selectionRevision.value += 1;
   }
 
-  // Scale factor: 1 meter = 10 pixels (adjust as needed)
-  // Actually, with zoom 1.0, 1 unit = 1 pixel.
-  // Box2D works best with objects between 0.1 and 10 meters.
-  // So if we have a 300px wide screen, that's 300 meters which is huge for Box2D.
-  // We should probably use a zoom of 10 or 20.
-  // Let's try zoom 20. So 300px screen width = 15 meters.
-  // A 50px bubble = 2.5 meters. That's reasonable.
-  static const double worldScale = 20.0;
+  // Scale factor: 1 meter = 32 pixels. Box2D works best with objects
+  // between 0.1 and 10 meters, and this zoom keeps the entity pile large
+  // enough to fill a satisfying share of the stage.
+  static const double worldScale = 32.0;
 
   @override
   Future<void> onLoad() async {
@@ -181,9 +181,8 @@ class BubbleGame extends Forge2DGame {
     // We can use a HUD component for this
     add(DiscardZoneIndicator());
 
-    // Listen to accelerometer with error handling
-    // Use default gravity first, then try to listen to accelerometer
-    world.gravity = Vector2(0, 2.8);
+    // Set realistic gravity; entities fall and stack on the stage floor.
+    world.gravity = Vector2(0, gravityY);
     _initAccelerometer();
   }
 
@@ -203,9 +202,9 @@ class BubbleGame extends Forge2DGame {
     try {
       _accelerometerSubscription = accelerometerEventStream().listen(
         (event) {
-          // Update gravity based on tilt
-          final targetX = (-event.x * 0.58).clamp(-4.8, 4.8);
-          final targetY = (2.8 + event.y * 0.12).clamp(1.4, 5.2);
+          // Tilt the gravity vector so piled entities roll around naturally.
+          final targetX = (-event.x * 4.4).clamp(-5.6, 5.6);
+          final targetY = (gravityY + event.y * 1.5).clamp(4.0, 15.0);
           _gravityX += (targetX - _gravityX) * 0.14;
           _gravityY += (targetY - _gravityY) * 0.14;
           world.gravity = Vector2(_gravityX, _gravityY);
@@ -239,42 +238,44 @@ class BubbleGame extends Forge2DGame {
 
     final visibleWidth = max(size.x / worldScale, 8.0);
     final visibleHeight = max(size.y / worldScale, 12.0);
+    final placements = <({Vector2 center, double span})>[];
 
-    const topInset = 1.9;
-    const bottomInset = 2.6;
-    final placements = <({Vector2 center, double radius})>[];
+    // Scatter entities across the upper region so they rain down and settle
+    // into a natural pile instead of hovering like bubbles.
+    final spawnBandTop = 1.1;
+    final spawnBandHeight =
+        max(1.0, visibleHeight * 0.42 - spawnBandTop - 2.4);
 
     for (var i = 0; i < bubbles.length; i++) {
       final data = bubbles[i];
-      final tierRadius = switch (i % 8) {
-        0 || 5 => 2.06 + rand.nextDouble() * 0.20,
-        1 || 3 || 6 => 1.62 + rand.nextDouble() * 0.20,
-        _ => 1.28 + rand.nextDouble() * 0.22,
+      // Size tiers keep the pile varied, and history-driven sizeMultiplier
+      // makes frequently chosen preferences visibly larger over time.
+      final tierSpan = switch (i % 8) {
+        0 || 5 => 2.65 + rand.nextDouble() * 0.5,
+        1 || 3 || 6 => 2.15 + rand.nextDouble() * 0.5,
+        _ => 1.85 + rand.nextDouble() * 0.45,
       };
-      final radius = (tierRadius * (0.94 + data.sizeMultiplier * 0.06))
-          .clamp(1.24, 2.24)
+      final span = (tierSpan * data.sizeMultiplier)
+          .clamp(1.75, 3.4)
           .toDouble();
+      final reach = span * 0.55;
 
       Vector2? chosen;
       var bestClearance = -double.infinity;
       Vector2? bestCandidate;
       for (var attempt = 0; attempt < 72; attempt++) {
         final candidate = Vector2(
-          radius +
-              0.35 +
-              rand.nextDouble() * max(0.1, visibleWidth - radius * 2 - 0.7),
-          topInset +
-              radius +
-              rand.nextDouble() *
-                  max(
-                    0.1,
-                    visibleHeight - topInset - bottomInset - radius * 2,
-                  ),
+          reach +
+              0.3 +
+              rand.nextDouble() * max(0.1, visibleWidth - reach * 2 - 0.6),
+          spawnBandTop +
+              reach +
+              rand.nextDouble() * spawnBandHeight,
         );
         var clearance = double.infinity;
         for (final placed in placements) {
-          final gap = candidate.distanceTo(placed.center) -
-              (radius + placed.radius) * 0.84;
+          final gap =
+              candidate.distanceTo(placed.center) - (reach + placed.span) * 0.82;
           clearance = min(clearance, gap);
         }
         if (clearance > bestClearance) {
@@ -286,12 +287,12 @@ class BubbleGame extends Forge2DGame {
           break;
         }
       }
-      chosen ??= bestCandidate ?? Vector2(visibleWidth / 2, visibleHeight / 2);
-      placements.add((center: chosen, radius: radius));
+      chosen ??= bestCandidate ?? Vector2(visibleWidth / 2, spawnBandTop + reach);
+      placements.add((center: chosen, span: reach));
 
       world.add(BubbleBody(
         data: data,
-        radius: radius,
+        targetLongSide: span,
         initialPosition: chosen,
       ));
     }
