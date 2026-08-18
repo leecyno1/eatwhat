@@ -101,6 +101,11 @@ class AppPalette {
   static const Color inkSoft = Color(0xFF5E5652);
   static const Color inkMuted = Color(0xFF8D817A);
   static const Color night = Color(0xFF1C1C1E);
+  static const Color nightSurface = Color(0xFF242426);
+  static const Color nightElevated = Color(0xFF2C2C2E);
+  static const Color nightDivider = Color(0xFF3A3A3C);
+  static const Color moonlight = Color(0xFFEDEBE8);
+  static const Color moonMuted = Color(0xFF9B9691);
   static const Color grape = Color(0xFF8A7CF7);
   static const Color ocean = Color(0xFF45A6D8);
   static const Color canvas = gardenMist;

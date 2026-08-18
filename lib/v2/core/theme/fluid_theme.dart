@@ -103,23 +103,97 @@ class FluidTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: Brightness.dark,
-      scaffoldBackgroundColor: AppColors.darkBackground,
+      scaffoldBackgroundColor: AppPalette.night,
       fontFamily: '.SF Pro Text',
-      primaryColor: AppPalette.garden,
+      primaryColor: AppPalette.leaf,
       colorScheme: ColorScheme.fromSeed(
         seedColor: AppPalette.garden,
         brightness: Brightness.dark,
       ).copyWith(
-        primary: AppPalette.garden,
-        secondary: AppPalette.tomato,
+        primary: AppPalette.leaf,
+        onPrimary: AppPalette.night,
+        secondary: AppPalette.yolk,
+        onSecondary: AppPalette.night,
+        surface: AppPalette.nightSurface,
+        onSurface: AppPalette.moonlight,
+        onSurfaceVariant: AppPalette.moonMuted,
+        outline: AppPalette.nightDivider,
+        surfaceContainerHighest: AppPalette.nightElevated,
       ),
       textTheme: TextTheme(
-        displayLarge: AppType.display.copyWith(color: AppPalette.rice),
-        headlineMedium: AppType.title.copyWith(color: AppPalette.rice),
-        titleMedium: AppType.section.copyWith(color: AppPalette.rice),
-        bodyLarge: AppType.body.copyWith(color: AppPalette.rice),
-        bodyMedium: AppType.body.copyWith(color: AppPalette.rice),
-        labelLarge: AppType.label.copyWith(color: AppPalette.rice),
+        displayLarge: AppType.display.copyWith(color: AppPalette.moonlight),
+        headlineMedium: AppType.title.copyWith(color: AppPalette.moonlight),
+        titleMedium: AppType.section.copyWith(color: AppPalette.moonlight),
+        bodyLarge: AppType.body.copyWith(color: AppPalette.moonlight),
+        bodyMedium: AppType.body.copyWith(color: AppPalette.moonMuted),
+        labelLarge: AppType.label.copyWith(color: AppPalette.moonlight),
+      ),
+      filledButtonTheme: FilledButtonThemeData(
+        style: FilledButton.styleFrom(
+          backgroundColor: AppPalette.leaf,
+          foregroundColor: AppPalette.night,
+          elevation: 0,
+          minimumSize: const Size(0, 52),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          textStyle: AppType.label.copyWith(
+            color: AppPalette.night,
+            fontWeight: FontWeight.w700,
+          ),
+          shape: RoundedRectangleBorder(borderRadius: AppRadii.capsule),
+        ),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppPalette.leaf,
+          minimumSize: const Size(0, 52),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
+          side: const BorderSide(color: AppPalette.leaf),
+          shape: RoundedRectangleBorder(borderRadius: AppRadii.capsule),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: AppPalette.leaf,
+          textStyle: AppType.label,
+        ),
+      ),
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppPalette.nightElevated,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: AppRadii.card,
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: AppRadii.card,
+          borderSide: const BorderSide(color: AppPalette.nightDivider),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: AppRadii.card,
+          borderSide: const BorderSide(color: AppPalette.leaf, width: 1.4),
+        ),
+        labelStyle: AppType.label.copyWith(color: AppPalette.moonMuted),
+        hintStyle: AppType.body.copyWith(color: AppPalette.moonMuted),
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: AppPalette.nightElevated,
+        selectedColor: AppPalette.nightSurface,
+        side: const BorderSide(color: AppPalette.nightDivider),
+        shape: RoundedRectangleBorder(borderRadius: AppRadii.capsule),
+        labelStyle: AppType.label.copyWith(color: AppPalette.moonlight),
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: Colors.transparent,
+        foregroundColor: AppPalette.moonlight,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        titleTextStyle: AppType.section.copyWith(color: AppPalette.moonlight),
       ),
     );
   }
