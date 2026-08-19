@@ -185,8 +185,7 @@ class BubbleGame extends Forge2DGame {
       final delay = Duration(milliseconds: 45 * i);
       Future.delayed(delay, () {
         if (entity.isRemoved || entity.isRejected) return;
-        _spawnBurst(entity, positive: true);
-        entity.collect(withFeedback: false);
+        entity.collect(withFeedback: false, emitChip: false);
       });
     }
   }
@@ -203,12 +202,13 @@ class BubbleGame extends Forge2DGame {
     HapticFeedback.heavyImpact();
 
     for (final entity in batch) {
-      _spawnBurst(entity, positive: false);
       entity.sweepReject();
     }
   }
 
-  void _spawnBurst(BubbleBody entity, {required bool positive}) {
+  /// Splash of particles at an entity's position, spawned by both taps and
+  /// sweeps so every collect/block lands with the same visual punch.
+  void spawnSelectionBurst(BubbleBody entity, {required bool positive}) {
     if (entity.isRemoved) return;
     world.add(SelectionBurst(
       position: entity.body.position,

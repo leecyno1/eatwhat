@@ -212,10 +212,14 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
 
   /// Collects this entity into the taste tray. [withFeedback] controls the
   /// local haptics/jelly response; batch sweeps trigger it once for the
-  /// whole gesture instead of once per entity.
-  void collect({bool withFeedback = true}) {
+  /// whole gesture instead of once per entity, and suppress the per-entity
+  /// chip in favor of one summary chip.
+  void collect({bool withFeedback = true, bool emitChip = true}) {
+    game.spawnSelectionBurst(this, positive: true);
     game.toggleSelection(this);
-    game.emitSwipeFeedback(label: text, positive: true);
+    if (emitChip) {
+      game.emitSwipeFeedback(label: text, positive: true);
+    }
     _collectToTray();
 
     if (withFeedback) {
@@ -242,6 +246,7 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   /// stage while fading out.
   void sweepReject() {
     if (isRejected || _isCollecting) return;
+    game.spawnSelectionBurst(this, positive: false);
     game.rejectBubble(this);
     sweepPending = false;
   }

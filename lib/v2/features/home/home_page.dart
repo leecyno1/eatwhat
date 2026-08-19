@@ -1025,54 +1025,64 @@ class _HeaderSelectionSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      key: const ValueKey('taste-signature-button'),
-      color: AppPalette.nightSurface.withValues(alpha: 0.92),
-      borderRadius: AppRadii.capsule,
-      child: InkWell(
-        key: const ValueKey('taste-entity-selection-summary'),
-        onTap: onTap,
+    // The capsule pops whenever a sweep or tap changes the counts, so every
+    // collect lands with a visible pulse right where the tally lives.
+    return TweenAnimationBuilder<double>(
+      key: ValueKey('taste-summary-bounce-$likedCount-$blockedCount'),
+      tween: Tween<double>(begin: 1.22, end: 1),
+      duration: AppMotion.standard,
+      curve: AppMotion.enter,
+      builder: (context, scale, child) =>
+          Transform.scale(scale: scale, child: child),
+      child: Material(
+        key: const ValueKey('taste-signature-button'),
+        color: AppPalette.nightSurface.withValues(alpha: 0.92),
         borderRadius: AppRadii.capsule,
-        child: Container(
-          height: 34,
-          padding: const EdgeInsets.symmetric(horizontal: 10),
-          decoration: BoxDecoration(
-            borderRadius: AppRadii.capsule,
-            border: Border.all(color: AppPalette.nightDivider),
-          ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Icon(
-                Icons.favorite_rounded,
-                size: 14,
-                color: AppPalette.leaf,
-              ),
-              const SizedBox(width: 3),
-              Text(
-                '$likedCount',
-                style: const TextStyle(
-                  color: AppPalette.moonlight,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w900,
+        child: InkWell(
+          key: const ValueKey('taste-entity-selection-summary'),
+          onTap: onTap,
+          borderRadius: AppRadii.capsule,
+          child: Container(
+            height: 34,
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            decoration: BoxDecoration(
+              borderRadius: AppRadii.capsule,
+              border: Border.all(color: AppPalette.nightDivider),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(
+                  Icons.favorite_rounded,
+                  size: 14,
+                  color: AppPalette.leaf,
                 ),
-              ),
-              const SizedBox(width: 7),
-              const Icon(
-                Icons.block_rounded,
-                size: 13,
-                color: AppPalette.tomato,
-              ),
-              const SizedBox(width: 3),
-              Text(
-                '$blockedCount',
-                style: const TextStyle(
-                  color: AppPalette.moonlight,
-                  fontSize: 11,
-                  fontWeight: FontWeight.w900,
+                const SizedBox(width: 3),
+                Text(
+                  '$likedCount',
+                  style: const TextStyle(
+                    color: AppPalette.moonlight,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 7),
+                const Icon(
+                  Icons.block_rounded,
+                  size: 13,
+                  color: AppPalette.tomato,
+                ),
+                const SizedBox(width: 3),
+                Text(
+                  '$blockedCount',
+                  style: const TextStyle(
+                    color: AppPalette.moonlight,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
