@@ -21,7 +21,7 @@ class BubbleGame extends Forge2DGame {
   /// Entities the stage carries once fully populated. The pile is built
   /// by the replenish stream (see [update]) instead of one giant drop, so
   /// oversized entities never spawn overlapped.
-  static const int visibleBubbleCount = 40;
+  static const int visibleBubbleCount = 34;
 
   /// Entities dropped in each opening wave.
   static const int _initialDropWaveSize = 10;

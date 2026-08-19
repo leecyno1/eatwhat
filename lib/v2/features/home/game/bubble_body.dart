@@ -67,9 +67,10 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   String get text => data.label;
   double get _halfSpan => targetLongSide * 0.5;
 
-  /// Sweep hit radius (world meters), slightly padded so the finger path
-  /// does not have to be pixel-perfect.
-  double get reach => targetLongSide * 0.55 + 0.22;
+  /// Sweep hit radius (world meters): the entity's own radius plus a
+  /// finger tolerance. Kept tight so a path brushing a crowded pile only
+  /// claims the entities it actually crosses.
+  double get reach => targetLongSide * 0.5 + 0.18;
 
   @override
   Future<void> onLoad() async {
@@ -205,8 +206,11 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   }
 
   @override
-  void onTapDown(TapDownEvent event) {
-    super.onTapDown(event);
+  void onTapUp(TapUpEvent event) {
+    super.onTapUp(event);
+    // Collect on release, not on press: a finger that lands on an entity
+    // and then sweeps away must not accidentally collect it. Flame cancels
+    // the tap once the pointer moves, so only a true tap gets here.
     collect(withFeedback: true);
   }
 

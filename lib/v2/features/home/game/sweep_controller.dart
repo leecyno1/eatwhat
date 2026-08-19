@@ -174,14 +174,15 @@ class SweepGestureHandler extends PositionComponent
 enum SweepFlickIntent { up, down, cancel }
 
 /// Minimum final-flick length (screen px) that counts as an intent.
-const double sweepMinFlickLength = 30;
+const double sweepMinFlickLength = 26;
 
 /// Distance looked back from the release point when measuring the flick.
 const double sweepFlickLookback = 110;
 
 /// Vertical dominance required: |dy| must be at least this fraction of
-/// |dx| for the flick to read as up/down rather than sideways.
-const double sweepVerticalDominance = 0.45;
+/// |dx| for the flick to read as up/down rather than sideways. Kept low so
+/// diagonal flicks still register.
+const double sweepVerticalDominance = 0.36;
 
 /// Decides what a finished sweep means from its screen-space trail.
 ///
