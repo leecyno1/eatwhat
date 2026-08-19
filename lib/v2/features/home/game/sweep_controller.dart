@@ -235,7 +235,7 @@ class SelectionBurst extends PositionComponent {
             math.sin(angle) * speed - 1.4,
           ),
           life: 0.4 + rand.nextDouble() * 0.3,
-          radius: 0.05 + rand.nextDouble() * 0.075,
+          radius: 0.065 + rand.nextDouble() * 0.098,
           color: positive
               ? (rand.nextBool() ? const Color(0xFF7ABF88) : accent)
               : (rand.nextBool() ? const Color(0xFFE4513F) : accent),

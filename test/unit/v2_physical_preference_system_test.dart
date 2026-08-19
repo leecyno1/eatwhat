@@ -40,8 +40,8 @@ void main() {
     expect(labels, containsAll(const ['低碳', '辣', '鸡蛋']));
   });
 
-  test('实体容器常驻 30 个偏好实体', () {
-    expect(BubbleGame.visibleBubbleCount, 30);
+  test('实体容器常驻 40 个偏好实体', () {
+    expect(BubbleGame.visibleBubbleCount, 40);
   });
 
   test('四组筛选覆盖全部 94 个实体', () async {

@@ -18,14 +18,17 @@ import 'sweep_controller.dart';
 import 'wall_body.dart';
 
 class BubbleGame extends Forge2DGame {
-  /// Entities on stage at any time. The stage starts full and a light
-  /// replenish stream drops new ones in from the top as entities leave, so
-  /// the pile always has room to breathe and fresh picks always land on
-  /// top where they can be swept.
-  static const int visibleBubbleCount = 30;
+  /// Entities the stage carries once fully populated. The pile is built
+  /// by the replenish stream (see [update]) instead of one giant drop, so
+  /// oversized entities never spawn overlapped.
+  static const int visibleBubbleCount = 40;
 
-  /// How often the replenish stream checks the population.
-  static const Duration _replenishInterval = Duration(milliseconds: 2500);
+  /// Entities dropped in each opening wave.
+  static const int _initialDropWaveSize = 10;
+
+  /// Seconds between the two opening waves, and between replenish drops.
+  static const double _initialWaveGapSec = 0.5;
+  static const double _replenishIntervalSec = 0.45;
 
   /// Realistic downward gravity in world units so entities pile up and
   /// settle like real objects instead of floating like bubbles.
@@ -50,7 +53,11 @@ class BubbleGame extends Forge2DGame {
   final V2PreferenceFeedbackService _feedback =
       V2PreferenceFeedbackService.instance;
   async.StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
-  async.Timer? _replenishTimer;
+
+  /// Replenish scheduling, driven by the game clock in [update] so no dart
+  /// timers leak into widget tests or outlive the component.
+  double _replenishClock = 0;
+  double? _pendingWaveDelay;
   final ValueNotifier<int> selectionCount = ValueNotifier(0);
   final ValueNotifier<int> selectionRevision = ValueNotifier(0);
   final ValueNotifier<SwipeFeedbackEvent?> swipeFeedback =
@@ -239,7 +246,8 @@ class BubbleGame extends Forge2DGame {
     // ...
 
     // Add some initial bubbles
-    _addBubbles();
+    _addBubbles(count: _initialDropWaveSize);
+    _pendingWaveDelay = _initialWaveGapSec;
 
     // Add "Discard" zone indicator at the bottom (Visual only)
     // We can use a HUD component for this
@@ -252,16 +260,35 @@ class BubbleGame extends Forge2DGame {
     // Set realistic gravity; entities fall and stack on the stage floor.
     world.gravity = Vector2(0, gravityY);
     _initAccelerometer();
+  }
 
-    // Replenish stream: keep the population topped up with a gentle drop
-    // from the top every few seconds instead of dumping everything at once.
-    _replenishTimer = async.Timer.periodic(_replenishInterval, (_) {
-      if (!_isLoaded) return;
-      final population = entities.length;
-      if (population < visibleBubbleCount) {
+  @override
+  void update(double dt) {
+    super.update(dt);
+    if (!_isLoaded || isRemoved) return;
+
+    // Opening waves: pour the second drop in after the first has begun to
+    // separate mid-air.
+    final pendingWave = _pendingWaveDelay;
+    if (pendingWave != null) {
+      final remaining = pendingWave - dt;
+      if (remaining <= 0) {
+        _pendingWaveDelay = null;
+        _addBubbles(count: _initialDropWaveSize);
+      } else {
+        _pendingWaveDelay = remaining;
+      }
+    }
+
+    // Replenish stream: builds the pile up to a full population and keeps
+    // it topped up with a gentle drop from the top, one entity at a time.
+    _replenishClock += dt;
+    if (_replenishClock >= _replenishIntervalSec) {
+      _replenishClock = 0;
+      if (entities.length < visibleBubbleCount) {
         _addBubbles(count: 1, replenish: true);
       }
-    });
+    }
   }
 
   void _initAccelerometer() {
@@ -339,14 +366,16 @@ class BubbleGame extends Forge2DGame {
     for (var i = 0; i < bubbles.length; i++) {
       final data = bubbles[i];
       // Size tiers keep the pile varied, and history-driven sizeMultiplier
-      // makes frequently chosen preferences visibly larger over time.
+      // makes frequently chosen preferences visibly larger over time. The
+      // whole scale was bumped ~30% so entities read clearly and are easy
+      // to sweep with a finger path.
       final tierSpan = switch (i % 8) {
-        0 || 5 => 2.65 + rand.nextDouble() * 0.5,
-        1 || 3 || 6 => 2.15 + rand.nextDouble() * 0.5,
-        _ => 1.85 + rand.nextDouble() * 0.45,
+        0 || 5 => 3.45 + rand.nextDouble() * 0.65,
+        1 || 3 || 6 => 2.8 + rand.nextDouble() * 0.65,
+        _ => 2.41 + rand.nextDouble() * 0.59,
       };
       final span = (tierSpan * data.sizeMultiplier)
-          .clamp(1.75, 3.4)
+          .clamp(2.28, 4.42)
           .toDouble();
       final reach = span * 0.55;
 
@@ -411,7 +440,10 @@ class BubbleGame extends Forge2DGame {
     for (final bubble in world.children.whereType<BubbleBody>().toList()) {
       bubble.removeFromParent();
     }
-    _addBubbles();
+    // Same wave pattern as the opening: drop a first wave, let the
+    // replenish stream pour the rest in without overlaps.
+    _addBubbles(count: _initialDropWaveSize);
+    _pendingWaveDelay = _initialWaveGapSec;
   }
 
   @override
@@ -453,14 +485,12 @@ class BubbleGame extends Forge2DGame {
   @override
   void onRemove() {
     _accelerometerSubscription?.cancel();
-    _replenishTimer?.cancel();
     super.onRemove();
   }
 
   @override
   void onDispose() {
     _accelerometerSubscription?.cancel();
-    _replenishTimer?.cancel();
     selectionCount.dispose();
     selectionRevision.dispose();
     swipeFeedback.dispose();
