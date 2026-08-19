@@ -203,7 +203,7 @@ class _PhysicalTasteHabitatState extends State<_PhysicalTasteHabitat> {
                           border: Border.all(color: AppPalette.nightDivider),
                         ),
                         child: const Text(
-                          '点选喜欢 · 划过多个 · 收尾上划收下 · 下划拉黑',
+                          '点选 · 划过连选 · 按住抓起，顶部收下 / 底部拉黑',
                           maxLines: 1,
                           textAlign: TextAlign.center,
                           style: TextStyle(

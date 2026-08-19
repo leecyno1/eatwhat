@@ -75,4 +75,38 @@ void main() {
       );
     });
   });
+
+  group('resolveGrabOutcome', () {
+    test('顶部托盘区松手判定为收集', () {
+      expect(
+        resolveGrabOutcome(releaseY: 40, stageHeight: 620),
+        GrabReleaseOutcome.collect,
+      );
+      expect(
+        resolveGrabOutcome(releaseY: grabTrayZoneDepth, stageHeight: 620),
+        GrabReleaseOutcome.collect,
+      );
+    });
+
+    test('底部拉黑区松手判定为拉黑', () {
+      expect(
+        resolveGrabOutcome(releaseY: 600, stageHeight: 620),
+        GrabReleaseOutcome.reject,
+      );
+      expect(
+        resolveGrabOutcome(
+          releaseY: 620 - grabDiscardZoneDepth,
+          stageHeight: 620,
+        ),
+        GrabReleaseOutcome.reject,
+      );
+    });
+
+    test('中部任意位置松手判定为落回堆中', () {
+      expect(
+        resolveGrabOutcome(releaseY: 300, stageHeight: 620),
+        GrabReleaseOutcome.drop,
+      );
+    });
+  });
 }

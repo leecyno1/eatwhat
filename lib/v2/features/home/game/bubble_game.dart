@@ -81,6 +81,18 @@ class BubbleGame extends Forge2DGame {
   /// to hit-test the finger path).
   Iterable<BubbleBody> get entities => world.children.whereType<BubbleBody>();
 
+  int _suppressTapUntilMicros = 0;
+
+  /// A grabbed gesture suppresses the coincident tap so dropping an entity
+  /// back into the pile doesn't also collect it.
+  bool get isTapSuppressed =>
+      DateTime.now().microsecondsSinceEpoch < _suppressTapUntilMicros;
+
+  void suppressTapFor(Duration duration) {
+    _suppressTapUntilMicros =
+        DateTime.now().microsecondsSinceEpoch + duration.inMicroseconds;
+  }
+
   void syncSelections({
     required Map<String, String> likedTags,
     required Map<String, String> blockedTags,

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'dart:ui';
 
 import 'package:flame/components.dart';
@@ -12,6 +13,7 @@ import 'package:vibration/vibration.dart';
 import 'bubble_data_manager.dart';
 import 'bubble_game.dart';
 import 'entity_geometry.dart';
+import 'sweep_controller.dart';
 import 'taste_entity_visual_catalog.dart';
 
 /// A physical preference entity on the home stage.
@@ -47,6 +49,14 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   /// between collecting and blocking.
   bool sweepPending = false;
 
+  /// Held by the finger: follows the pointer while the pile collapses
+  /// behind it (see SweepGestureHandler's grab phase).
+  bool isGrabbed = false;
+
+  /// Which release zone the grabbed entity is currently hovering over,
+  /// so the player sees what releasing will do before lifting.
+  GrabReleaseOutcome grabZoneHint = GrabReleaseOutcome.drop;
+
   bool _isCollecting = false;
   double _collectionElapsed = 0;
   Vector2? _collectionStart;
@@ -63,6 +73,11 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   // Soft squash-and-stretch response when tapped.
   double _jellyScale = 1.0;
   double _jellyVelocity = 0.0;
+
+  // Idle breathing: sleeping entities occasionally wobble a touch so the
+  // pile reads as alive rather than a frozen screenshot.
+  double _nextWobbleIn = _randomIdleWobbleDelay();
+  static double _randomIdleWobbleDelay() => 3 + Random().nextDouble() * 6;
 
   String get text => data.label;
   double get _halfSpan => targetLongSide * 0.5;
@@ -179,6 +194,19 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
     _jellyVelocity += force * dt;
     _jellyScale += _jellyVelocity * dt;
 
+    // Idle breathing: every few seconds a sleeping entity wobbles a touch
+    // so a settled pile still feels alive. Purely visual — the physics body
+    // stays asleep.
+    if (!_isCollecting && !isGrabbed && !isRejected) {
+      _nextWobbleIn -= dt;
+      if (_nextWobbleIn <= 0) {
+        _nextWobbleIn = _randomIdleWobbleDelay();
+        if (!body.isAwake) {
+          _jellyVelocity = 0.45 + Random().nextDouble() * 0.3;
+        }
+      }
+    }
+
     if (_isCollecting) {
       _collectionElapsed += dt;
       final start = _collectionStart;
@@ -209,9 +237,60 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   void onTapUp(TapUpEvent event) {
     super.onTapUp(event);
     // Collect on release, not on press: a finger that lands on an entity
-    // and then sweeps away must not accidentally collect it. Flame cancels
-    // the tap once the pointer moves, so only a true tap gets here.
+    // and then sweeps away must not accidentally collect it. A grabbed
+    // gesture suppresses the tap so dropping an entity doesn't double-fire.
+    if (game.isTapSuppressed) return;
     collect(withFeedback: true);
+  }
+
+  /// Pins the entity to the finger as a kinematic body. The pile it was
+  /// supporting collapses on its own — that collapse is the whole point of
+  /// the grab.
+  void beginGrab() {
+    if (isRemoved || isRejected) return;
+    isGrabbed = true;
+    sweepPending = false;
+    grabZoneHint = GrabReleaseOutcome.drop;
+    body
+      ..setType(BodyType.kinematic)
+      ..linearVelocity = Vector2.zero()
+      ..angularVelocity = 0;
+    _jellyVelocity = 4.5;
+    HapticFeedback.selectionClick();
+  }
+
+  /// Moves the grabbed entity toward the finger with a little lag, slowly
+  /// righting its rotation, and previews which release zone it hovers in.
+  void updateGrab(Vector2 fingerWorld, double fingerScreenY, double stageHeight) {
+    if (!isGrabbed) return;
+    final target = body.position + (fingerWorld - body.position) * 0.35;
+    body.setTransform(target, body.angle * 0.90);
+    grabZoneHint = resolveGrabOutcome(
+      releaseY: fingerScreenY,
+      stageHeight: stageHeight,
+    );
+  }
+
+  /// Lets go: the entity becomes dynamic again, optionally inheriting the
+  /// finger's fling velocity.
+  void endGrab({Vector2? flingVelocity}) {
+    if (!isGrabbed) return;
+    isGrabbed = false;
+    grabZoneHint = GrabReleaseOutcome.drop;
+    if (body.bodyType != BodyType.dynamic) {
+      body.setType(BodyType.dynamic);
+    }
+    final fling = flingVelocity;
+    if (fling != null && fling.length > 0.5) {
+      final capped = fling.clone();
+      if (capped.length > 14) {
+        capped.scale(14 / capped.length);
+      }
+      body
+        ..linearVelocity = capped
+        ..angularVelocity = (fling.x * 0.15).clamp(-4.0, 4.0);
+    }
+    _jellyVelocity = -3.0;
   }
 
   /// Collects this entity into the taste tray. [withFeedback] controls the
@@ -281,7 +360,29 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
 
     canvas.save();
 
-    if (sweepPending && !_isCollecting) {
+    if (isGrabbed) {
+      // Held by the finger: a stronger halo, a bigger lift, and a zone
+      // hint ring that turns leaf-green over the tray and tomato-red over
+      // the discard zone so the release outcome is always visible.
+      final hintColor = switch (grabZoneHint) {
+        GrabReleaseOutcome.collect => const Color(0xFF9FD8AC),
+        GrabReleaseOutcome.reject => const Color(0xFFE4513F),
+        GrabReleaseOutcome.drop => const Color(0xFF7ABF88),
+      };
+      final glowPaint = Paint()
+        ..color = hintColor.withValues(alpha: 0.5)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14);
+      canvas.drawCircle(Offset.zero, _halfSpan * 1.15, glowPaint);
+      canvas.drawCircle(
+        Offset.zero,
+        _halfSpan * 0.98,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.06
+          ..color = hintColor,
+      );
+      canvas.scale(1.10, 1.10);
+    } else if (sweepPending && !_isCollecting) {
       // Pending sweep highlight: a soft halo behind the artwork plus a
       // gentle enlarge so the player sees exactly what a flick will commit.
       final glowPaint = Paint()
