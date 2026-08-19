@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
@@ -18,13 +19,14 @@ import 'taste_entity_visual_catalog.dart';
 /// The artwork itself is the body: the sprite is rendered as-is (no bubble
 /// shell, no circular clip) and the collision shape is decomposed from the
 /// sprite's alpha silhouette so entities fall, collide, and stack like real
-/// objects under gravity.
-class BubbleBody extends BodyComponent<BubbleGame>
-    with TapCallbacks, DragCallbacks {
+/// objects under gravity. Selection happens through taps or the stage-level
+/// sweep gesture (see [SweepGestureHandler]).
+class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   BubbleBody({
     required this.data,
     required this.targetLongSide,
     required this.initialPosition,
+    this.initialHorizontalImpulse = 0,
   });
 
   final BubbleData data;
@@ -34,13 +36,17 @@ class BubbleBody extends BodyComponent<BubbleGame>
   final double targetLongSide;
   final Vector2 initialPosition;
 
+  /// Small random sideways velocity for replenished entities so they drift
+  /// naturally as they fall from the top.
+  final double initialHorizontalImpulse;
+
   bool isSelected = false;
   bool isRejected = false; // For swipe down
 
-  // Drag handling
-  Vector2? _dragStartPos;
-  final Vector2 _dragDistance = Vector2.zero();
-  bool _isDragging = false;
+  /// Highlighted by the sweep gesture and awaiting the final flick to decide
+  /// between collecting and blocking.
+  bool sweepPending = false;
+
   bool _isCollecting = false;
   double _collectionElapsed = 0;
   Vector2? _collectionStart;
@@ -60,6 +66,10 @@ class BubbleBody extends BodyComponent<BubbleGame>
 
   String get text => data.label;
   double get _halfSpan => targetLongSide * 0.5;
+
+  /// Sweep hit radius (world meters), slightly padded so the finger path
+  /// does not have to be pixel-perfect.
+  double get reach => targetLongSide * 0.55 + 0.22;
 
   @override
   Future<void> onLoad() async {
@@ -91,6 +101,7 @@ class BubbleBody extends BodyComponent<BubbleGame>
       type: BodyType.dynamic,
       angularDamping: 0.45,
       linearDamping: 0.08,
+      linearVelocity: Vector2(initialHorizontalImpulse, 0),
     );
     final body = world.createBody(bodyDef);
 
@@ -196,28 +207,43 @@ class BubbleBody extends BodyComponent<BubbleGame>
   @override
   void onTapDown(TapDownEvent event) {
     super.onTapDown(event);
-    _handleSelection();
+    collect(withFeedback: true);
   }
 
-  void _handleSelection() {
+  /// Collects this entity into the taste tray. [withFeedback] controls the
+  /// local haptics/jelly response; batch sweeps trigger it once for the
+  /// whole gesture instead of once per entity.
+  void collect({bool withFeedback = true}) {
     game.toggleSelection(this);
-    game.emitSwipeFeedback(label: text, positive: isSelected);
+    game.emitSwipeFeedback(label: text, positive: true);
     _collectToTray();
 
-    _jellyVelocity = 9.0;
-
-    HapticFeedback.mediumImpact();
-    if (!kIsWeb &&
-        (defaultTargetPlatform == TargetPlatform.android ||
-            defaultTargetPlatform == TargetPlatform.iOS)) {
-      unawaited(
-        Vibration.vibrate(duration: 40).catchError((Object _) {}),
-      );
+    if (withFeedback) {
+      _jellyVelocity = 9.0;
+      HapticFeedback.mediumImpact();
+      if (!kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.android ||
+              defaultTargetPlatform == TargetPlatform.iOS)) {
+        unawaited(
+          Vibration.vibrate(duration: 40).catchError((Object _) {}),
+        );
+      }
+    } else {
+      _jellyVelocity = 6.0;
     }
 
     if (isSelected) {
       data.usageCount++;
     }
+    sweepPending = false;
+  }
+
+  /// Marks the entity as rejected: it sinks through the pile and off the
+  /// stage while fading out.
+  void sweepReject() {
+    if (isRejected || _isCollecting) return;
+    game.rejectBubble(this);
+    sweepPending = false;
   }
 
   void _collectToTray() {
@@ -237,57 +263,6 @@ class BubbleBody extends BodyComponent<BubbleGame>
   }
 
   @override
-  void onDragStart(DragStartEvent event) {
-    super.onDragStart(event);
-    _dragStartPos = event.localPosition;
-    _dragDistance.setZero();
-    _isDragging = true;
-    body
-      ..setType(BodyType.kinematic)
-      ..linearVelocity = Vector2.zero()
-      ..angularVelocity = 0;
-  }
-
-  @override
-  void onDragEnd(DragEndEvent event) {
-    super.onDragEnd(event);
-    _isDragging = false;
-
-    if (_dragStartPos == null) return;
-    body.setType(BodyType.dynamic);
-
-    if (_dragDistance.y < -54) {
-      if (!isSelected) _handleSelection();
-    } else if (_dragDistance.y > 54) {
-      game.rejectBubble(this);
-      game.emitSwipeFeedback(label: text, positive: false);
-      HapticFeedback.heavyImpact();
-    } else {
-      final throwVelocity = event.velocity / BubbleGame.worldScale;
-      if (throwVelocity.length > 18) {
-        throwVelocity.normalize();
-        throwVelocity.scale(18);
-      }
-      body
-        ..linearVelocity = throwVelocity
-        ..angularVelocity = (_dragDistance.x / 42).clamp(-5.5, 5.5);
-    }
-    _dragStartPos = null;
-  }
-
-  @override
-  void onDragUpdate(DragUpdateEvent event) {
-    if (!_isDragging) return;
-
-    _dragDistance.add(event.canvasDelta);
-    final worldDelta = event.canvasDelta / BubbleGame.worldScale;
-    body.setTransform(
-      body.position + worldDelta,
-      body.angle + event.canvasDelta.x * 0.006,
-    );
-  }
-
-  @override
   void render(Canvas canvas) {
     final sprite = _entitySprite;
     if (sprite == null) {
@@ -296,6 +271,25 @@ class BubbleBody extends BodyComponent<BubbleGame>
     }
 
     canvas.save();
+
+    if (sweepPending && !_isCollecting) {
+      // Pending sweep highlight: a soft halo behind the artwork plus a
+      // gentle enlarge so the player sees exactly what a flick will commit.
+      final glowPaint = Paint()
+        ..color = const Color(0xFF7ABF88).withValues(alpha: 0.4)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
+      canvas.drawCircle(Offset.zero, _halfSpan * 1.05, glowPaint);
+      canvas.drawCircle(
+        Offset.zero,
+        _halfSpan * 0.92,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.05
+          ..color = const Color(0xFF7ABF88).withValues(alpha: 0.85),
+      );
+      canvas.scale(1.06, 1.06);
+    }
+
     if (_isCollecting) {
       final t = (_collectionElapsed / 0.36).clamp(0.0, 1.0);
       final scale = 1 - t * 0.34;

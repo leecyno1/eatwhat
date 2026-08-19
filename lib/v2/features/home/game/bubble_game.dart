@@ -9,10 +9,12 @@ import 'package:flame/components.dart';
 import 'package:flame_forge2d/flame_forge2d.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 
 import 'bubble_body.dart';
 import 'bubble_data_manager.dart';
+import 'sweep_controller.dart';
 import 'wall_body.dart';
 
 class BubbleGame extends Forge2DGame {
@@ -59,6 +61,10 @@ class BubbleGame extends Forge2DGame {
   String? get category => _category;
   int get totalTagCount => _dataManager.totalTagCount;
   int get visibleCategoryCount => _dataManager.countForCategory(_category);
+
+  /// Every live preference entity on the stage (used by the sweep gesture
+  /// to hit-test the finger path).
+  Iterable<BubbleBody> get entities => world.children.whereType<BubbleBody>();
 
   void syncSelections({
     required Map<String, String> likedTags,
@@ -153,6 +159,56 @@ class BubbleGame extends Forge2DGame {
     selectionRevision.value += 1;
   }
 
+  /// Collects a batch of swept entities. Each entity flies to the tray with
+  /// a small stagger so a big sweep reads as a satisfying wave, but haptics
+  /// and the feedback chip fire once for the whole gesture.
+  void collectEntities(Iterable<BubbleBody> swept) {
+    final batch = swept
+        .where((entity) => !entity.isRemoved && !entity.isRejected)
+        .toList()
+      ..sort((a, b) => a.body.position.x.compareTo(b.body.position.x));
+    if (batch.isEmpty) return;
+
+    emitSwipeFeedback(label: '${batch.length} 个偏好', positive: true);
+    HapticFeedback.mediumImpact();
+
+    for (var i = 0; i < batch.length; i++) {
+      final entity = batch[i];
+      final delay = Duration(milliseconds: 45 * i);
+      Future.delayed(delay, () {
+        if (entity.isRemoved || entity.isRejected) return;
+        _spawnBurst(entity, positive: true);
+        entity.collect(withFeedback: false);
+      });
+    }
+  }
+
+  /// Blocks a batch of swept entities: all of them sink out at once with a
+  /// single heavy haptic thud.
+  void rejectEntities(Iterable<BubbleBody> swept) {
+    final batch = swept
+        .where((entity) => !entity.isRemoved && !entity.isRejected)
+        .toList();
+    if (batch.isEmpty) return;
+
+    emitSwipeFeedback(label: '${batch.length} 个不想要', positive: false);
+    HapticFeedback.heavyImpact();
+
+    for (final entity in batch) {
+      _spawnBurst(entity, positive: false);
+      entity.sweepReject();
+    }
+  }
+
+  void _spawnBurst(BubbleBody entity, {required bool positive}) {
+    if (entity.isRemoved) return;
+    world.add(SelectionBurst(
+      position: entity.body.position,
+      positive: positive,
+      accent: entity.data.primaryColor,
+    ));
+  }
+
   // Scale factor: 1 meter = 32 pixels. Box2D works best with objects
   // between 0.1 and 10 meters, and this zoom keeps the entity pile large
   // enough to fill a satisfying share of the stage.
@@ -180,6 +236,10 @@ class BubbleGame extends Forge2DGame {
     // Add "Discard" zone indicator at the bottom (Visual only)
     // We can use a HUD component for this
     add(DiscardZoneIndicator());
+
+    // Stage-level sweep gesture: drag through entities, flick up to
+    // collect, flick down to block.
+    add(SweepGestureHandler());
 
     // Set realistic gravity; entities fall and stack on the stage floor.
     world.gravity = Vector2(0, gravityY);
