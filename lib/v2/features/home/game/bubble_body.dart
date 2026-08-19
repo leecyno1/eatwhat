@@ -89,8 +89,8 @@ class BubbleBody extends BodyComponent<BubbleGame>
     final bodyDef = BodyDef(
       position: initialPosition,
       type: BodyType.dynamic,
-      angularDamping: 0.32,
-      linearDamping: 0.05,
+      angularDamping: 0.45,
+      linearDamping: 0.08,
     );
     final body = world.createBody(bodyDef);
 
@@ -114,7 +114,7 @@ class BubbleBody extends BodyComponent<BubbleGame>
         FixtureDef(shape)
           ..density = 1.0
           ..friction = 0.55
-          ..restitution = 0.06,
+          ..restitution = 0.02,
       );
       fixtureCount++;
     }
@@ -131,7 +131,7 @@ class BubbleBody extends BodyComponent<BubbleGame>
       FixtureDef(shape)
         ..density = 1.0
         ..friction = 0.55
-        ..restitution = 0.06,
+        ..restitution = 0.02,
     );
   }
 

@@ -131,6 +131,7 @@ class _AppV2State extends State<AppV2> {
           title: 'EatWhat V2',
           theme: FluidTheme.lightTheme,
           darkTheme: FluidTheme.darkTheme,
+          themeMode: ThemeMode.dark,
           routerConfig: _router,
           debugShowCheckedModeBanner: false,
         );

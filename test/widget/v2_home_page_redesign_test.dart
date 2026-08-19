@@ -33,7 +33,7 @@ void main() {
       );
       await _pumpFrames(tester);
 
-      expect(find.text('吃什么'), findsOneWidget);
+      expect(find.text('吃什么'), findsNothing);
       expect(find.text('把今天想吃的，放进餐盘'), findsNothing);
       expect(
         find.byKey(const ValueKey('meal-planning-direction-selector')),
@@ -44,10 +44,6 @@ void main() {
       expect(find.byKey(const ValueKey('filter-execution')), findsOneWidget);
       expect(
         find.byKey(const ValueKey('taste-entity-category-tabs')),
-        findsOneWidget,
-      );
-      expect(
-        find.byKey(const ValueKey('filter-strip-scroll-hint')),
         findsOneWidget,
       );
       expect(
@@ -155,7 +151,16 @@ void main() {
       );
       await _pumpFrames(tester, count: 12);
 
-      expect(find.text('习惯 · 健康向'), findsOneWidget);
+      final directionMenu2 =
+          tester.widget<PopupMenuButton<MealPlanningDirection>>(
+        find.descendant(
+          of: find.byKey(
+            const ValueKey('meal-planning-direction-selector'),
+          ),
+          matching: find.byType(PopupMenuButton<MealPlanningDirection>),
+        ),
+      );
+      expect(directionMenu2.initialValue, MealPlanningDirection.health);
 
       await tester.enterText(
         find.byKey(const ValueKey('home-requirement-input')),
@@ -196,7 +201,17 @@ void main() {
           .onSelected
           ?.call(30);
       await tester.pump();
-      expect(find.text('预算 · 30元'), findsOneWidget);
+      expect(
+        tester
+            .widget<PopupMenuButton<int>>(
+              find.descendant(
+                of: find.byKey(const ValueKey('filter-budget')),
+                matching: find.byType(PopupMenuButton<int>),
+              ),
+            )
+            .initialValue,
+        30,
+      );
       tester
           .widget<PopupMenuButton<int>>(
             find.descendant(
@@ -207,8 +222,17 @@ void main() {
           .onSelected
           ?.call(1);
       await tester.pump();
-      expect(find.text('预算 · 30元'), findsOneWidget);
-      expect(find.text('人数 · 1人'), findsOneWidget);
+      expect(
+        tester
+            .widget<PopupMenuButton<int>>(
+              find.descendant(
+                of: find.byKey(const ValueKey('filter-party')),
+                matching: find.byType(PopupMenuButton<int>),
+              ),
+            )
+            .initialValue,
+        1,
+      );
       tester
           .widget<PopupMenuButton<TasteExecutionPreference>>(
             find.descendant(
@@ -219,8 +243,28 @@ void main() {
           .onSelected
           ?.call(TasteExecutionPreference.delivery);
       await tester.pump();
-      expect(find.text('预算 · 30元'), findsOneWidget);
-      expect(find.text('人数 · 1人'), findsOneWidget);
+      expect(
+        tester
+            .widget<PopupMenuButton<int>>(
+              find.descendant(
+                of: find.byKey(const ValueKey('filter-budget')),
+                matching: find.byType(PopupMenuButton<int>),
+              ),
+            )
+            .initialValue,
+        30,
+      );
+      expect(
+        tester
+            .widget<PopupMenuButton<int>>(
+              find.descendant(
+                of: find.byKey(const ValueKey('filter-party')),
+                matching: find.byType(PopupMenuButton<int>),
+              ),
+            )
+            .initialValue,
+        1,
+      );
       await tester.tap(
         find.byKey(const ValueKey('home-start-inference-button')),
       );

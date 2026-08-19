@@ -315,12 +315,12 @@ class _SwipeFeedbackChip extends StatelessWidget {
                         begin: Alignment.topLeft,
                         end: Alignment.bottomRight,
                         colors: [
-                          Colors.white.withValues(alpha: 0.88),
-                          Colors.white.withValues(alpha: 0.58),
+                          const Color(0xFF2C2C2E).withValues(alpha: 0.94),
+                          const Color(0xFF242426).withValues(alpha: 0.86),
                         ],
                       ),
                       border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.92),
+                        color: const Color(0xFF3A3A3C),
                       ),
                       boxShadow: [
                         BoxShadow(
@@ -346,7 +346,7 @@ class _SwipeFeedbackChip extends StatelessWidget {
                               ],
                             ),
                             border: Border.all(
-                              color: Colors.white.withValues(alpha: 0.72),
+                              color: const Color(0xFF3A3A3C),
                             ),
                           ),
                           child: Icon(
@@ -366,7 +366,7 @@ class _SwipeFeedbackChip extends StatelessWidget {
                               Text(
                                 title,
                                 style: const TextStyle(
-                                  color: AppColors.textPrimary,
+                                  color: Color(0xFFEDEBE8),
                                   fontSize: 12,
                                   fontWeight: FontWeight.w800,
                                 ),
@@ -377,7 +377,7 @@ class _SwipeFeedbackChip extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  color: AppColors.textPrimary
+                                  color: const Color(0xFFEDEBE8)
                                       .withValues(alpha: 0.7),
                                   fontSize: 11,
                                   fontWeight: FontWeight.w700,
@@ -389,8 +389,8 @@ class _SwipeFeedbackChip extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
-                                  color: AppColors.textPrimary
-                                      .withValues(alpha: 0.48),
+                                  color: const Color(0xFF9B9691)
+                                      .withValues(alpha: 0.85),
                                   fontSize: 10,
                                   fontWeight: FontWeight.w600,
                                 ),

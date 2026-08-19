@@ -16,7 +16,7 @@ import 'bubble_data_manager.dart';
 import 'wall_body.dart';
 
 class BubbleGame extends Forge2DGame {
-  static const int visibleBubbleCount = 32;
+  static const int visibleBubbleCount = 44;
 
   /// Realistic downward gravity in world units so entities pile up and
   /// settle like real objects instead of floating like bubbles.
@@ -205,8 +205,17 @@ class BubbleGame extends Forge2DGame {
           // Tilt the gravity vector so piled entities roll around naturally.
           final targetX = (-event.x * 4.4).clamp(-5.6, 5.6);
           final targetY = (gravityY + event.y * 1.5).clamp(4.0, 15.0);
-          _gravityX += (targetX - _gravityX) * 0.14;
-          _gravityY += (targetY - _gravityY) * 0.14;
+          final nextX = _gravityX + (targetX - _gravityX) * 0.14;
+          final nextY = _gravityY + (targetY - _gravityY) * 0.14;
+          // Only poke the world when gravity actually shifts: rewriting the
+          // vector on every sensor tick keeps stacked bodies awake and
+          // makes them jitter forever.
+          if ((nextX - _gravityX).abs() < 0.02 &&
+              (nextY - _gravityY).abs() < 0.02) {
+            return;
+          }
+          _gravityX = nextX;
+          _gravityY = nextY;
           world.gravity = Vector2(_gravityX, _gravityY);
         },
         onError: (error) {
@@ -400,8 +409,8 @@ class DiscardZoneIndicator extends PositionComponent
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          const Color(0xFFEAF5E7).withOpacity(0.0),
-          const Color(0xFFDCEED8).withOpacity(0.72),
+          const Color(0xFF1C1C1E).withOpacity(0.0),
+          const Color(0xFF101012).withOpacity(0.72),
         ],
         stops: const [0.0, 1.0],
       ).createShader(Rect.fromLTWH(0, height - 150, width, 150));
@@ -413,7 +422,7 @@ class DiscardZoneIndicator extends PositionComponent
       text: TextSpan(
         text: '下滑拉黑',
         style: TextStyle(
-          color: const Color(0xFF315A3B).withOpacity(0.66),
+          color: const Color(0xFF9B9691).withOpacity(0.66),
           fontSize: 12,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.4,

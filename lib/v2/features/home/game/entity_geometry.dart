@@ -165,7 +165,7 @@ class EntityGeometry {
     final contour = <Vector2>[
       for (final point in boundary) Vector2(point.x * stride, point.y * stride),
     ];
-    final simplified = simplifyRing(contour, epsilon: 2.0 * stride);
+    final simplified = simplifyRing(contour, epsilon: 2.6 * stride);
     if (simplified.length < 3) return null;
 
     final parts = decomposeContour(simplified);
@@ -421,7 +421,7 @@ List<List<Vector2>> decomposeContour(List<Vector2> contour) {
   }
 
   final deficit = (1.0 - convexity).clamp(0.0, 1.0);
-  final slabCount = (2 + deficit * 6).round().clamp(2, 5);
+  final slabCount = (2 + deficit * 6).round().clamp(2, 4);
   final parts = <List<Vector2>>[];
   for (var i = 0; i < slabCount; i++) {
     final x0 = minX + (maxX - minX) * i / slabCount;
