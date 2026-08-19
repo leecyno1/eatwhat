@@ -1,6 +1,6 @@
 // ignore_for_file: deprecated_member_use, override_on_non_overriding_member
 
-import 'dart:async';
+import 'dart:async' as async;
 import 'dart:io';
 import 'dart:math';
 
@@ -18,7 +18,14 @@ import 'sweep_controller.dart';
 import 'wall_body.dart';
 
 class BubbleGame extends Forge2DGame {
-  static const int visibleBubbleCount = 44;
+  /// Entities on stage at any time. The stage starts full and a light
+  /// replenish stream drops new ones in from the top as entities leave, so
+  /// the pile always has room to breathe and fresh picks always land on
+  /// top where they can be swept.
+  static const int visibleBubbleCount = 30;
+
+  /// How often the replenish stream checks the population.
+  static const Duration _replenishInterval = Duration(milliseconds: 2500);
 
   /// Realistic downward gravity in world units so entities pile up and
   /// settle like real objects instead of floating like bubbles.
@@ -42,7 +49,8 @@ class BubbleGame extends Forge2DGame {
   late final BubbleDataManager _dataManager;
   final V2PreferenceFeedbackService _feedback =
       V2PreferenceFeedbackService.instance;
-  StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
+  async.StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
+  async.Timer? _replenishTimer;
   final ValueNotifier<int> selectionCount = ValueNotifier(0);
   final ValueNotifier<int> selectionRevision = ValueNotifier(0);
   final ValueNotifier<SwipeFeedbackEvent?> swipeFeedback =
@@ -133,7 +141,7 @@ class BubbleGame extends Forge2DGame {
       selectedTagIds.add(bubble.data.id);
     }
     selectedTagIdToLabel[bubble.data.id] = bubble.text;
-    unawaited(_feedback.recordPositiveTag(bubble.data.id, delta: 2));
+    async.unawaited(_feedback.recordPositiveTag(bubble.data.id, delta: 2));
     _notifySelectionChanged();
   }
 
@@ -150,7 +158,7 @@ class BubbleGame extends Forge2DGame {
       blockedTagIds.add(bubble.data.id);
     }
     blockedTagIdToLabel[bubble.data.id] = bubble.text;
-    unawaited(_feedback.recordNegativeTag(bubble.data.id, delta: 2));
+    async.unawaited(_feedback.recordNegativeTag(bubble.data.id, delta: 2));
     _notifySelectionChanged();
   }
 
@@ -244,6 +252,16 @@ class BubbleGame extends Forge2DGame {
     // Set realistic gravity; entities fall and stack on the stage floor.
     world.gravity = Vector2(0, gravityY);
     _initAccelerometer();
+
+    // Replenish stream: keep the population topped up with a gentle drop
+    // from the top every few seconds instead of dumping everything at once.
+    _replenishTimer = async.Timer.periodic(_replenishInterval, (_) {
+      if (!_isLoaded) return;
+      final population = entities.length;
+      if (population < visibleBubbleCount) {
+        _addBubbles(count: 1, replenish: true);
+      }
+    });
   }
 
   void _initAccelerometer() {
@@ -289,7 +307,7 @@ class BubbleGame extends Forge2DGame {
     }
   }
 
-  void _addBubbles({int count = visibleBubbleCount}) {
+  void _addBubbles({int count = visibleBubbleCount, bool replenish = false}) {
     final rand = Random();
     final existingIds = world.children
         .whereType<BubbleBody>()
@@ -310,10 +328,13 @@ class BubbleGame extends Forge2DGame {
     final placements = <({Vector2 center, double span})>[];
 
     // Scatter entities across the upper region so they rain down and settle
-    // into a natural pile instead of hovering like bubbles.
+    // into a natural pile instead of hovering like bubbles. Replenished
+    // entities spawn from a narrow band at the very top and drift in with
+    // a little sideways velocity so they visibly fall onto the pile.
     final spawnBandTop = 1.1;
-    final spawnBandHeight =
-        max(1.0, visibleHeight * 0.42 - spawnBandTop - 2.4);
+    final spawnBandHeight = replenish
+        ? 0.4
+        : max(1.0, visibleHeight * 0.42 - spawnBandTop - 2.4);
 
     for (var i = 0; i < bubbles.length; i++) {
       final data = bubbles[i];
@@ -363,17 +384,20 @@ class BubbleGame extends Forge2DGame {
         data: data,
         targetLongSide: span,
         initialPosition: chosen,
+        initialHorizontalImpulse:
+            replenish ? (rand.nextDouble() - 0.5) * 2.4 : 0,
       ));
     }
   }
 
   void handleBubbleExplosion(BubbleBody bubble) {
+    // The replenish stream tops the population back up; no instant refill
+    // here so a batch collect reads as a visible dip in the pile.
     if (bubble.parent != null) bubble.removeFromParent();
-    _addBubbles(count: 1);
   }
 
   void handleBubbleRejection(BubbleBody bubble) {
-    _addBubbles(count: 1);
+    // Handled by the replenish stream (see [_replenishTimer]).
   }
 
   void setCategory(String? category) {
@@ -429,12 +453,14 @@ class BubbleGame extends Forge2DGame {
   @override
   void onRemove() {
     _accelerometerSubscription?.cancel();
+    _replenishTimer?.cancel();
     super.onRemove();
   }
 
   @override
   void onDispose() {
     _accelerometerSubscription?.cancel();
+    _replenishTimer?.cancel();
     selectionCount.dispose();
     selectionRevision.dispose();
     swipeFeedback.dispose();
