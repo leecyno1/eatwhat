@@ -184,7 +184,10 @@ class V2Phase2RecommendationService {
         recalledCount: localCandidates.length,
         finalRecommendations: finalRecommendations,
         aiReasonsByRecipeId: reasons,
-        aiSummary: localResult.summary,
+        // Say it out loud when the LLM never ran: the recommendation is a
+        // pure local pick, not an AI one, so nobody mistakes speed for
+        // intelligence.
+        aiSummary: '本地精选：由口味档案与本地菜谱库直接排序，AI 点菜师未启用。',
         isEstimated: false,
         resolutionStatus: RecommendationResolutionStatus.dbResolved,
         primarySource: 'unified_db',

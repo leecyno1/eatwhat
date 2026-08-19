@@ -630,25 +630,31 @@ class GenerationService {
     }).join('\n');
 
     final requirementText = (customRequirement?.trim().isNotEmpty ?? false)
-        ? '用户额外要求：${customRequirement!.trim()}\n\n'
+        ? '【用户补充要求】${customRequirement!.trim()}\n\n'
         : '';
 
-    final prompt = '用户本轮偏好标签：${cleanedTags.join('、')}\n\n'
+    final prompt = '【用户本轮偏好标签】${cleanedTags.join('、')}\n\n'
         '$requirementText'
-        '候选菜品（必须只从此列表中选择，不得编造新的 dishId）：\n'
+        '【候选菜品】（必须只从此列表中选择，不得编造新的 dishId）：\n'
         '$candidatesText\n\n'
-        '请从候选菜品中挑选最适合的 $limit 道，并给出每道菜的理由。\n'
-        '请严格按 JSON 输出（不要输出任何多余文字）：\n'
+        '【任务】你是私人点菜师，从候选中挑 $limit 道组成一桌：'
+        '既要单道匹配偏好，更要整桌成立——口味有层次、荤素主食有结构、场景对得上。\n'
+        '请严格按 JSON 输出（不要任何多余文字）：\n'
         '{\n'
         '  \"recommendations\": [\n'
-        '    {\"dishId\": \"123\", \"reason\": \"为什么适合我\", \"confidence\": 0.86}\n'
+        '    {\"dishId\": \"123\", \"reason\": \"一句话说明入选理由，具体到口味/食材/场景（20字内）\", \"confidence\": 0.86}\n'
         '  ],\n'
-        '  \"summary\": \"一句话总结（可选）\"\n'
+        '  \"summary\": \"一句话解释这组菜为什么搭在一起：口味层次、荤素结构、场景契合（40字内）\"\n'
         '}';
 
     try {
       final jsonMap = await _chatJson(
-        system: '你是一个严谨的美食推荐师。只允许从候选列表中选择 dishId；只输出 JSON；理由要短、直接、有生活感；用中文。',
+        system: '你是《吃什么》应用的私人点菜师，任务是替用户组一桌好菜。\n'
+            '规则：\n'
+            '1. 只能从候选列表中选择 dishId，禁止编造。\n'
+            '2. 每道菜的 reason 一句话、20 字内，必须具体（点名口味、食材或场景），禁止空话（如“很美味”“适合您”）。\n'
+            '3. summary 解释整组搭配逻辑（口味层次/荤素主食结构/场景契合），一句话 40 字内。\n'
+            '4. 只输出 JSON，用中文。',
         user: prompt,
         temperature: 0.4,
       );
