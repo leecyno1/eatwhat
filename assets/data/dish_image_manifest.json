@@ -4250,6 +4250,306 @@
       "sourceProject": "HowToCook",
       "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/vegetable_dish/鸡蛋羹/鸡蛋羹.jpg",
       "sourceRecipeName": "鸡蛋羹"
+    },
+    {
+      "dishId": "18",
+      "dishName": "葱油桂鱼",
+      "aliases": [
+        "葱油桂鱼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-18-howtocook-real2_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-18-howtocook-real2_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "howtocook_real",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/aquatic/葱油桂鱼/10.jpg",
+      "ingredients": [
+        "桂鱼",
+        "小葱",
+        "小米辣",
+        "姜",
+        "料酒",
+        "植物油"
+      ],
+      "cuisine": "水产"
+    },
+    {
+      "dishId": "81",
+      "dishName": "冰粉",
+      "aliases": [
+        "冰粉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-81-howtocook-real2_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-81-howtocook-real2_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "howtocook_real",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/drink/冰粉/石凉粉(冰粉)成品1.jpg",
+      "ingredients": [
+        "冰粉籽 200g",
+        "过滤豆浆渣的纱布一块",
+        "凉白开 2000g",
+        "薄荷汁 10ml / 薄荷粉 10g",
+        "一次性透明塑料杯",
+        "遇水发光冰块"
+      ],
+      "cuisine": "饮品"
+    },
+    {
+      "dishId": "174",
+      "dishName": "血浆鸭",
+      "aliases": [
+        "血浆鸭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-174-howtocook-real2_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-174-howtocook-real2_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "howtocook_real",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/血浆鸭/血浆鸭(微辣).jpg",
+      "ingredients": [
+        "鲜仔鸭肉",
+        "鲜鸭血",
+        "姜",
+        "蒜仔",
+        "葱",
+        "辣椒"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "185",
+      "dishName": "青椒土豆炒肉",
+      "aliases": [
+        "青椒土豆炒肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-185-howtocook-real2_1280.jpg",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-185-howtocook-real2_768.jpg",
+      "styleTag": "howtocook_real_photo",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "howtocook_real",
+      "sourceProject": "HowToCook",
+      "sourcePath": "/Volumes/PSSD/Projects/eatwhat/HowToCook/dishes/meat_dish/青椒土豆炒肉/青椒土豆炒肉.jpg",
+      "ingredients": [
+        "青椒",
+        "土豆",
+        "猪肉",
+        "葱",
+        "姜",
+        "蒜"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "1",
+      "dishName": "咖喱炒蟹",
+      "aliases": [
+        "咖喱炒蟹"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-1-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-1-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "青蟹",
+        "咖喱块",
+        "洋葱",
+        "椰浆",
+        "鸡蛋",
+        "生粉"
+      ],
+      "cuisine": "水产"
+    },
+    {
+      "dishId": "108",
+      "dishName": "咕噜肉",
+      "aliases": [
+        "咕噜肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-108-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-108-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "梅头猪肉",
+        "青椒",
+        "罐头菠萝片",
+        "盐",
+        "茄汁",
+        "白醋"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "116",
+      "dishName": "姜葱捞鸡",
+      "aliases": [
+        "姜葱捞鸡"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-116-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-116-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "鸡腿肉",
+        "盐焗鸡粉",
+        "葱"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "46",
+      "dishName": "蒸水蛋",
+      "aliases": [
+        "蒸水蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-46-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-46-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "新鲜鸡蛋",
+        "热水"
+      ],
+      "cuisine": "早餐"
+    },
+    {
+      "dishId": "49",
+      "dishName": "金枪鱼酱三明治",
+      "aliases": [
+        "金枪鱼酱三明治"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-49-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-49-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "水浸金枪鱼罐头",
+        "方形吐司片",
+        "蛋黄酱",
+        "俄式酸黄瓜汁",
+        "芝士片",
+        "火腿片"
+      ],
+      "cuisine": "早餐"
+    },
+    {
+      "dishId": "57",
+      "dishName": "葱油",
+      "aliases": [
+        "葱油"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-57-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-57-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "油",
+        "葱",
+        "姜",
+        "洋葱",
+        "料酒",
+        "香菜"
+      ],
+      "cuisine": "调料"
+    },
+    {
+      "dishId": "58",
+      "dishName": "蒜香酱油",
+      "aliases": [
+        "蒜香酱油"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-58-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-58-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "蒜头",
+        "白芝麻",
+        "花生油",
+        "酱油",
+        "蘸料碟"
+      ],
+      "cuisine": "调料"
+    },
+    {
+      "dishId": "79",
+      "dishName": "Mojito莫吉托",
+      "aliases": [
+        "Mojito莫吉托"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-79-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-79-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "打碎的冰块",
+        "冰镇苏打水",
+        "压汁器",
+        "海波杯",
+        "研杵"
+      ],
+      "cuisine": "饮品"
+    },
+    {
+      "dishId": "82",
+      "dishName": "可乐桶",
+      "aliases": [
+        "可乐桶"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-82-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-82-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "波旁威士忌",
+        "可口可乐",
+        "冰块",
+        "柠檬",
+        "手动压汁器"
+      ],
+      "cuisine": "饮品"
+    },
+    {
+      "dishId": "85",
+      "dishName": "杨枝甘露",
+      "aliases": [
+        "杨枝甘露"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-85-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-85-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "杯子",
+        "牛奶",
+        "冰块",
+        "调理机/果汁机"
+      ],
+      "cuisine": "饮品"
     }
   ]
 }

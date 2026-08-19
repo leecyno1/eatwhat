@@ -221,7 +221,7 @@ class EnvConfig {
 
   // AI模型配置
   static String get aiModelName =>
-      _readEnv('AI_MODEL_NAME', fallback: 'Qwen/Qwen3-30B-A3B');
+      _readEnv('AI_MODEL_NAME', fallback: 'MiniMax-M2.7');
 
   static int get aiMaxTokens =>
       int.tryParse(_readEnv('AI_MAX_TOKENS', fallback: '2048')) ?? 2048;
@@ -239,7 +239,7 @@ class EnvConfig {
       int.tryParse(_readEnv('AI_MAX_RETRIES', fallback: '3')) ?? 3;
 
   static String get aiFallbackModel =>
-      _readEnv('AI_FALLBACK_MODEL', fallback: 'gpt-3.5-turbo');
+      _readEnv('AI_FALLBACK_MODEL', fallback: 'MiniMax-M2.7');
 
   static String get aiImageModelName =>
       _readEnv('AI_IMAGE_MODEL_NAME').isNotEmpty
@@ -255,6 +255,16 @@ class EnvConfig {
 
   static String get minimaxImageModel =>
       _readEnv('MINIMAX_IMAGE_MODEL', fallback: 'image-01');
+
+  /// MiniMax OpenAI-compatible chat endpoint used for all text generation
+  /// (recommendation refinement, intros, summaries).
+  static String get minimaxChatApiUrl => _readEnv(
+        'MINIMAX_CHAT_API_URL',
+        fallback: 'https://api.minimaxi.com/v1',
+      );
+
+  static String get minimaxChatModel =>
+      _readEnv('MINIMAX_CHAT_MODEL', fallback: 'MiniMax-M2.7');
 
   static String get prebuiltImageIndexUrl =>
       _readEnv('PREBUILT_IMAGE_INDEX_URL');

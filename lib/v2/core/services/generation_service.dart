@@ -19,9 +19,9 @@ class GenerationService {
   final Dio _dio = Dio();
   final V2AiCacheService _cache = V2AiCacheService.instance;
 
-  String get _baseUrl => EnvConfig.siliconFlowApiUrl;
-  String get _apiKey => EnvConfig.siliconFlowApiKey;
-  String get _textModel => EnvConfig.aiModelName;
+  String get _baseUrl => EnvConfig.minimaxChatApiUrl;
+  String get _apiKey => EnvConfig.minimaxApiKey;
+  String get _textModel => EnvConfig.minimaxChatModel;
 
   String get _imageModel => EnvConfig.aiImageModelName;
   String get _miniMaxImageModel => EnvConfig.minimaxImageModel.trim().isNotEmpty
@@ -39,7 +39,9 @@ class GenerationService {
   double get _temperature => EnvConfig.aiTemperature;
 
   bool get isConfigured => _apiKey.trim().isNotEmpty;
-  bool get _isMiniMaxTextApi => _baseUrl.contains('api.minimaxi.com');
+  bool get _isMiniMaxTextApi =>
+      _baseUrl.contains('api.minimaxi.com') ||
+      _baseUrl.contains('api.minimax.io');
 
   Options _options() {
     return Options(
@@ -69,7 +71,7 @@ class GenerationService {
     double? temperature,
   }) async {
     if (!isConfigured) {
-      throw StateError('AI 未配置：缺少 SILICONFLOW_API_KEY');
+      throw StateError('AI 未配置：缺少 MINIMAX_API_KEY');
     }
 
     Object? lastError;
