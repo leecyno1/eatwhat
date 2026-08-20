@@ -644,7 +644,7 @@ class GenerationService {
         '请严格按 JSON 输出（不要任何多余文字）：\n'
         '{\n'
         '  \"recommendations\": [\n'
-        '    {\"dishId\": \"123\", \"reason\": \"一句话说明入选理由，具体到口味/食材/场景（20字内）\", \"confidence\": 0.86}\n'
+        '    {\"dishId\": \"123\", \"dishName\": \"菜品名\", \"reason\": \"一句话说明入选理由，具体到口味/食材/场景（20字内）\", \"confidence\": 0.86}\n'
         '  ],\n'
         '  \"summary\": \"一句话解释这组菜为什么搭在一起：口味层次、荤素结构、场景契合（40字内）\"\n'
         '}';
@@ -656,7 +656,8 @@ class GenerationService {
             '1. 只能从候选列表中选择 dishId，禁止编造。\n'
             '2. 每道菜的 reason 一句话、20 字内，必须具体（点名口味、食材或场景），禁止空话（如“很美味”“适合您”）。\n'
             '3. summary 解释整组搭配逻辑（口味层次/荤素主食结构/场景契合），一句话 40 字内。\n'
-            '4. 只输出 JSON，用中文。',
+            '4. dishId 与 dishName 必须成对输出且指向同一道候选菜。\n'
+            '5. 只输出 JSON，用中文。',
         user: prompt,
         temperature: 0.4,
       );
@@ -678,16 +679,39 @@ class GenerationService {
       final reasonsById = <String, String>{};
 
       String? tryResolveId(Map<String, dynamic> item) {
-        final id = item['dishId'] ?? item['dish_id'] ?? item['id'];
-        if (id != null) {
-          final s = id.toString().trim();
-          if (s.isNotEmpty) return s;
+        final rawId = item['dishId'] ?? item['dish_id'] ?? item['id'];
+        String? id;
+        if (rawId != null) {
+          final s = rawId.toString().trim();
+          if (s.isNotEmpty) id = s;
         }
 
-        final name = (item['name']?.toString() ?? '').trim();
+        final name = ((item['dishName'] ?? item['name'])?.toString() ?? '')
+            .trim();
+
+        if (id != null && name.isNotEmpty) {
+          // Dual-key cross-check: the echoed dishName must agree with the
+          // candidate the dishId points at, so a hallucinated or swapped
+          // id can never surface a mismatched dish (and its image).
+          final agreeing = cleanedCandidates
+              .where((c) => _dishNameMatches(c.name, name))
+              .map((c) => c.id)
+              .toSet();
+          if (agreeing.isNotEmpty && !agreeing.contains(id)) {
+            // id and name disagree: trust the name only when unique.
+            return agreeing.length == 1 ? agreeing.first : null;
+          }
+        }
+        if (id != null) return id;
+
         if (name.isEmpty) return null;
-        final match = cleanedCandidates.where((c) => c.name == name).toList();
-        if (match.isNotEmpty) return match.first.id;
+        final match =
+            cleanedCandidates.where((c) => _dishNameMatches(c.name, name)).toList();
+        if (match.length == 1) return match.first.id;
+        if (match.isNotEmpty) {
+          final exact = match.where((c) => c.name == name).toList();
+          if (exact.isNotEmpty) return exact.first.id;
+        }
         return null;
       }
 
@@ -727,6 +751,20 @@ class GenerationService {
       await _cache.setJson(cacheKey, fallback.toJson());
       return fallback;
     }
+  }
+
+  /// Fuzzy dish-name agreement used for the dishId/dishName dual-key
+  /// cross-check: exact after normalization, or one containing the other
+  /// (the model often echoes a shortened name like 麻婆豆腐 vs 麻婆豆腐(家常)).
+  static bool _dishNameMatches(String candidateName, String echoedName) {
+    String normalize(String value) => value
+        .trim()
+        .toLowerCase()
+        .replaceAll(RegExp(r'[\s\-_·•,，。.!！？?、（）()：:]'), '');
+    final a = normalize(candidateName);
+    final b = normalize(echoedName);
+    if (a.isEmpty || b.isEmpty) return false;
+    return a == b || a.contains(b) || b.contains(a);
   }
 
   Future<NutritionAnalysis> getNutritionAnalysis(RecipeModel recipe) async {
