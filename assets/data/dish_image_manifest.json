@@ -5372,6 +5372,428 @@
         "方糖"
       ],
       "cuisine": "饮品"
+    },
+    {
+      "dishId": "119",
+      "dishName": "小炒肉",
+      "aliases": [
+        "小炒肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-119-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-119-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "五花肉",
+        "朝天椒",
+        "小米椒",
+        "豆豉",
+        "豆瓣酱",
+        "老抽"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "122",
+      "dishName": "小米辣炒肉",
+      "aliases": [
+        "小米辣炒肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-122-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-122-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "小米辣",
+        "花生油",
+        "五花肉/瘦肉",
+        "盐",
+        "生抽",
+        "蚝油"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "123",
+      "dishName": "小酥肉",
+      "aliases": [
+        "小酥肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-123-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-123-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "去皮猪肉",
+        "植物油",
+        "老姜",
+        "小葱",
+        "料酒",
+        "盐"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "13",
+      "dishName": "红烧鱼",
+      "aliases": [
+        "红烧鱼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-13-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-13-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "姜、蒜瓣、干辣椒",
+        "油、盐、料酒、醋、酱油、白砂糖",
+        "鱼",
+        "蚝油",
+        "葱",
+        "香菜"
+      ],
+      "cuisine": "水产"
+    },
+    {
+      "dishId": "14",
+      "dishName": "红烧鱼头",
+      "aliases": [
+        "红烧鱼头"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-14-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-14-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "注",
+        "大葱、姜、大蒜、香菜、美人椒",
+        "油、盐、鸡精、生抽、老抽、陈醋、黑胡椒粉、料酒",
+        "八角、干辣椒",
+        "鱼头一个"
+      ],
+      "cuisine": "水产"
+    },
+    {
+      "dishId": "15",
+      "dishName": "红烧鲤鱼",
+      "aliases": [
+        "红烧鲤鱼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-15-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-15-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "大葱、姜、大蒜、干辣椒",
+        "油、盐、生抽、老抽、陈醋、蚝油、料酒、白糖",
+        "鲤鱼、五花肉"
+      ],
+      "cuisine": "水产"
+    },
+    {
+      "dishId": "208",
+      "dishName": "速冻馄饨",
+      "aliases": [
+        "速冻馄饨"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-208-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-208-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "未过期的一袋速冻馄饨",
+        "盐",
+        "鸡精",
+        "胡椒粉",
+        "香油",
+        "香菜 1 根"
+      ],
+      "cuisine": "半成品加工"
+    },
+    {
+      "dishId": "217",
+      "dishName": "番茄牛肉蛋花汤",
+      "aliases": [
+        "番茄牛肉蛋花汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-217-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-217-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "牛肉",
+        "番茄",
+        "鸡蛋",
+        "葱、姜、蒜",
+        "盐",
+        "胡椒粉"
+      ],
+      "cuisine": "汤羹"
+    },
+    {
+      "dishId": "218",
+      "dishName": "皮蛋瘦肉粥",
+      "aliases": [
+        "皮蛋瘦肉粥"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-218-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-218-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "饮用水",
+        "皮蛋",
+        "瘦肉",
+        "大米",
+        "小葱",
+        "香菜"
+      ],
+      "cuisine": "汤羹"
+    },
+    {
+      "dishId": "219",
+      "dishName": "米粥",
+      "aliases": [
+        "米粥"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-219-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-219-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "米",
+        "水",
+        "植物油"
+      ],
+      "cuisine": "汤羹"
+    },
+    {
+      "dishId": "242",
+      "dishName": "汤面",
+      "aliases": [
+        "汤面"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-242-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-242-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "面食材料",
+        "菜类材料",
+        "牛羊鱼虾等肉类",
+        "鸡蛋鸭蛋鹅蛋鸵鸟蛋等蛋类",
+        "豆块豆筋豆腐皮等豆制品类",
+        "生菜菠菜油麦菜"
+      ],
+      "cuisine": "主食"
+    },
+    {
+      "dishId": "246",
+      "dishName": "炒年糕",
+      "aliases": [
+        "炒年糕"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-246-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-246-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "年糕/白粿",
+        "葱"
+      ],
+      "cuisine": "主食"
+    },
+    {
+      "dishId": "248",
+      "dishName": "炒方便面",
+      "aliases": [
+        "炒方便面"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-248-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-248-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "方便面",
+        "盐",
+        "鸡蛋",
+        "火腿肠"
+      ],
+      "cuisine": "主食"
+    },
+    {
+      "dishId": "292",
+      "dishName": "家常日本豆腐",
+      "aliases": [
+        "家常日本豆腐"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-292-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-292-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "日本豆腐",
+        "青椒",
+        "胡萝卜",
+        "火腿肠",
+        "黑木耳",
+        "洋葱"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "297",
+      "dishName": "松仁玉米",
+      "aliases": [
+        "松仁玉米"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-297-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-297-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "玉米粒",
+        "熟松子仁",
+        "胡萝卜",
+        "食用油",
+        "白砂糖",
+        "盐"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "300",
+      "dishName": "水油焖蔬菜",
+      "aliases": [
+        "水油焖蔬菜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-300-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-300-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "食用油",
+        "盐",
+        "蚝油",
+        "叶菜类蔬菜"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "32",
+      "dishName": "微波炉蒸蛋",
+      "aliases": [
+        "微波炉蒸蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-32-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-32-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "鸡蛋",
+        "温水或高汤",
+        "食盐",
+        "生抽",
+        "香油"
+      ],
+      "cuisine": "早餐"
+    },
+    {
+      "dishId": "33",
+      "dishName": "微波炉蛋糕",
+      "aliases": [
+        "微波炉蛋糕"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-33-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-33-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "黄油",
+        "面粉",
+        "泡打粉",
+        "鸡蛋"
+      ],
+      "cuisine": "早餐"
+    },
+    {
+      "dishId": "34",
+      "dishName": "手抓饼",
+      "aliases": [
+        "手抓饼"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-34-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-34-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "普通面粉",
+        "开水",
+        "冷水",
+        "食用油",
+        "盐",
+        "鸡蛋"
+      ],
+      "cuisine": "早餐"
+    },
+    {
+      "dishId": "98",
+      "dishName": "长岛冰茶",
+      "aliases": [
+        "长岛冰茶"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-98-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-98-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "金酒",
+        "龙舌兰酒",
+        "伏特加",
+        "白朗姆酒",
+        "橙味甜酒",
+        "柠檬"
+      ],
+      "cuisine": "饮品"
     }
   ]
 }
