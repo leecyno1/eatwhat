@@ -33,6 +33,7 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
     required this.targetLongSide,
     required this.initialPosition,
     required this.layerIndex,
+    this.isGolden = false,
     this.initialHorizontalImpulse = 0,
   });
 
@@ -47,6 +48,11 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   /// (front). Entities only collide with the walls and with entities on
   /// the same layer; other layers overlap visually.
   final int layerIndex;
+
+  /// A rare golden entity (see [BubbleGame.goldenEntityChance]). Pulses
+  /// with a gold halo and weighs the preference more heavily when
+  /// collected — buried treasure hidden in the pot.
+  final bool isGolden;
 
   /// Small random sideways velocity for replenished entities so they drift
   /// naturally as they fall from the top.
@@ -84,6 +90,9 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   // pile reads as alive rather than a frozen screenshot.
   double _nextWobbleIn = _randomIdleWobbleDelay();
   static double _randomIdleWobbleDelay() => 3 + Random().nextDouble() * 6;
+
+  // Golden halo breathing phase.
+  double _goldenPhase = Random().nextDouble() * 6.28;
 
   String get text => data.label;
   double get _halfSpan => targetLongSide * 0.5;
@@ -214,6 +223,10 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   void update(double dt) {
     super.update(dt);
 
+    if (isGolden) {
+      _goldenPhase = (_goldenPhase + dt * 3.2) % (2 * pi);
+    }
+
     // Spring simulation for the tap squash effect.
     const k = 150.0;
     const damping = 10.0;
@@ -319,21 +332,30 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
     _jellyVelocity = -3.0;
   }
 
-  /// Collects this entity into the taste tray.
+  /// Collects this entity into the taste tray. Golden entities land with a
+  /// heavier haptic and a rare-find chip so the treasure moment is felt.
   void collect({bool withFeedback = true}) {
     game.spawnSelectionBurst(this, positive: true);
     game.toggleSelection(this);
-    game.emitSwipeFeedback(label: text, positive: true);
+    game.emitSwipeFeedback(
+      label: isGolden ? '✨ 稀有偏好 · $text' : text,
+      positive: true,
+    );
     _collectToTray();
 
     if (withFeedback) {
       _jellyVelocity = 9.0;
-      HapticFeedback.mediumImpact();
+      if (isGolden) {
+        HapticFeedback.heavyImpact();
+      } else {
+        HapticFeedback.mediumImpact();
+      }
       if (!kIsWeb &&
           (defaultTargetPlatform == TargetPlatform.android ||
               defaultTargetPlatform == TargetPlatform.iOS)) {
         unawaited(
-          Vibration.vibrate(duration: 40).catchError((Object _) {}),
+          Vibration.vibrate(duration: isGolden ? 90 : 40)
+              .catchError((Object _) {}),
         );
       }
     } else {
@@ -395,6 +417,26 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
     }
 
     canvas.save();
+
+    if (isGolden && !_isCollecting) {
+      // Golden rare: a breathing gold halo marks the buried treasure,
+      // visible even through the pot's overlapping layers.
+      final pulse = 0.5 + 0.5 * sin(_goldenPhase);
+      final haloRadius = _halfSpan * (1.08 + pulse * 0.16);
+      final haloPaint = Paint()
+        ..color = const Color(0xFFFFD54F).withValues(alpha: 0.34 + pulse * 0.2)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
+      canvas.drawCircle(Offset.zero, haloRadius, haloPaint);
+      canvas.drawCircle(
+        Offset.zero,
+        _halfSpan * 0.96,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.06
+          ..color = const Color(0xFFFFD54F)
+            .withValues(alpha: 0.55 + pulse * 0.4),
+      );
+    }
 
     if (isGrabbed) {
       // Held by the finger: a stronger halo, a bigger lift, and a zone

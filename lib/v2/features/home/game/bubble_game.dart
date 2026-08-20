@@ -28,6 +28,17 @@ class BubbleGame extends Forge2DGame {
   /// overlapped.
   static const int visibleBubbleCount = 60;
 
+  /// Chance a freshly dropped entity is a golden rare. Golden entities
+  /// pulse with a gold halo, and collecting one weighs the preference much
+  /// more heavily — the buried-treasure hook that makes digging through the
+  /// pot (and shaking it) worth it.
+  static const double goldenEntityChance = 1 / 15;
+
+  /// How much stronger a golden collect/block weighs against the normal
+  /// per-tag delta when recording preference feedback.
+  static const int goldenFeedbackDelta = 5;
+  static const int normalFeedbackDelta = 2;
+
   /// Entities dropped in each opening wave.
   static const int _initialDropWaveSize = 12;
 
@@ -167,7 +178,12 @@ class BubbleGame extends Forge2DGame {
       selectedTagIds.add(bubble.data.id);
     }
     selectedTagIdToLabel[bubble.data.id] = bubble.text;
-    async.unawaited(_feedback.recordPositiveTag(bubble.data.id, delta: 2));
+    async.unawaited(
+      _feedback.recordPositiveTag(
+        bubble.data.id,
+        delta: bubble.isGolden ? goldenFeedbackDelta : normalFeedbackDelta,
+      ),
+    );
     _notifySelectionChanged();
   }
 
@@ -184,7 +200,12 @@ class BubbleGame extends Forge2DGame {
       blockedTagIds.add(bubble.data.id);
     }
     blockedTagIdToLabel[bubble.data.id] = bubble.text;
-    async.unawaited(_feedback.recordNegativeTag(bubble.data.id, delta: 2));
+    async.unawaited(
+      _feedback.recordNegativeTag(
+        bubble.data.id,
+        delta: bubble.isGolden ? goldenFeedbackDelta : normalFeedbackDelta,
+      ),
+    );
     _notifySelectionChanged();
   }
 
@@ -194,13 +215,15 @@ class BubbleGame extends Forge2DGame {
   }
 
   /// Splash of particles at an entity's position, spawned by both taps and
-  /// grabs so every collect/block lands with the same visual punch.
+  /// grabs so every collect/block lands with the same visual punch. Golden
+  /// entities burst into a shower of gold.
   void spawnSelectionBurst(BubbleBody entity, {required bool positive}) {
     if (entity.isRemoved) return;
     world.add(SelectionBurst(
       position: entity.body.position,
       positive: positive,
       accent: entity.data.primaryColor,
+      golden: entity.isGolden,
     ));
   }
 
@@ -413,6 +436,7 @@ class BubbleGame extends Forge2DGame {
         targetLongSide: span,
         initialPosition: chosen,
         layerIndex: _nextSpawnLayer++ % potLayerCount,
+        isGolden: rand.nextDouble() < goldenEntityChance,
         initialHorizontalImpulse:
             replenish ? (rand.nextDouble() - 0.5) * 2.4 : 0,
       ));

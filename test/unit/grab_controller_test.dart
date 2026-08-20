@@ -89,5 +89,13 @@ void main() {
       expect(BubbleGame.visibleBubbleCount, 60);
       expect(BubbleGame.visibleBubbleCount % BubbleGame.potLayerCount, 0);
     });
+
+    test('稀有实体概率与偏好加成配置合理', () {
+      // Golden rares stay rare but present: at 60 entities the expected
+      // count on stage is 60 * (1/15) = 4.
+      expect(BubbleGame.goldenEntityChance, greaterThan(0));
+      expect(BubbleGame.goldenEntityChance, lessThan(0.2));
+      expect(BubbleGame.goldenFeedbackDelta, greaterThan(BubbleGame.normalFeedbackDelta));
+    });
   });
 }

@@ -214,34 +214,49 @@ GrabReleaseOutcome resolveGrabOutcome({
 
 /// A short splash of particles spawned when an entity is collected or
 /// blocked, giving the gesture an immediate cause-and-effect punch.
+/// Golden entities burst into a shower of gold.
 class SelectionBurst extends PositionComponent {
   SelectionBurst({
     required Vector2 position,
     required this.positive,
     required Color accent,
+    this.golden = false,
   }) : super(position: position.clone(), priority: 600) {
     final rand = math.Random();
-    for (var i = 0; i < 16; i++) {
+    for (var i = 0; i < (golden ? 24 : 16); i++) {
       final angle = rand.nextDouble() * math.pi * 2;
-      final speed = 1.6 + rand.nextDouble() * 2.6;
+      final speed = 1.6 + rand.nextDouble() * (golden ? 3.4 : 2.6);
       _particles.add(
         _BurstParticle(
           velocity: Vector2(
             math.cos(angle) * speed,
             math.sin(angle) * speed - 1.4,
           ),
-          life: 0.4 + rand.nextDouble() * 0.3,
+          life: 0.4 + rand.nextDouble() * (golden ? 0.45 : 0.3),
           radius: 0.065 + rand.nextDouble() * 0.098,
-          color: positive
-              ? (rand.nextBool() ? const Color(0xFF7ABF88) : accent)
-              : (rand.nextBool() ? const Color(0xFFE4513F) : accent),
+          color: golden
+              ? _goldSpark(rand)
+              : (positive
+                  ? (rand.nextBool() ? const Color(0xFF7ABF88) : accent)
+                  : (rand.nextBool() ? const Color(0xFFE4513F) : accent)),
         ),
       );
     }
   }
 
   final bool positive;
+  final bool golden;
   final List<_BurstParticle> _particles = [];
+
+  static Color _goldSpark(math.Random rand) {
+    const sparks = [
+      Color(0xFFFFD54F),
+      Color(0xFFFFB300),
+      Color(0xFFF59E0B),
+      Color(0xFFFFE082),
+    ];
+    return sparks[rand.nextInt(sparks.length)];
+  }
 
   @override
   void update(double dt) {
