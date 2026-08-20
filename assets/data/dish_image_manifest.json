@@ -7045,6 +7045,436 @@
         "盐"
       ],
       "cuisine": "早餐"
+    },
+    {
+      "dishId": "170",
+      "dishName": "萝卜炖羊排",
+      "aliases": [
+        "萝卜炖羊排"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-170-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-170-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "羊排",
+        "白萝卜",
+        "大葱",
+        "花椒",
+        "白芷",
+        "姜"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "171",
+      "dishName": "蒜苔炒肉末",
+      "aliases": [
+        "蒜苔炒肉末"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-171-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-171-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "五花肉薄片",
+        "蒜苔",
+        "食用盐",
+        "生抽",
+        "食用油",
+        "蒜瓣"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "172",
+      "dishName": "虎皮肘子",
+      "aliases": [
+        "虎皮肘子"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-172-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-172-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "猪前肘",
+        "食用植物油",
+        "冰糖",
+        "盐",
+        "老抽",
+        "生抽"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "173",
+      "dishName": "蚂蚁上树",
+      "aliases": [
+        "蚂蚁上树"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-173-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-173-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "红薯粉丝",
+        "猪肉末",
+        "郫县豆瓣酱",
+        "生抽",
+        "老抽",
+        "食用油"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "176",
+      "dishName": "西红柿牛腩",
+      "aliases": [
+        "西红柿牛腩"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-176-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-176-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "西红柿",
+        "牛腩",
+        "燃气灶",
+        "2cm 两段葱段、两片姜片",
+        "生抽、白胡椒粉"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "178",
+      "dishName": "豉汁排骨",
+      "aliases": [
+        "豉汁排骨"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-178-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-178-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "肋排",
+        "阳江豆豉",
+        "蒜蓉",
+        "姜末",
+        "生抽",
+        "老抽"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "181",
+      "dishName": "辣椒炒肉",
+      "aliases": [
+        "辣椒炒肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-181-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-181-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "青椒",
+        "猪瘦肉",
+        "盐",
+        "生抽",
+        "蚝油",
+        "大蒜"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "186",
+      "dishName": "香干肉丝",
+      "aliases": [
+        "香干肉丝"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-186-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-186-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "猪里脊",
+        "香干",
+        "盐",
+        "生抽",
+        "淀粉",
+        "大蒜"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "194",
+      "dishName": "麻辣香锅",
+      "aliases": [
+        "麻辣香锅"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-194-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-194-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "青菜",
+        "无骨肉",
+        "干豆腐",
+        "北京麻辣方便面",
+        "干辣椒"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "196",
+      "dishName": "黄瓜炒肉",
+      "aliases": [
+        "黄瓜炒肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-196-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-196-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "黄瓜",
+        "猪瘦肉",
+        "食用油",
+        "生抽",
+        "盐",
+        "蒜"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "268",
+      "dishName": "蛋包饭",
+      "aliases": [
+        "蛋包饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-268-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-268-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "鸡蛋",
+        "洋葱",
+        "胡萝卜",
+        "玉米粒",
+        "青豆",
+        "火腿肠或鸡胸肉"
+      ],
+      "cuisine": "主食"
+    },
+    {
+      "dishId": "270",
+      "dishName": "螺蛳粉",
+      "aliases": [
+        "螺蛳粉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-270-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-270-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "袋装螺蛳粉一包",
+        "米粉",
+        "螺蛳肉包",
+        "汤料包",
+        "酸笋包、花生包、豆皮包、木耳包等配料包",
+        "醋包、辣椒油等调味包"
+      ],
+      "cuisine": "主食"
+    },
+    {
+      "dishId": "272",
+      "dishName": "豆角焖面",
+      "aliases": [
+        "豆角焖面"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-272-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-272-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "鲜面条",
+        "肉",
+        "盐",
+        "豆角",
+        "鸡精",
+        "耗油"
+      ],
+      "cuisine": "主食"
+    },
+    {
+      "dishId": "274",
+      "dishName": "酸辣蕨根粉",
+      "aliases": [
+        "酸辣蕨根粉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-274-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-274-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "蕨根粉",
+        "油泼辣子",
+        "酱油",
+        "香醋",
+        "小米辣",
+        "蒜"
+      ],
+      "cuisine": "主食"
+    },
+    {
+      "dishId": "275",
+      "dishName": "醪糟小汤圆",
+      "aliases": [
+        "醪糟小汤圆"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-275-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-275-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "小汤圆",
+        "醪糟",
+        "白糖",
+        "枸杞"
+      ],
+      "cuisine": "主食"
+    },
+    {
+      "dishId": "278",
+      "dishName": "韭菜盒子",
+      "aliases": [
+        "韭菜盒子"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-278-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-278-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "韭菜",
+        "虾仁",
+        "鸡蛋",
+        "香油",
+        "盐",
+        "面粉"
+      ],
+      "cuisine": "主食"
+    },
+    {
+      "dishId": "279",
+      "dishName": "鲜肉烧卖",
+      "aliases": [
+        "鲜肉烧卖"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-279-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-279-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "烧卖皮",
+        "猪肉末",
+        "生姜末",
+        "葱末",
+        "生抽",
+        "料酒"
+      ],
+      "cuisine": "主食"
+    },
+    {
+      "dishId": "281",
+      "dishName": "麻油拌面",
+      "aliases": [
+        "麻油拌面"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-281-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-281-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "风干快熟面/任何牌子的快熟面",
+        "麻油",
+        "胡椒粉",
+        "老抽",
+        "盐"
+      ],
+      "cuisine": "主食"
+    },
+    {
+      "dishId": "282",
+      "dishName": "麻辣减脂荞麦面",
+      "aliases": [
+        "麻辣减脂荞麦面"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-282-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-282-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "原料"
+      ],
+      "cuisine": "主食"
+    },
+    {
+      "dishId": "315",
+      "dishName": "脆皮豆腐",
+      "aliases": [
+        "脆皮豆腐"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-315-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-315-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "老豆腐",
+        "鸡蛋",
+        "生抽",
+        "老抽",
+        "蚝油",
+        "白糖"
+      ],
+      "cuisine": "素菜"
     }
   ]
 }
