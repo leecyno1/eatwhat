@@ -7475,6 +7475,288 @@
         "白糖"
       ],
       "cuisine": "素菜"
+    },
+    {
+      "dishId": "317",
+      "dishName": "茄子炖土豆",
+      "aliases": [
+        "茄子炖土豆"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-317-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-317-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "茄子",
+        "土豆",
+        "肉",
+        "辣椒",
+        "酱油",
+        "盐"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "320",
+      "dishName": "葱煎豆腐",
+      "aliases": [
+        "葱煎豆腐"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-320-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-320-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "白豆腐",
+        "葱",
+        "青辣椒",
+        "盐",
+        "鸡精"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "323",
+      "dishName": "蒲烧茄子",
+      "aliases": [
+        "蒲烧茄子"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-323-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-323-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "茄子",
+        "蒲烧汁",
+        "蜂蜜",
+        "白糖",
+        "生抽",
+        "老抽"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "326",
+      "dishName": "蚝油生菜",
+      "aliases": [
+        "蚝油生菜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-326-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-326-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "生菜",
+        "蚝油",
+        "大蒜",
+        "生抽",
+        "盐",
+        "白糖"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "327",
+      "dishName": "西红柿炒鸡蛋",
+      "aliases": [
+        "西红柿炒鸡蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-327-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-327-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "西红柿",
+        "鸡蛋",
+        "食用油",
+        "盐",
+        "糖",
+        "葱花"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "331",
+      "dishName": "酸辣土豆丝",
+      "aliases": [
+        "酸辣土豆丝"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-331-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-331-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "土豆",
+        "大蒜",
+        "青椒",
+        "红椒",
+        "干辣椒",
+        "葱"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "332",
+      "dishName": "金针菇日本豆腐煲",
+      "aliases": [
+        "金针菇日本豆腐煲"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-332-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-332-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "金针菇",
+        "日本豆腐",
+        "小米椒",
+        "生抽",
+        "蚝油",
+        "盐"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "333",
+      "dishName": "金钱蛋",
+      "aliases": [
+        "金钱蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-333-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-333-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "鸡蛋",
+        "线椒",
+        "小米辣",
+        "豆瓣酱",
+        "蒜",
+        "小葱"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "334",
+      "dishName": "陕北熬豆角",
+      "aliases": [
+        "陕北熬豆角"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-334-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-334-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "豆角",
+        "土豆",
+        "西红柿",
+        "螺丝椒",
+        "盐",
+        "生抽"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "335",
+      "dishName": "雷椒皮蛋",
+      "aliases": [
+        "雷椒皮蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-335-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-335-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "皮蛋",
+        "长条青椒",
+        "葱",
+        "蒜",
+        "小米辣",
+        "食用油"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "336",
+      "dishName": "鸡蛋火腿炒黄瓜",
+      "aliases": [
+        "鸡蛋火腿炒黄瓜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-336-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-336-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "黄瓜",
+        "鸡蛋",
+        "火腿肠",
+        "盐",
+        "生抽",
+        "红尖椒"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "338",
+      "dishName": "蒸箱鸡蛋羹",
+      "aliases": [
+        "蒸箱鸡蛋羹"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-338-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-338-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "鸡蛋",
+        "食用盐",
+        "食用油",
+        "生抽",
+        "蒸箱"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "340",
+      "dishName": "鸡蛋花",
+      "aliases": [
+        "鸡蛋花"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-340-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-340-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "鸡蛋",
+        "白糖",
+        "食盐",
+        "搅拌器"
+      ],
+      "cuisine": "素菜"
     }
   ]
 }
