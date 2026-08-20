@@ -13,7 +13,7 @@ import 'package:vibration/vibration.dart';
 import 'bubble_data_manager.dart';
 import 'bubble_game.dart';
 import 'entity_geometry.dart';
-import 'sweep_controller.dart';
+import 'grab_controller.dart';
 import 'taste_entity_visual_catalog.dart';
 
 /// A physical preference entity on the home stage.
@@ -21,13 +21,18 @@ import 'taste_entity_visual_catalog.dart';
 /// The artwork itself is the body: the sprite is rendered as-is (no bubble
 /// shell, no circular clip) and the collision shape is decomposed from the
 /// sprite's alpha silhouette so entities fall, collide, and stack like real
-/// objects under gravity. Selection happens through taps or the stage-level
-/// sweep gesture (see [SweepGestureHandler]).
+/// objects under gravity. The stage is a pot: entities live on one of three
+/// overlapping depth layers. Entities on the same layer collide with each
+/// other (preserving the size-tier physics), while different layers pass
+/// through each other and render on top of one another, so the pot stacks
+/// several visible layers deep. Selection happens through taps or the
+/// stage-level grab gesture (see [GrabGestureHandler]).
 class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   BubbleBody({
     required this.data,
     required this.targetLongSide,
     required this.initialPosition,
+    required this.layerIndex,
     this.initialHorizontalImpulse = 0,
   });
 
@@ -38,19 +43,20 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   final double targetLongSide;
   final Vector2 initialPosition;
 
+  /// Depth layer in the pot, 0 (back) to [BubbleGame.potLayerCount] - 1
+  /// (front). Entities only collide with the walls and with entities on
+  /// the same layer; other layers overlap visually.
+  final int layerIndex;
+
   /// Small random sideways velocity for replenished entities so they drift
   /// naturally as they fall from the top.
   final double initialHorizontalImpulse;
 
   bool isSelected = false;
-  bool isRejected = false; // For swipe down
-
-  /// Highlighted by the sweep gesture and awaiting the final flick to decide
-  /// between collecting and blocking.
-  bool sweepPending = false;
+  bool isRejected = false;
 
   /// Held by the finger: follows the pointer while the pile collapses
-  /// behind it (see SweepGestureHandler's grab phase).
+  /// behind it (see GrabGestureHandler).
   bool isGrabbed = false;
 
   /// Which release zone the grabbed entity is currently hovering over,
@@ -82,10 +88,23 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   String get text => data.label;
   double get _halfSpan => targetLongSide * 0.5;
 
-  /// Sweep hit radius (world meters): the entity's own radius plus a
-  /// finger tolerance. Kept tight so a path brushing a crowded pile only
-  /// claims the entities it actually crosses.
+  /// Opacity by depth layer: back layers fade slightly so the pot reads as
+  /// having depth while every entity stays visible underneath.
+  double get _layerAlpha => switch (layerIndex) {
+        0 => 0.72,
+        1 => 0.87,
+        _ => 1.0,
+      };
+
+  /// Hit radius (world meters) used by the grab gesture's tap testing:
+  /// the entity's own radius plus a finger tolerance.
   double get reach => targetLongSide * 0.5 + 0.18;
+
+  /// Collision bits: walls live on bit 0, layer i owns bit i+1. Each entity
+  /// collides with the walls and its own layer only, so overlapping layers
+  /// never push each other around.
+  int get _collisionCategory => 1 << (layerIndex + 1);
+  int get _collisionMask => 0x0001 | (1 << (layerIndex + 1));
 
   @override
   Future<void> onLoad() async {
@@ -106,8 +125,10 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
     }
 
     await super.onLoad(); // Creates the body via createBody().
-    // Larger entities render above smaller ones for a natural depth feel.
-    priority = (1000 - targetLongSide * 24).round();
+    // Front layers render above back layers (pot depth); within a layer,
+    // larger entities render above smaller ones for a natural depth feel.
+    priority =
+        layerIndex * 400 + (1000 - targetLongSide * 24).round();
   }
 
   @override
@@ -137,8 +158,11 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
       // welding (its tolerance is 0.05m between adjacent vertices).
       if (polygonSignedArea(vertices).abs() < 0.01) continue;
       final shape = PolygonShape()..set(vertices);
+      final filter = Filter()
+        ..categoryBits = _collisionCategory
+        ..maskBits = _collisionMask;
       body.createFixture(
-        FixtureDef(shape)
+        FixtureDef(shape, filter: filter)
           ..density = 1.0
           ..friction = 0.55
           ..restitution = 0.02,
@@ -154,8 +178,11 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
 
   void _createCircleFixture(Body body, {required double radius}) {
     final shape = CircleShape()..radius = radius;
+    final filter = Filter()
+      ..categoryBits = _collisionCategory
+      ..maskBits = _collisionMask;
     body.createFixture(
-      FixtureDef(shape)
+      FixtureDef(shape, filter: filter)
         ..density = 1.0
         ..friction = 0.55
         ..restitution = 0.02,
@@ -249,7 +276,6 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   void beginGrab() {
     if (isRemoved || isRejected) return;
     isGrabbed = true;
-    sweepPending = false;
     grabZoneHint = GrabReleaseOutcome.drop;
     body
       ..setType(BodyType.kinematic)
@@ -293,16 +319,11 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
     _jellyVelocity = -3.0;
   }
 
-  /// Collects this entity into the taste tray. [withFeedback] controls the
-  /// local haptics/jelly response; batch sweeps trigger it once for the
-  /// whole gesture instead of once per entity, and suppress the per-entity
-  /// chip in favor of one summary chip.
-  void collect({bool withFeedback = true, bool emitChip = true}) {
+  /// Collects this entity into the taste tray.
+  void collect({bool withFeedback = true}) {
     game.spawnSelectionBurst(this, positive: true);
     game.toggleSelection(this);
-    if (emitChip) {
-      game.emitSwipeFeedback(label: text, positive: true);
-    }
+    game.emitSwipeFeedback(label: text, positive: true);
     _collectToTray();
 
     if (withFeedback) {
@@ -322,16 +343,31 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
     if (isSelected) {
       data.usageCount++;
     }
-    sweepPending = false;
   }
 
   /// Marks the entity as rejected: it sinks through the pile and off the
   /// stage while fading out.
-  void sweepReject() {
+  void rejectNow() {
     if (isRejected || _isCollecting) return;
     game.spawnSelectionBurst(this, positive: false);
     game.rejectBubble(this);
-    sweepPending = false;
+  }
+
+  /// Shake-to-stir: fling the entity upward with a random spin so shaking
+  /// the phone re-arranges the whole pot and every entity lands at a new
+  /// angle for inspection.
+  void stirUp(Random rand) {
+    if (isRemoved || isRejected || isGrabbed || _isCollecting) return;
+    if (body.bodyType != BodyType.dynamic) {
+      body.setType(BodyType.dynamic);
+    }
+    body
+      ..setAwake(true)
+      ..linearVelocity = Vector2(
+        (rand.nextDouble() - 0.5) * 6.0,
+        -(3.6 + rand.nextDouble() * 3.4),
+      )
+      ..angularVelocity = (rand.nextDouble() - 0.5) * 9.0;
   }
 
   void _collectToTray() {
@@ -382,22 +418,6 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
           ..color = hintColor,
       );
       canvas.scale(1.10, 1.10);
-    } else if (sweepPending && !_isCollecting) {
-      // Pending sweep highlight: a soft halo behind the artwork plus a
-      // gentle enlarge so the player sees exactly what a flick will commit.
-      final glowPaint = Paint()
-        ..color = const Color(0xFF7ABF88).withValues(alpha: 0.4)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10);
-      canvas.drawCircle(Offset.zero, _halfSpan * 1.05, glowPaint);
-      canvas.drawCircle(
-        Offset.zero,
-        _halfSpan * 0.92,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 0.05
-          ..color = const Color(0xFF7ABF88).withValues(alpha: 0.85),
-      );
-      canvas.scale(1.06, 1.06);
     }
 
     if (_isCollecting) {
@@ -408,13 +428,14 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
       canvas.scale(_jellyScale, _jellyScale);
     }
 
+    final opacity = _layerAlpha * (isRejected ? 0.42 : 1.0);
     sprite.render(
       canvas,
       position: _spriteOffset,
       size: _spriteSize,
       anchor: Anchor.center,
       overridePaint: Paint()
-        ..color = Colors.white.withValues(alpha: isRejected ? 0.42 : 1.0),
+        ..color = Colors.white.withValues(alpha: opacity),
     );
 
     canvas.restore();

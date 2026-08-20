@@ -14,21 +14,26 @@ import 'package:sensors_plus/sensors_plus.dart';
 
 import 'bubble_body.dart';
 import 'bubble_data_manager.dart';
-import 'sweep_controller.dart';
+import 'grab_controller.dart';
 import 'wall_body.dart';
 
 class BubbleGame extends Forge2DGame {
-  /// Entities the stage carries once fully populated. The pile is built
-  /// by the replenish stream (see [update]) instead of one giant drop, so
-  /// oversized entities never spawn overlapped.
-  static const int visibleBubbleCount = 34;
+  /// Depth layers of the pot. Entities on the same layer collide with each
+  /// other; layers overlap visually (see [BubbleBody.layerIndex]).
+  static const int potLayerCount = 3;
+
+  /// Entities the stage carries once fully populated, spread evenly across
+  /// the pot's layers. The pile is built by the replenish stream (see
+  /// [update]) instead of one giant drop, so oversized entities never spawn
+  /// overlapped.
+  static const int visibleBubbleCount = 60;
 
   /// Entities dropped in each opening wave.
-  static const int _initialDropWaveSize = 10;
+  static const int _initialDropWaveSize = 12;
 
   /// Seconds between the two opening waves, and between replenish drops.
   static const double _initialWaveGapSec = 0.5;
-  static const double _replenishIntervalSec = 0.45;
+  static const double _replenishIntervalSec = 0.28;
 
   /// Realistic downward gravity in world units so entities pile up and
   /// settle like real objects instead of floating like bubbles.
@@ -53,6 +58,8 @@ class BubbleGame extends Forge2DGame {
   final V2PreferenceFeedbackService _feedback =
       V2PreferenceFeedbackService.instance;
   async.StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
+  final ShakeDetector _shakeDetector = ShakeDetector();
+  int _nextSpawnLayer = 0;
 
   /// Replenish scheduling, driven by the game clock in [update] so no dart
   /// timers leak into widget tests or outlive the component.
@@ -77,8 +84,8 @@ class BubbleGame extends Forge2DGame {
   int get totalTagCount => _dataManager.totalTagCount;
   int get visibleCategoryCount => _dataManager.countForCategory(_category);
 
-  /// Every live preference entity on the stage (used by the sweep gesture
-  /// to hit-test the finger path).
+  /// Every live preference entity on the stage (used by the grab gesture
+  /// to hit-test the finger position).
   Iterable<BubbleBody> get entities => world.children.whereType<BubbleBody>();
 
   int _suppressTapUntilMicros = 0;
@@ -186,47 +193,8 @@ class BubbleGame extends Forge2DGame {
     selectionRevision.value += 1;
   }
 
-  /// Collects a batch of swept entities. Each entity flies to the tray with
-  /// a small stagger so a big sweep reads as a satisfying wave, but haptics
-  /// and the feedback chip fire once for the whole gesture.
-  void collectEntities(Iterable<BubbleBody> swept) {
-    final batch = swept
-        .where((entity) => !entity.isRemoved && !entity.isRejected)
-        .toList()
-      ..sort((a, b) => a.body.position.x.compareTo(b.body.position.x));
-    if (batch.isEmpty) return;
-
-    emitSwipeFeedback(label: '${batch.length} 个偏好', positive: true);
-    HapticFeedback.mediumImpact();
-
-    for (var i = 0; i < batch.length; i++) {
-      final entity = batch[i];
-      final delay = Duration(milliseconds: 45 * i);
-      Future.delayed(delay, () {
-        if (entity.isRemoved || entity.isRejected) return;
-        entity.collect(withFeedback: false, emitChip: false);
-      });
-    }
-  }
-
-  /// Blocks a batch of swept entities: all of them sink out at once with a
-  /// single heavy haptic thud.
-  void rejectEntities(Iterable<BubbleBody> swept) {
-    final batch = swept
-        .where((entity) => !entity.isRemoved && !entity.isRejected)
-        .toList();
-    if (batch.isEmpty) return;
-
-    emitSwipeFeedback(label: '${batch.length} 个不想要', positive: false);
-    HapticFeedback.heavyImpact();
-
-    for (final entity in batch) {
-      entity.sweepReject();
-    }
-  }
-
   /// Splash of particles at an entity's position, spawned by both taps and
-  /// sweeps so every collect/block lands with the same visual punch.
+  /// grabs so every collect/block lands with the same visual punch.
   void spawnSelectionBurst(BubbleBody entity, {required bool positive}) {
     if (entity.isRemoved) return;
     world.add(SelectionBurst(
@@ -234,6 +202,17 @@ class BubbleGame extends Forge2DGame {
       positive: positive,
       accent: entity.data.primaryColor,
     ));
+  }
+
+  /// Shake-to-stir: a sharp shake of the phone flings every entity upward
+  /// with a random spin so the pot re-arranges and each preference lands at
+  /// a new angle for inspection.
+  void _stirThePot() {
+    final rand = Random();
+    for (final entity in entities.toList()) {
+      entity.stirUp(rand);
+    }
+    HapticFeedback.heavyImpact();
   }
 
   // Scale factor: 1 meter = 32 pixels. Box2D works best with objects
@@ -265,9 +244,9 @@ class BubbleGame extends Forge2DGame {
     // We can use a HUD component for this
     add(DiscardZoneIndicator());
 
-    // Stage-level sweep gesture: drag through entities, flick up to
-    // collect, flick down to block.
-    add(SweepGestureHandler());
+    // Stage-level grab gesture: press an entity to pick it up, drop it in
+    // the top tray to collect or the bottom zone to block.
+    add(GrabGestureHandler());
 
     // Set realistic gravity; entities fall and stack on the stage floor.
     world.gravity = Vector2(0, gravityY);
@@ -319,6 +298,14 @@ class BubbleGame extends Forge2DGame {
     try {
       _accelerometerSubscription = accelerometerEventStream().listen(
         (event) {
+          // Shake-to-stir first: a sharp jolt flings the whole pot around.
+          final magnitude = sqrt(
+            event.x * event.x + event.y * event.y + event.z * event.z,
+          );
+          if (_shakeDetector.register(magnitude, now: DateTime.now())) {
+            _stirThePot();
+          }
+
           // Tilt the gravity vector so piled entities roll around naturally.
           final targetX = (-event.x * 4.4).clamp(-5.6, 5.6);
           final targetY = (gravityY + event.y * 1.5).clamp(4.0, 15.0);
@@ -425,6 +412,7 @@ class BubbleGame extends Forge2DGame {
         data: data,
         targetLongSide: span,
         initialPosition: chosen,
+        layerIndex: _nextSpawnLayer++ % potLayerCount,
         initialHorizontalImpulse:
             replenish ? (rand.nextDouble() - 0.5) * 2.4 : 0,
       ));
@@ -521,6 +509,51 @@ class SwipeFeedbackEvent {
   final int nonce;
 }
 
+/// Detects shake gestures from accelerometer magnitude samples (m/s²,
+/// gravity included, so ≈ 9.8 while resting). A shake is [requiredSamples]
+/// consecutive samples at or above [threshold], reported at most once per
+/// [cooldown] so one physical shake never double-fires.
+class ShakeDetector {
+  ShakeDetector({
+    this.threshold = 20.0,
+    this.requiredSamples = 2,
+    this.cooldown = const Duration(milliseconds: 1400),
+  });
+
+  /// Magnitude (m/s²) a sample must reach to count toward a shake. A hard
+  /// wrist flick spikes past this; gravity alone (~9.8) never does.
+  final double threshold;
+
+  /// Consecutive over-threshold samples required before firing.
+  final int requiredSamples;
+
+  /// Minimum spacing between two fired shakes.
+  final Duration cooldown;
+
+  int _overSamples = 0;
+  DateTime? _lastTriggeredAt;
+
+  /// Feeds one sample. Returns true exactly once per detected shake.
+  bool register(double magnitude, {required DateTime now}) {
+    final lastTriggered = _lastTriggeredAt;
+    if (lastTriggered != null && now.difference(lastTriggered) < cooldown) {
+      _overSamples = 0;
+      return false;
+    }
+    if (magnitude >= threshold) {
+      _overSamples++;
+      if (_overSamples >= requiredSamples) {
+        _overSamples = 0;
+        _lastTriggeredAt = now;
+        return true;
+      }
+    } else {
+      _overSamples = 0;
+    }
+    return false;
+  }
+}
+
 class DiscardZoneIndicator extends PositionComponent
     with HasGameRef<BubbleGame> {
   @override
@@ -548,7 +581,7 @@ class DiscardZoneIndicator extends PositionComponent
     // Draw "discard" text
     final textPainter = TextPainter(
       text: TextSpan(
-        text: '下滑拉黑',
+        text: '拖到这里拉黑',
         style: TextStyle(
           color: const Color(0xFF9B9691).withOpacity(0.66),
           fontSize: 12,
