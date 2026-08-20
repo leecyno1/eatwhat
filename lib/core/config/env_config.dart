@@ -224,7 +224,7 @@ class EnvConfig {
       _readEnv('AI_MODEL_NAME', fallback: 'MiniMax-M2.7');
 
   static int get aiMaxTokens =>
-      int.tryParse(_readEnv('AI_MAX_TOKENS', fallback: '2048')) ?? 2048;
+      int.tryParse(_readEnv('AI_MAX_TOKENS', fallback: '8192')) ?? 8192;
 
   static double get aiTemperature =>
       double.tryParse(_readEnv('AI_TEMPERATURE', fallback: '0.7')) ?? 0.7;

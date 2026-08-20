@@ -81,6 +81,7 @@ class V2Phase2RecommendationService {
     GenerationService? generationService,
     V2HowToCookRecipeService? howToCookRecipeService,
     Duration stageTimeout = const Duration(seconds: 2),
+    Duration refineTimeout = const Duration(seconds: 25),
     Duration enrichmentTimeout = const Duration(seconds: 3),
     bool enableAiEnhancement = true,
   })  : _localRecommendationLoader = localRecommendationLoader,
@@ -92,6 +93,7 @@ class V2Phase2RecommendationService {
         _howToCookRecipeService =
             howToCookRecipeService ?? V2HowToCookRecipeService.instance,
         _stageTimeout = stageTimeout,
+        _refineTimeout = refineTimeout,
         _enrichmentTimeout = enrichmentTimeout,
         _enableAiEnhancement = enableAiEnhancement;
 
@@ -104,6 +106,7 @@ class V2Phase2RecommendationService {
   final GenerationService _generationService;
   final V2HowToCookRecipeService _howToCookRecipeService;
   final Duration _stageTimeout;
+  final Duration _refineTimeout;
   final Duration _enrichmentTimeout;
   final bool _enableAiEnhancement;
 
@@ -282,7 +285,7 @@ class V2Phase2RecommendationService {
           candidates: localCandidates,
           limit: limit,
           customRequirement: _buildAiRequirement(input),
-        ).timeout(_stageTimeout);
+        ).timeout(_refineTimeout);
         return _validateRefinement(refined, localCandidates);
       }
 
@@ -306,7 +309,7 @@ class V2Phase2RecommendationService {
             limit: limit,
             customRequirement: _buildAiRequirement(input),
           )
-          .timeout(_stageTimeout);
+          .timeout(_refineTimeout);
       return _validateRefinement(refined, localCandidates);
     } on TimeoutException {
       return const _AiEnhancementResult.failed('ai_timeout');

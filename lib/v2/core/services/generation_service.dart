@@ -152,20 +152,30 @@ class GenerationService {
 
   Map<String, dynamic> _parseJsonFromModelContent(String raw) {
     var text = raw.trim();
-    if (text.startsWith('```json')) {
-      text = text.replaceFirst(RegExp(r'^```json\\s*'), '');
-      text = text.replaceFirst(RegExp(r'```\\s*$'), '');
-    } else if (text.startsWith('```')) {
-      text = text.replaceFirst(RegExp(r'^```\\s*'), '');
-      text = text.replaceFirst(RegExp(r'```\\s*$'), '');
+    // MiniMax-M2.7 is a reasoning model: the content arrives wrapped in a
+    // <think>…</think> segment followed by the answer. Any braces inside the
+    // reasoning would corrupt the JSON boundary detection below, so strip
+    // the whole segment first (and anything after an unterminated <think>,
+    // which means the answer itself was never produced).
+    text = text.replaceAll(RegExp(r'<think>[\s\S]*?</think>'), '');
+    final unclosedThink = text.indexOf('<think>');
+    if (unclosedThink >= 0) {
+      text = text.substring(0, unclosedThink);
     }
-
+    if (text.startsWith('```json')) {
+      text = text.replaceFirst(RegExp(r'^```json\s*'), '');
+      text = text.replaceFirst(RegExp(r'```\s*$'), '');
+    } else if (text.startsWith('```')) {
+      text = text.replaceFirst(RegExp(r'^```\s*'), '');
+      text = text.replaceFirst(RegExp(r'```\s*$'), '');
+    }
+  
     final start = text.indexOf('{');
     final end = text.lastIndexOf('}');
     if (start >= 0 && end >= 0 && end > start) {
       text = text.substring(start, end + 1);
     }
-
+  
     final decoded = jsonDecode(text);
     if (decoded is Map<String, dynamic>) return decoded;
     if (decoded is Map) {

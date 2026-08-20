@@ -58,7 +58,7 @@ class DecisionPage extends StatefulWidget {
 }
 
 class _DecisionPageState extends State<DecisionPage> {
-  static const Duration _recommendationWaitTimeout = Duration(seconds: 12);
+  static const Duration _recommendationWaitTimeout = Duration(seconds: 30);
 
   late final V2Phase2RecommendationService _recommendationFlowService;
   late final V2RecommendationTelemetryService _recommendationTelemetryService;
