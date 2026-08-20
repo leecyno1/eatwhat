@@ -1,4 +1,5 @@
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
+import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_enrichment_controller.dart';
 import 'package:flutter/material.dart';
 
@@ -49,7 +50,7 @@ class PairingBand extends StatelessWidget {
               const Text(
                 '顺手搭一套',
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: AppPalette.moonlight,
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                 ),
@@ -72,7 +73,7 @@ class PairingBand extends StatelessWidget {
                       ? '规则兜底 ${pairings.length} 条'
                       : '${pairings.length} 条搭配',
                   style: TextStyle(
-                    color: AppColors.textPrimary.withValues(alpha: 0.45),
+                    color: AppPalette.moonlight.withValues(alpha: 0.45),
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                   ),
@@ -87,7 +88,7 @@ class PairingBand extends StatelessWidget {
               PairingLoadState.fallback => 'AI 搭配暂时不可用，先用本地规则给你补一套顺手组合。',
             },
             style: TextStyle(
-              color: AppColors.textPrimary.withValues(alpha: 0.52),
+              color: AppPalette.moonlight.withValues(alpha: 0.52),
               fontSize: 12,
               fontWeight: FontWeight.w600,
               height: 1.4,
@@ -189,7 +190,7 @@ class PairingBubble extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    color: AppColors.textPrimary,
+                    color: AppPalette.moonlight,
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
                   ),
@@ -200,7 +201,7 @@ class PairingBubble extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: AppColors.textPrimary.withValues(alpha: 0.52),
+                    color: AppPalette.moonlight.withValues(alpha: 0.52),
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     height: 1.35,

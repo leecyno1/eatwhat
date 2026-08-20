@@ -19,7 +19,7 @@ class ResultFeedbackBand extends StatelessWidget {
     return Container(
       key: const ValueKey('result-feedback-band'),
       padding: const EdgeInsets.all(AppSpacing.sm),
-      decoration: AppDecorations.card(),
+      decoration: AppDecorations.nightCard(),
       child: Row(
         children: [
           Expanded(
@@ -68,7 +68,7 @@ class _FeedbackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foreground = selected ? AppPalette.rice : AppColors.textPrimary;
+    final foreground = selected ? AppPalette.rice : AppPalette.moonlight;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -79,12 +79,12 @@ class _FeedbackButton extends StatelessWidget {
           vertical: AppSpacing.sm,
         ),
         decoration: BoxDecoration(
-          color: selected ? AppColors.sunsetOrange : AppPalette.surfaceMuted,
+          color: selected ? AppColors.sunsetOrange : AppPalette.nightElevated,
           borderRadius: AppRadii.card,
           border: Border.all(
             color: selected
                 ? AppColors.sunsetOrange
-                : AppColors.textPrimary.withValues(alpha: 0.08),
+                : AppPalette.moonlight.withValues(alpha: 0.08),
           ),
         ),
         child: Row(
@@ -97,7 +97,7 @@ class _FeedbackButton extends StatelessWidget {
                 label,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: AppType.label.copyWith(color: foreground),
+                style: AppTypeNight.label.copyWith(color: foreground),
               ),
             ),
           ],

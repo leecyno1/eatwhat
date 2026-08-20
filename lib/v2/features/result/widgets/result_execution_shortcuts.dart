@@ -25,17 +25,17 @@ class ResultExecutionShortcuts extends StatelessWidget {
     return Container(
       key: const ValueKey('result-execution-shortcuts'),
       padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: AppDecorations.card(),
+      decoration: AppDecorations.nightCard(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('怎么吃', style: AppType.section),
+          const Text('怎么吃', style: AppTypeNight.section),
           const SizedBox(height: 4),
           Text(
             preferredPath == ExecutionPath.any
                 ? '选好菜后，可以直接做、叫外卖或找附近餐馆。'
                 : '已按你的要求标出优先方式。',
-            style: AppType.label,
+            style: AppTypeNight.label,
           ),
           const SizedBox(height: AppSpacing.sm),
           _ExecutionAction(
@@ -123,13 +123,13 @@ class _ExecutionActionState extends State<_ExecutionAction> {
             ),
             decoration: BoxDecoration(
               color: widget.preferred
-                  ? AppPalette.positiveSurface
-                  : AppPalette.surfaceMuted,
+                  ? AppPalette.nightElevated
+                  : AppPalette.nightSurface,
               borderRadius: AppRadii.small,
               border: Border.all(
                 color: widget.preferred
-                    ? AppPalette.chili.withValues(alpha: 0.32)
-                    : AppPalette.divider,
+                    ? AppPalette.leaf.withValues(alpha: 0.5)
+                    : AppPalette.nightDivider,
               ),
             ),
             child: Row(
@@ -138,7 +138,7 @@ class _ExecutionActionState extends State<_ExecutionAction> {
                   width: 36,
                   height: 36,
                   decoration: BoxDecoration(
-                    color: AppPalette.surface,
+                    color: AppPalette.nightElevated,
                     borderRadius: BorderRadius.circular(AppRadii.xs),
                   ),
                   child: Icon(
@@ -146,8 +146,8 @@ class _ExecutionActionState extends State<_ExecutionAction> {
                     key: widget.iconKey,
                     size: 19,
                     color: widget.preferred
-                        ? AppPalette.chili
-                        : AppPalette.inkSoft,
+                        ? AppPalette.leaf
+                        : AppPalette.moonMuted,
                   ),
                 ),
                 const SizedBox(width: AppSpacing.sm),
@@ -158,7 +158,8 @@ class _ExecutionActionState extends State<_ExecutionAction> {
                       Row(
                         children: [
                           Flexible(
-                            child: Text(widget.title, style: AppType.section),
+                            child: Text(
+                                widget.title, style: AppTypeNight.section),
                           ),
                           if (widget.preferred) ...[
                             const SizedBox(width: AppSpacing.xs),
@@ -168,13 +169,13 @@ class _ExecutionActionState extends State<_ExecutionAction> {
                                 vertical: 3,
                               ),
                               decoration: BoxDecoration(
-                                color: AppPalette.surface,
+                                color: AppPalette.nightElevated,
                                 borderRadius: AppRadii.capsule,
                               ),
                               child: Text(
                                 '优先',
-                                style: AppType.microLabel.copyWith(
-                                  color: AppPalette.chili,
+                                style: AppTypeNight.microLabel.copyWith(
+                                  color: AppPalette.leaf,
                                 ),
                               ),
                             ),
@@ -186,7 +187,7 @@ class _ExecutionActionState extends State<_ExecutionAction> {
                         widget.subtitle,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: AppType.label,
+                        style: AppTypeNight.label,
                       ),
                     ],
                   ),
@@ -194,7 +195,7 @@ class _ExecutionActionState extends State<_ExecutionAction> {
                 const SizedBox(width: AppSpacing.xs),
                 const Icon(
                   Icons.chevron_right_rounded,
-                  color: AppPalette.inkMuted,
+                  color: AppPalette.moonMuted,
                 ),
               ],
             ),

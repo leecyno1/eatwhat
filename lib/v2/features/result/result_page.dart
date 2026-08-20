@@ -27,7 +27,6 @@ import 'package:eatwhat_app/v2/features/details/howtocook_library_page.dart';
 import 'package:eatwhat_app/v2/features/details/recipe_detail_page.dart';
 import 'package:eatwhat_app/v2/features/execution/execution_sheet.dart';
 import 'package:eatwhat_app/v2/features/execution/meituan_menu_builder_page.dart';
-import 'package:eatwhat_app/v2/features/home/widgets/floating_editorial_background.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_choice_controller.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_choice_state_coordinator.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_enrichment_controller.dart';
@@ -144,6 +143,7 @@ class _ResultPageState extends State<ResultPage> {
   bool _isFavorited = false;
   bool _isGeneratingImage = false;
   ResultFeedbackSelection? _feedbackSelection;
+  Map<String, String> _thumbUrlByRecipeId = const {};
 
   List<String> get _displayTags {
     if (widget.recallLabels.isNotEmpty) return widget.recallLabels;
@@ -272,6 +272,24 @@ class _ResultPageState extends State<ResultPage> {
     if (_choiceController.hasCurrentChoice) {
       _refreshCurrentChoiceState();
     }
+    unawaited(_loadCandidateThumbnails());
+  }
+
+  /// Resolves the prebuilt thumbnail for every candidate up front so the
+  /// candidate rail can show each dish's photo immediately, matching the
+  /// fully prebuilt image library (340/340 dishes).
+  Future<void> _loadCandidateThumbnails() async {
+    final results = <String, String>{};
+    for (final recipe in widget.recommendations) {
+      final url = await _imageCatalog.resolveThumbUrl(recipe);
+      if (url != null && url.trim().isNotEmpty) {
+        results[recipe.id] = url.trim();
+      }
+    }
+    if (!mounted || results.isEmpty) return;
+    setState(() {
+      _thumbUrlByRecipeId = results;
+    });
   }
 
   Future<void> _refreshFavoriteState() async {
@@ -779,7 +797,7 @@ class _ResultPageState extends State<ResultPage> {
         ? NutritionLoadState.loading
         : _enrichmentController.nutritionStateFor(currentChoice.id);
     return Scaffold(
-      backgroundColor: AppColors.lightBackground,
+      backgroundColor: AppPalette.night,
       bottomNavigationBar: currentChoice == null
           ? null
           : SafeArea(
@@ -795,77 +813,72 @@ class _ResultPageState extends State<ResultPage> {
                 confirmLabel: _isMealMode ? '就吃这套' : '就吃这个',
               ),
             ),
-      body: Stack(
-        children: [
-          const Positioned.fill(child: FloatingEditorialBackground()),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.md,
-                AppSpacing.lg,
-                AppSpacing.lg,
-              ),
-              child: Column(
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.sm,
+            AppSpacing.lg,
+            AppSpacing.md,
+          ),
+          child: Column(
+            children: [
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      const Text('今日推荐板', style: AppType.microLabel),
-                      const Spacer(),
-                      _HeaderCircleButton(
-                        icon: Icons.arrow_back_ios_new_rounded,
-                        onTap: () => Navigator.of(context).popUntil(
-                          (route) => route.isFirst,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      _HeaderCircleButton(
-                        icon: _isFavorited
-                            ? Icons.favorite_rounded
-                            : Icons.favorite_border_rounded,
-                        accent: _isFavorited ? AppColors.sunsetOrange : null,
-                        onTap: currentChoice == null ? () {} : _toggleFavorite,
-                      ),
-                    ],
+                  const Text('今日推荐板', style: AppTypeNight.microLabel),
+                  const Spacer(),
+                  _HeaderCircleButton(
+                    icon: Icons.arrow_back_ios_new_rounded,
+                    onTap: () => Navigator.of(context).popUntil(
+                      (route) => route.isFirst,
+                    ),
                   ),
-                  const SizedBox(height: 16),
-                  Expanded(
-                    child: Container(
-                      key: const ValueKey('result-stage-shell'),
-                      decoration: AppDecorations.card(radius: AppRadii.lg),
-                      child: ClipRRect(
-                        borderRadius: AppRadii.panel,
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(
-                            AppSpacing.xl,
-                            AppSpacing.xl,
-                            AppSpacing.xl,
-                            AppSpacing.xl,
+                  const SizedBox(width: 10),
+                  _HeaderCircleButton(
+                    icon: _isFavorited
+                        ? Icons.favorite_rounded
+                        : Icons.favorite_border_rounded,
+                    accent: _isFavorited ? AppColors.sunsetOrange : null,
+                    onTap: currentChoice == null ? () {} : _toggleFavorite,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Expanded(
+                child: Container(
+                  key: const ValueKey('result-stage-shell'),
+                  decoration: AppDecorations.nightCard(radius: AppRadii.lg),
+                  child: ClipRRect(
+                    borderRadius: AppRadii.panel,
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(
+                        AppSpacing.md,
+                        AppSpacing.md,
+                        AppSpacing.md,
+                        AppSpacing.md,
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            '今晚这口，替你收好了',
+                            style: AppTypeNight.title,
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Text(
-                                '今晚这口，替你收好了',
-                                style: AppType.title,
-                              ),
-                              const SizedBox(height: AppSpacing.xs),
-                              Text(
-                                widget.aiSummary?.trim().isNotEmpty == true
-                                    ? widget.aiSummary!.trim()
-                                    : '基于你刚刚的口味表达和偏好轨迹，先把选择缩成一口更像你的答案。',
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                                style: TextStyle(
-                                  color: AppColors.textPrimary.withValues(
-                                    alpha: 0.58,
-                                  ),
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  height: 1.45,
-                                ),
-                              ),
-                              const SizedBox(height: AppSpacing.lg),
+                          const SizedBox(height: AppSpacing.xxs),
+                          Text(
+                            widget.aiSummary?.trim().isNotEmpty == true
+                                ? widget.aiSummary!.trim()
+                                : '基于你刚刚的口味表达和偏好轨迹，先把选择缩成一口更像你的答案。',
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: AppPalette.moonMuted,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              height: 1.45,
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.md),
                               Expanded(
                                 child: currentChoice == null
                                     ? EmptyRecommendationState(
@@ -889,7 +902,7 @@ class _ResultPageState extends State<ResultPage> {
                                                         .availableChoices
                                                         .length >
                                                     1) ...[
-                                              const SizedBox(height: 12),
+                                              const SizedBox(height: 10),
                                               ResultCandidateRail(
                                                 key: const ValueKey(
                                                   'result-candidate-rail',
@@ -902,11 +915,13 @@ class _ResultPageState extends State<ResultPage> {
                                                     widget.recalledCount,
                                                 aiReasonsByRecipeId:
                                                     widget.aiReasonsByRecipeId,
+                                                thumbUrlByRecipeId:
+                                                    _thumbUrlByRecipeId,
                                                 onSelect: _selectChoice,
                                               ),
                                             ],
                                             if (!_isMealMode) ...[
-                                              const SizedBox(height: 14),
+                                              const SizedBox(height: 10),
                                               ResultExecutionShortcuts(
                                                 preferredPath: _preferredPath,
                                                 onCook: () =>
@@ -923,7 +938,7 @@ class _ResultPageState extends State<ResultPage> {
                                                 ),
                                               ),
                                             ],
-                                            const SizedBox(height: 14),
+                                            const SizedBox(height: 10),
                                             AnimatedSwitcher(
                                               duration:
                                                   contentTransitionDuration,
@@ -990,7 +1005,7 @@ class _ResultPageState extends State<ResultPage> {
                                                     ),
                                             ),
                                             if (_isMealMode) ...[
-                                              const SizedBox(height: 14),
+                                              const SizedBox(height: 10),
                                               ResultExecutionShortcuts(
                                                 preferredPath: _preferredPath,
                                                 onCook: () =>
@@ -1007,7 +1022,7 @@ class _ResultPageState extends State<ResultPage> {
                                                 ),
                                               ),
                                             ],
-                                            const SizedBox(height: 16),
+                                            const SizedBox(height: 12),
                                             Wrap(
                                               spacing: 8,
                                               runSpacing: 8,
@@ -1027,12 +1042,12 @@ class _ResultPageState extends State<ResultPage> {
                                                   ResultTagChip(label: tag),
                                               ],
                                             ),
-                                            const SizedBox(height: 18),
+                                            const SizedBox(height: 12),
                                             Text(
                                               currentChoice.name,
-                                              style: AppType.display,
+                                              style: AppTypeNight.display,
                                             ),
-                                            const SizedBox(height: 10),
+                                            const SizedBox(height: 8),
                                             Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
@@ -1043,9 +1058,10 @@ class _ResultPageState extends State<ResultPage> {
                                                     'result-hero-intro',
                                                   ),
                                                   style: TextStyle(
-                                                    color: AppColors.textPrimary
+                                                    color: AppPalette
+                                                        .moonlight
                                                         .withValues(
-                                                      alpha: 0.72,
+                                                      alpha: 0.82,
                                                     ),
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w600,
@@ -1060,11 +1076,8 @@ class _ResultPageState extends State<ResultPage> {
                                                   Text(
                                                     '正在整理这道 HowToCook 菜谱简介',
                                                     style: TextStyle(
-                                                      color: AppColors
-                                                          .textPrimary
-                                                          .withValues(
-                                                        alpha: 0.42,
-                                                      ),
+                                                      color: AppPalette
+                                                          .moonMuted,
                                                       fontSize: 12,
                                                       fontWeight:
                                                           FontWeight.w700,
@@ -1074,7 +1087,7 @@ class _ResultPageState extends State<ResultPage> {
                                               ],
                                             ),
                                             if (!_isMealMode) ...[
-                                              const SizedBox(height: 18),
+                                              const SizedBox(height: 12),
                                               PairingBand(
                                                 key: const ValueKey(
                                                   'result-pairing-band',
@@ -1083,7 +1096,7 @@ class _ResultPageState extends State<ResultPage> {
                                                 loadState: pairingState,
                                               ),
                                             ],
-                                            const SizedBox(height: 22),
+                                            const SizedBox(height: 14),
                                             NutritionSummaryCard(
                                               key: const ValueKey(
                                                 'result-nutrition-card',
@@ -1091,7 +1104,7 @@ class _ResultPageState extends State<ResultPage> {
                                               data: nutrition,
                                               loadState: nutritionState,
                                             ),
-                                            const SizedBox(height: 18),
+                                            const SizedBox(height: 12),
                                             RecommendationExplanationCard(
                                               key: const ValueKey(
                                                 'result-explanation-card',
@@ -1110,7 +1123,7 @@ class _ResultPageState extends State<ResultPage> {
                                               reason:
                                                   _buildRecommendationSubtitle(),
                                             ),
-                                            const SizedBox(height: 16),
+                                            const SizedBox(height: 12),
                                             ResultFeedbackBand(
                                               selection: _feedbackSelection,
                                               onEnjoyed: () =>
@@ -1123,7 +1136,7 @@ class _ResultPageState extends State<ResultPage> {
                                                     .notForMe,
                                               ),
                                             ),
-                                            const SizedBox(height: 22),
+                                            const SizedBox(height: 14),
                                             ResultActionBar(
                                               onReroll: _reroll,
                                               onOpenSimilarRecipes: () =>
@@ -1150,8 +1163,6 @@ class _ResultPageState extends State<ResultPage> {
               ),
             ),
           ),
-        ],
-      ),
     );
   }
 
@@ -1189,12 +1200,32 @@ class _ResultPageState extends State<ResultPage> {
       return summary.trim();
     }
 
-    final labels = _displayTags.take(3).join('、');
-    if (labels.isNotEmpty) {
-      return '根据你的口味签名推荐：$labels';
+    // Local, rule-based explanation when the AI chef is not configured:
+    // intersect the dish's own tags with the user's liked tags so the
+    // reason names the concrete matches instead of a generic line.
+    final liked =
+        (widget.inferenceInput?.likedTagLabels ?? const <String>[]).toSet();
+    final hits = currentChoice.tags
+        .where(liked.contains)
+        .take(3)
+        .toList(growable: false);
+    final ingredients = currentChoice.ingredients.take(2).join('、');
+    final buffer = StringBuffer();
+    if (hits.isNotEmpty) {
+      buffer.write('命中你的偏好：${hits.join('、')}');
+      if (ingredients.isNotEmpty) buffer.write('；');
     }
-
-    return '根据你的口味推荐';
+    if (ingredients.isNotEmpty) {
+      buffer.write('主料$ingredients，口味扎实');
+    }
+    if (buffer.isEmpty) {
+      final labels = _displayTags.take(3).join('、');
+      if (labels.isNotEmpty) {
+        return '根据你的口味签名推荐：$labels';
+      }
+      return '根据你的口味推荐';
+    }
+    return buffer.toString();
   }
 
   String _buildDishIntroduction() {
@@ -1251,16 +1282,16 @@ class _HeaderCircleButton extends StatelessWidget {
         borderRadius: AppRadii.small,
         onTap: onTap,
         child: Ink(
-          width: 40,
-          height: 40,
+          width: 38,
+          height: 38,
           decoration: BoxDecoration(
-            color: AppPalette.surface,
+            color: AppPalette.nightElevated,
             borderRadius: AppRadii.small,
-            border: Border.all(color: AppPalette.divider),
+            border: Border.all(color: AppPalette.nightDivider),
           ),
           child: Icon(
             icon,
-            color: accent ?? AppColors.textPrimary,
+            color: accent ?? AppPalette.moonlight,
             size: 18,
           ),
         ),

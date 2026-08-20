@@ -1,5 +1,4 @@
 import 'package:eatwhat_app/v2/core/data/models/recommendation_resolution.dart';
-import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
 
@@ -26,14 +25,14 @@ class RecommendationExplanationCard extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
-      decoration: AppDecorations.card(),
+      decoration: AppDecorations.nightCard(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
             '推荐说明',
             style: TextStyle(
-              color: AppColors.textPrimary,
+              color: AppPalette.moonlight,
               fontSize: 16,
               fontWeight: FontWeight.w800,
             ),
@@ -42,7 +41,7 @@ class RecommendationExplanationCard extends StatelessWidget {
           Text(
             _buildSourceLine(),
             style: TextStyle(
-              color: AppColors.textPrimary.withValues(alpha: 0.74),
+              color: AppPalette.moonlight.withValues(alpha: 0.74),
               fontSize: 13,
               fontWeight: FontWeight.w700,
               height: 1.45,
@@ -52,7 +51,7 @@ class RecommendationExplanationCard extends StatelessWidget {
           Text(
             reason,
             style: TextStyle(
-              color: AppColors.textPrimary.withValues(alpha: 0.56),
+              color: AppPalette.moonlight.withValues(alpha: 0.56),
               fontSize: 13,
               fontWeight: FontWeight.w600,
               height: 1.45,
@@ -63,7 +62,7 @@ class RecommendationExplanationCard extends StatelessWidget {
             Text(
               '生成信号：${recallLabels.take(4).join('、')}',
               style: TextStyle(
-                color: AppColors.textPrimary.withValues(alpha: 0.52),
+                color: AppPalette.moonlight.withValues(alpha: 0.52),
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 height: 1.45,
@@ -75,7 +74,7 @@ class RecommendationExplanationCard extends StatelessWidget {
             Text(
               '本轮约束：${constraintLabels.join('、')}',
               style: TextStyle(
-                color: AppColors.textPrimary.withValues(alpha: 0.52),
+                color: AppPalette.moonlight.withValues(alpha: 0.52),
                 fontSize: 12,
                 fontWeight: FontWeight.w700,
                 height: 1.45,
@@ -149,7 +148,7 @@ class EmptyRecommendationState extends StatelessWidget {
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.fromLTRB(20, 22, 20, 22),
-        decoration: AppDecorations.card(),
+        decoration: AppDecorations.nightCard(),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -162,7 +161,7 @@ class EmptyRecommendationState extends StatelessWidget {
               child: Text(
                 badge,
                 style: const TextStyle(
-                  color: AppColors.textPrimary,
+                  color: AppPalette.moonlight,
                   fontSize: 11,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 1.2,
@@ -174,7 +173,7 @@ class EmptyRecommendationState extends StatelessWidget {
               '这轮没有收束出合适的菜',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: AppColors.textPrimary,
+                color: AppPalette.moonlight,
                 fontSize: 24,
                 fontWeight: FontWeight.w800,
                 height: 1.15,
@@ -185,7 +184,7 @@ class EmptyRecommendationState extends StatelessWidget {
               hint,
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: AppColors.textPrimary.withValues(alpha: 0.62),
+                color: AppPalette.moonlight.withValues(alpha: 0.62),
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
                 height: 1.5,

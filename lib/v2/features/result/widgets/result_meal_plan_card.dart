@@ -1,5 +1,4 @@
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
-import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_pairing_band.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +23,7 @@ class ResultMealPlanCard extends StatelessWidget {
         title: mainDish.name,
         subtitle: _mainDishSubtitle(mainDish),
         icon: Icons.restaurant_menu_rounded,
-        accent: AppPalette.chili,
+        accent: AppPalette.leaf,
       ),
       ...pairings.map(
         (pairing) => _MealItem(
@@ -40,8 +39,8 @@ class ResultMealPlanCard extends StatelessWidget {
     return Container(
       key: const ValueKey('result-meal-plan-card'),
       padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
-      decoration: AppDecorations.card(
-        color: AppPalette.surfaceMuted,
+      decoration: AppDecorations.nightCard(
+        color: AppPalette.nightElevated,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,11 +51,11 @@ class ResultMealPlanCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('这一顿这样搭', style: AppType.section),
+                    const Text('这一顿这样搭', style: AppTypeNight.section),
                     const SizedBox(height: 4),
                     Text(
                       '${partySize ?? 1} 人份 · ${items.length} 样组合',
-                      style: AppType.label,
+                      style: AppTypeNight.label,
                     ),
                   ],
                 ),
@@ -66,11 +65,11 @@ class ResultMealPlanCard extends StatelessWidget {
                     const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
                   borderRadius: AppRadii.capsule,
-                  color: AppPalette.herb.withValues(alpha: 0.14),
+                  color: AppPalette.leaf.withValues(alpha: 0.14),
                 ),
                 child: Text(
                   '完整一餐',
-                  style: AppType.microLabel.copyWith(color: AppPalette.herb),
+                  style: AppTypeNight.microLabel.copyWith(color: AppPalette.leaf),
                 ),
               ),
             ],
@@ -119,7 +118,7 @@ class _MealItemTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: AppDecorations.card(radius: AppRadii.sm),
+      decoration: AppDecorations.nightCard(radius: AppRadii.sm),
       child: Row(
         children: [
           Container(
@@ -141,7 +140,7 @@ class _MealItemTile extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    color: AppColors.textPrimary,
+                    color: AppPalette.moonlight,
                     fontSize: 15,
                     fontWeight: FontWeight.w800,
                   ),
@@ -152,7 +151,7 @@ class _MealItemTile extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                    color: AppColors.textPrimary.withValues(alpha: 0.52),
+                    color: AppPalette.moonlight.withValues(alpha: 0.52),
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
                     height: 1.35,

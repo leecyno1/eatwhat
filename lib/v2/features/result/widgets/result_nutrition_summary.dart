@@ -18,7 +18,7 @@ class NutritionSummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
-      decoration: AppDecorations.card(),
+      decoration: AppDecorations.nightCard(),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -27,7 +27,7 @@ class NutritionSummaryCard extends StatelessWidget {
               const Text(
                 '营养速览',
                 style: TextStyle(
-                  color: AppColors.textPrimary,
+                  color: AppPalette.moonlight,
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                 ),
@@ -48,7 +48,7 @@ class NutritionSummaryCard extends StatelessWidget {
                 Text(
                   '健康分 ${data!.healthScore}/10',
                   style: TextStyle(
-                    color: AppColors.textPrimary.withValues(alpha: 0.46),
+                    color: AppPalette.moonlight.withValues(alpha: 0.46),
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                   ),
@@ -63,7 +63,7 @@ class NutritionSummaryCard extends StatelessWidget {
               NutritionLoadState.unavailable => '营养信息暂时不可用',
             },
             style: TextStyle(
-              color: AppColors.textPrimary.withValues(alpha: 0.52),
+              color: AppPalette.moonlight.withValues(alpha: 0.52),
               fontSize: 12,
               fontWeight: FontWeight.w600,
               height: 1.4,
@@ -123,7 +123,7 @@ class NutritionSummaryCard extends StatelessWidget {
                       child: Text(
                         tag,
                         style: const TextStyle(
-                          color: AppColors.textPrimary,
+                          color: AppPalette.moonlight,
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
                         ),
@@ -154,8 +154,8 @@ class NutritionMetric extends StatelessWidget {
     return Container(
       width: 118,
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-      decoration: AppDecorations.card(
-        color: AppPalette.surfaceMuted,
+      decoration: AppDecorations.nightCard(
+        color: AppPalette.nightElevated,
         radius: AppRadii.sm,
       ),
       child: Column(
@@ -164,7 +164,7 @@ class NutritionMetric extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              color: AppColors.textPrimary.withValues(alpha: 0.44),
+              color: AppPalette.moonlight.withValues(alpha: 0.44),
               fontSize: 10,
               fontWeight: FontWeight.w800,
               letterSpacing: 1.0,
@@ -174,7 +174,7 @@ class NutritionMetric extends StatelessWidget {
           Text(
             value,
             style: const TextStyle(
-              color: AppColors.textPrimary,
+              color: AppPalette.moonlight,
               fontSize: 15,
               fontWeight: FontWeight.w800,
             ),

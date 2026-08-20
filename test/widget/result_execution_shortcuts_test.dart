@@ -33,7 +33,7 @@ void main() {
             find.byKey(const ValueKey('result-execution-cook-icon')),
           )
           .color,
-      AppPalette.inkSoft,
+      AppPalette.moonMuted,
     );
     expect(
       tester
@@ -41,7 +41,7 @@ void main() {
             find.byKey(const ValueKey('result-execution-delivery-icon')),
           )
           .color,
-      AppPalette.chili,
+      AppPalette.leaf,
     );
     expect(
       tester
@@ -49,7 +49,7 @@ void main() {
             find.byKey(const ValueKey('result-execution-dine-in-icon')),
           )
           .color,
-      AppPalette.inkSoft,
+      AppPalette.moonMuted,
     );
 
     await tester.tap(find.byKey(const ValueKey('result-execution-delivery')));

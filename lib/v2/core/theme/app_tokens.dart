@@ -173,6 +173,56 @@ class AppMotion {
   static const Curve sheet = Cubic(0.32, 0.72, 0, 1);
 }
 
+/// Night-mode text styles for the V2 dark pages. Same metrics as the
+/// daylight [AppType] styles, re-inked for the night palette so titles stay
+/// moonlit and secondary text fades to moonMuted.
+class AppTypeNight {
+  const AppTypeNight._();
+
+  static const TextStyle display = TextStyle(
+    fontSize: 32,
+    fontWeight: FontWeight.w900,
+    height: 1.08,
+    color: AppPalette.moonlight,
+  );
+
+  static const TextStyle title = TextStyle(
+    fontSize: 24,
+    fontWeight: FontWeight.w800,
+    height: 1.12,
+    color: AppPalette.moonlight,
+  );
+
+  static const TextStyle section = TextStyle(
+    fontSize: 18,
+    fontWeight: FontWeight.w800,
+    height: 1.2,
+    color: AppPalette.moonlight,
+  );
+
+  static const TextStyle body = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.w500,
+    height: 1.45,
+    color: AppPalette.moonMuted,
+  );
+
+  static const TextStyle label = TextStyle(
+    fontSize: 12,
+    fontWeight: FontWeight.w700,
+    height: 1.2,
+    color: AppPalette.moonMuted,
+  );
+
+  static const TextStyle microLabel = TextStyle(
+    fontSize: 11,
+    fontWeight: FontWeight.w800,
+    height: 1.15,
+    letterSpacing: 1.2,
+    color: AppPalette.moonMuted,
+  );
+}
+
 class AppDecorations {
   const AppDecorations._();
 
@@ -198,5 +248,19 @@ class AppDecorations {
       borderColor: borderColor,
       radius: radius,
     ).copyWith(boxShadow: AppSurfaces.softShadow());
+  }
+
+  /// Night-mode surface for the V2 dark pages: an elevated night panel
+  /// with a subtle divider rim instead of the daylight glass card.
+  static BoxDecoration nightCard({
+    Color color = AppPalette.nightSurface,
+    Color borderColor = AppPalette.nightDivider,
+    double radius = AppRadii.md,
+  }) {
+    return BoxDecoration(
+      color: color,
+      borderRadius: BorderRadius.circular(radius),
+      border: Border.all(color: borderColor),
+    );
   }
 }

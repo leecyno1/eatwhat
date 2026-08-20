@@ -7,9 +7,7 @@ import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
 import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
 import 'package:eatwhat_app/v2/core/services/v2_phase2_recommendation_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_recommendation_telemetry_service.dart';
-import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
-import 'package:eatwhat_app/v2/features/home/widgets/floating_editorial_background.dart';
 import 'package:eatwhat_app/v2/features/result/result_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -275,136 +273,139 @@ class _DecisionPageState extends State<DecisionPage> {
     ];
 
     return Scaffold(
-      backgroundColor: AppColors.lightBackground,
-      body: Stack(
-        children: [
-          const Positioned.fill(child: FloatingEditorialBackground()),
-          SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppSpacing.lg,
-                AppSpacing.md,
-                AppSpacing.lg,
-                AppSpacing.xl,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: AppPalette.night,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppSpacing.lg,
+            AppSpacing.sm,
+            AppSpacing.lg,
+            AppSpacing.lg,
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
                 children: [
-                  Row(
-                    children: [
-                      const Text('口味收束台', style: AppType.microLabel),
-                      const Spacer(),
-                      _DecisionStatusBadge(
-                        isLoading: _aiLoading,
-                        duration: transitionDuration,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: AppSpacing.lg),
-                  Expanded(
-                    child: Container(
-                      key: const ValueKey('decision-stage-shell'),
-                      width: double.infinity,
-                      decoration: AppDecorations.card(radius: AppRadii.lg),
-                      child: SingleChildScrollView(
-                        padding: const EdgeInsets.fromLTRB(
-                          AppSpacing.xl,
-                          AppSpacing.xxl,
-                          AppSpacing.xl,
-                          AppSpacing.xl,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            AnimatedContainer(
-                              duration: transitionDuration,
-                              curve: AppMotion.enter,
-                              width: 48,
-                              height: 48,
-                              decoration: BoxDecoration(
-                                color: _isFinished
-                                    ? AppPalette.positiveSurface
-                                    : AppPalette.surfaceMuted,
-                                borderRadius: AppRadii.small,
-                              ),
-                              child: Icon(
-                                _isFinished
-                                    ? Icons.check_rounded
-                                    : Icons.restaurant_menu_rounded,
-                                color: _isFinished
-                                    ? AppPalette.chili
-                                    : AppPalette.ink,
-                              ),
-                            ),
-                            const SizedBox(height: AppSpacing.xl),
-                            const Text(
-                              '正在组合你的口味签名',
-                              style: AppType.title,
-                            ),
-                            const SizedBox(height: AppSpacing.sm),
-                            Text(
-                              _refinedSummary?.trim().isNotEmpty == true
-                                  ? _refinedSummary!.trim()
-                                  : '根据你的偏好和补充要求，先从可靠菜谱中筛选，再收束成一组可直接选择的结果。',
-                              style: AppType.body,
-                            ),
-                            const SizedBox(height: AppSpacing.xl),
-                            Wrap(
-                              spacing: AppSpacing.xs,
-                              runSpacing: AppSpacing.xs,
-                              children: [
-                                for (final signal in _displaySignals.take(4))
-                                  _DecisionSignalChip(label: signal),
-                              ],
-                            ),
-                            const SizedBox(height: AppSpacing.xxl),
-                            const Divider(height: 1, color: AppPalette.divider),
-                            const SizedBox(height: AppSpacing.lg),
-                            for (var index = 0;
-                                index < stageItems.length;
-                                index++) ...[
-                              _DecisionStageRow(
-                                label: stageItems[index].label,
-                                state: _stateFor(stageItems[index].stage),
-                                duration: transitionDuration,
-                              ),
-                              if (index != stageItems.length - 1)
-                                const SizedBox(height: AppSpacing.sm),
-                            ],
-                            const SizedBox(height: AppSpacing.xl),
-                            AnimatedSwitcher(
-                              duration: transitionDuration,
-                              switchInCurve: AppMotion.enter,
-                              switchOutCurve: AppMotion.enter,
-                              child: Text(
-                                _buildLiveStatusText(),
-                                key: ValueKey(_stage),
-                                style: AppType.label.copyWith(
-                                  color: _isFinished
-                                      ? AppPalette.chili
-                                      : AppPalette.inkMuted,
-                                ),
-                              ),
-                            ),
-                            if (_isFinished) ...[
-                              const SizedBox(height: AppSpacing.xs),
-                              Text(
-                                '候选菜品已经准备好',
-                                style: AppType.label.copyWith(
-                                  color: AppPalette.herb,
-                                ),
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    ),
+                  const Text('口味收束台', style: AppTypeNight.microLabel),
+                  const Spacer(),
+                  _DecisionStatusBadge(
+                    isLoading: _aiLoading,
+                    duration: transitionDuration,
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: AppSpacing.sm),
+              Expanded(
+                child: Container(
+                  key: const ValueKey('decision-stage-shell'),
+                  width: double.infinity,
+                  decoration: AppDecorations.nightCard(radius: AppRadii.lg),
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.lg,
+                      AppSpacing.xl,
+                      AppSpacing.lg,
+                      AppSpacing.lg,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        AnimatedContainer(
+                          duration: transitionDuration,
+                          curve: AppMotion.enter,
+                          width: 44,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: _isFinished
+                                ? AppPalette.nightElevated
+                                : AppPalette.nightSurface,
+                            borderRadius: AppRadii.small,
+                            border: Border.all(
+                              color: _isFinished
+                                  ? AppPalette.leaf.withValues(alpha: 0.5)
+                                  : AppPalette.nightDivider,
+                            ),
+                          ),
+                          child: Icon(
+                            _isFinished
+                                ? Icons.check_rounded
+                                : Icons.restaurant_menu_rounded,
+                            color: _isFinished
+                                ? AppPalette.leaf
+                                : AppPalette.moonMuted,
+                          ),
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        const Text(
+                          '正在组合你的口味签名',
+                          style: AppTypeNight.title,
+                        ),
+                        const SizedBox(height: AppSpacing.xs),
+                        Text(
+                          _refinedSummary?.trim().isNotEmpty == true
+                              ? _refinedSummary!.trim()
+                              : '根据你的偏好和补充要求，先从可靠菜谱中筛选，再收束成一组可直接选择的结果。',
+                          style: AppTypeNight.body,
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        Wrap(
+                          spacing: AppSpacing.xs,
+                          runSpacing: AppSpacing.xs,
+                          children: [
+                            for (final signal in _displaySignals.take(4))
+                              _DecisionSignalChip(label: signal),
+                          ],
+                        ),
+                        const SizedBox(height: AppSpacing.lg),
+                        const Divider(
+                          height: 1,
+                          color: AppPalette.nightDivider,
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        for (var index = 0;
+                            index < stageItems.length;
+                            index++) ...[
+                          _DecisionStageRow(
+                            label: stageItems[index].label,
+                            state: _stateFor(stageItems[index].stage),
+                            duration: transitionDuration,
+                          ),
+                          if (index != stageItems.length - 1)
+                            const SizedBox(height: AppSpacing.xs),
+                        ],
+                        const SizedBox(height: AppSpacing.lg),
+                        AnimatedSwitcher(
+                          duration: transitionDuration,
+                          switchInCurve: AppMotion.enter,
+                          switchOutCurve: AppMotion.enter,
+                          child: Text(
+                            _buildLiveStatusText(),
+                            key: ValueKey(_stage),
+                            style: AppTypeNight.label.copyWith(
+                              color: _isFinished
+                                  ? AppPalette.leaf
+                                  : AppPalette.moonMuted,
+                            ),
+                          ),
+                        ),
+                        if (_isFinished) ...[
+                          const SizedBox(height: AppSpacing.xxs),
+                          Text(
+                            '候选菜品已经准备好',
+                            style: AppTypeNight.label.copyWith(
+                              color: AppPalette.leaf,
+                            ),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -441,9 +442,9 @@ class _DecisionStatusBadge extends StatelessWidget {
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: isLoading ? AppPalette.surfaceMuted : AppPalette.positiveSurface,
+        color: AppPalette.nightElevated,
         borderRadius: AppRadii.capsule,
-        border: Border.all(color: AppPalette.divider),
+        border: Border.all(color: AppPalette.nightDivider),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -453,15 +454,15 @@ class _DecisionStatusBadge extends StatelessWidget {
             width: 7,
             height: 7,
             decoration: BoxDecoration(
-              color: isLoading ? AppPalette.yolk : AppPalette.herb,
+              color: isLoading ? AppPalette.yolk : AppPalette.leaf,
               shape: BoxShape.circle,
             ),
           ),
           const SizedBox(width: AppSpacing.xs),
           Text(
             isLoading ? '口味推理中' : '口味推理完成',
-            style: AppType.microLabel.copyWith(
-              color: isLoading ? AppPalette.inkSoft : AppPalette.herb,
+            style: AppTypeNight.microLabel.copyWith(
+              color: isLoading ? AppPalette.yolk : AppPalette.leaf,
             ),
           ),
         ],
@@ -484,14 +485,15 @@ class _DecisionSignalChip extends StatelessWidget {
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: AppPalette.surfaceMuted,
+        color: AppPalette.nightElevated,
         borderRadius: AppRadii.capsule,
+        border: Border.all(color: AppPalette.nightDivider),
       ),
       child: Text(
         label,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: AppType.label,
+        style: AppTypeNight.label,
       ),
     );
   }
@@ -512,13 +514,14 @@ class _DecisionStageRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final isComplete = state == _DecisionStageState.complete;
     final isActive = state == _DecisionStageState.active;
-    final foreground =
-        isComplete || isActive ? AppPalette.ink : AppPalette.inkMuted;
+    final foreground = isComplete || isActive
+        ? AppPalette.moonlight
+        : AppPalette.moonMuted;
     final surface = isComplete
-        ? AppPalette.positiveSurface
+        ? AppPalette.nightElevated
         : isActive
-            ? AppPalette.surfaceMuted
-            : AppPalette.surface;
+            ? AppPalette.nightSurface
+            : AppPalette.night;
 
     return AnimatedContainer(
       duration: duration,
@@ -527,7 +530,11 @@ class _DecisionStageRow extends StatelessWidget {
       decoration: BoxDecoration(
         color: surface,
         borderRadius: AppRadii.small,
-        border: Border.all(color: AppPalette.divider),
+        border: Border.all(
+          color: isComplete
+              ? AppPalette.leaf.withValues(alpha: 0.42)
+              : AppPalette.nightDivider,
+        ),
       ),
       child: Row(
         children: [
@@ -537,10 +544,10 @@ class _DecisionStageRow extends StatelessWidget {
             height: 28,
             decoration: BoxDecoration(
               color: isComplete
-                  ? AppPalette.chili
+                  ? AppPalette.leaf
                   : isActive
-                      ? AppPalette.ink
-                      : AppPalette.surfaceMuted,
+                      ? AppPalette.moonlight
+                      : AppPalette.nightElevated,
               borderRadius: BorderRadius.circular(AppRadii.xs),
             ),
             child: Icon(
@@ -551,15 +558,15 @@ class _DecisionStageRow extends StatelessWidget {
                       : Icons.remove_rounded,
               size: 17,
               color: isComplete || isActive
-                  ? AppPalette.rice
-                  : AppPalette.inkMuted,
+                  ? AppPalette.night
+                  : AppPalette.moonMuted,
             ),
           ),
           const SizedBox(width: AppSpacing.sm),
           Expanded(
             child: Text(
               label,
-              style: AppType.label.copyWith(color: foreground),
+              style: AppTypeNight.label.copyWith(color: foreground),
             ),
           ),
         ],

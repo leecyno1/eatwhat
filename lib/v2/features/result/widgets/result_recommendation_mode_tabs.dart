@@ -24,8 +24,8 @@ class ResultRecommendationModeTabs extends StatelessWidget {
       child: Container(
         key: const ValueKey('result-recommendation-mode-tabs'),
         padding: const EdgeInsets.all(4),
-        decoration: AppDecorations.card(
-          color: AppPalette.surfaceMuted,
+        decoration: AppDecorations.nightCard(
+          color: AppPalette.nightElevated,
           radius: AppRadii.sm,
         ),
         child: Row(
@@ -79,7 +79,7 @@ class _ModeTab extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 10),
             decoration: BoxDecoration(
               borderRadius: AppRadii.small,
-              color: selected ? AppPalette.chili : Colors.transparent,
+              color: selected ? AppPalette.leaf : Colors.transparent,
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -87,13 +87,13 @@ class _ModeTab extends StatelessWidget {
                 Icon(
                   icon,
                   size: 17,
-                  color: selected ? AppPalette.rice : AppPalette.ink,
+                  color: selected ? AppPalette.night : AppPalette.moonlight,
                 ),
                 const SizedBox(width: 7),
                 Text(
                   label,
-                  style: AppType.label.copyWith(
-                    color: selected ? AppPalette.rice : AppPalette.ink,
+                  style: AppTypeNight.label.copyWith(
+                    color: selected ? AppPalette.night : AppPalette.moonlight,
                     fontWeight: FontWeight.w800,
                   ),
                 ),

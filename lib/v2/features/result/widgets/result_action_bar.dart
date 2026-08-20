@@ -17,10 +17,10 @@ class ResultTagChip extends StatelessWidget {
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: AppPalette.surfaceMuted,
+        color: AppPalette.nightElevated,
         borderRadius: AppRadii.capsule,
       ),
-      child: Text(label, style: AppType.label),
+      child: Text(label, style: AppTypeNight.label),
     );
   }
 }
@@ -86,7 +86,7 @@ class ResultPrimaryConfirmBar extends StatelessWidget {
     return Container(
       key: const ValueKey('result-primary-confirm-bar'),
       padding: const EdgeInsets.all(AppSpacing.xs),
-      decoration: AppDecorations.floating(radius: AppRadii.md),
+      decoration: AppDecorations.nightCard(radius: AppRadii.md),
       child: FilledButton.icon(
         key: const ValueKey('execution-entry-button'),
         onPressed: onConfirm,
@@ -136,18 +136,20 @@ class _SecondaryActionState extends State<_SecondaryAction> {
           child: Container(
             height: 48,
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xs),
-            decoration: AppDecorations.card(radius: AppRadii.sm),
+            decoration: AppDecorations.nightCard(radius: AppRadii.sm),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(widget.icon, size: 17, color: AppPalette.inkSoft),
+                Icon(widget.icon, size: 17, color: AppPalette.moonMuted),
                 const SizedBox(width: 6),
                 Flexible(
                   child: Text(
                     widget.label,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: AppType.label.copyWith(color: AppPalette.ink),
+                    style: AppTypeNight.label.copyWith(
+                      color: AppPalette.moonlight,
+                    ),
                   ),
                 ),
               ],
