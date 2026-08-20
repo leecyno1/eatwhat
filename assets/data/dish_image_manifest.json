@@ -5794,6 +5794,425 @@
         "柠檬"
       ],
       "cuisine": "饮品"
+    },
+    {
+      "dishId": "125",
+      "dishName": "尖椒炒牛肉",
+      "aliases": [
+        "尖椒炒牛肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-125-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-125-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "牛肉",
+        "葱、姜、蒜",
+        "尖椒",
+        "酱油",
+        "盐",
+        "糖"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "126",
+      "dishName": "山西过油肉",
+      "aliases": [
+        "山西过油肉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-126-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-126-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "猪里脊",
+        "蒜苔",
+        "盐",
+        "酱油",
+        "葱姜蒜",
+        "鸡蛋"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "128",
+      "dishName": "带把肘子",
+      "aliases": [
+        "带把肘子"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-128-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-128-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "带脚、爪猪前肘",
+        "红豆腐乳",
+        "甜面酱",
+        "精盐",
+        "红酱油",
+        "白酱油"
+      ],
+      "cuisine": "荤菜"
+    },
+    {
+      "dishId": "16",
+      "dishName": "肉蟹煲",
+      "aliases": [
+        "肉蟹煲"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-16-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-16-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "肉蟹",
+        "虾",
+        "土豆",
+        "年糕",
+        "洋葱",
+        "大蒜"
+      ],
+      "cuisine": "水产"
+    },
+    {
+      "dishId": "220",
+      "dishName": "紫菜蛋花汤",
+      "aliases": [
+        "紫菜蛋花汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-220-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-220-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "鸡蛋",
+        "紫菜",
+        "葱花",
+        "水",
+        "盐",
+        "油"
+      ],
+      "cuisine": "汤羹"
+    },
+    {
+      "dishId": "221",
+      "dishName": "罗宋汤",
+      "aliases": [
+        "罗宋汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-221-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-221-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "蔬菜高汤",
+        "牛肉高汤",
+        "牛肉",
+        "番茄"
+      ],
+      "cuisine": "汤羹"
+    },
+    {
+      "dishId": "223",
+      "dishName": "腊八粥",
+      "aliases": [
+        "腊八粥"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-223-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-223-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "饮用水",
+        "大米",
+        "糯米",
+        "花生",
+        "红豆",
+        "红枣"
+      ],
+      "cuisine": "汤羹"
+    },
+    {
+      "dishId": "225",
+      "dishName": "西红柿鸡蛋汤",
+      "aliases": [
+        "西红柿鸡蛋汤"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-225-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-225-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "西红柿",
+        "鸡蛋",
+        "香油",
+        "味素",
+        "盐",
+        "葱、姜、蒜"
+      ],
+      "cuisine": "汤羹"
+    },
+    {
+      "dishId": "23",
+      "dishName": "酱炖蟹",
+      "aliases": [
+        "酱炖蟹"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-23-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-23-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "螃蟹",
+        "豆瓣酱",
+        "冰糖",
+        "老抽",
+        "菜油",
+        "番茄酱"
+      ],
+      "cuisine": "水产"
+    },
+    {
+      "dishId": "249",
+      "dishName": "炒河粉",
+      "aliases": [
+        "炒河粉"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-249-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-249-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "炒河粉、猪肉/牛肉",
+        "炒料",
+        "其他调味料",
+        "黄瓜、面筋块、绿豆芽、鸡蛋、蒜瓣、小葱、淀粉"
+      ],
+      "cuisine": "主食"
+    },
+    {
+      "dishId": "250",
+      "dishName": "炒馍",
+      "aliases": [
+        "炒馍"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-250-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-250-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "馒头",
+        "盐",
+        "油",
+        "孜然粉",
+        "五香粉",
+        "小葱"
+      ],
+      "cuisine": "主食"
+    },
+    {
+      "dishId": "254",
+      "dishName": "热干面",
+      "aliases": [
+        "热干面"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-254-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-254-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "热干面特有的碱水面",
+        "小葱",
+        "酸豆角",
+        "肉末",
+        "蒜水",
+        "肉汤汁"
+      ],
+      "cuisine": "主食"
+    },
+    {
+      "dishId": "255",
+      "dishName": "照烧鸡腿饭",
+      "aliases": [
+        "照烧鸡腿饭"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-255-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-255-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "鸡腿",
+        "料酒",
+        "生抽",
+        "蜂蜜",
+        "黑椒碎",
+        "黑椒粉"
+      ],
+      "cuisine": "主食"
+    },
+    {
+      "dishId": "301",
+      "dishName": "油醋爆蛋",
+      "aliases": [
+        "油醋爆蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-301-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-301-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "鸡蛋",
+        "小米辣",
+        "小葱",
+        "蒜",
+        "油",
+        "香醋"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "303",
+      "dishName": "清炒花菜",
+      "aliases": [
+        "清炒花菜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-303-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-303-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "花菜",
+        "大蒜",
+        "盐"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "304",
+      "dishName": "清蒸南瓜",
+      "aliases": [
+        "清蒸南瓜"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-304-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-304-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "南瓜"
+      ],
+      "cuisine": "素菜"
+    },
+    {
+      "dishId": "35",
+      "dishName": "桂圆红枣粥",
+      "aliases": [
+        "桂圆红枣粥"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-35-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-35-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "糯米",
+        "红枣",
+        "桂圆"
+      ],
+      "cuisine": "早餐"
+    },
+    {
+      "dishId": "36",
+      "dishName": "水煮玉米",
+      "aliases": [
+        "水煮玉米"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-36-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-36-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "新鲜玉米",
+        "水",
+        "盐",
+        "糖"
+      ],
+      "cuisine": "早餐"
+    },
+    {
+      "dishId": "37",
+      "dishName": "温泉蛋",
+      "aliases": [
+        "温泉蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-37-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-37-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "鸡蛋",
+        "厨房用温度计",
+        "杯子",
+        "昆布酱油",
+        "香葱"
+      ],
+      "cuisine": "早餐"
+    },
+    {
+      "dishId": "38",
+      "dishName": "溏心蛋",
+      "aliases": [
+        "溏心蛋"
+      ],
+      "heroUrl": "assets/images/prebuilt_dishes/dish-38-ai-v2_1280.png",
+      "thumbUrl": "assets/images/prebuilt_dishes/dish-38-ai-v2768.png",
+      "styleTag": "ai_food_photo_v2",
+      "updatedAt": "2026-08-20T00:00:00Z",
+      "sourceType": "ai_generated_v2",
+      "sourceProject": "MiniMax-ImageGen",
+      "ingredients": [
+        "鸡蛋",
+        "水",
+        "秒表"
+      ],
+      "cuisine": "早餐"
     }
   ]
 }
