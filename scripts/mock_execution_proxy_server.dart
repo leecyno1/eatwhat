@@ -9,6 +9,8 @@ Future<void> main(List<String> args) async {
     ..writeln(
       'Mock execution proxy listening on http://${server.address.address}:$port',
     )
+    ..writeln('GET  /health')
+    ..writeln('GET  /api/v1/delivery/oauth/status')
     ..writeln('POST /api/v1/delivery/merchants/search')
     ..writeln('POST /api/v1/delivery/products/search')
     ..writeln('POST /api/v1/delivery/order-previews')
@@ -17,6 +19,8 @@ Future<void> main(List<String> args) async {
 
   await for (final request in server) {
     _addCorsHeaders(request.response);
+    stdout.writeln('[${DateTime.now().toIso8601String()}] '
+        '${request.method} ${request.uri.path}');
     if (request.method == 'OPTIONS') {
       request.response.statusCode = HttpStatus.noContent;
       await request.response.close();
@@ -27,6 +31,18 @@ Future<void> main(List<String> args) async {
         'status': 'ok',
         'mode': 'mock',
         'providers': {'meituan': true},
+      });
+      continue;
+    }
+    // The mock proxy answers as an already-connected ordering backend so
+    // the client's OAuth status check succeeds during local integration.
+    if (request.method == 'GET' &&
+        request.uri.path == '/api/v1/delivery/oauth/status') {
+      await _writeJson(request.response, HttpStatus.ok, {
+        'connected': true,
+        'requiresUserAuthorization': false,
+        'nickname': '美团联调用户',
+        'maskedPhone': '138****8000',
       });
       continue;
     }
