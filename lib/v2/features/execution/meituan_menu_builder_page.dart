@@ -3,10 +3,10 @@ import 'package:eatwhat_app/v2/core/external/platform/platform_exceptions.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
 import 'package:eatwhat_app/v2/core/services/v2_location_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
+import 'package:eatwhat_app/v2/features/auth/auth_sheet.dart';
 import 'package:eatwhat_app/v2/features/execution/meituan_order_page.dart';
 import 'package:eatwhat_app/v2/features/execution/widgets/execution_widgets.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MeituanMenuBuilderPage extends StatefulWidget {
@@ -94,7 +94,17 @@ class _MeituanMenuBuilderPageState extends State<MeituanMenuBuilderPage> {
       title: '先登录吃什么，再继续点单',
       description: '下单账号属于“吃什么”。登录后，服务端才能为你的账号安全保存美团交易授权和订单信息。',
       actionLabel: '登录吃什么',
-      onAction: () => context.push('/login'),
+      onAction: () async {
+        // In-place auth sheet instead of a full-page route jump, so signing
+        // in resumes the merchant search right where the user left off.
+        final signedIn = await showEatWhatAuthSheet(
+          context,
+          reason: '登录后才能使用美团下单',
+        );
+        if (signedIn && mounted) {
+          _refresh();
+        }
+      },
     );
   }
 

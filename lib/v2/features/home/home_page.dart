@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:eatwhat_app/core/config/env_config.dart';
+import 'package:eatwhat_app/core/services/auth_service.dart';
 import 'package:eatwhat_app/v2/core/data/models/meal_planning_direction.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
@@ -10,6 +11,7 @@ import 'package:eatwhat_app/v2/core/services/v2_favorites_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_meal_habit_learning_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_speech_input_service.dart';
+import 'package:eatwhat_app/v2/features/auth/auth_sheet.dart';
 import 'package:eatwhat_app/v2/features/favorites/favorites_page.dart';
 import 'package:eatwhat_app/v2/features/home/controllers/home_recent_success_controller.dart';
 import 'package:eatwhat_app/v2/features/home/controllers/home_taste_deck_builder.dart';
@@ -311,6 +313,21 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  /// Account entry: signed-in users get the account/membership sheet,
+  /// signed-out users get the login/register sheet. Either way the header
+  /// re-renders so the person icon reflects the new session state.
+  Future<void> _openAccount() async {
+    if (AuthService.isLoggedIn) {
+      await showEatWhatAccountSheet(context);
+    } else {
+      await showEatWhatAuthSheet(
+        context,
+        reason: '登录后可同步偏好与订单',
+      );
+    }
+    if (mounted) setState(() {});
+  }
+
   void _showDeck() {
     final session = _session;
     if (session == null) return;
@@ -508,6 +525,7 @@ class _HomePageState extends State<HomePage> {
                     onStructuredConstraintsChanged:
                         _handleStructuredConstraintsChanged,
                     onShowSignature: _showSignature,
+                    onOpenAccount: _openAccount,
                     onOpenFavorites: () {
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
@@ -639,9 +657,7 @@ class _HomePageState extends State<HomePage> {
                     ? Icons.graphic_eq_rounded
                     : Icons.mic_none_rounded,
                 size: 18,
-                color: _isListening
-                    ? AppPalette.leaf
-                    : AppPalette.moonMuted,
+                color: _isListening ? AppPalette.leaf : AppPalette.moonMuted,
               ),
             ),
           ),
@@ -728,6 +744,7 @@ class _FreshCompactHeader extends StatelessWidget {
     required this.onCategoryChanged,
     required this.onStructuredConstraintsChanged,
     required this.onShowSignature,
+    required this.onOpenAccount,
     required this.onOpenFavorites,
     required this.onOpenRecent,
   });
@@ -742,6 +759,7 @@ class _FreshCompactHeader extends StatelessWidget {
   final ValueChanged<String?> onCategoryChanged;
   final ValueChanged<TasteStructuredConstraints> onStructuredConstraintsChanged;
   final VoidCallback onShowSignature;
+  final VoidCallback onOpenAccount;
   final VoidCallback onOpenFavorites;
   final VoidCallback onOpenRecent;
 
@@ -755,7 +773,8 @@ class _FreshCompactHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final matchesHistory = habitSnapshot?.recommendedDirection == planningDirection;
+    final matchesHistory =
+        habitSnapshot?.recommendedDirection == planningDirection;
     return SizedBox(
       key: const ValueKey('taste-entity-category-tabs'),
       height: 40,
@@ -866,6 +885,16 @@ class _FreshCompactHeader extends StatelessWidget {
           ),
           const SizedBox(width: 5),
           _HeaderAction(
+            key: const ValueKey('home-account-button'),
+            icon: AuthService.isLoggedIn
+                ? Icons.person_rounded
+                : Icons.person_outline_rounded,
+            tooltip: AuthService.isLoggedIn ? '账号与会员' : '登录 / 注册',
+            color: AuthService.isLoggedIn ? AppPalette.leaf : null,
+            onTap: onOpenAccount,
+          ),
+          const SizedBox(width: 5),
+          _HeaderAction(
             key: const ValueKey('home-favorites-button'),
             icon: Icons.favorite_border_rounded,
             tooltip: '收藏',
@@ -928,8 +957,8 @@ class _FilterIconPill<T> extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: AppRadii.card),
       tooltip: tooltip,
       child: Container(
-        width: 34,
-        height: 34,
+        width: 32,
+        height: 32,
         decoration: BoxDecoration(
           color: AppPalette.nightSurface.withValues(alpha: 0.92),
           borderRadius: AppRadii.capsule,
@@ -984,11 +1013,16 @@ class _HeaderAction extends StatelessWidget {
     required this.icon,
     required this.tooltip,
     required this.onTap,
+    this.color,
   });
 
   final IconData icon;
   final String tooltip;
   final VoidCallback onTap;
+
+  /// Overrides the default moonMuted icon color — the signed-in account
+  /// button lights up leaf green.
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
@@ -1003,9 +1037,9 @@ class _HeaderAction extends StatelessWidget {
           customBorder: const CircleBorder(),
           onTap: onTap,
           child: SizedBox(
-            width: 34,
-            height: 34,
-            child: Icon(icon, size: 16, color: AppPalette.moonMuted),
+            width: 32,
+            height: 32,
+            child: Icon(icon, size: 16, color: color ?? AppPalette.moonMuted),
           ),
         ),
       ),
@@ -1027,14 +1061,23 @@ class _HeaderSelectionSummary extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // The capsule pops whenever a sweep or tap changes the counts, so every
-    // collect lands with a visible pulse right where the tally lives.
+    // collect lands with a visible pulse right where the tally lives. The
+    // Flexible+FittedBox combo keeps the header row overflow-free on narrow
+    // screens: the capsule scales down instead of pushing past the edge.
     return TweenAnimationBuilder<double>(
       key: ValueKey('taste-summary-bounce-$likedCount-$blockedCount'),
       tween: Tween<double>(begin: 1.22, end: 1),
       duration: AppMotion.standard,
       curve: AppMotion.enter,
-      builder: (context, scale, child) =>
-          Transform.scale(scale: scale, child: child),
+      builder: (context, scale, child) => Flexible(
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Transform.scale(
+            scale: scale,
+            child: child,
+          ),
+        ),
+      ),
       child: Material(
         key: const ValueKey('taste-signature-button'),
         color: AppPalette.nightSurface.withValues(alpha: 0.92),

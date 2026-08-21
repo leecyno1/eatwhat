@@ -373,8 +373,10 @@ class AuthService {
       return AuthResult(success: false, message: '用户名长度应在3-20字符之间');
     }
 
-    if (!RegExp(r'^[a-zA-Z0-9_]+$').hasMatch(username)) {
-      return AuthResult(success: false, message: '用户名只能包含字母、数字和下划线');
+    // Chinese usernames are the natural choice for this app: letters,
+    // digits, underscore, and CJK characters are all allowed.
+    if (!RegExp(r'^[a-zA-Z0-9_\u4e00-\u9fa5]+$').hasMatch(username)) {
+      return AuthResult(success: false, message: '用户名只能包含中文、字母、数字和下划线');
     }
 
     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email)) {
@@ -825,6 +827,11 @@ class User {
   final DateTime lastLoginAt;
   final UserPreference userPreference;
 
+  /// Membership flag for the eatwhat account. New accounts start as standard
+  /// members; the tier drives the account sheet and future member perks.
+  final bool isMember;
+  final DateTime? memberSince;
+
   User({
     required this.id,
     required this.username,
@@ -836,6 +843,8 @@ class User {
     this.updatedAt,
     required this.lastLoginAt,
     required this.userPreference,
+    this.isMember = false,
+    this.memberSince,
   });
 
   User copyWith({
@@ -849,6 +858,8 @@ class User {
     DateTime? updatedAt,
     DateTime? lastLoginAt,
     UserPreference? userPreference,
+    bool? isMember,
+    DateTime? memberSince,
   }) {
     return User(
       id: id ?? this.id,
@@ -861,6 +872,8 @@ class User {
       updatedAt: updatedAt ?? this.updatedAt,
       lastLoginAt: lastLoginAt ?? this.lastLoginAt,
       userPreference: userPreference ?? this.userPreference,
+      isMember: isMember ?? this.isMember,
+      memberSince: memberSince ?? this.memberSince,
     );
   }
 
@@ -876,6 +889,8 @@ class User {
       'updatedAt': updatedAt?.toIso8601String(),
       'lastLoginAt': lastLoginAt.toIso8601String(),
       'userPreference': userPreference.toJson(),
+      'isMember': isMember,
+      'memberSince': memberSince?.toIso8601String(),
     };
   }
 
@@ -892,6 +907,11 @@ class User {
           json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
       lastLoginAt: DateTime.parse(json['lastLoginAt']),
       userPreference: UserPreference.fromJson(json['userPreference']),
+      // Older stored accounts predate the membership fields.
+      isMember: (json['isMember'] as bool?) ?? false,
+      memberSince: json['memberSince'] != null
+          ? DateTime.parse(json['memberSince'])
+          : null,
     );
   }
 }

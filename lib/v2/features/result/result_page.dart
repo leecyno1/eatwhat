@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:eatwhat_app/core/services/unified_recipe_database_service.dart';
+import 'package:eatwhat_app/core/services/auth_service.dart';
 import 'package:eatwhat_app/v2/core/data/models/ai_generation_models.dart';
 import 'package:eatwhat_app/v2/core/data/models/dish_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/meal_planning_direction.dart';
@@ -23,6 +24,7 @@ import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart
 import 'package:eatwhat_app/v2/core/services/v2_recommendation_telemetry_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
+import 'package:eatwhat_app/v2/features/auth/auth_sheet.dart';
 import 'package:eatwhat_app/v2/features/details/howtocook_library_page.dart';
 import 'package:eatwhat_app/v2/features/details/recipe_detail_page.dart';
 import 'package:eatwhat_app/v2/features/execution/execution_sheet.dart';
@@ -667,6 +669,15 @@ class _ResultPageState extends State<ResultPage> {
         );
         return;
       case ExecutionPath.delivery:
+        // Ordering gate: Meituan orders belong to an eatwhat account; a
+        // signed-out user signs in (or registers) before the menu builder.
+        if (!AuthService.isLoggedIn) {
+          final signedIn = await showEatWhatAuthSheet(
+            context,
+            reason: '登录后才能使用美团下单',
+          );
+          if (!signedIn || !mounted) return;
+        }
         await Navigator.of(context).push(
           MaterialPageRoute<void>(
             builder: (_) => MeituanMenuBuilderPage(

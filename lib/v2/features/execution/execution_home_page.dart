@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:eatwhat_app/core/services/auth_service.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
 import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
 import 'package:eatwhat_app/v2/core/services/v2_execution_service.dart';
@@ -11,6 +12,7 @@ import 'package:eatwhat_app/v2/features/details/howtocook_library_page.dart';
 import 'package:eatwhat_app/v2/features/details/recipe_detail_page.dart';
 import 'package:eatwhat_app/v2/features/execution/controllers/execution_completion_controller.dart'
     as execution_completion;
+import 'package:eatwhat_app/v2/features/auth/auth_sheet.dart';
 import 'package:eatwhat_app/v2/features/execution/meituan_menu_builder_page.dart';
 import 'package:eatwhat_app/v2/features/execution/meituan_order_page.dart';
 import 'package:eatwhat_app/v2/features/execution/widgets/execution_completion_feedback_panel.dart';
@@ -94,6 +96,18 @@ class _ExecutionHomePageState extends State<ExecutionHomePage> {
   Future<void> _openDelivery(BuildContext context) async {
     unawaited(_feedback.recordExecutionPathChosen(ExecutionPath.delivery));
     _recordExecutionStarted(ExecutionPath.delivery);
+
+    // Ordering gate: Meituan orders belong to an eatwhat account, so a
+    // signed-out user gets the login/register sheet first and only moves
+    // on into the delivery flow after signing in.
+    if (!AuthService.isLoggedIn) {
+      final signedIn = await showEatWhatAuthSheet(
+        context,
+        reason: '登录后才能使用美团下单',
+      );
+      if (!signedIn || !context.mounted) return;
+    }
+
     final intent = widget.intent.copyWith(
       preferredPath: ExecutionPath.delivery,
     );

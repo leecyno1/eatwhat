@@ -28,20 +28,14 @@ void main() {
     await tester.pump(const Duration(milliseconds: 240));
   }
 
-  testWidgets('AppV2 closes the cold-start questionnaire after skipping',
+  testWidgets('AppV2 skips the retired questionnaire and lands on home',
       (tester) async {
     await tester.pumpWidget(buildTestApp());
     await pumpQuestionnaireFrames(tester);
 
-    expect(find.text('你更喜欢什么菜系？'), findsWidgets);
-
-    await tester.tap(find.text('跳过'));
-    await pumpQuestionnaireFrames(tester);
-    expect(find.text('跳过问卷'), findsOneWidget);
-
-    await tester.tap(find.text('确定跳过'));
-    await pumpQuestionnaireFrames(tester);
-
+    // The cold-start questionnaire is retired: even with the completed flag
+    // unset, the app goes straight to the home stage — preference collection
+    // happens through the physical pot, not a form flow.
     expect(find.text('你更喜欢什么菜系？'), findsNothing);
     expect(find.byType(MaterialApp), findsOneWidget);
   });

@@ -1,4 +1,5 @@
 import 'package:eatwhat_app/core/models/analytics_event.dart';
+import 'package:eatwhat_app/core/services/auth_service.dart';
 import 'package:eatwhat_app/v2/core/data/models/ai_generation_models.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_pairing_model.dart';
@@ -482,7 +483,35 @@ void main() {
     expect(
         find.byKey(const ValueKey('result-execution-dine-in')), findsOneWidget);
 
+    // Seed an account so the ordering gate has a user to sign in as.
+    await AuthService.register(
+      username: 'testfoodie',
+      email: 'test@example.com',
+      password: 'Test1234',
+      confirmPassword: 'Test1234',
+    );
+    await AuthService.logout();
+
     await tester.tap(find.byKey(const ValueKey('result-execution-delivery')));
+    await tester.pumpAndSettle();
+
+    // The ordering gate now requires an eatwhat account: a signed-out user
+    // gets the auth sheet instead of the menu builder. Sign in through the
+    // sheet, then the delivery flow resumes.
+    expect(find.byKey(const ValueKey('eatwhat-auth-sheet')), findsOneWidget);
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-login-username')),
+      'testfoodie',
+    );
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-login-password')),
+      'Test1234',
+    );
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('auth-login-submit')),
+    );
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('auth-login-submit')));
     await tester.pumpAndSettle();
 
     expect(find.text('生成外卖菜单'), findsOneWidget);
