@@ -146,16 +146,24 @@ class AuthService {
       }
 
       // 创建新用户
+      final now = DateTime.now();
       final user = User(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        id: now.millisecondsSinceEpoch.toString(),
         username: username,
         email: email,
         nickname: nickname ?? username,
         passwordHash: _hashPassword(password),
-        createdAt: DateTime.now(),
-        lastLoginAt: DateTime.now(),
+        createdAt: now,
+        lastLoginAt: now,
+        // Registration comes with a trial membership so the account sheet
+        // shows a live tier instead of a coming-soon teaser.
+        isMember: true,
+        memberSince: now,
+        memberExpiresAt: now.add(
+          const Duration(days: User.trialMemberDays),
+        ),
         userPreference: UserPreference(
-          userId: DateTime.now().millisecondsSinceEpoch.toString(),
+          userId: now.millisecondsSinceEpoch.toString(),
           // 默认偏好设置
         ),
       );
@@ -827,10 +835,18 @@ class User {
   final DateTime lastLoginAt;
   final UserPreference userPreference;
 
-  /// Membership flag for the eatwhat account. New accounts start as standard
-  /// members; the tier drives the account sheet and future member perks.
+  /// Membership flag for the eatwhat account. New accounts start with a
+  /// trial membership (see [trialMemberDays]); the tier drives the account
+  /// sheet and future member perks.
   final bool isMember;
   final DateTime? memberSince;
+
+  /// When the current membership period ends (trial or paid). Null means
+  /// the flag carries no expiry — kept for forward compatibility.
+  final DateTime? memberExpiresAt;
+
+  /// Trial membership granted at registration, in days.
+  static const int trialMemberDays = 7;
 
   User({
     required this.id,
@@ -845,6 +861,7 @@ class User {
     required this.userPreference,
     this.isMember = false,
     this.memberSince,
+    this.memberExpiresAt,
   });
 
   User copyWith({
@@ -860,6 +877,7 @@ class User {
     UserPreference? userPreference,
     bool? isMember,
     DateTime? memberSince,
+    DateTime? memberExpiresAt,
   }) {
     return User(
       id: id ?? this.id,
@@ -874,6 +892,7 @@ class User {
       userPreference: userPreference ?? this.userPreference,
       isMember: isMember ?? this.isMember,
       memberSince: memberSince ?? this.memberSince,
+      memberExpiresAt: memberExpiresAt ?? this.memberExpiresAt,
     );
   }
 
@@ -891,6 +910,7 @@ class User {
       'userPreference': userPreference.toJson(),
       'isMember': isMember,
       'memberSince': memberSince?.toIso8601String(),
+      'memberExpiresAt': memberExpiresAt?.toIso8601String(),
     };
   }
 
@@ -912,7 +932,29 @@ class User {
       memberSince: json['memberSince'] != null
           ? DateTime.parse(json['memberSince'])
           : null,
+      memberExpiresAt: json['memberExpiresAt'] != null
+          ? DateTime.parse(json['memberExpiresAt'])
+          : null,
     );
+  }
+
+  /// Whether the membership is currently active — the flag is set and the
+  /// period (if any) has not ended yet.
+  bool get isMembershipActive {
+    if (!isMember) return false;
+    final expiresAt = memberExpiresAt;
+    if (expiresAt == null) return true;
+    return DateTime.now().isBefore(expiresAt);
+  }
+
+  /// Whole days left in the membership period (null when there is no
+  /// expiry to count down).
+  int? get membershipDaysLeft {
+    final expiresAt = memberExpiresAt;
+    if (expiresAt == null) return null;
+    final leftHours = expiresAt.difference(DateTime.now()).inHours;
+    if (leftHours <= 0) return 0;
+    return (leftHours / 24).ceil();
   }
 }
 

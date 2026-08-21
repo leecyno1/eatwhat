@@ -1,9 +1,23 @@
+import 'dart:io';
+
 import 'package:eatwhat_app/core/services/auth_service.dart';
 import 'package:eatwhat_app/v2/features/auth/auth_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 void main() {
+  setUpAll(() async {
+    // Analytics identify (fired on login/register) flows into MetricsService,
+    // which persists through Hive — give the test zone a real temp home so
+    // the box can open instead of throwing unhandled HiveErrors. Plain
+    // Hive.init (VM path) is used because initFlutter needs path_provider,
+    // which has no plugin implementation in widget tests.
+    final dir = await Directory.systemTemp.createTemp('auth_sheet_test');
+    Hive.init(dir.path);
+  });
+
   setUp(() {
     SharedPreferences.setMockInitialValues({});
   });
@@ -89,12 +103,16 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 500));
 
-    // sheet 关闭且登录态就绪
+    // sheet 关闭且登录态就绪（注册即送体验会员）
     expect(find.byKey(const ValueKey('eatwhat-auth-sheet')), findsNothing);
     expect(signedIn, isTrue);
     expect(AuthService.isLoggedIn, isTrue);
     expect(AuthService.currentUser?.username, '美食家小王');
-    expect(AuthService.currentUser?.isMember, isFalse);
+    expect(AuthService.currentUser?.isMembershipActive, isTrue);
+    expect(
+      AuthService.currentUser?.memberExpiresAt,
+      isNotNull,
+    );
 
     await AuthService.logout();
   });
@@ -190,13 +208,29 @@ void main() {
     expect(legacy.isMember, isFalse);
     expect(legacy.memberSince, isNull);
 
-    // 会员字段完整回环
+    // 会员字段完整回环（含到期时间；用相对时间构造避免时间依赖）
+    final now = DateTime.now();
     final member = legacy.copyWith(
       isMember: true,
-      memberSince: DateTime(2026, 8, 21),
+      memberSince: now,
+      memberExpiresAt: now.add(const Duration(days: 7)),
     );
     final restored = User.fromJson(member.toJson());
     expect(restored.isMember, isTrue);
-    expect(restored.memberSince, DateTime(2026, 8, 21));
+    expect(restored.memberSince, now);
+    expect(
+      restored.memberExpiresAt,
+      now.add(const Duration(days: 7)),
+    );
+    expect(restored.isMembershipActive, isTrue);
+    expect(restored.membershipDaysLeft, 7);
+
+    // 过期会员不再活跃
+    final expired = legacy.copyWith(
+      isMember: true,
+      memberExpiresAt: now.subtract(const Duration(days: 1)),
+    );
+    expect(expired.isMembershipActive, isFalse);
+    expect(expired.membershipDaysLeft, 0);
   });
 }

@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:eatwhat_app/core/services/analytics_service.dart';
 import 'package:eatwhat_app/core/services/auth_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
@@ -92,6 +95,17 @@ class _EatWhatAuthSheetState extends State<_EatWhatAuthSheet> {
     if (!mounted) return;
     if (result.success) {
       HapticFeedback.mediumImpact();
+      // Tie the session to the account so preference and order telemetry
+      // stop reporting as anonymous the moment the user signs in.
+      final user = result.user;
+      if (user != null) {
+        unawaited(
+          AnalyticsService().identify(user.id, traits: {
+            'username': user.username,
+            'nickname': user.nickname,
+          }),
+        );
+      }
       Navigator.of(context).pop(true);
       return;
     }
@@ -475,6 +489,8 @@ class _EatWhatAccountSheet extends StatelessWidget {
     );
     if (confirmed != true) return;
     await AuthService.logout();
+    // Release the account identity from the analytics session too.
+    await AnalyticsService().logout();
     if (context.mounted) {
       Navigator.of(context).pop();
     }
@@ -592,8 +608,9 @@ class _EatWhatAccountSheet extends StatelessWidget {
   }
 }
 
-/// Membership card in the account sheet. Standard accounts see the upgrade
-/// teaser; member accounts see the tier badge and join date.
+/// Membership card in the account sheet. Active members (trial or paid)
+/// see the tier badge with the days remaining on the period; everyone else
+/// sees the upgrade teaser.
 class _MembershipCard extends StatelessWidget {
   const _MembershipCard({required this.user});
 
@@ -601,7 +618,14 @@ class _MembershipCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final member = user.isMember;
+    final member = user.isMembershipActive;
+    final daysLeft = user.membershipDaysLeft;
+    final tierLabel = member
+        ? (daysLeft != null ? '体验会员 · 剩 $daysLeft 天' : '吃什么会员')
+        : '标准账号';
+    final subtitle = member
+        ? '会员期内下单享更多权益，到期后可随时续费'
+        : '注册即送 ${User.trialMemberDays} 天体验会员，登录后自动生效';
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -628,7 +652,7 @@ class _MembershipCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  member ? '吃什么会员' : '标准账号',
+                  tierLabel,
                   style: AppTypeNight.label.copyWith(
                     color: member ? AppPalette.leaf : AppPalette.moonlight,
                     fontWeight: FontWeight.w800,
@@ -636,11 +660,7 @@ class _MembershipCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 2),
                 Text(
-                  member
-                      ? (user.memberSince != null
-                          ? '会员有效期与权益以正式上线为准 · ${user.memberSince!.year} 年加入'
-                          : '会员权益以正式上线为准')
-                      : '会员体系即将上线，敬请期待',
+                  subtitle,
                   style: AppTypeNight.microLabel,
                 ),
               ],

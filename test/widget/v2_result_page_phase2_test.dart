@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:eatwhat_app/core/models/analytics_event.dart';
 import 'package:eatwhat_app/core/services/auth_service.dart';
 import 'package:eatwhat_app/v2/core/data/models/ai_generation_models.dart';
@@ -16,9 +18,20 @@ import 'package:eatwhat_app/v2/core/services/v2_recommendation_telemetry_service
 import 'package:eatwhat_app/v2/features/result/result_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
+  setUpAll(() async {
+    // The ordering-gate test signs in through the auth sheet, which fires
+    // AnalyticsService.identify into MetricsService (Hive-backed). Give the
+    // test zone a temp Hive home so opening the box doesn't throw
+    // unhandled HiveErrors. Plain Hive.init is used because initFlutter
+    // needs path_provider, unavailable in widget tests.
+    final dir = await Directory.systemTemp.createTemp('result_phase2_test');
+    Hive.init(dir.path);
+  });
+
   setUp(() {
     SharedPreferences.setMockInitialValues({});
   });

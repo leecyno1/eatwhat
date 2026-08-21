@@ -119,7 +119,7 @@ class HomeFirstUseGuideCard extends StatelessWidget {
           const Text('选出今天想吃的方向', style: AppTypeNight.title),
           const SizedBox(height: AppSpacing.sm),
           const Text(
-            '点一下或上滑表示喜欢，下滑加入拉黑；拖动食材还能抛进这个口味餐盘。',
+            '点一下收下；按住抓起，拖到顶部收下、底部拉黑；摇一摇翻一翻锅。',
             style: AppTypeNight.body,
           ),
           const SizedBox(height: AppSpacing.lg),
