@@ -238,7 +238,8 @@ class _HomePageState extends State<HomePage> {
       context: context,
       barrierDismissible: true,
       barrierLabel: '首页引导',
-      barrierColor: AppSurfaces.scrim,
+      // Night scrim so the guide card floats focused above the dark stage.
+      barrierColor: AppPalette.night.withValues(alpha: 0.72),
       pageBuilder: (context, _, __) {
         return SafeArea(
           child: Center(

@@ -14,12 +14,12 @@ class HomeVoiceStageOverlay extends StatelessWidget {
     final text = transcript.trim();
     return ColoredBox(
       key: const ValueKey('taste-voice-stage-overlay'),
-      color: AppPalette.surface.withValues(alpha: 0.96),
+      color: AppPalette.night.withValues(alpha: 0.96),
       child: Center(
         child: Container(
           constraints: const BoxConstraints(maxWidth: 300),
           padding: const EdgeInsets.all(AppSpacing.xl),
-          decoration: AppDecorations.card(radius: AppRadii.lg),
+          decoration: AppDecorations.nightCard(radius: AppRadii.lg),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -27,26 +27,26 @@ class HomeVoiceStageOverlay extends StatelessWidget {
                 width: 48,
                 height: 48,
                 decoration: BoxDecoration(
-                  color: AppPalette.positiveSurface,
+                  color: AppPalette.nightElevated,
                   borderRadius: AppRadii.small,
                 ),
                 child: const Icon(
                   Icons.mic_rounded,
-                  color: AppPalette.garden,
+                  color: AppPalette.leaf,
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              const Text('正在听你说', style: AppType.section),
+              const Text('正在听你说', style: AppTypeNight.section),
               const SizedBox(height: AppSpacing.xs),
               Text(
                 text.isEmpty ? '可以说想吃什么、预算、人数或不想吃的东西。' : text,
                 textAlign: TextAlign.center,
-                style: AppType.body,
+                style: AppTypeNight.body,
               ),
               const SizedBox(height: AppSpacing.md),
               Text(
                 '松手后写回输入框',
-                style: AppType.microLabel.copyWith(color: AppPalette.garden),
+                style: AppTypeNight.microLabel.copyWith(color: AppPalette.leaf),
               ),
             ],
           ),
@@ -64,12 +64,12 @@ class HomeGenerationTransitionOverlay extends StatelessWidget {
     return AbsorbPointer(
       child: ColoredBox(
         key: const ValueKey('generation-transition-overlay'),
-        color: AppPalette.canvas.withValues(alpha: 0.96),
+        color: AppPalette.night.withValues(alpha: 0.96),
         child: Center(
           child: Container(
             constraints: const BoxConstraints(maxWidth: 280),
             padding: const EdgeInsets.all(AppSpacing.xl),
-            decoration: AppDecorations.card(radius: AppRadii.lg),
+            decoration: AppDecorations.nightCard(radius: AppRadii.lg),
             child: const Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -78,16 +78,16 @@ class HomeGenerationTransitionOverlay extends StatelessWidget {
                   height: 28,
                   child: CircularProgressIndicator(
                     strokeWidth: 2.4,
-                    color: AppPalette.garden,
+                    color: AppPalette.leaf,
                   ),
                 ),
                 SizedBox(height: AppSpacing.lg),
-                Text('正在准备推荐', style: AppType.section),
+                Text('正在准备推荐', style: AppTypeNight.section),
                 SizedBox(height: AppSpacing.xs),
                 Text(
                   '马上为你整理成一道菜或一顿饭。',
                   textAlign: TextAlign.center,
-                  style: AppType.body,
+                  style: AppTypeNight.body,
                 ),
               ],
             ),
@@ -111,16 +111,16 @@ class HomeFirstUseGuideCard extends StatelessWidget {
     return Container(
       constraints: const BoxConstraints(maxWidth: 340),
       padding: const EdgeInsets.all(AppSpacing.xl),
-      decoration: AppDecorations.card(radius: AppRadii.lg),
+      decoration: AppDecorations.nightCard(radius: AppRadii.lg),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('选出今天想吃的方向', style: AppType.title),
+          const Text('选出今天想吃的方向', style: AppTypeNight.title),
           const SizedBox(height: AppSpacing.sm),
           const Text(
             '点一下或上滑表示喜欢，下滑加入拉黑；拖动食材还能抛进这个口味餐盘。',
-            style: AppType.body,
+            style: AppTypeNight.body,
           ),
           const SizedBox(height: AppSpacing.lg),
           SizedBox(
@@ -128,6 +128,10 @@ class HomeFirstUseGuideCard extends StatelessWidget {
             child: FilledButton(
               key: const ValueKey('home-guide-dismiss-button'),
               onPressed: onDismiss,
+              style: FilledButton.styleFrom(
+                backgroundColor: AppPalette.leaf,
+                foregroundColor: AppPalette.night,
+              ),
               child: const Text('开始选择'),
             ),
           ),

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../core/models/cold_start_questionnaire.dart';
 import '../../core/services/cold_start_service.dart';
+import '../../core/theme/app_tokens.dart';
 
 /// 冷启动问卷页面
 class ColdStartQuestionnairePage extends StatefulWidget {
@@ -191,17 +192,20 @@ class _ColdStartQuestionnairePageState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppPalette.night,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: Colors.black87),
+          icon: const Icon(Icons.close, color: AppPalette.moonlight),
           onPressed: _handleSkip,
         ),
         actions: [
           TextButton(
             onPressed: _handleSkip,
+            style: TextButton.styleFrom(
+              foregroundColor: AppPalette.leaf,
+            ),
             child: const Text('跳过'),
           ),
         ],
@@ -251,7 +255,7 @@ class _ColdStartQuestionnairePageState
                 '${_currentPage + 1} / ${QuestionnaireQuestions.totalQuestions}',
                 style: TextStyle(
                   fontSize: 14.sp,
-                  color: Colors.grey[600],
+                  color: AppPalette.moonMuted,
                 ),
               ),
               SizedBox(width: 12.w),
@@ -264,7 +268,7 @@ class _ColdStartQuestionnairePageState
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w500,
-                    color: Colors.black87,
+                    color: AppPalette.moonlight,
                   ),
                 ),
               ),
@@ -275,9 +279,9 @@ class _ColdStartQuestionnairePageState
             borderRadius: BorderRadius.circular(4),
             child: LinearProgressIndicator(
               value: (_currentPage + 1) / QuestionnaireQuestions.totalQuestions,
-              backgroundColor: Colors.grey[200],
-              valueColor: AlwaysStoppedAnimation<Color>(
-                Theme.of(context).primaryColor,
+              backgroundColor: AppPalette.nightElevated,
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                AppPalette.leaf,
               ),
               minHeight: 6,
             ),
@@ -302,7 +306,7 @@ class _ColdStartQuestionnairePageState
             style: TextStyle(
               fontSize: 24.sp,
               fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              color: AppPalette.moonlight,
             ),
           ),
 
@@ -313,7 +317,7 @@ class _ColdStartQuestionnairePageState
             question.subtitle,
             style: TextStyle(
               fontSize: 14.sp,
-              color: Colors.grey[600],
+              color: AppPalette.moonMuted,
             ),
           ),
 
@@ -401,11 +405,10 @@ class _ColdStartQuestionnairePageState
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
-          color: isSelected ? Theme.of(context).primaryColor : Colors.grey[100],
+          color: isSelected ? AppPalette.leaf : AppPalette.nightElevated,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color:
-                isSelected ? Theme.of(context).primaryColor : Colors.grey[300]!,
+            color: isSelected ? AppPalette.leaf : AppPalette.nightDivider,
             width: 1.5,
           ),
         ),
@@ -415,7 +418,7 @@ class _ColdStartQuestionnairePageState
           style: TextStyle(
             fontSize: 15.sp,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-            color: isSelected ? Colors.white : Colors.black87,
+            color: isSelected ? AppPalette.night : AppPalette.moonlight,
           ),
         ),
       ),
@@ -435,12 +438,11 @@ class _ColdStartQuestionnairePageState
         padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
         decoration: BoxDecoration(
           color: isSelected
-              ? Theme.of(context).primaryColor.withValues(alpha: 0.1)
-              : Colors.grey[100],
+              ? AppPalette.leaf.withValues(alpha: 0.12)
+              : AppPalette.nightElevated,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color:
-                isSelected ? Theme.of(context).primaryColor : Colors.grey[300]!,
+            color: isSelected ? AppPalette.leaf : AppPalette.nightDivider,
             width: 1.5,
           ),
         ),
@@ -452,16 +454,14 @@ class _ColdStartQuestionnairePageState
                 style: TextStyle(
                   fontSize: 16.sp,
                   fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
-                  color: isSelected
-                      ? Theme.of(context).primaryColor
-                      : Colors.black87,
+                  color: isSelected ? AppPalette.leaf : AppPalette.moonlight,
                 ),
               ),
             ),
             if (isSelected)
               Icon(
                 Icons.check_circle,
-                color: Theme.of(context).primaryColor,
+                color: AppPalette.leaf,
                 size: 24.sp,
               ),
           ],
@@ -488,9 +488,10 @@ class _ColdStartQuestionnairePageState
               child: ElevatedButton(
                 onPressed: _isCurrentQuestionAnswered() ? _goToNextPage : null,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  foregroundColor: Colors.white,
-                  disabledBackgroundColor: Colors.grey[300],
+                  backgroundColor: AppPalette.leaf,
+                  foregroundColor: AppPalette.night,
+                  disabledBackgroundColor: AppPalette.nightElevated,
+                  disabledForegroundColor: AppPalette.moonMuted,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(26.r),
                   ),
@@ -514,9 +515,10 @@ class _ColdStartQuestionnairePageState
               child: ElevatedButton(
                 onPressed: _isProcessing ? null : _handleComplete,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Theme.of(context).primaryColor,
-                  foregroundColor: Colors.white,
-                  disabledBackgroundColor: Colors.grey[300],
+                  backgroundColor: AppPalette.leaf,
+                  foregroundColor: AppPalette.night,
+                  disabledBackgroundColor: AppPalette.nightElevated,
+                  disabledForegroundColor: AppPalette.moonMuted,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(26.r),
                   ),
@@ -529,7 +531,7 @@ class _ColdStartQuestionnairePageState
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor:
-                              AlwaysStoppedAnimation<Color>(Colors.white),
+                              AlwaysStoppedAnimation<Color>(AppPalette.night),
                         ),
                       )
                     : Text(
@@ -548,11 +550,13 @@ class _ColdStartQuestionnairePageState
               padding: EdgeInsets.only(top: 12.h),
               child: TextButton(
                 onPressed: _goToPreviousPage,
+                style: TextButton.styleFrom(
+                  foregroundColor: AppPalette.moonMuted,
+                ),
                 child: Text(
                   '返回上一题',
                   style: TextStyle(
                     fontSize: 14.sp,
-                    color: Colors.grey[600],
                   ),
                 ),
               ),
