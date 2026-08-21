@@ -18,138 +18,150 @@ Future<void> main(List<String> args) async {
     ..writeln('GET  /mock/meituan/cashier');
 
   await for (final request in server) {
-    _addCorsHeaders(request.response);
-    stdout.writeln('[${DateTime.now().toIso8601String()}] '
-        '${request.method} ${request.uri.path}');
-    if (request.method == 'OPTIONS') {
-      request.response.statusCode = HttpStatus.noContent;
-      await request.response.close();
-      continue;
-    }
-    if (request.method == 'GET' && request.uri.path == '/health') {
-      await _writeJson(request.response, HttpStatus.ok, {
-        'status': 'ok',
-        'mode': 'mock',
-        'providers': {'meituan': true},
-      });
-      continue;
-    }
-    // The mock proxy answers as an already-connected ordering backend so
-    // the client's OAuth status check succeeds during local integration.
-    if (request.method == 'GET' &&
-        request.uri.path == '/api/v1/delivery/oauth/status') {
-      await _writeJson(request.response, HttpStatus.ok, {
-        'connected': true,
-        'requiresUserAuthorization': false,
-        'nickname': '美团联调用户',
-        'maskedPhone': '138****8000',
-      });
-      continue;
-    }
-    if (request.method == 'GET' &&
-        request.uri.path == '/mock/meituan/cashier') {
-      request.response
-        ..statusCode = HttpStatus.ok
-        ..headers.contentType = ContentType.html
-        ..write(
-            '''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+    await handleMockProxyRequest(
+      request,
+      port: port,
+      log: (line) => stdout.writeln(line),
+    );
+  }
+}
+
+/// Serves one mock-proxy request. Shared by the CLI server above and the
+/// widget-test harness, so tests exercise the exact same responses the
+/// local integration flow sees.
+Future<void> handleMockProxyRequest(
+  HttpRequest request, {
+  required int port,
+  void Function(String line)? log,
+}) async {
+  _addCorsHeaders(request.response);
+  log?.call('[${DateTime.now().toIso8601String()}] '
+      '${request.method} ${request.uri.path}');
+  if (request.method == 'OPTIONS') {
+    request.response.statusCode = HttpStatus.noContent;
+    await request.response.close();
+    return;
+  }
+  if (request.method == 'GET' && request.uri.path == '/health') {
+    await _writeJson(request.response, HttpStatus.ok, {
+      'status': 'ok',
+      'mode': 'mock',
+      'providers': {'meituan': true},
+    });
+    return;
+  }
+  // The mock proxy answers as an already-connected ordering backend so
+  // the client's OAuth status check succeeds during local integration.
+  if (request.method == 'GET' &&
+      request.uri.path == '/api/v1/delivery/oauth/status') {
+    await _writeJson(request.response, HttpStatus.ok, {
+      'connected': true,
+      'requiresUserAuthorization': false,
+      'nickname': '美团联调用户',
+      'maskedPhone': '138****8000',
+    });
+    return;
+  }
+  if (request.method == 'GET' && request.uri.path == '/mock/meituan/cashier') {
+    request.response
+      ..statusCode = HttpStatus.ok
+      ..headers.contentType = ContentType.html
+      ..write('''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>美团模拟收银台</title></head><body style="font-family:-apple-system;padding:32px;background:#fff8ee">
 <h1>美团模拟收银台</h1><p>订单 ${request.uri.queryParameters['orderId'] ?? 'mock-order'} 已创建。</p>
 <p>本页仅用于本地验收，不会产生真实扣款。</p></body></html>''');
-      await request.response.close();
-      continue;
-    }
-    if (request.method != 'POST') {
+    await request.response.close();
+    return;
+  }
+  if (request.method != 'POST') {
+    await _writeError(
+        request.response, HttpStatus.notFound, 'route_not_found', 'Mock 路由不存在');
+    return;
+  }
+
+  final body = await _readJson(request);
+  switch (request.uri.path) {
+    case '/api/v1/delivery/merchants/search':
+      await _writeJson(request.response, HttpStatus.ok, {
+        'status': 'available',
+        'merchants': [
+          {
+            'merchantId': 'mock-merchant-001',
+            'merchantName': '锅气食堂（美团联调店）',
+            'address': '深圳市南山区科技园联调路 1 号',
+            'rating': 4.8,
+            'deliveryTimeMinutes': 28,
+            'shippingFee': 4,
+            'minimumOrder': 20,
+          },
+          {
+            'merchantId': 'mock-merchant-002',
+            'merchantName': '家常小馆（美团联调店）',
+            'address': '深圳市南山区科技园联调路 2 号',
+            'rating': 4.6,
+            'deliveryTimeMinutes': 35,
+            'shippingFee': 3,
+            'minimumOrder': 15,
+          },
+        ],
+        'hasNextPage': false,
+        'query': body['keyword'],
+      });
+      break;
+    case '/api/v1/delivery/products/search':
+      await _writeJson(request.response, HttpStatus.ok, {
+        'status': 'available',
+        'merchant': {
+          'merchantId': body['merchantId'],
+          'merchantName': '锅气食堂（美团联调店）',
+        },
+        'products': _mockProducts,
+      });
+      break;
+    case '/api/v1/delivery/order-previews':
+      final items = (body['items'] as List<dynamic>? ?? const [])
+          .whereType<Map>()
+          .toList();
+      if (items.isEmpty) {
+        await _writeError(request.response, HttpStatus.unprocessableEntity,
+            'validation_error', 'items 不能为空');
+        break;
+      }
+      final productTotal = items.fold<double>(0, (sum, item) {
+        final sku = _skuById(item['skuId']?.toString() ?? '');
+        final count = (item['count'] as num?)?.toInt() ?? 1;
+        return sum + ((sku?['price'] as num?)?.toDouble() ?? 0) * count;
+      });
+      await _writeJson(request.response, HttpStatus.ok, {
+        'status': 'available',
+        'previewToken': 'mock-preview-${DateTime.now().millisecondsSinceEpoch}',
+        'preview': {
+          'merchantName': '锅气食堂（美团联调店）',
+          'total': productTotal + 5,
+          'shippingFee': 4,
+          'boxFee': 1,
+        },
+      });
+      break;
+    case '/api/v1/delivery/orders':
+      if (body['previewToken']?.toString().trim().isEmpty ?? true) {
+        await _writeError(request.response, HttpStatus.unprocessableEntity,
+            'validation_error', 'previewToken 不能为空');
+        break;
+      }
+      const orderId = 'mock-order-20260812';
+      await _writeJson(request.response, HttpStatus.ok, {
+        'status': 'payment_required',
+        'orderId': orderId,
+        'paymentUrl':
+            'http://127.0.0.1:$port/mock/meituan/cashier?orderId=$orderId',
+        'requiresVerification': false,
+      });
+      break;
+    default:
       await _writeError(request.response, HttpStatus.notFound,
           'route_not_found', 'Mock 路由不存在');
-      continue;
-    }
-
-    final body = await _readJson(request);
-    switch (request.uri.path) {
-      case '/api/v1/delivery/merchants/search':
-        await _writeJson(request.response, HttpStatus.ok, {
-          'status': 'available',
-          'merchants': [
-            {
-              'merchantId': 'mock-merchant-001',
-              'merchantName': '锅气食堂（美团联调店）',
-              'address': '深圳市南山区科技园联调路 1 号',
-              'rating': 4.8,
-              'deliveryTimeMinutes': 28,
-              'shippingFee': 4,
-              'minimumOrder': 20,
-            },
-            {
-              'merchantId': 'mock-merchant-002',
-              'merchantName': '家常小馆（美团联调店）',
-              'address': '深圳市南山区科技园联调路 2 号',
-              'rating': 4.6,
-              'deliveryTimeMinutes': 35,
-              'shippingFee': 3,
-              'minimumOrder': 15,
-            },
-          ],
-          'hasNextPage': false,
-          'query': body['keyword'],
-        });
-        break;
-      case '/api/v1/delivery/products/search':
-        await _writeJson(request.response, HttpStatus.ok, {
-          'status': 'available',
-          'merchant': {
-            'merchantId': body['merchantId'],
-            'merchantName': '锅气食堂（美团联调店）',
-          },
-          'products': _mockProducts,
-        });
-        break;
-      case '/api/v1/delivery/order-previews':
-        final items = (body['items'] as List<dynamic>? ?? const [])
-            .whereType<Map>()
-            .toList();
-        if (items.isEmpty) {
-          await _writeError(request.response, HttpStatus.unprocessableEntity,
-              'validation_error', 'items 不能为空');
-          break;
-        }
-        final productTotal = items.fold<double>(0, (sum, item) {
-          final sku = _skuById(item['skuId']?.toString() ?? '');
-          final count = (item['count'] as num?)?.toInt() ?? 1;
-          return sum + ((sku?['price'] as num?)?.toDouble() ?? 0) * count;
-        });
-        await _writeJson(request.response, HttpStatus.ok, {
-          'status': 'available',
-          'previewToken':
-              'mock-preview-${DateTime.now().millisecondsSinceEpoch}',
-          'preview': {
-            'merchantName': '锅气食堂（美团联调店）',
-            'total': productTotal + 5,
-            'shippingFee': 4,
-            'boxFee': 1,
-          },
-        });
-        break;
-      case '/api/v1/delivery/orders':
-        if (body['previewToken']?.toString().trim().isEmpty ?? true) {
-          await _writeError(request.response, HttpStatus.unprocessableEntity,
-              'validation_error', 'previewToken 不能为空');
-          break;
-        }
-        const orderId = 'mock-order-20260812';
-        await _writeJson(request.response, HttpStatus.ok, {
-          'status': 'payment_required',
-          'orderId': orderId,
-          'paymentUrl':
-              'http://127.0.0.1:$port/mock/meituan/cashier?orderId=$orderId',
-          'requiresVerification': false,
-        });
-        break;
-      default:
-        await _writeError(request.response, HttpStatus.notFound,
-            'route_not_found', 'Mock 路由不存在');
-    }
   }
 }
 
