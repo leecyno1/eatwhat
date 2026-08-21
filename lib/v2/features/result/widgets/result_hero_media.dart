@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
+import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_image_state_controller.dart';
 import 'package:flutter/material.dart';
 
@@ -14,7 +15,7 @@ class ResultHeroMedia extends StatelessWidget {
     required this.imageLoadState,
     required this.imageSource,
     required this.onRetryImage,
-    this.height = 268,
+    this.height,
   });
 
   final RecipeModel recipe;
@@ -22,27 +23,27 @@ class ResultHeroMedia extends StatelessWidget {
   final DishImageLoadState imageLoadState;
   final ImageSourceBadgeData? imageSource;
   final VoidCallback onRetryImage;
-  final double height;
+
+  /// Null fills the available space (the single-screen gold stage).
+  final double? height;
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: height,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(32),
-        border: Border.all(
-          color: Colors.white.withValues(alpha: 0.84),
-        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: GoldPalette.goldHairline),
         boxShadow: [
           BoxShadow(
-            color: const Color(0x332B1915).withValues(alpha: 0.18),
-            blurRadius: 24,
-            offset: const Offset(0, 16),
+            color: GoldPalette.gold.withValues(alpha: 0.10),
+            blurRadius: 28,
+            offset: const Offset(0, 14),
           ),
         ],
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(20),
         child: Stack(
           fit: StackFit.expand,
           children: [
@@ -77,23 +78,21 @@ class ResultHeroMedia extends StatelessWidget {
                       vertical: 8,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.54),
+                      color: Colors.black.withValues(alpha: 0.58),
                       borderRadius: BorderRadius.circular(999),
-                      border: Border.all(
-                        color: Colors.white.withValues(alpha: 0.76),
-                      ),
+                      border: Border.all(color: GoldPalette.goldHairline),
                     ),
                     child: Text(
                       switch (imageLoadState) {
                         DishImageLoadState.loading => 'AI 出图中',
                         DishImageLoadState.failed => '菜图暂未生成',
-                        _ => '今日首推',
+                        _ => '主厨推荐',
                       },
                       style: const TextStyle(
-                        color: AppColors.textPrimary,
-                        fontSize: 11,
+                        color: GoldPalette.gold,
+                        fontSize: 10,
                         fontWeight: FontWeight.w800,
-                        letterSpacing: 1.4,
+                        letterSpacing: 2.2,
                       ),
                     ),
                   ),
@@ -114,19 +113,17 @@ class ResultHeroMedia extends StatelessWidget {
                           vertical: 8,
                         ),
                         decoration: BoxDecoration(
-                          color: Colors.white.withValues(alpha: 0.6),
+                          color: Colors.black.withValues(alpha: 0.58),
                           borderRadius: BorderRadius.circular(999),
-                          border: Border.all(
-                            color: Colors.white.withValues(alpha: 0.82),
-                          ),
+                          border: Border.all(color: GoldPalette.goldHairline),
                         ),
                         child: const Text(
                           '重试出图',
                           style: TextStyle(
-                            color: AppColors.textPrimary,
-                            fontSize: 11,
+                            color: GoldPalette.gold,
+                            fontSize: 10,
                             fontWeight: FontWeight.w800,
-                            letterSpacing: 1.0,
+                            letterSpacing: 1.6,
                           ),
                         ),
                       ),
@@ -147,10 +144,12 @@ class ResultHeroMedia extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.w800,
-                        height: 1.0,
+                        color: GoldPalette.creamText,
+                        fontFamily: 'serif',
+                        fontSize: 30,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 1.2,
+                        height: 1.05,
                       ),
                     ),
                   ),

@@ -23,17 +23,17 @@ void main() {
 
     expect(find.byKey(const ValueKey('result-execution-shortcuts')),
         findsOneWidget);
-    expect(find.text('自己做'), findsOneWidget);
-    expect(find.text('叫外卖'), findsOneWidget);
-    expect(find.text('去堂食'), findsOneWidget);
-    expect(find.text('优先'), findsOneWidget);
+    expect(find.text('在家开火'), findsOneWidget);
+    expect(find.text('外卖到家'), findsOneWidget);
+    expect(find.text('出门堂食'), findsOneWidget);
+    expect(find.text('首选'), findsOneWidget);
     expect(
       tester
           .widget<Icon>(
             find.byKey(const ValueKey('result-execution-cook-icon')),
           )
           .color,
-      AppPalette.moonMuted,
+      GoldPalette.goldSoft,
     );
     expect(
       tester
@@ -41,7 +41,7 @@ void main() {
             find.byKey(const ValueKey('result-execution-delivery-icon')),
           )
           .color,
-      AppPalette.leaf,
+      GoldPalette.gold,
     );
     expect(
       tester
@@ -49,7 +49,7 @@ void main() {
             find.byKey(const ValueKey('result-execution-dine-in-icon')),
           )
           .color,
-      AppPalette.moonMuted,
+      GoldPalette.goldSoft,
     );
 
     await tester.tap(find.byKey(const ValueKey('result-execution-delivery')));

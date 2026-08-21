@@ -264,3 +264,33 @@ class AppDecorations {
     );
   }
 }
+
+/// Gold-luxury palette for the V2 result stage — 黑金奢华：纯黑底、香槟金
+/// 强调、暖白文字、金色发丝线。serif 字体配大图，做高级餐厅菜单卡的观感。
+class GoldPalette {
+  const GoldPalette._();
+
+  /// Stage background: near-black with a whisper of warmth.
+  static const Color nightDeep = Color(0xFF0B0B0D);
+
+  /// Panel color one step above the stage background.
+  static const Color panel = Color(0xFF141416);
+
+  /// Primary champagne gold — accents, active states, key actions.
+  static const Color gold = Color(0xFFE8C97D);
+
+  /// Softer antique gold for secondary accents.
+  static const Color goldSoft = Color(0xFFC9A96E);
+
+  /// Dim gold for hairlines and disabled states.
+  static const Color goldDim = Color(0xFF8A6D2F);
+
+  /// 20% gold hairline for borders and dividers.
+  static const Color goldHairline = Color(0x33E8C97D);
+
+  /// Warm candlelight white for primary text.
+  static const Color creamText = Color(0xFFF5EEDC);
+
+  /// Muted warm gray for secondary text.
+  static const Color creamMuted = Color(0xFF9C948A);
+}

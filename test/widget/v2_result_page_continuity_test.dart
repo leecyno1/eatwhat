@@ -31,15 +31,22 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 700));
 
+    // The gold single-screen stage: no editorial header, no mode tabs,
+    // no scrolling chrome — just the hero, the reason line, three gold
+    // action cards, and the confirm bar.
     expect(find.text('TASTE BOARD'), findsNothing);
     expect(find.text('RECOMMENDED DISH'), findsNothing);
     expect(find.text('NOW'), findsNothing);
-    expect(find.text('今日推荐板'), findsOneWidget);
-    expect(find.byKey(const ValueKey('result-stage-shell')), findsOneWidget);
-    expect(find.text('今晚这口，替你收好了'), findsOneWidget);
-    expect(find.byKey(const ValueKey('result-mode-single')), findsOneWidget);
-    expect(find.byKey(const ValueKey('result-mode-meal')), findsOneWidget);
+    expect(find.text('今日推荐板'), findsNothing);
+    expect(find.byKey(const ValueKey('result-stage-shell')), findsNothing);
+    expect(find.text('今晚这口，替你收好了'), findsNothing);
+    expect(find.byKey(const ValueKey('result-mode-single')), findsNothing);
+    expect(find.byKey(const ValueKey('result-mode-meal')), findsNothing);
     expect(find.text('暖食编辑部'), findsNothing);
+    expect(find.byKey(const ValueKey('result-gold-reason-line')),
+        findsOneWidget);
+    expect(find.byKey(const ValueKey('result-favorite-toggle')),
+        findsOneWidget);
     expect(find.byKey(const ValueKey('result-execution-shortcuts')),
         findsOneWidget);
     expect(find.byKey(const ValueKey('result-execution-cook')), findsOneWidget);
@@ -47,13 +54,6 @@ void main() {
         findsOneWidget);
     expect(
         find.byKey(const ValueKey('result-execution-dine-in')), findsOneWidget);
-
-    await tester.tap(find.byKey(const ValueKey('result-mode-meal')));
-    await tester.pump(const Duration(milliseconds: 500));
-
-    expect(find.byKey(const ValueKey('result-meal-plan-card')), findsOneWidget);
-    expect(find.text('这一顿这样搭'), findsOneWidget);
-    expect(find.text('主菜 · 番茄肥牛锅'), findsOneWidget);
-    expect(find.text('就吃这套'), findsOneWidget);
+    expect(find.text('就吃这个'), findsOneWidget);
   });
 }

@@ -48,7 +48,6 @@ void main() {
 
     expect(find.byKey(const ValueKey('result-candidate-rail')), findsOneWidget);
     expect(find.text('番茄肥牛锅'), findsWidgets);
-    expect(find.text('热、香、带汤感，适合今晚直接收口。'), findsWidgets);
   });
 }
 

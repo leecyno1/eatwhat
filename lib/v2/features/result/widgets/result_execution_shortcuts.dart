@@ -2,6 +2,9 @@ import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
 
+/// How-to-eat actions as three gold-on-black cards — one glance, one tap.
+/// The preferred path (when the session constrained it) carries a lit gold
+/// border and a tiny 首选 badge.
 class ResultExecutionShortcuts extends StatelessWidget {
   const ResultExecutionShortcuts({
     super.key,
@@ -22,64 +25,53 @@ class ResultExecutionShortcuts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return Row(
       key: const ValueKey('result-execution-shortcuts'),
-      padding: const EdgeInsets.all(AppSpacing.md),
-      decoration: AppDecorations.nightCard(),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text('怎么吃', style: AppTypeNight.section),
-          const SizedBox(height: 4),
-          Text(
-            preferredPath == ExecutionPath.any
-                ? '选好菜后，可以直接做、叫外卖或找附近餐馆。'
-                : '已按你的要求标出优先方式。',
-            style: AppTypeNight.label,
-          ),
-          const SizedBox(height: AppSpacing.sm),
-          _ExecutionAction(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(
+          child: _GoldActionCard(
             key: const ValueKey('result-execution-delivery'),
             iconKey: const ValueKey('result-execution-delivery-icon'),
-            icon: Icons.delivery_dining_rounded,
-            title: '叫外卖',
-            subtitle: '搜索匹配菜品并进入美团菜单',
+            icon: Icons.moped_rounded,
+            title: '外卖到家',
             preferred: _isPreferred(ExecutionPath.delivery),
             onTap: onDelivery,
           ),
-          const SizedBox(height: AppSpacing.xs),
-          _ExecutionAction(
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: _GoldActionCard(
             key: const ValueKey('result-execution-cook'),
             iconKey: const ValueKey('result-execution-cook-icon'),
-            icon: Icons.kitchen_rounded,
-            title: '自己做',
-            subtitle: '查看材料和步骤',
+            icon: Icons.soup_kitchen_rounded,
+            title: '在家开火',
             preferred: _isPreferred(ExecutionPath.cook),
             onTap: onCook,
           ),
-          const SizedBox(height: AppSpacing.xs),
-          _ExecutionAction(
+        ),
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+          child: _GoldActionCard(
             key: const ValueKey('result-execution-dine-in'),
             iconKey: const ValueKey('result-execution-dine-in-icon'),
             icon: Icons.storefront_rounded,
-            title: '去堂食',
-            subtitle: '查看附近餐馆',
+            title: '出门堂食',
             preferred: _isPreferred(ExecutionPath.dineIn),
             onTap: onDineIn,
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
 
-class _ExecutionAction extends StatefulWidget {
-  const _ExecutionAction({
+class _GoldActionCard extends StatefulWidget {
+  const _GoldActionCard({
     super.key,
     required this.iconKey,
     required this.icon,
     required this.title,
-    required this.subtitle,
     required this.preferred,
     required this.onTap,
   });
@@ -87,119 +79,85 @@ class _ExecutionAction extends StatefulWidget {
   final Key iconKey;
   final IconData icon;
   final String title;
-  final String subtitle;
   final bool preferred;
   final VoidCallback onTap;
 
   @override
-  State<_ExecutionAction> createState() => _ExecutionActionState();
+  State<_GoldActionCard> createState() => _GoldActionCardState();
 }
 
-class _ExecutionActionState extends State<_ExecutionAction> {
+class _GoldActionCardState extends State<_GoldActionCard> {
   bool _pressed = false;
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: widget.title,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTapDown: (_) => setState(() => _pressed = true),
-        onTapCancel: () => setState(() => _pressed = false),
-        onTapUp: (_) {
-          setState(() => _pressed = false);
-          widget.onTap();
-        },
-        child: AnimatedScale(
-          duration: AppMotion.press,
-          curve: AppMotion.enter,
-          scale: _pressed ? 0.98 : 1,
-          child: Container(
-            constraints: const BoxConstraints(minHeight: 58),
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.sm,
-              vertical: AppSpacing.sm,
+    final gold = widget.preferred ? GoldPalette.gold : GoldPalette.goldSoft;
+    return GestureDetector(
+      onTapDown: (_) => setState(() => _pressed = true),
+      onTapUp: (_) => setState(() => _pressed = false),
+      onTapCancel: () => setState(() => _pressed = false),
+      onTap: widget.onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 140),
+        curve: AppMotion.enter,
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.xs,
+          vertical: AppSpacing.sm + 2,
+        ),
+        decoration: BoxDecoration(
+          color: _pressed
+              ? GoldPalette.panel.withValues(alpha: 0.96)
+              : GoldPalette.panel,
+          borderRadius: AppRadii.small,
+          border: Border.all(
+            color: widget.preferred ? gold : GoldPalette.goldHairline,
+            width: widget.preferred ? 1.4 : 1,
+          ),
+          gradient: widget.preferred
+              ? LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    GoldPalette.gold.withValues(alpha: 0.10),
+                    Colors.transparent,
+                  ],
+                )
+              : null,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              widget.icon,
+              key: widget.iconKey,
+              size: 24,
+              color: gold,
             ),
-            decoration: BoxDecoration(
-              color: widget.preferred
-                  ? AppPalette.nightElevated
-                  : AppPalette.nightSurface,
-              borderRadius: AppRadii.small,
-              border: Border.all(
-                color: widget.preferred
-                    ? AppPalette.leaf.withValues(alpha: 0.5)
-                    : AppPalette.nightDivider,
+            const SizedBox(height: 6),
+            Text(
+              widget.title,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: GoldPalette.creamText,
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                letterSpacing: 1.2,
               ),
             ),
-            child: Row(
-              children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: AppPalette.nightElevated,
-                    borderRadius: BorderRadius.circular(AppRadii.xs),
-                  ),
-                  child: Icon(
-                    widget.icon,
-                    key: widget.iconKey,
-                    size: 19,
-                    color: widget.preferred
-                        ? AppPalette.leaf
-                        : AppPalette.moonMuted,
-                  ),
+            if (widget.preferred) ...[
+              const SizedBox(height: 3),
+              Text(
+                '首选',
+                style: TextStyle(
+                  color: GoldPalette.gold,
+                  fontSize: 10,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: 2,
                 ),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                                widget.title, style: AppTypeNight.section),
-                          ),
-                          if (widget.preferred) ...[
-                            const SizedBox(width: AppSpacing.xs),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 7,
-                                vertical: 3,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppPalette.nightElevated,
-                                borderRadius: AppRadii.capsule,
-                              ),
-                              child: Text(
-                                '优先',
-                                style: AppTypeNight.microLabel.copyWith(
-                                  color: AppPalette.leaf,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        widget.subtitle,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTypeNight.label,
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: AppSpacing.xs),
-                const Icon(
-                  Icons.chevron_right_rounded,
-                  color: AppPalette.moonMuted,
-                ),
-              ],
-            ),
-          ),
+              ),
+            ],
+          ],
         ),
       ),
     );

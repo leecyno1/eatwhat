@@ -57,9 +57,10 @@ void main() {
 
     expect(find.byKey(const ValueKey('result-candidate-rail')), findsOneWidget);
     expect(find.text('番茄肥牛锅'), findsWidgets);
-    expect(find.text('热菜、带汤感，适合今晚直接收口。'), findsWidgets);
 
-    await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
+    // The gold stage has no in-app back button; a system back returns to
+    // the home stage.
+    await tester.binding.handlePopRoute();
     await tester.pump(const Duration(milliseconds: 400));
 
     expect(find.text('正在准备推荐'), findsNothing);

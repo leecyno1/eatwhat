@@ -197,6 +197,7 @@ flutter:
 
   # 资源文件
   assets:
+    - .env
     - assets/images/
     - assets/images/card_game/
     - assets/images/prebuilt_dishes/

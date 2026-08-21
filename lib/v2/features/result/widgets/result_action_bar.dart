@@ -86,10 +86,24 @@ class ResultPrimaryConfirmBar extends StatelessWidget {
     return Container(
       key: const ValueKey('result-primary-confirm-bar'),
       padding: const EdgeInsets.all(AppSpacing.xs),
-      decoration: AppDecorations.nightCard(radius: AppRadii.md),
+      decoration: BoxDecoration(
+        color: GoldPalette.panel,
+        borderRadius: AppRadii.card,
+        border: Border.all(color: GoldPalette.goldHairline),
+      ),
       child: FilledButton.icon(
         key: const ValueKey('execution-entry-button'),
         onPressed: onConfirm,
+        style: FilledButton.styleFrom(
+          backgroundColor: GoldPalette.gold,
+          foregroundColor: GoldPalette.nightDeep,
+          textStyle: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w900,
+            letterSpacing: 3,
+          ),
+          shape: RoundedRectangleBorder(borderRadius: AppRadii.capsule),
+        ),
         icon: const Icon(Icons.arrow_forward_rounded, size: 19),
         label: Text(confirmLabel),
       ),

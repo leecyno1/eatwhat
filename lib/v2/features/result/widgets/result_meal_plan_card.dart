@@ -69,7 +69,8 @@ class ResultMealPlanCard extends StatelessWidget {
                 ),
                 child: Text(
                   '完整一餐',
-                  style: AppTypeNight.microLabel.copyWith(color: AppPalette.leaf),
+                  style:
+                      AppTypeNight.microLabel.copyWith(color: AppPalette.leaf),
                 ),
               ),
             ],
