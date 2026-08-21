@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:eatwhat_app/core/services/auth_service.dart';
+import 'package:eatwhat_app/v2/core/external/platform/meituan_delivery_order_client.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
 import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
 import 'package:eatwhat_app/v2/core/services/v2_execution_service.dart';
@@ -96,6 +97,18 @@ class _ExecutionHomePageState extends State<ExecutionHomePage> {
   Future<void> _openDelivery(BuildContext context) async {
     unawaited(_feedback.recordExecutionPathChosen(ExecutionPath.delivery));
     _recordExecutionStarted(ExecutionPath.delivery);
+
+    // Degrade before the login gate when the ordering backend isn't wired
+    // up — a snackbar beats signing the user in only to hit a technical
+    // error in the menu builder.
+    if (!MeituanDeliveryOrderClient().isConfigured) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('外卖服务暂未接入，先收藏或看看怎么做')),
+        );
+      }
+      return;
+    }
 
     // Ordering gate: Meituan orders belong to an eatwhat account, so a
     // signed-out user gets the login/register sheet first and only moves

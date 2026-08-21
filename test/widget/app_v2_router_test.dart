@@ -342,6 +342,11 @@ Future<GeoPoint> _fixedLocation() async {
 }
 
 class _RouterMeituanMerchantClient extends MeituanDeliveryOrderClient {
+  // Test environment has no proxy configured — mark the backend as wired
+  // so the menu builder runs its normal flow.
+  @override
+  bool get isConfigured => true;
+
   @override
   Future<MeituanMerchantSearchResult> searchMerchantResults({
     required String keyword,

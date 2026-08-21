@@ -12,6 +12,12 @@ class MeituanDeliveryOrderClient {
 
   final ExecutionProxyClient _client;
 
+  /// Whether the execution proxy backend is configured at all. When false,
+  /// every ordering call would fail on network grounds — entry points use
+  /// this to degrade gracefully (外卖服务暂未接入) instead of walking the
+  /// user through login only to hit a technical error.
+  bool get isConfigured => _client.isConfigured;
+
   Future<MeituanOAuthStatus> getOAuthStatus() async {
     final payload = await _client.getJson(EnvConfig.meituanOAuthStatusPath);
     return MeituanOAuthStatus.fromJson(payload);

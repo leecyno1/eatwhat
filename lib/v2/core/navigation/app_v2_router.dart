@@ -369,6 +369,11 @@ Future<GeoPoint> _demoLocationResolver() async {
 }
 
 class _DemoMeituanDeliveryOrderClient extends MeituanDeliveryOrderClient {
+  // The demo route serves reviewable merchants without any backend — from
+  // the page's perspective the ordering service is fully wired up.
+  @override
+  bool get isConfigured => true;
+
   @override
   Future<MeituanMerchantSearchResult> searchMerchantResults({
     required String keyword,

@@ -450,6 +450,54 @@ void main() {
     expect(find.text('本轮约束：15 分钟内、30 元内、1 人、素食、叫外卖、附近'), findsOneWidget);
   });
 
+  testWidgets('ResultPage 外卖后端未接入时入口直接降级且不弹登录', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ResultPage(
+          meituanOrderClient: _UnconfiguredMeituanClient(),
+          meituanLocationResolver: () async =>
+              const GeoPoint(latitude: 39.9042, longitude: 116.4074),
+          imageGenerator: (_) async => null,
+          recommendations: const [
+            RecipeModel(
+              id: 'r1',
+              name: '椒麻鸡丝凉面',
+              description: '适合想省心点外卖的一口。',
+              ingredients: ['鸡丝', '面条'],
+              tags: ['外卖', '凉面'],
+            ),
+          ],
+          inferenceInput: const TasteInferenceInput(
+            likedTagIds: [],
+            likedTagLabels: ['家常'],
+            dislikedTagIds: [],
+            dislikedTagLabels: [],
+            skippedTagIds: [],
+            skippedTagLabels: [],
+            freeformRequirement: '叫外卖',
+            structuredConstraints: TasteStructuredConstraints(
+              executionPreference: TasteExecutionPreference.delivery,
+            ),
+            historyPreferenceSummary: {},
+          ),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 900));
+
+    await tester.tap(find.byKey(const ValueKey('result-execution-delivery')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    // 降级提示出现，登录弹窗与菜单页都不出现
+    expect(find.text('外卖服务暂未接入，先收藏或看看怎么做'), findsOneWidget);
+    expect(find.byKey(const ValueKey('eatwhat-auth-sheet')), findsNothing);
+    expect(find.text('生成外卖菜单'), findsNothing);
+    expect(AuthService.isLoggedIn, isFalse);
+  });
+
   testWidgets('ResultPage 展示三种开吃快捷入口并进入 API 菜单生成页', (tester) async {
     final meituanClient = _FakeMeituanMerchantClient();
     await tester.pumpWidget(
@@ -1110,8 +1158,20 @@ void main() {
   });
 }
 
+class _UnconfiguredMeituanClient extends MeituanDeliveryOrderClient {
+  // Simulates the production state where EXECUTION_PROXY_BASE_URL is
+  // missing: entry points must degrade instead of ordering.
+  @override
+  bool get isConfigured => false;
+}
+
 class _FakeMeituanMerchantClient extends MeituanDeliveryOrderClient {
   String? lastKeyword;
+
+  // The real getter reads EnvConfig's proxy base URL, which is absent in
+  // tests — ordering-gate tests need the backend marked as configured.
+  @override
+  bool get isConfigured => true;
 
   @override
   Future<MeituanMerchantSearchResult> searchMerchantResults({

@@ -669,6 +669,19 @@ class _ResultPageState extends State<ResultPage> {
         );
         return;
       case ExecutionPath.delivery:
+        // Degrade before the login gate when the ordering backend isn't
+        // wired up: no point signing the user in only to hit a technical
+        // error in the menu builder.
+        final deliveryClient =
+            widget.meituanOrderClient ?? MeituanDeliveryOrderClient();
+        if (!deliveryClient.isConfigured) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('外卖服务暂未接入，先收藏或看看怎么做')),
+            );
+          }
+          return;
+        }
         // Ordering gate: Meituan orders belong to an eatwhat account; a
         // signed-out user signs in (or registers) before the menu builder.
         if (!AuthService.isLoggedIn) {
