@@ -65,6 +65,7 @@ class _ImmediateRecommendationService extends V2Phase2RecommendationService {
     required TasteInferenceInput input,
     int recallLimit = 12,
     int finalLimit = 5,
+    bool skipAiEnhancement = false,
   }) async {
     return Phase2RecommendationBundle(
       recallLabels: input.primarySignals,

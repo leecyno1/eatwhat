@@ -635,9 +635,11 @@ class GenerationService {
       return fallback;
     }
 
-    final candidatesText = cleanedCandidates.take(16).map((r) {
-      final tags = r.tags.take(8).join('、');
-      final ings = r.ingredients.take(8).join('、');
+    // Compact candidate cards keep the reasoning model fast: 10 candidates,
+    // 5 tags + 5 ingredients each is all the signal the pick needs.
+    final candidatesText = cleanedCandidates.take(10).map((r) {
+      final tags = r.tags.take(5).join('、');
+      final ings = r.ingredients.take(5).join('、');
       return '- dishId=${r.id}｜菜名=${r.name}｜标签=${tags.isEmpty ? '无' : tags}｜食材=${ings.isEmpty ? '无' : ings}';
     }).join('\n');
 

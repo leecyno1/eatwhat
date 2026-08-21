@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:eatwhat_app/v2/core/external/platform/execution_proxy_client.dart';
 import 'package:eatwhat_app/v2/core/external/platform/meituan_delivery_order_client.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
+import 'package:eatwhat_app/v2/core/services/v2_membership_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../scripts/mock_execution_proxy_server.dart';
@@ -82,6 +83,35 @@ void main() {
     expect(mapo.attributes, hasLength(1));
     expect(mapo.attributes.first.name, '辣度');
     expect(mapo.attributes.first.values.first.label, '微辣');
+  });
+
+  test('会员支付链路：创建订单、收银台地址、支付状态查询', () async {
+    final membership = V2MembershipService(
+      client: ExecutionProxyClient(
+        baseUrl: 'http://127.0.0.1:${server.port}',
+      ),
+    );
+
+    // 创建会员订单 → 模拟收银台地址
+    final payload = await ExecutionProxyClient(
+      baseUrl: 'http://127.0.0.1:${server.port}',
+    ).postJson('/api/v1/payment/alipay/orders', body: {'plan': 'yearly'});
+    expect(payload['status'], 'payment_required');
+    expect(payload['orderId'], 'mock-pay-20260822');
+    expect(
+      payload['payUrl'].toString(),
+      contains('/mock/alipay/cashier'),
+    );
+
+    // 支付状态查询（mock 恒为 paid）
+    final status = await ExecutionProxyClient(
+      baseUrl: 'http://127.0.0.1:${server.port}',
+    ).getJson(
+      '/api/v1/payment/alipay/status?orderId=mock-pay-20260822',
+    );
+    expect(status['status'], 'paid');
+
+    expect(membership.isConfigured, isTrue);
   });
 
   test('订单预览与提交的全链路返回模拟收银台', () async {

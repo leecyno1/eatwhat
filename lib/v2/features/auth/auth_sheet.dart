@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:eatwhat_app/core/services/analytics_service.dart';
+import 'package:eatwhat_app/v2/core/services/v2_membership_service.dart';
 import 'package:eatwhat_app/core/services/auth_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
@@ -466,8 +467,50 @@ class _NightFormField extends StatelessWidget {
 }
 
 /// Signed-in account sheet: identity, membership card, logout.
-class _EatWhatAccountSheet extends StatelessWidget {
+class _EatWhatAccountSheet extends StatefulWidget {
   const _EatWhatAccountSheet();
+
+  @override
+  State<_EatWhatAccountSheet> createState() => _EatWhatAccountSheetState();
+}
+
+class _EatWhatAccountSheetState extends State<_EatWhatAccountSheet> {
+  bool _purchasing = false;
+
+  Future<void> _buyMembership() async {
+    if (_purchasing) return;
+    setState(() => _purchasing = true);
+    try {
+      final orderId = await V2MembershipService.instance
+          .createOrderAndOpenCashier();
+      if (orderId == null) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('暂时无法打开收银台，请稍后再试')),
+          );
+        }
+        return;
+      }
+      final paid = await V2MembershipService.instance
+          .waitForPaymentAndUpgrade(orderId);
+      if (!mounted) return;
+      setState(() => _purchasing = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(paid ? '会员已生效，感谢支持' : '暂未确认支付完成，稍后自动同步'),
+        ),
+      );
+      if (paid) {
+        HapticFeedback.mediumImpact();
+      }
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _purchasing = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('支付服务暂时不可用，请稍后再试')),
+      );
+    }
+  }
 
   Future<void> _logout(BuildContext context) async {
     final confirmed = await showDialog<bool>(
@@ -580,7 +623,11 @@ class _EatWhatAccountSheet extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: AppSpacing.lg),
-              _MembershipCard(user: user),
+              _MembershipCard(
+                user: user,
+                purchasing: _purchasing,
+                onBuy: _buyMembership,
+              ),
               const SizedBox(height: AppSpacing.lg),
               SizedBox(
                 height: 48,
@@ -612,9 +659,15 @@ class _EatWhatAccountSheet extends StatelessWidget {
 /// see the tier badge with the days remaining on the period; everyone else
 /// sees the upgrade teaser.
 class _MembershipCard extends StatelessWidget {
-  const _MembershipCard({required this.user});
+  const _MembershipCard({
+    required this.user,
+    this.purchasing = false,
+    this.onBuy,
+  });
 
   final User user;
+  final bool purchasing;
+  final VoidCallback? onBuy;
 
   @override
   Widget build(BuildContext context) {
@@ -666,6 +719,40 @@ class _MembershipCard extends StatelessWidget {
               ],
             ),
           ),
+          if (!member && onBuy != null) ...[
+            const SizedBox(width: AppSpacing.sm),
+            SizedBox(
+              height: 36,
+              child: FilledButton(
+                key: const ValueKey('membership-buy-button'),
+                onPressed: purchasing ? null : onBuy,
+                style: FilledButton.styleFrom(
+                  backgroundColor: GoldPalette.gold,
+                  foregroundColor: GoldPalette.nightDeep,
+                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  textStyle: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w800,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: AppRadii.capsule,
+                  ),
+                ),
+                child: purchasing
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation(
+                            GoldPalette.nightDeep,
+                          ),
+                        ),
+                      )
+                    : const Text('开通会员'),
+              ),
+            ),
+          ],
         ],
       ),
     );

@@ -65,6 +65,7 @@ class AppV2ResultRouteData {
     this.resolutionStatus,
     this.primarySource,
     this.recommendationContext,
+    this.aiEnhancement,
   });
 
   final List<RecipeModel> recommendations;
@@ -77,6 +78,10 @@ class AppV2ResultRouteData {
   final RecommendationResolutionStatus? resolutionStatus;
   final String? primarySource;
   final RecommendationTelemetryContext? recommendationContext;
+
+  /// Background MiniMax refine running behind the already-shown local
+  /// results; the result page updates its reason line when it lands.
+  final Future<Phase2RecommendationBundle>? aiEnhancement;
 }
 
 class AppV2RecipeDetailRouteData {
@@ -216,6 +221,7 @@ class AppV2Router {
               resolutionStatus: data.resolutionStatus,
               primarySource: data.primarySource,
               recommendationContext: data.recommendationContext,
+              aiEnhancement: data.aiEnhancement,
             );
           },
         ),

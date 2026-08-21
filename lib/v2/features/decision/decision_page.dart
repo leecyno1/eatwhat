@@ -58,8 +58,6 @@ class DecisionPage extends StatefulWidget {
 }
 
 class _DecisionPageState extends State<DecisionPage> {
-  static const Duration _recommendationWaitTimeout = Duration(seconds: 30);
-
   late final V2Phase2RecommendationService _recommendationFlowService;
   late final V2RecommendationTelemetryService _recommendationTelemetryService;
 
@@ -111,11 +109,31 @@ class _DecisionPageState extends State<DecisionPage> {
   }
 
   Future<void> _fetchRecommendations() async {
+    // Stage 1: the local bundle (hybrid scoring, no LLM call) is sub-second —
+    // navigate immediately so the user never stares at a spinner. Stage 2
+    // runs the MiniMax refine in the background and hands the finished
+    // bundle to the already-open result page.
+    final fullBundleFuture =
+        _recommendationFlowService.buildRecommendations(input: _input);
+    // Surface the AI's finished summary in the finalize window: when the
+    // background refine lands before navigation, the stage copy swaps in.
+    unawaited(
+      fullBundleFuture.then((bundle) {
+        if (!mounted) return;
+        final summary = bundle.aiSummary?.trim();
+        if (summary == null || summary.isEmpty) return;
+        setState(() => _refinedSummary = summary);
+      }).catchError((_) {}),
+    );
+
     try {
       final bundle = await _recommendationFlowService
-          .buildRecommendations(input: _input)
+          .buildRecommendations(
+            input: _input,
+            skipAiEnhancement: true,
+          )
           .timeout(
-            _recommendationWaitTimeout,
+            const Duration(seconds: 3),
             onTimeout: () => Phase2RecommendationBundle(
               recallLabels: _input.primarySignals,
               recalledCount: 0,
@@ -146,7 +164,10 @@ class _DecisionPageState extends State<DecisionPage> {
         _recommendations = bundle.finalRecommendations;
         _aiReasonsByRecipeId = bundle.aiReasonsByRecipeId;
         _aiSummary = bundle.aiSummary;
-        _refinedSummary = bundle.aiSummary;
+        // The local copy only fills the stage copy when the AI words have
+        // not landed yet — if the background refine already finished (fast
+        // mocks), its summary must not be overwritten by the local one.
+        _refinedSummary ??= bundle.aiSummary;
         _resolutionStatus = bundle.resolutionStatus;
         _primarySource = bundle.primarySource;
         _recallCount = bundle.recalledCount;
@@ -200,12 +221,15 @@ class _DecisionPageState extends State<DecisionPage> {
     };
   }
 
-  void _finish() {
+  Future<Phase2RecommendationBundle>? _aiEnhancement;
+
+  void _finish({Future<Phase2RecommendationBundle>? aiEnhancement}) {
     if (_isFinished) return;
     setState(() {
       _aiLoading = false;
       _isFinished = true;
       _stage = _DecisionStage.finalized;
+      _aiEnhancement = aiEnhancement;
     });
     HapticFeedback.mediumImpact();
 
@@ -227,6 +251,7 @@ class _DecisionPageState extends State<DecisionPage> {
       recallLabels: _recallLabels,
       recalledCount: _recallCount,
       recommendationContext: _recommendationContext,
+      aiEnhancement: _aiEnhancement,
     );
     final router = GoRouter.maybeOf(context);
     if (router != null) {
@@ -247,6 +272,7 @@ class _DecisionPageState extends State<DecisionPage> {
           recallLabels: resultData.recallLabels,
           recalledCount: resultData.recalledCount,
           recommendationContext: resultData.recommendationContext,
+          aiEnhancement: resultData.aiEnhancement,
         ),
       ),
     );
@@ -514,9 +540,8 @@ class _DecisionStageRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final isComplete = state == _DecisionStageState.complete;
     final isActive = state == _DecisionStageState.active;
-    final foreground = isComplete || isActive
-        ? AppPalette.moonlight
-        : AppPalette.moonMuted;
+    final foreground =
+        isComplete || isActive ? AppPalette.moonlight : AppPalette.moonMuted;
     final surface = isComplete
         ? AppPalette.nightElevated
         : isActive

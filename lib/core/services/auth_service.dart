@@ -61,10 +61,15 @@ class AuthService {
     return remaining.inMinutes < 30; // 30分钟内过期时需要刷新
   }
 
+  /// Seed admin/user credentials for demos and reviews (管理员/用户测试账号).
+  static const String seedUsername = '17600806220';
+  static const String seedPassword = 'Iv19whot@123';
+
   /// 初始化认证服务
   static Future<void> initialize() async {
     final prefs = await SharedPreferences.getInstance();
     _resetSession();
+    await _ensureSeedAccount();
 
     // 检查记住登录状态
     final rememberMe = prefs.getBool(_keyRememberMe) ?? false;
@@ -248,6 +253,19 @@ class AuthService {
   }
 
   /// 用户注销
+  /// 更新当前用户资料（会员状态、昵称等），同步本地库与会话。
+  static Future<bool> updateCurrentUser(User user) async {
+    if (_currentUser == null || _currentUser!.id != user.id) return false;
+    try {
+      await _updateUser(user);
+      await _setCurrentUser(user, rememberMe: true);
+      return true;
+    } catch (e) {
+      debugPrint('更新当前用户失败: $e');
+      return false;
+    }
+  }
+
   static Future<void> logout() async {
     _resetSession();
 
@@ -668,6 +686,35 @@ class AuthService {
 
     users.add(user.toJson());
     await prefs.setString(_keyUsers, json.encode(users));
+  }
+
+  /// Creates the seeded admin/user account once if absent. The account is a
+  /// full member (no trial expiry) so demo flows exercise the member path.
+  static Future<void> _ensureSeedAccount() async {
+    try {
+      final existing = await _getUserByUsernameOrEmail(
+        seedUsername,
+        '$seedUsername@seed.eatwhat',
+      );
+      if (existing != null) return;
+      final now = DateTime.now();
+      final user = User(
+        id: 'seed-admin-001',
+        username: seedUsername,
+        email: '$seedUsername@seed.eatwhat',
+        nickname: '管理员',
+        passwordHash: _hashPassword(seedPassword),
+        createdAt: now,
+        lastLoginAt: now,
+        userPreference: UserPreference(userId: 'seed-admin-001'),
+        isMember: true,
+        memberSince: now,
+      );
+      await _saveUser(user);
+      debugPrint('种子账号已创建: $seedUsername');
+    } catch (e) {
+      debugPrint('种子账号创建失败: $e');
+    }
   }
 
   /// 更新用户

@@ -81,7 +81,7 @@ class V2Phase2RecommendationService {
     GenerationService? generationService,
     V2HowToCookRecipeService? howToCookRecipeService,
     Duration stageTimeout = const Duration(seconds: 2),
-    Duration refineTimeout = const Duration(seconds: 25),
+    Duration refineTimeout = const Duration(seconds: 14),
     Duration enrichmentTimeout = const Duration(seconds: 3),
     bool enableAiEnhancement = true,
   })  : _localRecommendationLoader = localRecommendationLoader,
@@ -114,6 +114,11 @@ class V2Phase2RecommendationService {
     required TasteInferenceInput input,
     int recallLimit = 12,
     int finalLimit = 5,
+
+    /// Per-call override: the decision page calls this with true to get the
+    /// sub-second local bundle for instant navigation while the full bundle
+    /// (with AI refinement) continues in the background.
+    bool skipAiEnhancement = false,
   }) async {
     final stopwatch = Stopwatch()..start();
     final recallLabels = _recallLabels(input);
@@ -165,6 +170,7 @@ class V2Phase2RecommendationService {
       recallLabels: recallLabels,
       localCandidates: localCandidates,
       limit: resultLimit,
+      skipAiEnhancement: skipAiEnhancement,
     );
     final ordered = _orderCanonicalCandidates(
       localCandidates: localCandidates,
@@ -272,8 +278,9 @@ class V2Phase2RecommendationService {
     required List<String> recallLabels,
     required List<RecipeModel> localCandidates,
     required int limit,
+    bool skipAiEnhancement = false,
   }) async {
-    if (!_enableAiEnhancement) {
+    if (!_enableAiEnhancement || skipAiEnhancement) {
       return const _AiEnhancementResult.notAttempted();
     }
 

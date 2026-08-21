@@ -15,7 +15,10 @@ Future<void> main(List<String> args) async {
     ..writeln('POST /api/v1/delivery/products/search')
     ..writeln('POST /api/v1/delivery/order-previews')
     ..writeln('POST /api/v1/delivery/orders')
-    ..writeln('GET  /mock/meituan/cashier');
+    ..writeln('GET  /mock/meituan/cashier')
+    ..writeln('POST /api/v1/payment/alipay/orders')
+    ..writeln('GET  /api/v1/payment/alipay/status')
+    ..writeln('GET  /mock/alipay/cashier');
 
   await for (final request in server) {
     await handleMockProxyRequest(
@@ -70,6 +73,28 @@ Future<void> handleMockProxyRequest(
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>美团模拟收银台</title></head><body style="font-family:-apple-system;padding:32px;background:#fff8ee">
 <h1>美团模拟收银台</h1><p>订单 ${request.uri.queryParameters['orderId'] ?? 'mock-order'} 已创建。</p>
+<p>本页仅用于本地验收，不会产生真实扣款。</p></body></html>''');
+    await request.response.close();
+    return;
+  }
+  // Membership payment mock: create an Alipay order, then let the client
+  // open a fake cashier page and poll the paid status.
+  if (request.method == 'GET' &&
+      request.uri.path == '/api/v1/payment/alipay/status') {
+    await _writeJson(request.response, HttpStatus.ok, {
+      'status': 'paid',
+      'orderId': request.uri.queryParameters['orderId'] ?? 'mock-pay-order',
+    });
+    return;
+  }
+  if (request.method == 'GET' && request.uri.path == '/mock/alipay/cashier') {
+    request.response
+      ..statusCode = HttpStatus.ok
+      ..headers.contentType = ContentType.html
+      ..write('''<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>支付宝模拟收银台</title></head><body style="font-family:-apple-system;padding:32px;background:#1677ff;color:#fff">
+<h1>支付宝模拟收银台</h1><p>会员订单 ${request.uri.queryParameters['orderId'] ?? 'mock-pay-order'} 已创建。</p>
 <p>本页仅用于本地验收，不会产生真实扣款。</p></body></html>''');
     await request.response.close();
     return;
@@ -142,6 +167,16 @@ Future<void> handleMockProxyRequest(
           'shippingFee': 4,
           'boxFee': 1,
         },
+      });
+      break;
+    case '/api/v1/payment/alipay/orders':
+      final plan = body['plan']?.toString() ?? 'yearly';
+      const orderId = 'mock-pay-20260822';
+      await _writeJson(request.response, HttpStatus.ok, {
+        'status': 'payment_required',
+        'orderId': orderId,
+        'plan': plan,
+        'payUrl': 'http://127.0.0.1:$port/mock/alipay/cashier?orderId=$orderId',
       });
       break;
     case '/api/v1/delivery/orders':

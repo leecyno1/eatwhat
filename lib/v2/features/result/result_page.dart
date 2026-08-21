@@ -68,6 +68,7 @@ class ResultPage extends StatefulWidget {
     this.inferenceInput,
     this.aiReasonsByRecipeId = const {},
     this.aiSummary,
+    this.aiEnhancement,
     this.resolutionStatus,
     this.primarySource,
     this.recommendationContext,
@@ -91,6 +92,12 @@ class ResultPage extends StatefulWidget {
   final TasteInferenceInput? inferenceInput;
   final Map<String, String> aiReasonsByRecipeId;
   final String? aiSummary;
+
+  /// Background MiniMax refine bundle: the page opens instantly on local
+  /// results and this future lands a few seconds later, swapping the reason
+  /// line for the chef's words without disturbing whatever the user is
+  /// already looking at.
+  final Future<Phase2RecommendationBundle>? aiEnhancement;
   final RecommendationResolutionStatus? resolutionStatus;
   final String? primarySource;
   final RecommendationTelemetryContext? recommendationContext;
@@ -223,6 +230,29 @@ class _ResultPageState extends State<ResultPage> {
       _refreshCurrentChoiceState();
     }
     unawaited(_loadCandidateThumbnails());
+    _listenForAiEnhancement();
+  }
+
+  String? _enhancedAiSummary;
+
+  void _listenForAiEnhancement() {
+    final future = widget.aiEnhancement;
+    if (future == null) return;
+    future.then((bundle) {
+      if (!mounted) return;
+      final summary = bundle.aiSummary?.trim();
+      if (summary == null || summary.isEmpty) return;
+      setState(() => _enhancedAiSummary = summary);
+    }).catchError((_) {
+      // The local copy stays in place if the background refine fails.
+    });
+  }
+
+  String? get _effectiveAiSummary {
+    final enhanced = _enhancedAiSummary?.trim();
+    if (enhanced != null && enhanced.isNotEmpty) return enhanced;
+    final initial = widget.aiSummary?.trim();
+    return (initial != null && initial.isNotEmpty) ? initial : null;
   }
 
   /// Resolves the prebuilt thumbnail for every candidate up front so the
@@ -683,7 +713,6 @@ class _ResultPageState extends State<ResultPage> {
   }
 
   @override
-  @override
   Widget build(BuildContext context) {
     final currentChoice = _choiceController.currentChoice;
     final reduceMotion = MediaQuery.disableAnimationsOf(context);
@@ -796,9 +825,8 @@ class _ResultPageState extends State<ResultPage> {
                     const SizedBox(height: AppSpacing.md),
                     // One line of gold: why the chef picked this dish.
                     _GoldReasonLine(
-                      text: widget.aiSummary?.trim().isNotEmpty == true
-                          ? widget.aiSummary!.trim()
-                          : _buildRecommendationSubtitle(),
+                      text:
+                          _effectiveAiSummary ?? _buildRecommendationSubtitle(),
                     ),
                     const SizedBox(height: AppSpacing.md),
                     // Three gold cards: delivery, cook at home, dine out.
@@ -933,7 +961,7 @@ class _GoldReasonLine extends StatelessWidget {
           child: Row(
             children: [
               const SizedBox(width: 2),
-              Icon(
+              const Icon(
                 Icons.auto_awesome_rounded,
                 size: 13,
                 color: GoldPalette.gold,
