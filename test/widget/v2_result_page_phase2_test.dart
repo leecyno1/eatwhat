@@ -94,15 +94,24 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 900));
 
-    expect(find.byKey(const ValueKey('result-candidate-rail')), findsOneWidget);
+    expect(find.byKey(const ValueKey('result-dish-carousel')), findsOneWidget);
 
-    await tester.tap(find.byKey(const ValueKey('result-candidate-r2')));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 900));
+    // 先点非聚焦卡转到正前方，再点一次加入本餐菜单（多选 +1）。
+    // 转盘动画需要多帧小步 pump 推进（单帧长 pump 不驱动 ticker）。
+    await tester.tap(find.byKey(const ValueKey('carousel-dish-r2')));
+    for (var i = 0; i < 5; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    await tester.tap(find.byKey(const ValueKey('carousel-dish-r2')));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('本餐 2 道'), findsOneWidget);
 
-    // Dish name renders on the gold hero; long descriptions live in the
-    // recipe detail page now.
-    expect(find.text('香辣干锅鸡'), findsWidgets);
+    // 菜单区点 × 移除该菜
+    await tester.tap(
+      find.byKey(const ValueKey('selected-menu-remove-r2')),
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('本餐 1 道'), findsOneWidget);
   });
 
   testWidgets('ResultPage 推荐行为漏斗共享同一个推荐批次 ID', (tester) async {
@@ -183,7 +192,11 @@ void main() {
     );
     await tester.pump();
 
-    await tester.tap(find.byKey(const ValueKey('result-candidate-r2')));
+    await tester.drag(
+      find.byKey(const ValueKey('result-dish-carousel')),
+      const Offset(-140, 0),
+    );
+    await tester.pump(const Duration(milliseconds: 700)); // 惯性+吸附
     await tester.pump();
 
     await tester.ensureVisible(
@@ -444,213 +457,10 @@ void main() {
   });
 
 
-  testWidgets('ResultPage 优先使用 assets 预制菜图而不是触发在线生图', (tester) async {
-    var imageGeneratorCallCount = 0;
-    final imageCatalogService = PrebuiltDishImageCatalogService(
-      remoteManifestLoader: () async => null,
-      assetManifestLoader: () async => '''
-{
-  "items": [
-    {
-      "dishId": "r1",
-      "dishName": "番茄肥牛锅",
-      "aliases": ["番茄肥牛"],
-      "heroUrl": "assets/images/prebuilt_dishes/dish-r1_1280.jpg",
-      "thumbUrl": "assets/images/prebuilt_dishes/dish-r1_768.jpg",
-      "styleTag": "warm_stew",
-      "updatedAt": "2026-04-09T12:00:00Z",
-      "sourceType": "howtocook_real_local",
-      "sourceProject": "HowToCook",
-      "sourcePath": "/repo/HowToCook/dishes/meat_dish/番茄肥牛锅/1.jpg",
-      "sourceRecipeName": "番茄肥牛锅"
-    }
-  ]
-}
-''',
-    );
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: ResultPage(
-          imageCatalogService: imageCatalogService,
-          imageGenerator: (_) async {
-            imageGeneratorCallCount += 1;
-            return 'https://example.com/should-not-be-used.jpg';
-          },
-          recommendations: const [
-            RecipeModel(
-              id: 'r1',
-              name: '番茄肥牛锅',
-              description: '热一点，有锅气。',
-              ingredients: ['番茄', '肥牛'],
-            ),
-          ],
-        ),
-      ),
-    );
-
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 1200));
-
-    expect(imageGeneratorCallCount, 0);
-    expect(
-      find.byWidgetPredicate(
-        (widget) =>
-            widget is Image &&
-            widget.image.runtimeType.toString() == 'AssetImage',
-      ),
-      findsWidgets,
-    );
-    expect(find.text('实拍图'), findsOneWidget);
-  });
-
-  testWidgets('ResultPage 对旧预制图显示图库参考图标识', (tester) async {
-    final imageCatalogService = PrebuiltDishImageCatalogService(
-      remoteManifestLoader: () async => null,
-      assetManifestLoader: () async => '''
-{
-  "items": [
-    {
-      "dishId": "r1",
-      "dishName": "糖醋里脊",
-      "aliases": ["糖醋里脊"],
-      "heroUrl": "assets/images/prebuilt_dishes/dish-r1_1280.jpg",
-      "thumbUrl": "assets/images/prebuilt_dishes/dish-r1_768.jpg",
-      "styleTag": "dish",
-      "updatedAt": "2026-04-09T12:00:00Z",
-      "sourceType": "legacy_prebuilt_asset",
-      "sourceProject": "eatwhat_assets",
-      "sourcePath": "assets/images/prebuilt_dishes/dish-r1_1280.jpg",
-      "sourceRecipeName": "糖醋里脊"
-    }
-  ]
-}
-''',
-    );
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: ResultPage(
-          imageCatalogService: imageCatalogService,
-          imageGenerator: (_) async => null,
-          recommendations: const [
-            RecipeModel(
-              id: 'r1',
-              name: '糖醋里脊',
-              description: '酸甜开胃。',
-              ingredients: ['里脊肉', '番茄酱'],
-            ),
-          ],
-        ),
-      ),
-    );
-
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 1200));
-
-    expect(
-        find.byKey(const ValueKey('result-image-source-chip')), findsOneWidget);
-    expect(find.text('图库参考图'), findsOneWidget);
-  });
 
 
-  testWidgets('ResultPage 在预制图缺失时展示在线生图结果并显示 AI 简介', (tester) async {
-    const imageDataUri =
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO9jz6sAAAAASUVORK5CYII=';
 
-    await tester.pumpWidget(
-      MaterialApp(
-        home: ResultPage(
-          imageCatalogService: PrebuiltDishImageCatalogService(
-            remoteManifestLoader: () async => null,
-            assetManifestLoader: () async => '{"items":[]}',
-          ),
-          imageGenerator: (_) async => imageDataUri,
-          dishIntroLoader: (_, __, ___) async =>
-              '酸甜先打开胃口，随后肉香慢慢压上来，属于今晚很好入口的一道热菜。',
-          recommendations: const [
-            RecipeModel(
-              id: 'r-sweet-sour',
-              name: '糖醋里脊',
-              description: '',
-              ingredients: ['里脊肉', '番茄酱'],
-            ),
-          ],
-          aiReasonsByRecipeId: const {
-            'r-sweet-sour': '酸甜更开胃，今晚吃着不腻。',
-          },
-        ),
-      ),
-    );
 
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 1200));
-
-    expect(
-      find.byWidgetPredicate(
-        (widget) =>
-            widget is Image &&
-            widget.image.runtimeType.toString() == 'MemoryImage',
-      ),
-      findsWidgets,
-    );
-    expect(find.text('AI 生成图'), findsOneWidget);
-  });
-
-  testWidgets('ResultPage 生图失败时显示重试入口，重试成功后展示图片', (tester) async {
-    const imageDataUri =
-        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO9jz6sAAAAASUVORK5CYII=';
-    var calls = 0;
-
-    await tester.pumpWidget(
-      MaterialApp(
-        home: ResultPage(
-          imageCatalogService: PrebuiltDishImageCatalogService(
-            remoteManifestLoader: () async => null,
-            assetManifestLoader: () async => '{"items":[]}',
-          ),
-          imageGenerator: (_) async {
-            calls += 1;
-            return calls == 1 ? null : imageDataUri;
-          },
-          dishIntroLoader: (_, __, ___) async => '外酥里嫩，酸甜清亮，适合想吃得轻松但不寡淡的时候。',
-          recommendations: const [
-            RecipeModel(
-              id: 'r-retry',
-              name: '糖醋里脊',
-              description: '',
-              ingredients: ['里脊肉', '番茄酱'],
-            ),
-          ],
-        ),
-      ),
-    );
-
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 1200));
-
-    expect(find.byKey(const ValueKey('result-image-retry-button')),
-        findsOneWidget);
-    expect(find.text('菜图暂未生成'), findsOneWidget);
-
-    await tester.ensureVisible(
-      find.byKey(const ValueKey('result-image-retry-button')),
-    );
-    await tester.tap(find.byKey(const ValueKey('result-image-retry-button')));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 1200));
-
-    expect(
-        find.byKey(const ValueKey('result-image-retry-button')), findsNothing);
-    expect(
-      find.byWidgetPredicate(
-        (widget) =>
-            widget is Image &&
-            widget.image.runtimeType.toString() == 'MemoryImage',
-      ),
-      findsWidgets,
-    );
-  });
 
 
 

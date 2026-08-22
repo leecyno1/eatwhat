@@ -33,10 +33,10 @@ import 'package:eatwhat_app/v2/features/result/controllers/result_enrichment_con
 import 'package:eatwhat_app/v2/features/result/controllers/result_image_state_controller.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_pairing_suggestion_controller.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_action_bar.dart';
-import 'package:eatwhat_app/v2/features/result/widgets/result_candidate_rail.dart';
+import 'package:eatwhat_app/v2/features/result/widgets/dish_carousel.dart';
+import 'package:eatwhat_app/v2/features/result/widgets/selected_menu_rail.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_execution_shortcuts.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_feedback_band.dart';
-import 'package:eatwhat_app/v2/features/result/widgets/result_hero_media.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_meal_plan_card.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_pairing_band.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_recommendation_mode_tabs.dart';
@@ -233,6 +233,11 @@ class _ResultPageState extends State<ResultPage> {
     _listenForAiEnhancement();
   }
 
+  /// Tonight's picks — the dishes the user kept from the carousel. Starts
+  /// with the leading recommendation; tapping the front dish toggles.
+  final Set<String> _selectedMenuIds = {};
+  bool _menuSeeded = false;
+
   String? _enhancedAiSummary;
 
   void _listenForAiEnhancement() {
@@ -280,6 +285,22 @@ class _ResultPageState extends State<ResultPage> {
     setState(() {
       _isFavorited = isFav;
     });
+  }
+
+  /// Toggles a dish in/out of tonight's menu. The menu never empties
+  /// silently — removing the last dish keeps it (one dish must stay so the
+  /// confirm action always has a target).
+  void _toggleMenuPick(RecipeModel dish) {
+    setState(() {
+      if (_selectedMenuIds.contains(dish.id)) {
+        if (_selectedMenuIds.length > 1) {
+          _selectedMenuIds.remove(dish.id);
+        }
+      } else {
+        _selectedMenuIds.add(dish.id);
+      }
+    });
+    HapticFeedback.selectionClick();
   }
 
   Future<void> _toggleFavorite() async {
@@ -790,35 +811,53 @@ class _ResultPageState extends State<ResultPage> {
                                 partySize: widget.inferenceInput
                                     ?.structuredConstraints.partySize,
                               )
-                            : Stack(
-                                key: ValueKey('single-${currentChoice.id}'),
-                                fit: StackFit.expand,
-                                children: [
-                                  ResultHeroMedia(
-                                    recipe: currentChoice,
-                                    isGeneratingImage: _isGeneratingImage,
-                                    imageLoadState:
-                                        _imageStateController.stateFor(
-                                      currentChoice.id,
-                                    ),
-                                    imageSource:
-                                        _imageStateController.sourceFor(
-                                      currentChoice.id,
-                                    ),
-                                    onRetryImage: () =>
-                                        _maybeGenerateImageForCurrentChoice(
-                                      force: true,
-                                    ),
-                                  ),
-                                  Positioned(
-                                    top: 12,
-                                    right: 12,
-                                    child: _GoldFavoriteButton(
-                                      favorited: _isFavorited,
-                                      onTap: _toggleFavorite,
-                                    ),
-                                  ),
-                                ],
+                            : Builder(
+                                builder: (context) {
+                                  final choices =
+                                      _choiceController.availableChoices;
+                                  if (!_menuSeeded &&
+                                      currentChoice.id.isNotEmpty) {
+                                    _selectedMenuIds.add(currentChoice.id);
+                                    _menuSeeded = true;
+                                  }
+                                  // Fixed key: the carousel owns its angle;
+                                  // a choice change must not reset the wheel.
+                                  return Stack(
+                                    key: const ValueKey('result-carousel-stage'),
+                                    fit: StackFit.expand,
+                                    children: [
+                                      DishCarousel(
+                                        key: const ValueKey(
+                                          'result-dish-carousel-widget',
+                                        ),
+                                        dishes: choices,
+                                        thumbUrlByRecipeId:
+                                            _thumbUrlByRecipeId,
+                                        selectedIds: _selectedMenuIds,
+                                        onToggleSelect: _toggleMenuPick,
+                                        onFocusedChanged: (index) {
+                                          final choices = _choiceController
+                                              .availableChoices;
+                                          if (index >= 0 &&
+                                              index < choices.length) {
+                                            _selectChoice(
+                                              choices[index],
+                                              action: 'carousel_focus',
+                                            );
+                                          }
+                                        },
+                                      ),
+                                      Positioned(
+                                        top: 4,
+                                        right: 4,
+                                        child: _GoldFavoriteButton(
+                                          favorited: _isFavorited,
+                                          onTap: _toggleFavorite,
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                },
                               ),
                       ),
                     ),
@@ -842,16 +881,16 @@ class _ResultPageState extends State<ResultPage> {
                         ExecutionPath.dineIn,
                       ),
                     ),
-                    if (!_isMealMode &&
-                        _choiceController.availableChoices.length > 1) ...[
+                    if (!_isMealMode && _selectedMenuIds.isNotEmpty) ...[
                       const SizedBox(height: AppSpacing.md),
-                      ResultCandidateRail(
-                        currentChoiceId: currentChoice.id,
-                        choices: _choiceController.availableChoices,
-                        recalledCount: widget.recalledCount,
-                        aiReasonsByRecipeId: widget.aiReasonsByRecipeId,
+                      SelectedMenuRail(
+                        selected: [
+                          for (final choice
+                              in _choiceController.availableChoices)
+                            if (_selectedMenuIds.contains(choice.id)) choice,
+                        ],
                         thumbUrlByRecipeId: _thumbUrlByRecipeId,
-                        onSelect: _selectChoice,
+                        onRemove: _toggleMenuPick,
                       ),
                     ],
                   ],
