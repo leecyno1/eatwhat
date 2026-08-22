@@ -94,17 +94,12 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 900));
 
-    expect(find.byKey(const ValueKey('result-dish-carousel')), findsOneWidget);
+    expect(find.byKey(const ValueKey('result-candidate-rail')), findsOneWidget);
 
-    // 一桌菜模式：本餐菜单条显示当前选菜
-    await tester.tap(find.byKey(const ValueKey('result-mode-meal')));
-    await tester.pump(const Duration(milliseconds: 300));
-    expect(find.byKey(const ValueKey('selected-menu-rail')), findsOneWidget);
-    expect(find.text('本餐 1 道'), findsOneWidget);
-
-    // 一道菜模式：确认键回到单菜文案
-    await tester.tap(find.byKey(const ValueKey('result-mode-single')));
-    await tester.pump(const Duration(milliseconds: 300));
+    // 缩略图点选切换：菜名换到下一道
+    await tester.tap(find.byKey(const ValueKey('result-candidate-r3')));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(find.text('麻辣冒菜'), findsWidgets);
     expect(find.text('就吃这个'), findsOneWidget);
   });
 
@@ -186,12 +181,9 @@ void main() {
     );
     await tester.pump();
 
-    await tester.drag(
-      find.byKey(const ValueKey('result-dish-carousel')),
-      const Offset(-140, 0),
-    );
-    await tester.pump(const Duration(milliseconds: 700)); // 惯性+吸附
-    await tester.pump();
+    // 点缩略图切换候选（事件同步发出）
+    await tester.tap(find.byKey(const ValueKey('result-candidate-r2')));
+    await tester.pump(const Duration(milliseconds: 300));
 
     await tester.ensureVisible(
       find.byKey(const ValueKey('result-execution-delivery')),

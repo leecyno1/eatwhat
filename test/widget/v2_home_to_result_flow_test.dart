@@ -50,12 +50,12 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('home-start-inference-button')));
     await _pumpUntilFound(
       tester,
-      find.byKey(const ValueKey('result-dish-carousel')),
+      find.byKey(const ValueKey('result-candidate-rail')),
       step: const Duration(milliseconds: 250),
       maxPumps: 36,
     );
 
-    expect(find.byKey(const ValueKey('result-dish-carousel')), findsOneWidget);
+    expect(find.byKey(const ValueKey('result-candidate-rail')), findsOneWidget);
     expect(find.text('番茄肥牛锅'), findsWidgets);
 
     // The gold stage has no in-app back button; a system back returns to

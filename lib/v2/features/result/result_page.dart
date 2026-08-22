@@ -4,7 +4,6 @@ import 'package:eatwhat_app/core/services/unified_recipe_database_service.dart';
 import 'package:eatwhat_app/core/services/auth_service.dart';
 import 'package:eatwhat_app/v2/core/data/models/ai_generation_models.dart';
 import 'package:eatwhat_app/v2/core/data/models/dish_model.dart';
-import 'package:eatwhat_app/v2/core/data/models/meal_planning_direction.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_pairing_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recommendation_resolution.dart';
@@ -33,11 +32,10 @@ import 'package:eatwhat_app/v2/features/result/controllers/result_enrichment_con
 import 'package:eatwhat_app/v2/features/result/controllers/result_image_state_controller.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_pairing_suggestion_controller.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_action_bar.dart';
-import 'package:eatwhat_app/v2/features/result/widgets/dish_carousel.dart';
-import 'package:eatwhat_app/v2/features/result/widgets/selected_menu_rail.dart';
+import 'package:eatwhat_app/v2/features/result/widgets/result_candidate_rail.dart';
+import 'package:eatwhat_app/v2/features/result/widgets/result_hero_media.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_execution_shortcuts.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_feedback_band.dart';
-import 'package:eatwhat_app/v2/features/result/widgets/result_recommendation_mode_tabs.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_pairing_band.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_status_panels.dart';
 import 'package:flutter/material.dart';
@@ -137,8 +135,6 @@ class _ResultPageState extends State<ResultPage> {
       V2PreferenceFeedbackService.instance;
   final GenerationService _generation = GenerationService.instance;
   List<PairingSuggestion> _pairings = const [];
-  ResultRecommendationMode _recommendationMode =
-      ResultRecommendationMode.single;
   bool _isFavorited = false;
   bool _isGeneratingImage = false;
   ResultFeedbackSelection? _feedbackSelection;
@@ -169,25 +165,10 @@ class _ResultPageState extends State<ResultPage> {
     };
   }
 
-  bool get _isMealMode => _recommendationMode == ResultRecommendationMode.meal;
-
-  List<PairingSuggestion> get _mealPairings {
-    final recipe = _choiceController.currentChoice;
-    if (recipe == null) return const [];
-    return _pairingSuggestionController.completeMealPairings(
-      recipe,
-      _pairings,
-      direction: widget.inferenceInput?.planningDirection ??
-          MealPlanningDirection.balanced,
-    );
-  }
-
   String get _executionKeyword {
     final recipe = _choiceController.currentChoice;
     if (recipe == null) return '';
-    if (!_isMealMode) return recipe.name;
-    return [recipe.name, ..._mealPairings.map((pairing) => pairing.title)]
-        .join(' ');
+    return recipe.name;
   }
 
   @override
@@ -232,12 +213,10 @@ class _ResultPageState extends State<ResultPage> {
     _listenForAiEnhancement();
   }
 
-  /// Tonight's picks — the dishes the user kept from the carousel. Starts
-  /// with the leading recommendation; tapping the front dish toggles.
-  final Set<String> _selectedMenuIds = {};
-  bool _menuSeeded = false;
-
   String? _enhancedAiSummary;
+
+  /// Horizontal pager driving the big dish photos.
+  final PageController _heroPageController = PageController();
 
   void _listenForAiEnhancement() {
     final future = widget.aiEnhancement;
@@ -250,12 +229,6 @@ class _ResultPageState extends State<ResultPage> {
     }).catchError((_) {
       // The local copy stays in place if the background refine fails.
     });
-  }
-
-  String get _confirmLabel {
-    final count = _selectedMenuIds.length;
-    if (count > 1) return '就吃这桌（$count 道）';
-    return _isMealMode ? '就吃这桌' : '就吃这个';
   }
 
   String? get _effectiveAiSummary {
@@ -290,47 +263,6 @@ class _ResultPageState extends State<ResultPage> {
     setState(() {
       _isFavorited = isFav;
     });
-  }
-
-  void _setRecommendationMode(ResultRecommendationMode mode) {
-    if (_recommendationMode == mode) return;
-    setState(() {
-      _recommendationMode = mode;
-      // 一道菜模式：菜单收敛为正前方那道；一桌菜模式保留多选。
-      if (mode == ResultRecommendationMode.single) {
-        final current = _choiceController.currentChoice;
-        if (current != null) {
-          _selectedMenuIds
-            ..clear()
-            ..add(current.id);
-        }
-      }
-    });
-    HapticFeedback.selectionClick();
-  }
-
-  /// Toggles a dish in/out of tonight's menu. The menu never empties
-  /// silently — removing the last dish keeps it (one dish must stay so the
-  /// confirm action always has a target).
-  void _toggleMenuPick(RecipeModel dish) {
-    setState(() {
-      // 一道菜模式：点正前方的卡即"就吃这道"（单选替换）。
-      if (_recommendationMode == ResultRecommendationMode.single) {
-        _selectedMenuIds
-          ..clear()
-          ..add(dish.id);
-        return;
-      }
-      // 一桌菜模式：多选增删，至少保留一道。
-      if (_selectedMenuIds.contains(dish.id)) {
-        if (_selectedMenuIds.length > 1) {
-          _selectedMenuIds.remove(dish.id);
-        }
-      } else {
-        _selectedMenuIds.add(dish.id);
-      }
-    });
-    HapticFeedback.selectionClick();
   }
 
   Future<void> _toggleFavorite() async {
@@ -570,6 +502,27 @@ class _ResultPageState extends State<ResultPage> {
     return index < 0 ? 0 : index;
   }
 
+  @override
+  void dispose() {
+    _heroPageController.dispose();
+    super.dispose();
+  }
+
+  /// Thumbnail tap: switch the choice and slide the big photo to match.
+  void _selectChoiceWithHero(RecipeModel recipe) {
+    final choices = _choiceController.availableChoices;
+    final index = choices.indexWhere((c) => c.id == recipe.id);
+    if (index < 0) return;
+    _selectChoice(recipe);
+    if (_heroPageController.hasClients) {
+      _heroPageController.animateToPage(
+        index,
+        duration: AppMotion.standard,
+        curve: AppMotion.enter,
+      );
+    }
+  }
+
   void _selectChoice(
     RecipeModel recipe, {
     String action = 'candidate_tap',
@@ -609,34 +562,18 @@ class _ResultPageState extends State<ResultPage> {
         action: 'confirm',
       ),
     );
-    // 多选的一桌菜：聚焦菜为主菜，其余选中菜作为加选传入执行链路。
-    final extraPicks = _selectedMenuIds
-        .where((id) => id != currentChoice.id)
-        .map(
-          (id) => PairingSelection(
-            category: '加选',
-            title: _choiceController.availableChoices
-                .firstWhere(
-                  (c) => c.id == id,
-                  orElse: () => currentChoice,
-                )
-                .name,
-            subtitle: '本餐同点',
-          ),
-        );
     ExecutionSheet.show(
       context,
       recipe: currentChoice,
-      pairings: [
-        ...(_isMealMode ? _mealPairings : _pairings).map(
-          (pairing) => PairingSelection(
-            category: pairing.category,
-            title: pairing.title,
-            subtitle: pairing.subtitle,
-          ),
-        ),
-        ...extraPicks,
-      ],
+      pairings: _pairings
+          .map(
+            (pairing) => PairingSelection(
+              category: pairing.category,
+              title: pairing.title,
+              subtitle: pairing.subtitle,
+            ),
+          )
+          .toList(),
       sourceTags: _displayTags,
       structuredConstraints: widget.inferenceInput?.structuredConstraints,
       recommendationContext: _recommendationContext,
@@ -694,7 +631,7 @@ class _ResultPageState extends State<ResultPage> {
             builder: (_) => MeituanMenuBuilderPage(
               intent: ExecutionIntent(
                 recipe: recipe,
-                pairings: (_isMealMode ? _mealPairings : _pairings)
+                pairings: _pairings
                     .map(
                       (pairing) => PairingSelection(
                         category: pairing.category,
@@ -782,9 +719,7 @@ class _ResultPageState extends State<ResultPage> {
   @override
   Widget build(BuildContext context) {
     final currentChoice = _choiceController.currentChoice;
-    final reduceMotion = MediaQuery.disableAnimationsOf(context);
-    final contentTransitionDuration =
-        reduceMotion ? AppMotion.fast : AppMotion.standard;
+    final choices = _choiceController.availableChoices;
 
     return Scaffold(
       backgroundColor: GoldPalette.nightDeep,
@@ -800,7 +735,7 @@ class _ResultPageState extends State<ResultPage> {
               ),
               child: ResultPrimaryConfirmBar(
                 onConfirm: _confirm,
-                confirmLabel: _confirmLabel,
+                confirmLabel: '就吃这个',
               ),
             ),
       body: SafeArea(
@@ -822,90 +757,82 @@ class _ResultPageState extends State<ResultPage> {
                   AppSpacing.sm,
                 ),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Mode tabs: 一道菜 / 一桌菜 — single focus vs a table
-                    // of picks assembled on the carousel below.
-                    Center(
-                      child: ResultRecommendationModeTabs(
-                        value: _recommendationMode,
-                        onChanged: _setRecommendationMode,
+                    // Top: candidate thumbnails — tap to switch dishes.
+                    if (choices.length > 1) ...[
+                      ResultCandidateRail(
+                        currentChoiceId: currentChoice.id,
+                        choices: choices,
+                        recalledCount: widget.recalledCount,
+                        aiReasonsByRecipeId: widget.aiReasonsByRecipeId,
+                        thumbUrlByRecipeId: _thumbUrlByRecipeId,
+                        onSelect: _selectChoiceWithHero,
                       ),
-                    ),
-                    const SizedBox(height: AppSpacing.xs),
+                      const SizedBox(height: AppSpacing.sm),
+                    ],
+                    // Middle: tag chips above the big photo.
+                    if (currentChoice.tags.isNotEmpty) ...[
+                      SizedBox(
+                        height: 26,
+                        child: ListView.separated(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: currentChoice.tags.take(3).length,
+                          separatorBuilder: (_, __) => const SizedBox(width: 6),
+                          itemBuilder: (context, index) => _GoldTagChip(
+                            label: currentChoice.tags[index],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: AppSpacing.sm),
+                    ],
+                    // The big photo owns the middle; swipe sideways to move
+                    // between candidates, or tap a thumbnail above.
                     Expanded(
-                      child: AnimatedSwitcher(
-                        duration: contentTransitionDuration,
-                        reverseDuration: contentTransitionDuration,
-                        switchInCurve: AppMotion.enter,
-                        switchOutCurve: AppMotion.enter,
-                        transitionBuilder: (child, animation) {
-                          final fade = FadeTransition(
-                            opacity: animation,
-                            child: child,
-                          );
-                          if (reduceMotion) {
-                            return fade;
-                          }
-                          return ScaleTransition(
-                            scale: Tween<double>(begin: 0.97, end: 1).animate(
-                              CurvedAnimation(
-                                parent: animation,
-                                curve: AppMotion.enter,
-                              ),
+                      child: Stack(
+                        children: [
+                          PageView.builder(
+                            key: const ValueKey('result-hero-pager'),
+                            controller: _heroPageController,
+                            itemCount: choices.length,
+                            onPageChanged: (index) => _selectChoice(
+                              choices[index],
+                              action: 'hero_swipe',
                             ),
-                            child: fade,
-                          );
-                        },
-                        // Both modes share the carousel: 一道菜 picks by
-                        // focus, 一桌菜 multi-selects on the same wheel.
-                        child: Builder(
-                                builder: (context) {
-                                  final choices =
-                                      _choiceController.availableChoices;
-                                  if (!_menuSeeded &&
-                                      currentChoice.id.isNotEmpty) {
-                                    _selectedMenuIds.add(currentChoice.id);
-                                    _menuSeeded = true;
-                                  }
-                                  // Fixed key: the carousel owns its angle;
-                                  // a choice change must not reset the wheel.
-                                  return Stack(
-                                    key: const ValueKey('result-carousel-stage'),
-                                    fit: StackFit.expand,
-                                    children: [
-                                      DishCarousel(
-                                        key: const ValueKey(
-                                          'result-dish-carousel-widget',
-                                        ),
-                                        dishes: choices,
-                                        thumbUrlByRecipeId:
-                                            _thumbUrlByRecipeId,
-                                        selectedIds: _selectedMenuIds,
-                                        onToggleSelect: _toggleMenuPick,
-                                        onFocusedChanged: (index) {
-                                          final choices = _choiceController
-                                              .availableChoices;
-                                          if (index >= 0 &&
-                                              index < choices.length) {
-                                            _selectChoice(
-                                              choices[index],
-                                              action: 'carousel_focus',
-                                            );
-                                          }
-                                        },
-                                      ),
-                                      Positioned(
-                                        top: 4,
-                                        right: 4,
-                                        child: _GoldFavoriteButton(
-                                          favorited: _isFavorited,
-                                          onTap: _toggleFavorite,
-                                        ),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              ),
+                            itemBuilder: (context, index) {
+                              final recipe = choices[index];
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 3,
+                                ),
+                                child: ResultHeroMedia(
+                                  recipe: recipe,
+                                  isGeneratingImage: _isGeneratingImage &&
+                                      recipe.id == currentChoice.id,
+                                  imageLoadState:
+                                      _imageStateController.stateFor(
+                                    recipe.id,
+                                  ),
+                                  imageSource: _imageStateController.sourceFor(
+                                    recipe.id,
+                                  ),
+                                  onRetryImage: () =>
+                                      _maybeGenerateImageForCurrentChoice(
+                                    force: true,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          Positioned(
+                            top: 12,
+                            right: 12,
+                            child: _GoldFavoriteButton(
+                              favorited: _isFavorited,
+                              onTap: _toggleFavorite,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     const SizedBox(height: AppSpacing.md),
@@ -928,18 +855,6 @@ class _ResultPageState extends State<ResultPage> {
                         ExecutionPath.dineIn,
                       ),
                     ),
-                    if (_isMealMode && _selectedMenuIds.isNotEmpty) ...[
-                      const SizedBox(height: AppSpacing.md),
-                      SelectedMenuRail(
-                        selected: [
-                          for (final choice
-                              in _choiceController.availableChoices)
-                            if (_selectedMenuIds.contains(choice.id)) choice,
-                        ],
-                        thumbUrlByRecipeId: _thumbUrlByRecipeId,
-                        onRemove: _toggleMenuPick,
-                      ),
-                    ],
                   ],
                 ),
               ),
@@ -1072,6 +987,34 @@ class _GoldReasonLine extends StatelessWidget {
         ),
         Container(height: 0.6, color: GoldPalette.goldHairline),
       ],
+    );
+  }
+}
+
+/// Small gold-rimmed tag chip shown above the hero photo.
+class _GoldTagChip extends StatelessWidget {
+  const _GoldTagChip({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: GoldPalette.panel,
+        borderRadius: AppRadii.capsule,
+        border: Border.all(color: GoldPalette.goldHairline),
+      ),
+      child: Text(
+        label,
+        style: const TextStyle(
+          color: GoldPalette.goldSoft,
+          fontSize: 11,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.8,
+        ),
+      ),
     );
   }
 }

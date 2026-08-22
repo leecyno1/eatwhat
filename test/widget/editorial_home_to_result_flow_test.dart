@@ -42,11 +42,11 @@ void main() {
 
     await _pumpUntilFound(
       tester,
-      find.byKey(const ValueKey('result-dish-carousel')),
+      find.byKey(const ValueKey('result-candidate-rail')),
       maxPumps: 42,
     );
 
-    expect(find.byKey(const ValueKey('result-dish-carousel')), findsOneWidget);
+    expect(find.byKey(const ValueKey('result-candidate-rail')), findsOneWidget);
     expect(find.text('番茄肥牛锅'), findsWidgets);
   });
 }
