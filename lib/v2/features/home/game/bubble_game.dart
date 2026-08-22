@@ -381,9 +381,8 @@ class BubbleGame extends Forge2DGame {
     // entities spawn from a narrow band at the very top and drift in with
     // a little sideways velocity so they visibly fall onto the pile.
     final spawnBandTop = 1.1;
-    final spawnBandHeight = replenish
-        ? 0.4
-        : max(1.0, visibleHeight * 0.42 - spawnBandTop - 2.4);
+    final spawnBandHeight =
+        replenish ? 0.4 : max(1.0, visibleHeight * 0.42 - spawnBandTop - 2.4);
 
     for (var i = 0; i < bubbles.length; i++) {
       final data = bubbles[i];
@@ -396,9 +395,8 @@ class BubbleGame extends Forge2DGame {
         1 || 3 || 6 => 2.8 + rand.nextDouble() * 0.65,
         _ => 2.41 + rand.nextDouble() * 0.59,
       };
-      final span = (tierSpan * data.sizeMultiplier)
-          .clamp(2.28, 4.42)
-          .toDouble();
+      final span =
+          (tierSpan * data.sizeMultiplier).clamp(2.28, 4.42).toDouble();
       final reach = span * 0.55;
 
       Vector2? chosen;
@@ -409,14 +407,12 @@ class BubbleGame extends Forge2DGame {
           reach +
               0.3 +
               rand.nextDouble() * max(0.1, visibleWidth - reach * 2 - 0.6),
-          spawnBandTop +
-              reach +
-              rand.nextDouble() * spawnBandHeight,
+          spawnBandTop + reach + rand.nextDouble() * spawnBandHeight,
         );
         var clearance = double.infinity;
         for (final placed in placements) {
-          final gap =
-              candidate.distanceTo(placed.center) - (reach + placed.span) * 0.82;
+          final gap = candidate.distanceTo(placed.center) -
+              (reach + placed.span) * 0.82;
           clearance = min(clearance, gap);
         }
         if (clearance > bestClearance) {
@@ -428,7 +424,8 @@ class BubbleGame extends Forge2DGame {
           break;
         }
       }
-      chosen ??= bestCandidate ?? Vector2(visibleWidth / 2, spawnBandTop + reach);
+      chosen ??=
+          bestCandidate ?? Vector2(visibleWidth / 2, spawnBandTop + reach);
       placements.add((center: chosen, span: reach));
 
       world.add(BubbleBody(

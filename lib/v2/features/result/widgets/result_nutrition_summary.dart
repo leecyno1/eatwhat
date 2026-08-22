@@ -24,7 +24,7 @@ class NutritionSummaryCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text(
+              Text(
                 '营养速览',
                 style: TextStyle(
                   color: AppPalette.moonlight,
@@ -122,7 +122,7 @@ class NutritionSummaryCard extends StatelessWidget {
                       ),
                       child: Text(
                         tag,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppPalette.moonlight,
                           fontSize: 11,
                           fontWeight: FontWeight.w700,
@@ -173,7 +173,7 @@ class NutritionMetric extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppPalette.moonlight,
               fontSize: 15,
               fontWeight: FontWeight.w800,

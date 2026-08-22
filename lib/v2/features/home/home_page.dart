@@ -7,6 +7,7 @@ import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
 import 'package:eatwhat_app/v2/core/data/repositories/tag_repository_v2.dart';
 import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
+import 'package:eatwhat_app/v2/core/theme/app_theme_controller.dart';
 import 'package:eatwhat_app/v2/core/services/v2_favorites_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_meal_habit_learning_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
@@ -526,6 +527,10 @@ class _HomePageState extends State<HomePage> {
                         _handleStructuredConstraintsChanged,
                     onShowSignature: _showSignature,
                     onOpenAccount: _openAccount,
+                    onToggleTheme: () async {
+                      await AppThemeController.toggle();
+                      if (mounted) setState(() {});
+                    },
                     onOpenFavorites: () {
                       Navigator.of(context).push(
                         MaterialPageRoute<void>(
@@ -623,7 +628,7 @@ class _HomePageState extends State<HomePage> {
               focusNode: _focusNode,
               textInputAction: TextInputAction.done,
               minLines: 1,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppPalette.moonlight,
                 fontSize: 13.5,
                 fontWeight: FontWeight.w600,
@@ -747,6 +752,7 @@ class _FreshCompactHeader extends StatelessWidget {
     required this.onOpenAccount,
     required this.onOpenFavorites,
     required this.onOpenRecent,
+    required this.onToggleTheme,
   });
 
   final MealPlanningDirection planningDirection;
@@ -762,6 +768,7 @@ class _FreshCompactHeader extends StatelessWidget {
   final VoidCallback onOpenAccount;
   final VoidCallback onOpenFavorites;
   final VoidCallback onOpenRecent;
+  final VoidCallback onToggleTheme;
 
   static const _categories = <({String label, String? value})>[
     (label: '全部', value: null),
@@ -885,6 +892,15 @@ class _FreshCompactHeader extends StatelessWidget {
           ),
           const SizedBox(width: 5),
           _HeaderAction(
+            key: const ValueKey('home-theme-toggle'),
+            icon: AppThemeController.isCream
+                ? Icons.dark_mode_outlined
+                : Icons.light_mode_outlined,
+            tooltip: AppThemeController.isCream ? '切到黑色主题' : '切到米色主题',
+            onTap: onToggleTheme,
+          ),
+          const SizedBox(width: 4),
+          _HeaderAction(
             key: const ValueKey('home-account-button'),
             icon: AuthService.isLoggedIn
                 ? Icons.person_rounded
@@ -993,7 +1009,7 @@ class _FilterIconPill<T> extends StatelessWidget {
                 const SizedBox(width: 9),
                 Text(
                   option.label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppPalette.moonlight,
                     fontSize: 13,
                     fontWeight: FontWeight.w700,
@@ -1030,7 +1046,7 @@ class _HeaderAction extends StatelessWidget {
       message: tooltip,
       child: Material(
         color: AppPalette.nightSurface.withValues(alpha: 0.92),
-        shape: const CircleBorder(
+        shape: CircleBorder(
           side: BorderSide(color: AppPalette.nightDivider),
         ),
         child: InkWell(
@@ -1096,7 +1112,7 @@ class _HeaderSelectionSummary extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(
+                Icon(
                   Icons.favorite_rounded,
                   size: 14,
                   color: AppPalette.leaf,
@@ -1104,7 +1120,7 @@ class _HeaderSelectionSummary extends StatelessWidget {
                 const SizedBox(width: 3),
                 Text(
                   '$likedCount',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppPalette.moonlight,
                     fontSize: 11,
                     fontWeight: FontWeight.w900,
@@ -1119,7 +1135,7 @@ class _HeaderSelectionSummary extends StatelessWidget {
                 const SizedBox(width: 3),
                 Text(
                   '$blockedCount',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppPalette.moonlight,
                     fontSize: 11,
                     fontWeight: FontWeight.w900,

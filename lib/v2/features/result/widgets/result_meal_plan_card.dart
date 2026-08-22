@@ -51,7 +51,7 @@ class ResultMealPlanCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('这一顿这样搭', style: AppTypeNight.section),
+                    Text('这一顿这样搭', style: AppTypeNight.section),
                     const SizedBox(height: 4),
                     Text(
                       '${partySize ?? 1} 人份 · ${items.length} 样组合',
@@ -140,7 +140,7 @@ class _MealItemTile extends StatelessWidget {
                   '${item.category} · ${item.title}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppPalette.moonlight,
                     fontSize: 15,
                     fontWeight: FontWeight.w800,

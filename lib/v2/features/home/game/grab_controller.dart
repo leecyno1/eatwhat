@@ -97,9 +97,7 @@ class GrabGestureHandler extends PositionComponent
 
   void _engageGrab() {
     final candidate = _grabCandidate;
-    if (candidate == null ||
-        candidate.isRemoved ||
-        candidate.isRejected) {
+    if (candidate == null || candidate.isRemoved || candidate.isRejected) {
       _phase = _GesturePhase.idle;
       return;
     }
@@ -177,8 +175,7 @@ class GrabGestureHandler extends PositionComponent
       if (distance > entity.reach) continue;
       if (best == null ||
           entity.layerIndex > best.layerIndex ||
-          (entity.layerIndex == best.layerIndex &&
-              distance < bestDistance)) {
+          (entity.layerIndex == best.layerIndex && distance < bestDistance)) {
         best = entity;
         bestDistance = distance;
       }

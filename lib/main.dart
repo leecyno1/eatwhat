@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'core/config/env_config.dart';
 import 'core/services/auth_service.dart';
+import 'v2/core/theme/app_theme_controller.dart';
 import 'core/utils/analytics_helper.dart';
 import 'v2/app_v2.dart';
 
@@ -20,6 +21,7 @@ void main() async {
 
   await EnvConfig.init();
   await AuthService.initialize();
+  await AppThemeController.loadStored();
 
   // Set preferred orientations
   await SystemChrome.setPreferredOrientations([

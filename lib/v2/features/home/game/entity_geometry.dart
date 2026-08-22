@@ -304,8 +304,7 @@ List<Vector2> traceBoundary(Uint8List mask, int width, int height) {
 
 int _directionIndex(int dx, int dy) {
   for (var i = 0; i < 8; i++) {
-    if (_kNeighborOffsets[i * 2] == dx &&
-        _kNeighborOffsets[i * 2 + 1] == dy) {
+    if (_kNeighborOffsets[i * 2] == dx && _kNeighborOffsets[i * 2 + 1] == dy) {
       return i;
     }
   }
@@ -387,10 +386,11 @@ double _perpendicularDistance(
   if (lengthSquared < 1e-12) {
     return point.distanceTo(lineStart);
   }
-  final numerator =
-      (dy * point.x - dx * point.y + lineEnd.x * lineStart.y -
-              lineEnd.y * lineStart.x)
-          .abs();
+  final numerator = (dy * point.x -
+          dx * point.y +
+          lineEnd.x * lineStart.y -
+          lineEnd.y * lineStart.x)
+      .abs();
   return numerator / math.sqrt(lengthSquared);
 }
 
@@ -465,12 +465,9 @@ List<Vector2> _clipHalfPlane(
   for (var i = 0; i < polygon.length; i++) {
     final current = polygon[i];
     final next = polygon[(i + 1) % polygon.length];
-    final currentInside = keepGreaterOrEqual
-        ? current.x >= limit
-        : current.x <= limit;
-    final nextInside = keepGreaterOrEqual
-        ? next.x >= limit
-        : next.x <= limit;
+    final currentInside =
+        keepGreaterOrEqual ? current.x >= limit : current.x <= limit;
+    final nextInside = keepGreaterOrEqual ? next.x >= limit : next.x <= limit;
     if (currentInside) out.add(current);
     if (currentInside != nextInside) {
       final t = (limit - current.x) / (next.x - current.x);

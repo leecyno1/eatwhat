@@ -128,7 +128,7 @@ class _PhysicalTasteHabitatState extends State<_PhysicalTasteHabitat> {
             children: [
               Positioned.fill(
                 child: widget.isLoading
-                    ? const Center(
+                    ? Center(
                         child: CircularProgressIndicator(
                           color: AppPalette.leaf,
                         ),
@@ -169,7 +169,7 @@ class _PhysicalTasteHabitatState extends State<_PhysicalTasteHabitat> {
                       ),
                       child: Text(
                         _wallpaper.label,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppPalette.moonlight,
                           fontSize: 10,
                           fontWeight: FontWeight.w700,
@@ -202,7 +202,7 @@ class _PhysicalTasteHabitatState extends State<_PhysicalTasteHabitat> {
                           borderRadius: AppRadii.capsule,
                           border: Border.all(color: AppPalette.nightDivider),
                         ),
-                        child: const Text(
+                        child: Text(
                           '点选收下 · 按住抓起，顶部收下 / 底部拉黑 · 摇一摇翻锅',
                           maxLines: 1,
                           textAlign: TextAlign.center,
@@ -235,13 +235,13 @@ class _WallpaperSwitchButton extends StatelessWidget {
     return Material(
       key: const ValueKey('taste-stage-wallpaper-switch'),
       color: AppPalette.nightSurface.withValues(alpha: 0.82),
-      shape: const CircleBorder(
+      shape: CircleBorder(
         side: BorderSide(color: AppPalette.nightDivider),
       ),
       child: InkWell(
         customBorder: const CircleBorder(),
         onTap: onTap,
-        child: const SizedBox(
+        child: SizedBox(
           width: 36,
           height: 36,
           child: Icon(

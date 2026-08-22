@@ -59,7 +59,8 @@ class UserPreference {
       likedBubbles: likedBubbles ?? this.likedBubbles,
       dislikedBubbles: dislikedBubbles ?? this.dislikedBubbles,
       ignoredBubbles: ignoredBubbles ?? this.ignoredBubbles,
-      bubbleInteractionCount: bubbleInteractionCount ?? this.bubbleInteractionCount,
+      bubbleInteractionCount:
+          bubbleInteractionCount ?? this.bubbleInteractionCount,
       lastUpdated: lastUpdated ?? this.lastUpdated,
       bubbleWeights: bubbleWeights ?? this.bubbleWeights,
       favoriteFoods: favoriteFoods ?? this.favoriteFoods,

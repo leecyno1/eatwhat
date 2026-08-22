@@ -313,7 +313,7 @@ class _DecisionPageState extends State<DecisionPage> {
             children: [
               Row(
                 children: [
-                  const Text('口味收束台', style: AppTypeNight.microLabel),
+                  Text('口味收束台', style: AppTypeNight.microLabel),
                   const Spacer(),
                   _DecisionStatusBadge(
                     isLoading: _aiLoading,
@@ -363,7 +363,7 @@ class _DecisionPageState extends State<DecisionPage> {
                           ),
                         ),
                         const SizedBox(height: AppSpacing.md),
-                        const Text(
+                        Text(
                           '正在组合你的口味签名',
                           style: AppTypeNight.title,
                         ),
@@ -384,7 +384,7 @@ class _DecisionPageState extends State<DecisionPage> {
                           ],
                         ),
                         const SizedBox(height: AppSpacing.lg),
-                        const Divider(
+                        Divider(
                           height: 1,
                           color: AppPalette.nightDivider,
                         ),

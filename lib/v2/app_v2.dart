@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
+import 'core/theme/app_theme_controller.dart';
 import 'core/theme/fluid_theme.dart';
 import 'features/onboarding/onboarding_overlay.dart';
 import 'features/onboarding/onboarding_service.dart';
@@ -62,7 +63,6 @@ class _AppV2State extends State<AppV2> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
@@ -70,13 +70,20 @@ class _AppV2State extends State<AppV2> {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return MaterialApp.router(
-          title: 'EatWhat V2',
-          theme: FluidTheme.lightTheme,
-          darkTheme: FluidTheme.darkTheme,
-          themeMode: ThemeMode.dark,
-          routerConfig: _router,
-          debugShowCheckedModeBanner: false,
+        return ValueListenableBuilder<AppThemeMode>(
+          valueListenable: AppThemeController.mode,
+          builder: (context, theme, _) {
+            return MaterialApp.router(
+              title: 'EatWhat V2',
+              theme: FluidTheme.lightTheme,
+              darkTheme: FluidTheme.darkTheme,
+              themeMode: theme == AppThemeMode.cream
+                  ? ThemeMode.light
+                  : ThemeMode.dark,
+              routerConfig: _router,
+              debugShowCheckedModeBanner: false,
+            );
+          },
         );
       },
     );

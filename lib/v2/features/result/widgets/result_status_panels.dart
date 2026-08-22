@@ -29,7 +29,7 @@ class RecommendationExplanationCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             '推荐说明',
             style: TextStyle(
               color: AppPalette.moonlight,
@@ -160,7 +160,7 @@ class EmptyRecommendationState extends StatelessWidget {
               ),
               child: Text(
                 badge,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppPalette.moonlight,
                   fontSize: 11,
                   fontWeight: FontWeight.w800,
@@ -169,7 +169,7 @@ class EmptyRecommendationState extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               '这轮没有收束出合适的菜',
               textAlign: TextAlign.center,
               style: TextStyle(

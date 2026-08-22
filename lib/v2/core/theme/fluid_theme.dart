@@ -147,7 +147,7 @@ class FluidTheme {
           foregroundColor: AppPalette.leaf,
           minimumSize: const Size(0, 52),
           padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-          side: const BorderSide(color: AppPalette.leaf),
+          side: BorderSide(color: AppPalette.leaf),
           shape: RoundedRectangleBorder(borderRadius: AppRadii.capsule),
         ),
       ),
@@ -170,11 +170,11 @@ class FluidTheme {
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: AppRadii.card,
-          borderSide: const BorderSide(color: AppPalette.nightDivider),
+          borderSide: BorderSide(color: AppPalette.nightDivider),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: AppRadii.card,
-          borderSide: const BorderSide(color: AppPalette.leaf, width: 1.4),
+          borderSide: BorderSide(color: AppPalette.leaf, width: 1.4),
         ),
         labelStyle: AppType.label.copyWith(color: AppPalette.moonMuted),
         hintStyle: AppType.body.copyWith(color: AppPalette.moonMuted),
@@ -182,7 +182,7 @@ class FluidTheme {
       chipTheme: ChipThemeData(
         backgroundColor: AppPalette.nightElevated,
         selectedColor: AppPalette.nightSurface,
-        side: const BorderSide(color: AppPalette.nightDivider),
+        side: BorderSide(color: AppPalette.nightDivider),
         shape: RoundedRectangleBorder(borderRadius: AppRadii.capsule),
         labelStyle: AppType.label.copyWith(color: AppPalette.moonlight),
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),

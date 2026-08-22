@@ -73,9 +73,8 @@ class MeituanOpenPlatformClient {
     }
 
     // 拼接成 key=value&key=value 格式
-    final paramString = sortedParams.entries
-        .map((e) => '${e.key}=${e.value}')
-        .join('&');
+    final paramString =
+        sortedParams.entries.map((e) => '${e.key}=${e.value}').join('&');
 
     // 拼接方法、路径、参数和密钥
     final signString = '$method&$path&$paramString&$appSecret';

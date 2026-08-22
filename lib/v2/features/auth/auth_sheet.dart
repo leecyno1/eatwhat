@@ -123,7 +123,7 @@ class _EatWhatAuthSheetState extends State<_EatWhatAuthSheet> {
       padding: EdgeInsets.only(bottom: bottomInset),
       child: Container(
         key: const ValueKey('eatwhat-auth-sheet'),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppPalette.nightSurface,
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(AppRadii.sheet),
@@ -199,14 +199,14 @@ class _EatWhatAuthSheetState extends State<_EatWhatAuthSheet> {
         Container(
           width: 44,
           height: 44,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppPalette.nightElevated,
             shape: BoxShape.circle,
             border: Border.fromBorderSide(
               BorderSide(color: AppPalette.nightDivider),
             ),
           ),
-          child: const Icon(
+          child: Icon(
             Icons.restaurant_menu_rounded,
             size: 22,
             color: AppPalette.leaf,
@@ -285,8 +285,7 @@ class _EatWhatAuthSheetState extends State<_EatWhatAuthSheet> {
         hint: '输入密码',
         prefixIcon: Icons.lock_outline_rounded,
         obscure: true,
-        validator: (value) =>
-            (value == null || value.isEmpty) ? '请输入密码' : null,
+        validator: (value) => (value == null || value.isEmpty) ? '请输入密码' : null,
       ),
     ];
   }
@@ -377,19 +376,17 @@ class _EatWhatAuthSheetState extends State<_EatWhatAuthSheet> {
           elevation: 0,
         ),
         child: _submitting
-            ? const SizedBox(
+            ? SizedBox(
                 width: 22,
                 height: 22,
                 child: CircularProgressIndicator(
                   strokeWidth: 2.2,
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(AppPalette.night),
+                  valueColor: AlwaysStoppedAnimation<Color>(AppPalette.night),
                 ),
               )
             : Text(
                 _mode == _modeLogin ? '登录' : '注册并登录',
-                style: AppTypeNight.label
-                    .copyWith(fontWeight: FontWeight.w800),
+                style: AppTypeNight.label.copyWith(fontWeight: FontWeight.w800),
               ),
       ),
     );
@@ -442,11 +439,11 @@ class _NightFormField extends StatelessWidget {
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: AppRadii.small,
-              borderSide: const BorderSide(color: AppPalette.nightDivider),
+              borderSide: BorderSide(color: AppPalette.nightDivider),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: AppRadii.small,
-              borderSide: const BorderSide(color: AppPalette.leaf, width: 1.5),
+              borderSide: BorderSide(color: AppPalette.leaf, width: 1.5),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: AppRadii.small,
@@ -454,7 +451,8 @@ class _NightFormField extends StatelessWidget {
             ),
             focusedErrorBorder: OutlineInputBorder(
               borderRadius: AppRadii.small,
-              borderSide: const BorderSide(color: Color(0xFFE4513F), width: 1.5),
+              borderSide:
+                  const BorderSide(color: Color(0xFFE4513F), width: 1.5),
             ),
             errorStyle: AppTypeNight.microLabel
                 .copyWith(color: const Color(0xFFE4513F)),
@@ -481,8 +479,8 @@ class _EatWhatAccountSheetState extends State<_EatWhatAccountSheet> {
     if (_purchasing) return;
     setState(() => _purchasing = true);
     try {
-      final orderId = await V2MembershipService.instance
-          .createOrderAndOpenCashier();
+      final orderId =
+          await V2MembershipService.instance.createOrderAndOpenCashier();
       if (orderId == null) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -491,8 +489,8 @@ class _EatWhatAccountSheetState extends State<_EatWhatAccountSheet> {
         }
         return;
       }
-      final paid = await V2MembershipService.instance
-          .waitForPaymentAndUpgrade(orderId);
+      final paid =
+          await V2MembershipService.instance.waitForPaymentAndUpgrade(orderId);
       if (!mounted) return;
       setState(() => _purchasing = false);
       ScaffoldMessenger.of(context).showSnackBar(
@@ -545,7 +543,7 @@ class _EatWhatAccountSheetState extends State<_EatWhatAccountSheet> {
     if (user == null) {
       return Container(
         padding: const EdgeInsets.all(AppSpacing.xl),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: AppPalette.nightSurface,
           borderRadius: BorderRadius.vertical(
             top: Radius.circular(AppRadii.sheet),
@@ -562,11 +560,12 @@ class _EatWhatAccountSheetState extends State<_EatWhatAccountSheet> {
       );
     }
 
-    final initial = user.nickname.isNotEmpty ? user.nickname.characters.first : '吃';
+    final initial =
+        user.nickname.isNotEmpty ? user.nickname.characters.first : '吃';
 
     return Container(
       key: const ValueKey('eatwhat-account-sheet'),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         color: AppPalette.nightSurface,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(AppRadii.sheet),
@@ -601,8 +600,8 @@ class _EatWhatAccountSheetState extends State<_EatWhatAccountSheet> {
                     alignment: Alignment.center,
                     child: Text(
                       initial,
-                      style: AppTypeNight.section
-                          .copyWith(color: AppPalette.leaf),
+                      style:
+                          AppTypeNight.section.copyWith(color: AppPalette.leaf),
                     ),
                   ),
                   const SizedBox(width: AppSpacing.md),
@@ -673,9 +672,8 @@ class _MembershipCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final member = user.isMembershipActive;
     final daysLeft = user.membershipDaysLeft;
-    final tierLabel = member
-        ? (daysLeft != null ? '体验会员 · 剩 $daysLeft 天' : '吃什么会员')
-        : '标准账号';
+    final tierLabel =
+        member ? (daysLeft != null ? '体验会员 · 剩 $daysLeft 天' : '吃什么会员') : '标准账号';
     final subtitle = member
         ? '会员期内下单享更多权益，到期后可随时续费'
         : '注册即送 ${User.trialMemberDays} 天体验会员，登录后自动生效';

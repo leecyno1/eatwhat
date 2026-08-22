@@ -169,13 +169,13 @@ class GenerationService {
       text = text.replaceFirst(RegExp(r'^```\s*'), '');
       text = text.replaceFirst(RegExp(r'```\s*$'), '');
     }
-  
+
     final start = text.indexOf('{');
     final end = text.lastIndexOf('}');
     if (start >= 0 && end >= 0 && end > start) {
       text = text.substring(start, end + 1);
     }
-  
+
     final decoded = jsonDecode(text);
     if (decoded is Map<String, dynamic>) return decoded;
     if (decoded is Map) {
@@ -698,8 +698,8 @@ class GenerationService {
           if (s.isNotEmpty) id = s;
         }
 
-        final name = ((item['dishName'] ?? item['name'])?.toString() ?? '')
-            .trim();
+        final name =
+            ((item['dishName'] ?? item['name'])?.toString() ?? '').trim();
 
         if (id != null && name.isNotEmpty) {
           // Dual-key cross-check: the echoed dishName must agree with the
@@ -717,8 +717,9 @@ class GenerationService {
         if (id != null) return id;
 
         if (name.isEmpty) return null;
-        final match =
-            cleanedCandidates.where((c) => _dishNameMatches(c.name, name)).toList();
+        final match = cleanedCandidates
+            .where((c) => _dishNameMatches(c.name, name))
+            .toList();
         if (match.length == 1) return match.first.id;
         if (match.isNotEmpty) {
           final exact = match.where((c) => c.name == name).toList();

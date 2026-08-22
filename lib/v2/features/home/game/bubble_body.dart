@@ -119,8 +119,7 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   Future<void> onLoad() async {
     // Load the silhouette geometry before the body is created so the
     // fixtures can follow the artwork's true outline.
-    final geometry =
-        await EntityGeometry.load(data.assetName, data.assetPath);
+    final geometry = await EntityGeometry.load(data.assetName, data.assetPath);
     if (isRemoved) return;
     _geometry = geometry;
     if (geometry != null) {
@@ -136,8 +135,7 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
     await super.onLoad(); // Creates the body via createBody().
     // Front layers render above back layers (pot depth); within a layer,
     // larger entities render above smaller ones for a natural depth feel.
-    priority =
-        layerIndex * 400 + (1000 - targetLongSide * 24).round();
+    priority = layerIndex * 400 + (1000 - targetLongSide * 24).round();
   }
 
   @override
@@ -208,8 +206,7 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
       final scaled = vertex * scale;
       var unique = true;
       for (final existing in points) {
-        if (scaled.distanceToSquared(existing) <
-            weldDistance * weldDistance) {
+        if (scaled.distanceToSquared(existing) < weldDistance * weldDistance) {
           unique = false;
           break;
         }
@@ -254,7 +251,8 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
       if (start != null && target != null) {
         final t = (_collectionElapsed / 0.36).clamp(0.0, 1.0);
         final eased = 1 - (1 - t) * (1 - t) * (1 - t);
-        body.setTransform(start + (target - start) * eased, body.angle * (1 - t));
+        body.setTransform(
+            start + (target - start) * eased, body.angle * (1 - t));
         if (t >= 1) {
           game.handleBubbleExplosion(this);
           removeFromParent();
@@ -300,7 +298,8 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
 
   /// Moves the grabbed entity toward the finger with a little lag, slowly
   /// righting its rotation, and previews which release zone it hovers in.
-  void updateGrab(Vector2 fingerWorld, double fingerScreenY, double stageHeight) {
+  void updateGrab(
+      Vector2 fingerWorld, double fingerScreenY, double stageHeight) {
     if (!isGrabbed) return;
     final target = body.position + (fingerWorld - body.position) * 0.35;
     body.setTransform(target, body.angle * 0.90);
@@ -433,8 +432,8 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 0.06
-          ..color = const Color(0xFFFFD54F)
-            .withValues(alpha: 0.55 + pulse * 0.4),
+          ..color =
+              const Color(0xFFFFD54F).withValues(alpha: 0.55 + pulse * 0.4),
       );
     }
 
@@ -476,8 +475,7 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
       position: _spriteOffset,
       size: _spriteSize,
       anchor: Anchor.center,
-      overridePaint: Paint()
-        ..color = Colors.white.withValues(alpha: opacity),
+      overridePaint: Paint()..color = Colors.white.withValues(alpha: opacity),
     );
 
     canvas.restore();

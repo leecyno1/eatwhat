@@ -1,3 +1,4 @@
+import 'package:eatwhat_app/v2/core/theme/app_theme_controller.dart';
 import 'package:flutter/material.dart';
 
 class AppSpacing {
@@ -92,7 +93,11 @@ class AppPalette {
   static const Color chiliDeep = Color(0xFFD9431F);
   static const Color yolk = Color(0xFFFFB545);
   static const Color herb = garden;
-  static const Color leaf = Color(0xFF7ABF88);
+  static const Color _leafDark = Color(0xFF7ABF88);
+
+  /// Accent green — sage ink (墨绿) on the cream paper theme.
+  static Color get leaf =>
+      AppThemeController.isCream ? const Color(0xFF4A5D4E) : _leafDark;
   static const Color broth = Color(0xFFFFF5E6);
   static const Color cream = Color(0xFFFFFBF6);
   static const Color rice = Color(0xFFFFFFFF);
@@ -100,12 +105,32 @@ class AppPalette {
   static const Color ink = Color(0xFF1D1D1F);
   static const Color inkSoft = Color(0xFF5E5652);
   static const Color inkMuted = Color(0xFF8D817A);
-  static const Color night = Color(0xFF1C1C1E);
-  static const Color nightSurface = Color(0xFF242426);
-  static const Color nightElevated = Color(0xFF2C2C2E);
-  static const Color nightDivider = Color(0xFF3A3A3C);
-  static const Color moonlight = Color(0xFFEDEBE8);
-  static const Color moonMuted = Color(0xFF9B9691);
+  static const Color _night = Color(0xFF1C1C1E);
+  static const Color _nightSurface = Color(0xFF242426);
+  static const Color _nightElevated = Color(0xFF2C2C2E);
+  static const Color _nightDivider = Color(0xFF3A3A3C);
+  static const Color _moonlight = Color(0xFFEDEBE8);
+  static const Color _moonMuted = Color(0xFF9B9691);
+
+  // Cream paper theme (米色纸感): warm rice canvas, cream cards, brown ink.
+  static const Color _creamCanvas = Color(0xFFF5EFE3);
+  static const Color _creamSurface = Color(0xFFFCF8EF);
+  static const Color _creamElevated = Color(0xFFF0E8D8);
+  static const Color _creamDivider = Color(0xFFE2D8C4);
+  static const Color _inkBrown = Color(0xFF2E2924);
+  static const Color _mutedBrown = Color(0xFF8C8172);
+
+  static Color get night => AppThemeController.isCream ? _creamCanvas : _night;
+  static Color get nightSurface =>
+      AppThemeController.isCream ? _creamSurface : _nightSurface;
+  static Color get nightElevated =>
+      AppThemeController.isCream ? _creamElevated : _nightElevated;
+  static Color get nightDivider =>
+      AppThemeController.isCream ? _creamDivider : _nightDivider;
+  static Color get moonlight =>
+      AppThemeController.isCream ? _inkBrown : _moonlight;
+  static Color get moonMuted =>
+      AppThemeController.isCream ? _mutedBrown : _moonMuted;
   static const Color grape = Color(0xFF8A7CF7);
   static const Color ocean = Color(0xFF45A6D8);
   static const Color canvas = gardenMist;
@@ -179,48 +204,48 @@ class AppMotion {
 class AppTypeNight {
   const AppTypeNight._();
 
-  static const TextStyle display = TextStyle(
-    fontSize: 32,
-    fontWeight: FontWeight.w900,
-    height: 1.08,
-    color: AppPalette.moonlight,
-  );
+  static TextStyle get display => TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.w900,
+        height: 1.08,
+        color: AppPalette.moonlight,
+      );
 
-  static const TextStyle title = TextStyle(
-    fontSize: 24,
-    fontWeight: FontWeight.w800,
-    height: 1.12,
-    color: AppPalette.moonlight,
-  );
+  static TextStyle get title => TextStyle(
+        fontSize: 24,
+        fontWeight: FontWeight.w800,
+        height: 1.12,
+        color: AppPalette.moonlight,
+      );
 
-  static const TextStyle section = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.w800,
-    height: 1.2,
-    color: AppPalette.moonlight,
-  );
+  static TextStyle get section => TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.w800,
+        height: 1.2,
+        color: AppPalette.moonlight,
+      );
 
-  static const TextStyle body = TextStyle(
-    fontSize: 14,
-    fontWeight: FontWeight.w500,
-    height: 1.45,
-    color: AppPalette.moonMuted,
-  );
+  static TextStyle get body => TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        height: 1.45,
+        color: AppPalette.moonMuted,
+      );
 
-  static const TextStyle label = TextStyle(
-    fontSize: 12,
-    fontWeight: FontWeight.w700,
-    height: 1.2,
-    color: AppPalette.moonMuted,
-  );
+  static TextStyle get label => TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+        height: 1.2,
+        color: AppPalette.moonMuted,
+      );
 
-  static const TextStyle microLabel = TextStyle(
-    fontSize: 11,
-    fontWeight: FontWeight.w800,
-    height: 1.15,
-    letterSpacing: 1.2,
-    color: AppPalette.moonMuted,
-  );
+  static TextStyle get microLabel => TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.w800,
+        height: 1.15,
+        letterSpacing: 1.2,
+        color: AppPalette.moonMuted,
+      );
 }
 
 class AppDecorations {
@@ -253,14 +278,14 @@ class AppDecorations {
   /// Night-mode surface for the V2 dark pages: an elevated night panel
   /// with a subtle divider rim instead of the daylight glass card.
   static BoxDecoration nightCard({
-    Color color = AppPalette.nightSurface,
-    Color borderColor = AppPalette.nightDivider,
+    Color? color,
+    Color? borderColor,
     double radius = AppRadii.md,
   }) {
     return BoxDecoration(
-      color: color,
+      color: color ?? AppPalette.nightSurface,
       borderRadius: BorderRadius.circular(radius),
-      border: Border.all(color: borderColor),
+      border: Border.all(color: borderColor ?? AppPalette.nightDivider),
     );
   }
 }

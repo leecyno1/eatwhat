@@ -197,7 +197,7 @@ class _ColdStartQuestionnairePageState
         backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.close, color: AppPalette.moonlight),
+          icon: Icon(Icons.close, color: AppPalette.moonlight),
           onPressed: _handleSkip,
         ),
         actions: [
@@ -280,7 +280,7 @@ class _ColdStartQuestionnairePageState
             child: LinearProgressIndicator(
               value: (_currentPage + 1) / QuestionnaireQuestions.totalQuestions,
               backgroundColor: AppPalette.nightElevated,
-              valueColor: const AlwaysStoppedAnimation<Color>(
+              valueColor: AlwaysStoppedAnimation<Color>(
                 AppPalette.leaf,
               ),
               minHeight: 6,
@@ -525,7 +525,7 @@ class _ColdStartQuestionnairePageState
                   elevation: 0,
                 ),
                 child: _isProcessing
-                    ? const SizedBox(
+                    ? SizedBox(
                         width: 24,
                         height: 24,
                         child: CircularProgressIndicator(

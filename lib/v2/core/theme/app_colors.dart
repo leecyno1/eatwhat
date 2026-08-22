@@ -15,7 +15,7 @@ class AppColors {
 
   // Backgrounds
   static const Color lightBackground = AppPalette.canvas;
-  static const Color darkBackground = AppPalette.night;
+  static final Color darkBackground = AppPalette.night;
 
   // Text
   static const Color textPrimary = AppPalette.gardenInk;

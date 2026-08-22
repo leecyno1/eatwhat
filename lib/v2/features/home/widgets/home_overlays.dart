@@ -30,13 +30,13 @@ class HomeVoiceStageOverlay extends StatelessWidget {
                   color: AppPalette.nightElevated,
                   borderRadius: AppRadii.small,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.mic_rounded,
                   color: AppPalette.leaf,
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              const Text('正在听你说', style: AppTypeNight.section),
+              Text('正在听你说', style: AppTypeNight.section),
               const SizedBox(height: AppSpacing.xs),
               Text(
                 text.isEmpty ? '可以说想吃什么、预算、人数或不想吃的东西。' : text,
@@ -87,8 +87,7 @@ class _HomeGenerationTransitionOverlayState
       duration: const Duration(milliseconds: 2400),
     )..repeat();
     _controller.addListener(() {
-      final next = (_controller.value * _lines.length).floor() %
-          _lines.length;
+      final next = (_controller.value * _lines.length).floor() % _lines.length;
       if (next != _lineIndex) {
         setState(() => _lineIndex = next);
       }
@@ -206,9 +205,9 @@ class HomeFirstUseGuideCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('选出今天想吃的方向', style: AppTypeNight.title),
+          Text('选出今天想吃的方向', style: AppTypeNight.title),
           const SizedBox(height: AppSpacing.sm),
-          const Text(
+          Text(
             '点一下收下；按住抓起，拖到顶部收下、底部拉黑；摇一摇翻一翻锅。',
             style: AppTypeNight.body,
           ),

@@ -75,9 +75,7 @@ String tasteGameCardArtAsset(TasteDeckCard card) {
     'c_thai' => '$_assetRoot/art_thai.png',
     'c_hotpot' => '$_assetRoot/art_hotpot.png',
     'c_bbq' => '$_assetRoot/art_bbq.png',
-    'c_western' ||
-    'c_french' =>
-      '$_assetRoot/art_western.png',
+    'c_western' || 'c_french' => '$_assetRoot/art_western.png',
     'ft_wealth' => '$_assetRoot/art_wealth.png',
     _ => null,
   };

@@ -218,7 +218,8 @@ class _OnboardingWidgetState extends State<OnboardingWidget>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: DesignTokens.mint.withValues(alpha: 1 - _handAnimation.value),
+                  color: DesignTokens.mint
+                      .withValues(alpha: 1 - _handAnimation.value),
                   width: 2,
                 ),
               ),
@@ -370,7 +371,8 @@ class _OnboardingWidgetState extends State<OnboardingWidget>
             child: GestureDetector(
               onTap: _skipOnboarding,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   color: Colors.black.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(20),
@@ -448,7 +450,8 @@ class _OnboardingWidgetState extends State<OnboardingWidget>
                 GestureDetector(
                   onTap: _goToNextStep,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 32, vertical: 12),
                     decoration: BoxDecoration(
                       color: DesignTokens.mint,
                       borderRadius: BorderRadius.circular(24),
@@ -521,8 +524,7 @@ class _OnboardingMaskPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     // 创建路径 - 从外向内挖空圆形区域
-    final path = Path()
-      ..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+    final path = Path()..addRect(Rect.fromLTWH(0, 0, size.width, size.height));
 
     // 创建圆形高亮区域路径
     final circlePath = Path()

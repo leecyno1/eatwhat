@@ -47,7 +47,7 @@ class PairingBand extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Text(
+              Text(
                 '顺手搭一套',
                 style: TextStyle(
                   color: AppPalette.moonlight,
@@ -189,7 +189,7 @@ class PairingBubble extends StatelessWidget {
                   pairing.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppPalette.moonlight,
                     fontSize: 14,
                     fontWeight: FontWeight.w800,
