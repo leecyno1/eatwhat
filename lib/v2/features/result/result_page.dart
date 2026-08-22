@@ -37,9 +37,8 @@ import 'package:eatwhat_app/v2/features/result/widgets/dish_carousel.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/selected_menu_rail.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_execution_shortcuts.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_feedback_band.dart';
-import 'package:eatwhat_app/v2/features/result/widgets/result_meal_plan_card.dart';
-import 'package:eatwhat_app/v2/features/result/widgets/result_pairing_band.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_recommendation_mode_tabs.dart';
+import 'package:eatwhat_app/v2/features/result/widgets/result_pairing_band.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_status_panels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -253,6 +252,12 @@ class _ResultPageState extends State<ResultPage> {
     });
   }
 
+  String get _confirmLabel {
+    final count = _selectedMenuIds.length;
+    if (count > 1) return '就吃这桌（$count 道）';
+    return _isMealMode ? '就吃这桌' : '就吃这个';
+  }
+
   String? get _effectiveAiSummary {
     final enhanced = _enhancedAiSummary?.trim();
     if (enhanced != null && enhanced.isNotEmpty) return enhanced;
@@ -287,11 +292,36 @@ class _ResultPageState extends State<ResultPage> {
     });
   }
 
+  void _setRecommendationMode(ResultRecommendationMode mode) {
+    if (_recommendationMode == mode) return;
+    setState(() {
+      _recommendationMode = mode;
+      // 一道菜模式：菜单收敛为正前方那道；一桌菜模式保留多选。
+      if (mode == ResultRecommendationMode.single) {
+        final current = _choiceController.currentChoice;
+        if (current != null) {
+          _selectedMenuIds
+            ..clear()
+            ..add(current.id);
+        }
+      }
+    });
+    HapticFeedback.selectionClick();
+  }
+
   /// Toggles a dish in/out of tonight's menu. The menu never empties
   /// silently — removing the last dish keeps it (one dish must stay so the
   /// confirm action always has a target).
   void _toggleMenuPick(RecipeModel dish) {
     setState(() {
+      // 一道菜模式：点正前方的卡即"就吃这道"（单选替换）。
+      if (_recommendationMode == ResultRecommendationMode.single) {
+        _selectedMenuIds
+          ..clear()
+          ..add(dish.id);
+        return;
+      }
+      // 一桌菜模式：多选增删，至少保留一道。
       if (_selectedMenuIds.contains(dish.id)) {
         if (_selectedMenuIds.length > 1) {
           _selectedMenuIds.remove(dish.id);
@@ -579,18 +609,34 @@ class _ResultPageState extends State<ResultPage> {
         action: 'confirm',
       ),
     );
+    // 多选的一桌菜：聚焦菜为主菜，其余选中菜作为加选传入执行链路。
+    final extraPicks = _selectedMenuIds
+        .where((id) => id != currentChoice.id)
+        .map(
+          (id) => PairingSelection(
+            category: '加选',
+            title: _choiceController.availableChoices
+                .firstWhere(
+                  (c) => c.id == id,
+                  orElse: () => currentChoice,
+                )
+                .name,
+            subtitle: '本餐同点',
+          ),
+        );
     ExecutionSheet.show(
       context,
       recipe: currentChoice,
-      pairings: (_isMealMode ? _mealPairings : _pairings)
-          .map(
-            (pairing) => PairingSelection(
-              category: pairing.category,
-              title: pairing.title,
-              subtitle: pairing.subtitle,
-            ),
-          )
-          .toList(),
+      pairings: [
+        ...(_isMealMode ? _mealPairings : _pairings).map(
+          (pairing) => PairingSelection(
+            category: pairing.category,
+            title: pairing.title,
+            subtitle: pairing.subtitle,
+          ),
+        ),
+        ...extraPicks,
+      ],
       sourceTags: _displayTags,
       structuredConstraints: widget.inferenceInput?.structuredConstraints,
       recommendationContext: _recommendationContext,
@@ -754,7 +800,7 @@ class _ResultPageState extends State<ResultPage> {
               ),
               child: ResultPrimaryConfirmBar(
                 onConfirm: _confirm,
-                confirmLabel: _isMealMode ? '就吃这套' : '就吃这个',
+                confirmLabel: _confirmLabel,
               ),
             ),
       body: SafeArea(
@@ -777,8 +823,15 @@ class _ResultPageState extends State<ResultPage> {
                 ),
                 child: Column(
                   children: [
-                    // The dish photo owns the screen: it fills every bit of
-                    // space the chrome below leaves it.
+                    // Mode tabs: 一道菜 / 一桌菜 — single focus vs a table
+                    // of picks assembled on the carousel below.
+                    Center(
+                      child: ResultRecommendationModeTabs(
+                        value: _recommendationMode,
+                        onChanged: _setRecommendationMode,
+                      ),
+                    ),
+                    const SizedBox(height: AppSpacing.xs),
                     Expanded(
                       child: AnimatedSwitcher(
                         duration: contentTransitionDuration,
@@ -803,15 +856,9 @@ class _ResultPageState extends State<ResultPage> {
                             child: fade,
                           );
                         },
-                        child: _isMealMode
-                            ? ResultMealPlanCard(
-                                key: ValueKey('meal-${currentChoice.id}'),
-                                mainDish: currentChoice,
-                                pairings: _mealPairings,
-                                partySize: widget.inferenceInput
-                                    ?.structuredConstraints.partySize,
-                              )
-                            : Builder(
+                        // Both modes share the carousel: 一道菜 picks by
+                        // focus, 一桌菜 multi-selects on the same wheel.
+                        child: Builder(
                                 builder: (context) {
                                   final choices =
                                       _choiceController.availableChoices;
@@ -881,7 +928,7 @@ class _ResultPageState extends State<ResultPage> {
                         ExecutionPath.dineIn,
                       ),
                     ),
-                    if (!_isMealMode && _selectedMenuIds.isNotEmpty) ...[
+                    if (_isMealMode && _selectedMenuIds.isNotEmpty) ...[
                       const SizedBox(height: AppSpacing.md),
                       SelectedMenuRail(
                         selected: [

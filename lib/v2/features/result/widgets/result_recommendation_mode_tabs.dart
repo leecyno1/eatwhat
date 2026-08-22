@@ -39,7 +39,7 @@ class ResultRecommendationModeTabs extends StatelessWidget {
             ),
             _ModeTab(
               key: const ValueKey('result-mode-meal'),
-              label: '一顿饭',
+              label: '一桌菜',
               icon: Icons.table_restaurant_rounded,
               selected: value == ResultRecommendationMode.meal,
               onTap: () => onChanged(ResultRecommendationMode.meal),

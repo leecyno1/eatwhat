@@ -40,8 +40,8 @@ void main() {
     expect(find.text('今日推荐板'), findsNothing);
     expect(find.byKey(const ValueKey('result-stage-shell')), findsNothing);
     expect(find.text('今晚这口，替你收好了'), findsNothing);
-    expect(find.byKey(const ValueKey('result-mode-single')), findsNothing);
-    expect(find.byKey(const ValueKey('result-mode-meal')), findsNothing);
+    expect(find.byKey(const ValueKey('result-mode-single')), findsOneWidget);
+    expect(find.byKey(const ValueKey('result-mode-meal')), findsOneWidget);
     expect(find.text('暖食编辑部'), findsNothing);
     expect(find.byKey(const ValueKey('result-gold-reason-line')),
         findsOneWidget);

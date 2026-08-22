@@ -96,22 +96,16 @@ void main() {
 
     expect(find.byKey(const ValueKey('result-dish-carousel')), findsOneWidget);
 
-    // 先点非聚焦卡转到正前方，再点一次加入本餐菜单（多选 +1）。
-    // 转盘动画需要多帧小步 pump 推进（单帧长 pump 不驱动 ticker）。
-    await tester.tap(find.byKey(const ValueKey('carousel-dish-r2')));
-    for (var i = 0; i < 5; i++) {
-      await tester.pump(const Duration(milliseconds: 100));
-    }
-    await tester.tap(find.byKey(const ValueKey('carousel-dish-r2')));
+    // 一桌菜模式：本餐菜单条显示当前选菜
+    await tester.tap(find.byKey(const ValueKey('result-mode-meal')));
     await tester.pump(const Duration(milliseconds: 300));
-    expect(find.text('本餐 2 道'), findsOneWidget);
-
-    // 菜单区点 × 移除该菜
-    await tester.tap(
-      find.byKey(const ValueKey('selected-menu-remove-r2')),
-    );
-    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.byKey(const ValueKey('selected-menu-rail')), findsOneWidget);
     expect(find.text('本餐 1 道'), findsOneWidget);
+
+    // 一道菜模式：确认键回到单菜文案
+    await tester.tap(find.byKey(const ValueKey('result-mode-single')));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('就吃这个'), findsOneWidget);
   });
 
   testWidgets('ResultPage 推荐行为漏斗共享同一个推荐批次 ID', (tester) async {
