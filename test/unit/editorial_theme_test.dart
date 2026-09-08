@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('garden palette keeps the translucent surface language', () {
-    final theme = FluidTheme.lightTheme;
+  test('dark gold stage keeps the surface language', () {
+    final theme = FluidTheme.darkTheme;
 
-    expect(theme.scaffoldBackgroundColor, AppColors.lightBackground);
-    expect(theme.colorScheme.primary, AppPalette.garden);
-    expect(theme.colorScheme.surface, AppPalette.surface);
+    expect(theme.scaffoldBackgroundColor, AppColors.darkBackground);
+    expect(theme.colorScheme.primary, GoldPalette.gold);
+    expect(theme.colorScheme.surface, GoldPalette.panel);
     expect(AppSurfaces.glass.a, lessThan(1));
     expect(AppSurfaces.glassSoft.a, lessThan(1));
   });

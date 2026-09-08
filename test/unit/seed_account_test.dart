@@ -18,4 +18,5 @@ void main() {
     expect(AuthService.isLoggedIn, isTrue);
     await AuthService.logout();
   });
+
 }

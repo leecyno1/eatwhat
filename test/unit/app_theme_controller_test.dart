@@ -11,7 +11,7 @@ void main() {
 
   test('默认黑色主题，色板为夜色值', () {
     expect(AppThemeController.isCream, isFalse);
-    expect(AppPalette.night.value, 0xFF1C1C1E);
+    expect(AppPalette.night.value, 0xFF0B0B0D);
     expect(AppPalette.moonlight.value, 0xFFEDEBE8);
     expect(AppPalette.leaf.value, 0xFF7ABF88);
   });

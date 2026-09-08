@@ -1,4 +1,5 @@
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
+import 'package:eatwhat_app/v2/core/theme/app_theme_controller.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:eatwhat_app/v2/core/theme/fluid_theme.dart';
 import 'package:flutter/material.dart';
@@ -6,20 +7,42 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('App V2 design tokens', () {
-    test('legacy AppColors map to the V2 garden palette', () {
-      expect(AppColors.sunsetOrange, AppPalette.garden);
-      expect(AppColors.goldenHour, AppPalette.yolk);
-      expect(AppColors.lightBackground, AppPalette.canvas);
-      expect(AppColors.darkBackground, AppPalette.night);
-      expect(AppColors.textPrimary, AppPalette.gardenInk);
-      expect(AppColors.textSecondary, AppPalette.inkMuted);
-      expect(AppPalette.canvas, const Color(0xFFF4FAF3));
-      expect(AppPalette.garden, const Color(0xFF2F9B4F));
-      expect(AppPalette.gardenInk, const Color(0xFF123D2D));
-      expect(AppPalette.broth, const Color(0xFFFFF5E6));
-      expect(AppPalette.cream, const Color(0xFFFFFBF6));
+    test('legacy AppColors follow the active theme mode', () {
+      AppThemeController.mode.value = AppThemeMode.dark;
+      expect(AppColors.sunsetOrange, GoldPalette.gold);
+      expect(AppColors.goldenHour, GoldPalette.goldSoft);
+      expect(AppColors.lightBackground, GoldPalette.nightDeep);
+      expect(AppColors.darkBackground, GoldPalette.nightDeep);
+      expect(AppColors.textPrimary, GoldPalette.creamText);
+      expect(AppColors.textSecondary, GoldPalette.creamMuted);
+
+      AppThemeController.mode.value = AppThemeMode.cream;
+      expect(AppColors.sunsetOrange, const Color(0xFF2E2924));
+      expect(AppColors.goldenHour, const Color(0xFF8C8172));
+      expect(AppColors.lightBackground, const Color(0xFFF5EFE3));
+      expect(AppColors.textPrimary, const Color(0xFF2E2924));
+      expect(AppColors.textSecondary, const Color(0xFF8C8172));
+
+      // 语义 token 按主题分发：夜场黑金 / 纸感米棕。
+      AppThemeController.mode.value = AppThemeMode.dark;
+      expect(AppPalette.canvas, GoldPalette.nightDeep);
+      expect(AppPalette.garden, GoldPalette.gold);
+      expect(AppPalette.gardenInk, GoldPalette.creamText);
+      expect(AppPalette.broth, GoldPalette.nightDeep);
+      expect(AppPalette.cream, GoldPalette.panel);
+      expect(AppPalette.ink, GoldPalette.creamText);
+
+      AppThemeController.mode.value = AppThemeMode.cream;
+      expect(AppPalette.canvas, const Color(0xFFF5EFE3));
+      expect(AppPalette.garden, const Color(0xFF2E2924));
+      expect(AppPalette.gardenInk, const Color(0xFF2E2924));
+      expect(AppPalette.broth, const Color(0xFFF5EFE3));
+      expect(AppPalette.cream, const Color(0xFFFCF8EF));
+      expect(AppPalette.ink, const Color(0xFF2E2924));
+      AppThemeController.mode.value = AppThemeMode.dark;
+
+      // 静态点缀色不随主题变化。
       expect(AppPalette.chili, const Color(0xFFF45B33));
-      expect(AppPalette.ink, const Color(0xFF1D1D1F));
       expect(AppSurfaces.glass.a, lessThan(1));
       expect(AppSurfaces.glassSoft.a, lessThan(1));
     });
@@ -35,12 +58,13 @@ void main() {
       expect(AppRadii.hero, BorderRadius.circular(40));
     });
 
-    test('FluidTheme uses V2 typography and button tokens', () {
-      final theme = FluidTheme.lightTheme;
+    test('FluidTheme dark stage uses gold tokens', () {
+      AppThemeController.mode.value = AppThemeMode.dark;
+      final theme = FluidTheme.darkTheme;
       final buttonStyle = theme.filledButtonTheme.style!;
       final states = <WidgetState>{};
 
-      expect(theme.scaffoldBackgroundColor, AppPalette.canvas);
+      expect(theme.scaffoldBackgroundColor, GoldPalette.nightDeep);
       expect(theme.textTheme.displayLarge?.fontSize, AppType.display.fontSize);
       expect(theme.textTheme.displayLarge?.fontFamily, isNot('Songti SC'));
       expect(
@@ -54,9 +78,33 @@ void main() {
       expect(theme.textTheme.bodyLarge?.fontFamily, isNot('PingFang SC'));
       expect(
         buttonStyle.backgroundColor?.resolve(states),
-        AppPalette.garden,
+        GoldPalette.gold,
       );
-      expect(buttonStyle.foregroundColor?.resolve(states), AppPalette.rice);
+      expect(
+        buttonStyle.foregroundColor?.resolve(states),
+        GoldPalette.nightDeep,
+      );
+    });
+
+    test('FluidTheme cream paper stage uses ink tokens', () {
+      AppThemeController.mode.value = AppThemeMode.cream;
+      final theme = FluidTheme.lightTheme;
+      final buttonStyle = theme.filledButtonTheme.style!;
+      final states = <WidgetState>{};
+
+      expect(theme.scaffoldBackgroundColor, const Color(0xFFF5EFE3));
+      expect(theme.colorScheme.primary, const Color(0xFF2E2924));
+      expect(theme.colorScheme.surface, const Color(0xFFFCF8EF));
+      expect(
+        buttonStyle.backgroundColor?.resolve(states),
+        const Color(0xFF2E2924),
+      );
+      expect(
+        buttonStyle.foregroundColor?.resolve(states),
+        const Color(0xFFFCF8EF),
+      );
+
+      AppThemeController.mode.value = AppThemeMode.dark;
     });
   });
 }

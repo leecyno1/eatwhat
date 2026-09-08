@@ -337,7 +337,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
 
     // 降级提示出现，登录弹窗与菜单页都不出现
-    expect(find.text('外卖服务暂未接入，先收藏或看看怎么做'), findsOneWidget);
+    expect(find.text('外卖服务接入中，请先在美团开放平台注册商家'), findsOneWidget);
     expect(find.byKey(const ValueKey('eatwhat-auth-sheet')), findsNothing);
     expect(find.text('生成外卖菜单'), findsNothing);
     expect(AuthService.isLoggedIn, isFalse);
@@ -468,6 +468,10 @@ class _FakeMeituanMerchantClient extends MeituanDeliveryOrderClient {
   // tests — ordering-gate tests need the backend marked as configured.
   @override
   bool get isConfigured => true;
+
+  @override
+  Future<MeituanOAuthStatus> getOAuthStatus() async =>
+      const MeituanOAuthStatus(connected: true, requiresUserAuthorization: false);
 
   @override
   Future<MeituanMerchantSearchResult> searchMerchantResults({

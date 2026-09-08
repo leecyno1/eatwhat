@@ -27,13 +27,16 @@ void main() {
     expect(find.text('外卖到家'), findsOneWidget);
     expect(find.text('出门堂食'), findsOneWidget);
     expect(find.text('首选'), findsOneWidget);
+    // Brand-badge tiles: each icon sits on its channel-colored badge, so
+    // the ink contrasts against the badge color (kitchen gold / 美团黄 /
+    // 点评橙).
     expect(
       tester
           .widget<Icon>(
             find.byKey(const ValueKey('result-execution-cook-icon')),
           )
           .color,
-      GoldPalette.goldSoft,
+      GoldPalette.nightDeep,
     );
     expect(
       tester
@@ -41,7 +44,7 @@ void main() {
             find.byKey(const ValueKey('result-execution-delivery-icon')),
           )
           .color,
-      GoldPalette.gold,
+      const Color(0xFF3A2E00),
     );
     expect(
       tester
@@ -49,7 +52,7 @@ void main() {
             find.byKey(const ValueKey('result-execution-dine-in-icon')),
           )
           .color,
-      GoldPalette.goldSoft,
+      const Color(0xFFFFF3EC),
     );
 
     await tester.tap(find.byKey(const ValueKey('result-execution-delivery')));
