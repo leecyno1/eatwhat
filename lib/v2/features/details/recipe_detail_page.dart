@@ -8,6 +8,7 @@ import 'package:eatwhat_app/v2/core/services/v2_howtocook_recipe_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_recipe_execution_progress_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
+import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:eatwhat_app/v2/features/details/howtocook_library_page.dart';
 import 'package:eatwhat_app/v2/features/details/widgets/recipe_ai_result_views.dart';
 import 'package:eatwhat_app/v2/features/details/widgets/recipe_detail_controls.dart';
@@ -253,7 +254,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
       child: Container(
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 12),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: AppPalette.rice,
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: 0.06),
@@ -344,7 +345,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
               Center(
                 child: Text(
                   _loadingHowToCookDetail ? '正在准备烹饪步骤…' : '这道菜暂时没有可执行步骤。',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: AppColors.textSecondary,
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -426,7 +427,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         '做菜模式',
                         style: TextStyle(
                           color: AppColors.textPrimary,
@@ -440,7 +441,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                             ? '正在准备步骤'
                             : '第 ${activeIndex + 1} / $stepCount 步 · 完成 $completedCount/$stepCount',
                         key: const ValueKey('recipe-cooking-progress'),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 12,
                           fontWeight: FontWeight.w700,
@@ -453,7 +454,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                   child: Text(
                     _recipe.name,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: AppColors.sunsetOrange,
                       fontSize: 13,
                       fontWeight: FontWeight.w800,
@@ -469,8 +470,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                 minHeight: 3,
                 borderRadius: BorderRadius.circular(999),
                 backgroundColor: AppColors.sunsetOrange.withValues(alpha: 0.12),
-                valueColor:
-                    const AlwaysStoppedAnimation(AppColors.sunsetOrange),
+                valueColor: AlwaysStoppedAnimation(AppColors.sunsetOrange),
               ),
             ),
           ],
@@ -493,7 +493,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
           colors: [
             AppColors.sunsetOrange.withValues(alpha: 0.12),
             AppColors.lightBackground,
-            Colors.white,
+            AppPalette.rice,
           ],
         ),
       ),
@@ -504,7 +504,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
             children: [
               Text(
                 '步骤 ${index + 1}',
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.sunsetOrange,
                   fontSize: 18,
                   fontWeight: FontWeight.w900,
@@ -519,7 +519,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                     color: AppColors.freshLime.withValues(alpha: 0.18),
                     borderRadius: BorderRadius.circular(999),
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Icon(
@@ -549,7 +549,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                 key: ValueKey('recipe-cooking-step-text-$index'),
                 maxLines: 9,
                 minFontSize: 22,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textPrimary,
                   fontSize: 34,
                   height: 1.42,
@@ -570,7 +570,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
               ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.sunsetOrange,
-                backgroundColor: Colors.white.withValues(alpha: 0.78),
+                backgroundColor: AppPalette.rice.withValues(alpha: 0.78),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
                 side: BorderSide(
@@ -595,7 +595,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
               const SizedBox(width: 8),
               Text(
                 isLastStep ? '完成最后一步即可开吃' : '向上滑动，或点击下方“下一步”',
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textSecondary,
                   fontSize: 13,
                   fontWeight: FontWeight.w700,
@@ -910,7 +910,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           '做菜加成',
           style: TextStyle(
             fontSize: 20,
@@ -941,7 +941,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
           ],
         ),
         const SizedBox(height: 8),
-        const Text(
+        Text(
           '提示：主菜谱来自 HowToCook，下面只提供做菜时的辅助参考。',
           style: TextStyle(
             fontSize: 12,
@@ -994,8 +994,8 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
         final height = MediaQuery.of(context).size.height * 0.72;
         return Container(
           height: height,
-          decoration: const BoxDecoration(
-            color: Colors.white,
+          decoration: BoxDecoration(
+            color: AppPalette.rice,
             borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: Column(
@@ -1017,7 +1017,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                     Expanded(
                       child: Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w800,
                           color: AppColors.textPrimary,
@@ -1046,7 +1046,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                           child: Text(
                             '生成失败：${snapshot.error}',
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.textSecondary,
                               height: 1.5,
                             ),
@@ -1056,7 +1056,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                     }
                     final data = snapshot.data;
                     if (data == null) {
-                      return const Center(
+                      return Center(
                         child: Text(
                           '暂无结果',
                           style: TextStyle(color: AppColors.textSecondary),

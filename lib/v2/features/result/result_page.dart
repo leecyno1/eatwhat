@@ -41,6 +41,7 @@ import 'package:eatwhat_app/v2/features/result/widgets/result_status_panels.dart
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 typedef RecipeImageGenerator = Future<String?> Function(RecipeModel recipe);
 typedef NutritionLoader = Future<NutritionAnalysis> Function(
@@ -114,8 +115,15 @@ class ResultPage extends StatefulWidget {
   State<ResultPage> createState() => _ResultPageState();
 }
 
-class _ResultPageState extends State<ResultPage> {
+class _ResultPageState extends State<ResultPage>
+    with SingleTickerProviderStateMixin {
   late final ResultChoiceController _choiceController;
+
+  /// One-shot entrance choreography: the full-bleed photography settles
+  /// from a soft zoom while the overlay layers rise in sequence — a
+  /// curtain lift over the night stage. Finite by design so scroll and
+  /// test pumps are never held hostage.
+  late final AnimationController _entrance;
   final ResultPairingSuggestionController _pairingSuggestionController =
       const ResultPairingSuggestionController();
   final ResultChoiceStateCoordinator<PairingSuggestion>
@@ -174,6 +182,10 @@ class _ResultPageState extends State<ResultPage> {
   @override
   void initState() {
     super.initState();
+    _entrance = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1000),
+    )..forward();
     _imageCatalog =
         widget.imageCatalogService ?? PrebuiltDishImageCatalogService.instance;
     _howToCookRecipeService =
@@ -505,6 +517,7 @@ class _ResultPageState extends State<ResultPage> {
   @override
   void dispose() {
     _heroPageController.dispose();
+    _entrance.dispose();
     super.dispose();
   }
 
@@ -604,17 +617,22 @@ class _ResultPageState extends State<ResultPage> {
         );
         return;
       case ExecutionPath.delivery:
-        // Degrade before the login gate when the ordering backend isn't
-        // wired up: no point signing the user in only to hit a technical
-        // error in the menu builder.
         final deliveryClient =
             widget.meituanOrderClient ?? MeituanDeliveryOrderClient();
         if (!deliveryClient.isConfigured) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('外卖服务暂未接入，先收藏或看看怎么做')),
-            );
+          // 代理未配置：商家还没接入，直接引导去美团开放平台注册。
+          await _openMeituanOpenPlatform('外卖服务接入中，请先在美团开放平台注册商家');
+          return;
+        }
+        // 代理在，但美团侧可能还没完成授权：探测连接状态，未连接则引导授权。
+        try {
+          final status = await deliveryClient.getOAuthStatus();
+          if (!status.connected) {
+            await _openMeituanAuthorization(deliveryClient);
+            return;
           }
+        } catch (_) {
+          await _openMeituanOpenPlatform('美团服务暂时不可用，请先去开放平台完成接入');
           return;
         }
         // Ordering gate: Meituan orders belong to an eatwhat account; a
@@ -663,6 +681,45 @@ class _ResultPageState extends State<ResultPage> {
       case ExecutionPath.any:
         _confirm();
         return;
+    }
+  }
+
+  /// 外卖未接入时的兜底引导：直接打开美团开放平台注册页。
+  Future<void> _openMeituanOpenPlatform(String tip) async {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tip)));
+    }
+    try {
+      await launchUrl(
+        Uri.parse('https://open.meituan.com/'),
+        mode: LaunchMode.externalApplication,
+      );
+    } catch (_) {
+      // 无浏览器/测试环境打不开链接时静默，提示文案已展示。
+    }
+  }
+
+  /// 已配置但美团侧未授权：打开授权页；拿不到授权链接则回退开放平台首页。
+  Future<void> _openMeituanAuthorization(
+    MeituanDeliveryOrderClient client,
+  ) async {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('请先完成美团商家授权')),
+      );
+    }
+    try {
+      final uri = await client.createOAuthAuthorizationUri();
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      try {
+        await launchUrl(
+          Uri.parse('https://open.meituan.com/'),
+          mode: LaunchMode.externalApplication,
+        );
+      } catch (_) {
+        // 同上：打不开链接时提示文案已展示。
+      }
     }
   }
 
@@ -738,9 +795,9 @@ class _ResultPageState extends State<ResultPage> {
                 confirmLabel: '就吃这个',
               ),
             ),
-      body: SafeArea(
-        child: currentChoice == null
-            ? Padding(
+      body: currentChoice == null
+          ? SafeArea(
+              child: Padding(
                 padding: const EdgeInsets.all(AppSpacing.lg),
                 child: EmptyRecommendationState(
                   tags: _displayTags,
@@ -748,117 +805,146 @@ class _ResultPageState extends State<ResultPage> {
                   primarySource: widget.primarySource,
                   onReselect: _returnToPreferenceSelection,
                 ),
-              )
-            : Padding(
-                padding: const EdgeInsets.fromLTRB(
-                  AppSpacing.md,
-                  AppSpacing.xs,
-                  AppSpacing.md,
-                  AppSpacing.sm,
+              ),
+            )
+          : Stack(
+              fit: StackFit.expand,
+              children: [
+                // 1 · 全屏美食摄影：整屏出血，横向滑动切换候选，入场时从
+                // 轻微推近中缓缓落定，像镜头对焦完成的一瞬。
+                AnimatedBuilder(
+                  animation: _entrance,
+                  builder: (context, child) {
+                    final t = Curves.easeOutCubic.transform(_entrance.value);
+                    return Transform.scale(
+                      scale: 1.07 - 0.07 * t,
+                      child: child,
+                    );
+                  },
+                  child: PageView.builder(
+                    key: const ValueKey('result-hero-pager'),
+                    controller: _heroPageController,
+                    itemCount: choices.length,
+                    onPageChanged: (index) => _selectChoice(
+                      choices[index],
+                      action: 'hero_swipe',
+                    ),
+                    itemBuilder: (context, index) {
+                      final recipe = choices[index];
+                      return ResultHeroMedia(
+                        recipe: recipe,
+                        imageLoadState: _imageStateController.stateFor(
+                          recipe.id,
+                        ),
+                        imageSource: _imageStateController.sourceFor(
+                          recipe.id,
+                        ),
+                        onRetryImage: () => _maybeGenerateImageForCurrentChoice(
+                          force: true,
+                        ),
+                      );
+                    },
+                  ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Top: candidate thumbnails — tap to switch dishes.
-                    if (choices.length > 1) ...[
-                      ResultCandidateRail(
-                        currentChoiceId: currentChoice.id,
-                        choices: choices,
-                        recalledCount: widget.recalledCount,
-                        aiReasonsByRecipeId: widget.aiReasonsByRecipeId,
-                        thumbUrlByRecipeId: _thumbUrlByRecipeId,
-                        onSelect: _selectChoiceWithHero,
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                    ],
-                    // Middle: tag chips above the big photo.
-                    if (currentChoice.tags.isNotEmpty) ...[
-                      SizedBox(
-                        height: 26,
-                        child: ListView.separated(
-                          scrollDirection: Axis.horizontal,
-                          itemCount: currentChoice.tags.take(3).length,
-                          separatorBuilder: (_, __) => const SizedBox(width: 6),
-                          itemBuilder: (context, index) => _GoldTagChip(
-                            label: currentChoice.tags[index],
+                // 2 · 金色发丝内框：把整屏装裱成一张高级餐厅的菜单卡。
+                const IgnorePointer(child: _GoldInsetFrame()),
+                // 3 · 悬浮层：页眉压住顶部帘幕，其余信息沿照片底部的
+                // 黑色沉降带依次浮起。
+                SafeArea(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(
+                      AppSpacing.md,
+                      AppSpacing.xs,
+                      AppSpacing.md,
+                      AppSpacing.sm,
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _StageHeader(
+                          onBack: _returnToPreferenceSelection,
+                          favorited: _isFavorited,
+                          onToggleFavorite: _toggleFavorite,
+                        ),
+                        const Spacer(),
+                        if (currentChoice.tags.isNotEmpty) ...[
+                          _Reveal(
+                            controller: _entrance,
+                            interval: const (0.20, 0.55),
+                            child: SizedBox(
+                              height: 26,
+                              child: ListView.separated(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: currentChoice.tags.take(3).length,
+                                separatorBuilder: (_, __) =>
+                                    const SizedBox(width: 6),
+                                itemBuilder: (context, index) => _GoldTagChip(
+                                  label: currentChoice.tags[index],
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: AppSpacing.sm),
+                        ],
+                        _Reveal(
+                          controller: _entrance,
+                          interval: const (0.30, 0.68),
+                          child: _GoldNameplate(
+                            recipe: currentChoice,
+                            index: _positionFor(currentChoice),
+                            total: choices.length,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: AppSpacing.sm),
-                    ],
-                    // The big photo owns the middle; swipe sideways to move
-                    // between candidates, or tap a thumbnail above.
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          PageView.builder(
-                            key: const ValueKey('result-hero-pager'),
-                            controller: _heroPageController,
-                            itemCount: choices.length,
-                            onPageChanged: (index) => _selectChoice(
-                              choices[index],
-                              action: 'hero_swipe',
-                            ),
-                            itemBuilder: (context, index) {
-                              final recipe = choices[index];
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 3,
-                                ),
-                                child: ResultHeroMedia(
-                                  recipe: recipe,
-                                  isGeneratingImage: _isGeneratingImage &&
-                                      recipe.id == currentChoice.id,
-                                  imageLoadState:
-                                      _imageStateController.stateFor(
-                                    recipe.id,
-                                  ),
-                                  imageSource: _imageStateController.sourceFor(
-                                    recipe.id,
-                                  ),
-                                  onRetryImage: () =>
-                                      _maybeGenerateImageForCurrentChoice(
-                                    force: true,
-                                  ),
-                                ),
-                              );
-                            },
+                        const SizedBox(height: AppSpacing.sm),
+                        // One line of gold: why the chef picked this dish.
+                        _Reveal(
+                          controller: _entrance,
+                          interval: const (0.42, 0.80),
+                          child: _GoldReasonLine(
+                            text: _effectiveAiSummary ??
+                                _buildRecommendationSubtitle(),
                           ),
-                          Positioned(
-                            top: 12,
-                            right: 12,
-                            child: _GoldFavoriteButton(
-                              favorited: _isFavorited,
-                              onTap: _toggleFavorite,
+                        ),
+                        const SizedBox(height: AppSpacing.md),
+                        // Gallery rail: tap a frame to re-hang the stage.
+                        if (choices.length > 1) ...[
+                          _Reveal(
+                            controller: _entrance,
+                            interval: const (0.52, 0.92),
+                            child: ResultCandidateRail(
+                              currentChoiceId: currentChoice.id,
+                              choices: choices,
+                              recalledCount: widget.recalledCount,
+                              aiReasonsByRecipeId: widget.aiReasonsByRecipeId,
+                              thumbUrlByRecipeId: _thumbUrlByRecipeId,
+                              onSelect: _selectChoiceWithHero,
                             ),
                           ),
+                          const SizedBox(height: AppSpacing.sm),
                         ],
-                      ),
+                        // Three gold cards: delivery, cook at home, dine out.
+                        _Reveal(
+                          controller: _entrance,
+                          interval: const (0.62, 1.0),
+                          child: ResultExecutionShortcuts(
+                            preferredPath: _preferredPath,
+                            onCook: () => _openExecutionShortcut(
+                              ExecutionPath.cook,
+                            ),
+                            onDelivery: () => _openExecutionShortcut(
+                              ExecutionPath.delivery,
+                            ),
+                            onDineIn: () => _openExecutionShortcut(
+                              ExecutionPath.dineIn,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: AppSpacing.md),
-                    // One line of gold: why the chef picked this dish.
-                    _GoldReasonLine(
-                      text:
-                          _effectiveAiSummary ?? _buildRecommendationSubtitle(),
-                    ),
-                    const SizedBox(height: AppSpacing.md),
-                    // Three gold cards: delivery, cook at home, dine out.
-                    ResultExecutionShortcuts(
-                      preferredPath: _preferredPath,
-                      onCook: () => _openExecutionShortcut(
-                        ExecutionPath.cook,
-                      ),
-                      onDelivery: () => _openExecutionShortcut(
-                        ExecutionPath.delivery,
-                      ),
-                      onDineIn: () => _openExecutionShortcut(
-                        ExecutionPath.dineIn,
-                      ),
-                    ),
-                  ],
+                  ),
                 ),
-              ),
-      ),
+              ],
+            ),
     );
   }
 
@@ -991,7 +1077,8 @@ class _GoldReasonLine extends StatelessWidget {
   }
 }
 
-/// Small gold-rimmed tag chip shown above the hero photo.
+/// Small gold-rimmed tag chip floating on the photography — smoked glass
+/// body, hairline gold rim, wide-tracked ink.
 class _GoldTagChip extends StatelessWidget {
   const _GoldTagChip({required this.label});
 
@@ -1002,7 +1089,7 @@ class _GoldTagChip extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: GoldPalette.panel,
+        color: Colors.black.withValues(alpha: 0.42),
         borderRadius: AppRadii.capsule,
         border: Border.all(color: GoldPalette.goldHairline),
       ),
@@ -1013,6 +1100,222 @@ class _GoldTagChip extends StatelessWidget {
           fontSize: 11,
           fontWeight: FontWeight.w700,
           letterSpacing: 0.8,
+        ),
+      ),
+    );
+  }
+}
+
+/// Gallery mount for the whole stage: a hairline gold frame inset from
+/// the screen edges, turning the full-bleed photograph into a framed
+/// menu card from a maison you cannot afford.
+class _GoldInsetFrame extends StatelessWidget {
+  const _GoldInsetFrame();
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(10),
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border.all(color: GoldPalette.goldHairline, width: 0.8),
+          borderRadius: BorderRadius.circular(6),
+        ),
+        child: const SizedBox.expand(),
+      ),
+    );
+  }
+}
+
+/// Staggered curtain-lift: each overlay layer fades and rises inside its
+/// own interval of the one-shot entrance controller.
+class _Reveal extends StatelessWidget {
+  const _Reveal({
+    required this.controller,
+    required this.interval,
+    required this.child,
+  });
+
+  final AnimationController controller;
+  final (double, double) interval;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final curve = CurvedAnimation(
+      parent: controller,
+      curve: Interval(interval.$1, interval.$2, curve: AppMotion.enter),
+    );
+    return FadeTransition(
+      opacity: curve,
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 0.06),
+          end: Offset.zero,
+        ).animate(curve),
+        child: child,
+      ),
+    );
+  }
+}
+
+/// Editorial nameplate floating over the photograph's bottom falloff: a
+/// gold dash and the menu ordinal with tabular figures, then the serif
+/// dish name. Switching candidates crossfades the name instead of
+/// jumping — the frame stays, the dish changes.
+class _GoldNameplate extends StatelessWidget {
+  const _GoldNameplate({
+    required this.recipe,
+    required this.index,
+    required this.total,
+  });
+
+  final RecipeModel recipe;
+  final int index;
+  final int total;
+
+  @override
+  Widget build(BuildContext context) {
+    final ordinal = (index < 0 ? 0 : index) + 1;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          children: [
+            Container(width: 22, height: 1, color: GoldPalette.gold),
+            const SizedBox(width: 8),
+            Text(
+              'N°${ordinal.toString().padLeft(2, '0')} / ${total.toString().padLeft(2, '0')}',
+              style: const TextStyle(
+                color: GoldPalette.gold,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 2.6,
+                fontFeatures: [FontFeature.tabularFigures()],
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        AnimatedSwitcher(
+          duration: AppMotion.page,
+          switchInCurve: AppMotion.enter,
+          transitionBuilder: (child, animation) => FadeTransition(
+            opacity: animation,
+            child: SlideTransition(
+              position: Tween<Offset>(
+                begin: const Offset(0, 0.12),
+                end: Offset.zero,
+              ).animate(animation),
+              child: child,
+            ),
+          ),
+          child: Text(
+            recipe.name,
+            key: ValueKey('result-nameplate-${recipe.id}'),
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              color: GoldPalette.creamText,
+              fontFamily: 'serif',
+              fontSize: 34,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.2,
+              height: 1.05,
+              shadows: [
+                Shadow(
+                  color: Colors.black.withValues(alpha: 0.65),
+                  blurRadius: 18,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Slim maison header floating on the photography's top curtain: a
+/// gold-ringed back key, the house wordmark in wide-tracked caps, and
+/// the favorite star — the only chrome above the dish.
+class _StageHeader extends StatelessWidget {
+  const _StageHeader({
+    required this.onBack,
+    required this.favorited,
+    required this.onToggleFavorite,
+  });
+
+  final VoidCallback onBack;
+  final bool favorited;
+  final VoidCallback onToggleFavorite;
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 40,
+      child: Row(
+        children: [
+          _GoldCircleKey(
+            icon: Icons.arrow_back_ios_new_rounded,
+            onTap: onBack,
+            semanticLabel: '返回重选',
+          ),
+          const Expanded(
+            child: Text(
+              "主厨甄选 · CHEF'S SELECTION",
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: GoldPalette.goldSoft,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 3.2,
+              ),
+            ),
+          ),
+          _GoldFavoriteButton(
+            favorited: favorited,
+            onTap: onToggleFavorite,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Small gold-rimmed circular key used by the stage header.
+class _GoldCircleKey extends StatelessWidget {
+  const _GoldCircleKey({
+    required this.icon,
+    required this.onTap,
+    required this.semanticLabel,
+  });
+
+  final IconData icon;
+  final VoidCallback onTap;
+  final String semanticLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      button: true,
+      label: semanticLabel,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: onTap,
+        child: Container(
+          width: 36,
+          height: 36,
+          decoration: BoxDecoration(
+            color: GoldPalette.panel,
+            shape: BoxShape.circle,
+            border: Border.all(color: GoldPalette.goldHairline),
+          ),
+          child: Icon(icon, size: 16, color: GoldPalette.goldSoft),
         ),
       ),
     );

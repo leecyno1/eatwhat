@@ -67,6 +67,12 @@ class _CandidateThumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 目录未收录时回退到菜自身的 asset 图，让画廊与舞台共享同一张摄影。
+    final effectiveThumb = thumbUrl != null && thumbUrl!.isNotEmpty
+        ? thumbUrl!
+        : (recipe.imageUrl?.trim().startsWith('assets/') ?? false)
+            ? recipe.imageUrl!.trim()
+            : null;
     return GestureDetector(
       onTap: onTap,
       child: AnimatedContainer(
@@ -95,14 +101,22 @@ class _CandidateThumb extends StatelessWidget {
           child: Stack(
             fit: StackFit.expand,
             children: [
-              if (thumbUrl != null && thumbUrl!.isNotEmpty)
+              if (effectiveThumb != null)
                 Image.asset(
-                  thumbUrl!,
+                  effectiveThumb,
                   fit: BoxFit.cover,
                   errorBuilder: (_, __, ___) => _fallbackTile(),
                 )
               else
                 _fallbackTile(),
+              // Gallery focus: unselected photos sink into the dark so the
+              // chosen dish is the only frame fully lit on the rail.
+              if (!selected)
+                Positioned.fill(
+                  child: ColoredBox(
+                    color: Colors.black.withValues(alpha: 0.45),
+                  ),
+                ),
               // Bottom scrim keeps the dish name readable over any photo.
               Positioned(
                 left: 0,

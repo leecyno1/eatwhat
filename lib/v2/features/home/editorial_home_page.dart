@@ -425,7 +425,7 @@ class _EditorialHomePageState extends State<EditorialHomePage> {
                 children: [
                   const _EditorialBrandHeader(),
                   const SizedBox(height: 24),
-                  const Text(
+                  Text(
                     '今晚，\n吃点真的想吃的',
                     style: TextStyle(
                       color: AppPalette.ink,
@@ -438,14 +438,14 @@ class _EditorialHomePageState extends State<EditorialHomePage> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     '不用翻一百道菜。告诉我此刻的胃口，\n我替你把选择收窄到刚刚好。',
                     style: AppType.body,
                   ),
                   const SizedBox(height: 22),
                   Row(
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Text('此刻的胃口', style: AppType.section),
                       ),
                       Text(
@@ -491,14 +491,14 @@ class _EditorialHomePageState extends State<EditorialHomePage> {
                       ],
                     ),
                   const SizedBox(height: 8),
-                  const Text(
+                  Text(
                     '点一下表示喜欢，长按表示今天不想吃。',
                     style: AppType.label,
                   ),
                   const SizedBox(height: 18),
                   _EditorialHeroCard(reason: heroReason),
                   const SizedBox(height: 18),
-                  const Text('再加一点条件', style: AppType.section),
+                  Text('再加一点条件', style: AppType.section),
                   const SizedBox(height: 9),
                   SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
@@ -550,18 +550,18 @@ class _EditorialBrandHeader extends StatelessWidget {
         Container(
           width: 40,
           height: 40,
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppPalette.char,
             shape: BoxShape.circle,
           ),
-          child: const Icon(
+          child: Icon(
             Icons.restaurant_rounded,
             size: 20,
             color: AppPalette.rice,
           ),
         ),
         const SizedBox(width: 10),
-        const Expanded(
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -600,7 +600,7 @@ class _EditorialBrandHeader extends StatelessWidget {
             borderRadius: AppRadii.capsule,
             border: AppSurfaces.glassBorder,
           ),
-          child: const Row(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
@@ -758,7 +758,7 @@ class _EditorialHeroCard extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           '麻婆豆腐',
                           style: TextStyle(
                             color: AppPalette.rice,
@@ -792,7 +792,7 @@ class _EditorialHeroCard extends StatelessWidget {
                         color: AppPalette.rice.withValues(alpha: 0.5),
                       ),
                     ),
-                    child: const Icon(
+                    child: Icon(
                       Icons.bookmark_border_rounded,
                       color: AppPalette.rice,
                       size: 20,
@@ -945,7 +945,7 @@ class _EditorialRequirementPanel extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 12),
               ),
               child: isOpeningDecision
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 18,
                       height: 18,
                       child: CircularProgressIndicator(

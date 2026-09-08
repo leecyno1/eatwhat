@@ -5,6 +5,7 @@ import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_tokens.dart';
 import '../../decision/decision_page.dart';
 import '../../favorites/selected_tags_sheet.dart';
 import '../game/bubble_game.dart';
@@ -142,7 +143,7 @@ class _BubbleOceanState extends State<BubbleOcean> {
               );
             },
             loadingBuilder: (context) {
-              return const Center(
+              return Center(
                 child: CircularProgressIndicator(
                   color: AppColors.sunsetOrange,
                 ),
@@ -210,14 +211,14 @@ class _BubbleOceanState extends State<BubbleOcean> {
                                   alpha: 0.4,
                                 ),
                                 blurRadius: 20,
-                                offset: const Offset(0, 10),
+                                offset: Offset(0, 10),
                               ),
                             ],
                           ),
                           child: Text(
                             '决定 ($count)',
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: AppPalette.moonlight,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),

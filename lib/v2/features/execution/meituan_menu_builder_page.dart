@@ -169,7 +169,7 @@ class _MeituanMenuBuilderPageState extends State<MeituanMenuBuilderPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('匹配到的门店', style: AppType.microLabel),
+                  Text('匹配到的门店', style: AppType.microLabel),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
                     '${widget.intent.recipe.name} · ${result.merchants.length} 家可选',

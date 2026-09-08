@@ -149,21 +149,21 @@ class _FavoritesPageV2State extends State<FavoritesPageV2>
           child: ListTile(
             title: Text(
               t.label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w700,
                 color: AppColors.textPrimary,
               ),
             ),
             subtitle: Text(
               id,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textSecondary,
                 fontSize: 12,
               ),
             ),
             trailing: IconButton(
               onPressed: () => _toggleTag(id),
-              icon: const Icon(
+              icon: Icon(
                 Icons.favorite,
                 color: AppColors.sunsetOrange,
               ),
@@ -241,7 +241,7 @@ class _FavoritesPageV2State extends State<FavoritesPageV2>
                           r.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w800,
                             color: AppColors.textPrimary,
@@ -254,7 +254,7 @@ class _FavoritesPageV2State extends State<FavoritesPageV2>
                               : r.tags.take(3).join(' · '),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 12,
                             color: AppColors.textSecondary,
                             height: 1.4,
@@ -266,7 +266,7 @@ class _FavoritesPageV2State extends State<FavoritesPageV2>
                   const SizedBox(width: 10),
                   IconButton(
                     onPressed: () => _toggleRecipe(r.dishId),
-                    icon: const Icon(
+                    icon: Icon(
                       Icons.favorite,
                       color: AppColors.sunsetOrange,
                     ),
@@ -289,7 +289,7 @@ class _FavoritesPageV2State extends State<FavoritesPageV2>
           children: [
             Text(
               title,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w800,
                 color: AppColors.textPrimary,
@@ -299,7 +299,7 @@ class _FavoritesPageV2State extends State<FavoritesPageV2>
             const SizedBox(height: 10),
             Text(
               subtitle,
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textSecondary,
                 height: 1.5,
               ),

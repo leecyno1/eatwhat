@@ -27,6 +27,7 @@ class AppV2Routes {
   static const String decision = '/decision';
   static const String result = '/result';
   static const String recipeDetail = '/recipe-detail';
+  static const String recipeDetailDemo = '/recipe-detail-demo';
   static const String execution = '/execution';
   static const String executionDelivery = '/execution-delivery';
   static const String executionDineIn = '/execution-dine-in';
@@ -285,6 +286,14 @@ class AppV2Router {
           name: 'v2_decision_demo',
           builder: (context, state) =>
               const DecisionPage(input: demoInferenceInput),
+        ),
+        GoRoute(
+          path: AppV2Routes.recipeDetailDemo,
+          name: 'v2_recipe_detail_demo',
+          builder: (context, state) => RecipeDetailPage(
+            recipe: demoRecipes.first,
+            howToCookRecipeService: null,
+          ),
         ),
         GoRoute(
           path: AppV2Routes.resultDemo,

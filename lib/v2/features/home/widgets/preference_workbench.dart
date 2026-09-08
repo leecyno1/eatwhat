@@ -1,4 +1,5 @@
 import 'package:eatwhat_app/v2/core/data/repositories/tag_repository_v2.dart';
+import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:eatwhat_app/v2/features/decision/decision_page.dart';
 import 'package:flutter/material.dart';
 
@@ -160,11 +161,11 @@ class _PreferenceWorkbenchState extends State<PreferenceWorkbench> {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
                   '今日偏好工作台',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppPalette.moonlight,
                     fontSize: 18,
                     fontWeight: FontWeight.w800,
                   ),
@@ -291,10 +292,10 @@ class _BubbleModeBody extends StatelessWidget {
                       color: const Color(0xCC121018),
                       borderRadius: BorderRadius.circular(999),
                     ),
-                    child: const Text(
+                    child: Text(
                       'BUBBLE TASTE DECK',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppPalette.moonlight,
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                         letterSpacing: 1.5,
@@ -378,7 +379,7 @@ class _ModeChip extends StatelessWidget {
             child: Text(
               label,
               style: TextStyle(
-                color: Colors.white,
+                color: AppPalette.moonlight,
                 fontSize: 13,
                 fontWeight: isActive ? FontWeight.w800 : FontWeight.w600,
               ),

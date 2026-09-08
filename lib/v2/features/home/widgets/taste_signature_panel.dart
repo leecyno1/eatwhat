@@ -137,7 +137,7 @@ class TasteSignaturePanel extends StatelessWidget {
                       onPressed: onBack,
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.textPrimary,
-                        side: const BorderSide(color: AppPalette.divider),
+                        side: BorderSide(color: AppPalette.divider),
                         padding: EdgeInsets.symmetric(
                           vertical: buttonVerticalPadding,
                         ),

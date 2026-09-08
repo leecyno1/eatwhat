@@ -4,6 +4,7 @@ import 'package:eatwhat_app/v2/core/services/v2_howtocook_recipe_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
 import 'package:eatwhat_app/v2/features/details/recipe_detail_page.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/floating_editorial_background.dart';
+import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -115,7 +116,7 @@ class _HowToCookLibraryPageState extends State<HowToCookLibraryPage> {
                         icon: const Icon(Icons.arrow_back_ios_new_rounded),
                       ),
                       const SizedBox(width: 6),
-                      const Expanded(
+                      Expanded(
                         child: Text(
                           '家常菜谱',
                           style: TextStyle(
@@ -134,7 +135,7 @@ class _HowToCookLibraryPageState extends State<HowToCookLibraryPage> {
                     decoration: InputDecoration(
                       hintText: '搜索菜名、菜系或做法关键词',
                       filled: true,
-                      fillColor: Colors.white.withValues(alpha: 0.86),
+                      fillColor: AppPalette.rice.withValues(alpha: 0.86),
                       suffixIcon: IconButton(
                         onPressed: _search,
                         icon: const Icon(Icons.search_rounded),
@@ -184,7 +185,7 @@ class _HowToCookLibraryPageState extends State<HowToCookLibraryPage> {
                         }
                         final recipes = snapshot.data!;
                         if (recipes.isEmpty) {
-                          return const Center(
+                          return Center(
                             child: Text(
                               '当前没有匹配到合适菜谱',
                               style: TextStyle(
@@ -242,7 +243,7 @@ class _HowToCookLibraryPageState extends State<HowToCookLibraryPage> {
                                                     maxLines: 1,
                                                     overflow:
                                                         TextOverflow.ellipsis,
-                                                    style: const TextStyle(
+                                                    style: TextStyle(
                                                       fontSize: 20,
                                                       fontWeight:
                                                           FontWeight.w800,
@@ -265,7 +266,7 @@ class _HowToCookLibraryPageState extends State<HowToCookLibraryPage> {
                                                   : recipe.description,
                                               maxLines: 2,
                                               overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontSize: 14,
                                                 color: AppColors.textSecondary,
                                                 height: 1.45,
@@ -387,7 +388,7 @@ class _MetaChip extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           color: AppColors.sunsetOrange,
           fontSize: 12,
           fontWeight: FontWeight.w700,
@@ -418,18 +419,18 @@ class _FilterChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected
               ? AppColors.sunsetOrange
-              : Colors.white.withValues(alpha: 0.82),
+              : AppPalette.rice.withValues(alpha: 0.82),
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
             color: selected
                 ? AppColors.sunsetOrange
-                : Colors.white.withValues(alpha: 0.9),
+                : AppPalette.rice.withValues(alpha: 0.9),
           ),
         ),
         child: Text(
           label,
           style: TextStyle(
-            color: selected ? Colors.white : AppColors.textPrimary,
+            color: selected ? AppPalette.night : AppColors.textPrimary,
             fontSize: 13,
             fontWeight: FontWeight.w700,
           ),

@@ -5,6 +5,7 @@ import 'package:eatwhat_app/v2/core/data/models/meal_planning_direction.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recommendation_resolution.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
+import 'package:eatwhat_app/core/services/unified_recipe_database_service.dart';
 import 'package:eatwhat_app/v2/core/services/generation_service.dart';
 import 'package:eatwhat_app/v2/core/services/unified_recommendation_service_v2.dart';
 import 'package:eatwhat_app/v2/core/services/v2_howtocook_recipe_service.dart';
@@ -176,8 +177,20 @@ class V2Phase2RecommendationService {
       localCandidates: localCandidates,
       preferredIds: enhancement.orderedIds,
     );
-    final diversified = _diversify(ordered, resultLimit);
-    final finalRecommendations = await _enrichWithHowToCook(diversified);
+    // AI 融合菜优先入主榜；本地候选只补足数量，不再喧宾夺主。
+    final fused = enhancement.extraRecipes;
+    final List<RecipeModel> baseList;
+    if (fused.isNotEmpty) {
+      final fusedIds = fused.map((recipe) => recipe.id).toSet();
+      baseList = [
+        ...fused,
+        ..._diversify(ordered, resultLimit)
+            .where((recipe) => !fusedIds.contains(recipe.id)),
+      ].take(resultLimit).toList();
+    } else {
+      baseList = _diversify(ordered, resultLimit);
+    }
+    final finalRecommendations = await _enrichWithHowToCook(baseList);
     final finalIds = finalRecommendations.map((recipe) => recipe.id).toSet();
     final reasons = <String, String>{
       for (final entry in localReasons.entries)
@@ -309,20 +322,92 @@ class V2Phase2RecommendationService {
         return const _AiEnhancementResult.notAttempted();
       }
 
-      final refined = await _generationService
-          .refineRecommendations(
-            selectedTags: recallLabels,
-            candidates: localCandidates,
-            limit: limit,
-            customRequirement: _buildAiRequirement(input),
-          )
-          .timeout(_refineTimeout);
-      return _validateRefinement(refined, localCandidates);
+      // 融合生成主路径：把用户选出的标签交给模型组合成新菜，
+      // 再回库匹配现成菜谱与配图；库里没有就让模型生图。
+      return _generateFusion(input: input, recallLabels: recallLabels);
     } on TimeoutException {
       return const _AiEnhancementResult.failed('ai_timeout');
     } catch (_) {
       return const _AiEnhancementResult.failed('ai_error');
     }
+  }
+
+  Future<_AiEnhancementResult> _generateFusion({
+    required TasteInferenceInput input,
+    required List<String> recallLabels,
+  }) async {
+    final generated = await _generationService
+        .generateFusionDishes(
+          tags: recallLabels,
+          customRequirement: _buildAiRequirement(input),
+          count: 4,
+        )
+        .timeout(_refineTimeout);
+    if (generated.isEmpty) {
+      return const _AiEnhancementResult.failed('fusion_empty');
+    }
+
+    final resolved = <RecipeModel>[];
+    final reasonsById = <String, String>{};
+    for (final dish in generated) {
+      final matched = await _matchLibraryDish(dish);
+      final recipe = matched ?? await _withGeneratedImage(dish);
+      resolved.add(recipe);
+      if (dish.description.trim().isNotEmpty) {
+        reasonsById[recipe.id] = dish.description.trim();
+      }
+    }
+    return _AiEnhancementResult.succeeded(
+      orderedIds: resolved.map((recipe) => recipe.id).toList(),
+      reasonsById: reasonsById,
+      extraRecipes: resolved,
+      summary: 'AI 融合创意：${resolved.map((recipe) => recipe.name).join('、')}',
+    );
+  }
+
+  /// 把 AI 生成的菜名回库匹配：命中则继承库菜品的 id/步骤/配图，
+  /// 只保留 AI 写的融合推荐理由。
+  Future<RecipeModel?> _matchLibraryDish(RecipeModel dish) async {
+    try {
+      final rows = await UnifiedRecipeDatabaseService.instance
+          .searchRecipes(dish.name, limit: 3);
+      for (final row in rows) {
+        final candidate = RecipeModel.fromUnifiedDbRow(row);
+        if (_namesMatch(dish.name, candidate.name)) {
+          return candidate.copyWith(
+            description: dish.description.trim().isNotEmpty
+                ? dish.description.trim()
+                : candidate.description,
+          );
+        }
+      }
+    } catch (_) {
+      // 库不可用时按未命中处理，走生图。
+    }
+    return null;
+  }
+
+  bool _namesMatch(String a, String b) {
+    String norm(String value) =>
+        value.replaceAll(RegExp(r'[\s·\-—（）()]'), '').trim();
+    final na = norm(a);
+    final nb = norm(b);
+    if (na.isEmpty || nb.isEmpty) return false;
+    return na == nb || na.contains(nb) || nb.contains(na);
+  }
+
+  /// 库里没有这道菜：让模型直接为它生成配图。
+  Future<RecipeModel> _withGeneratedImage(RecipeModel dish) async {
+    if (dish.imageUrl?.trim().isNotEmpty ?? false) return dish;
+    try {
+      final url = await _generationService.generateRecipeImageUrl(dish);
+      if (url != null && url.trim().isNotEmpty) {
+        return dish.copyWith(imageUrl: url.trim());
+      }
+    } catch (_) {
+      // 生图失败则保留无图状态，由展示层走花字盘 fallback。
+    }
+    return dish;
   }
 
   _AiEnhancementResult _validateRefinement(
@@ -667,6 +752,7 @@ class _AiEnhancementResult {
     required this.isEstimated,
     this.summary,
     this.fallbackReason,
+    this.extraRecipes = const [],
   });
 
   const _AiEnhancementResult.notAttempted()
@@ -693,12 +779,14 @@ class _AiEnhancementResult {
     required Map<String, String> reasonsById,
     String? summary,
     bool isEstimated = false,
+    List<RecipeModel> extraRecipes = const [],
   }) {
     return _AiEnhancementResult._(
       attempted: true,
       succeeded: true,
       orderedIds: orderedIds,
       reasonsById: reasonsById,
+      extraRecipes: extraRecipes,
       summary: summary,
       isEstimated: isEstimated,
     );
@@ -711,4 +799,7 @@ class _AiEnhancementResult {
   final String? summary;
   final bool isEstimated;
   final String? fallbackReason;
+
+  /// AI 融合生成的新菜品（可能不在本地库），优先进入最终候选。
+  final List<RecipeModel> extraRecipes;
 }

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../../../shared/themes/design_tokens.dart';
+import '../../core/theme/app_tokens.dart';
 import 'onboarding_service.dart';
 
 /// 手势引导步骤配置
@@ -218,7 +218,7 @@ class _OnboardingWidgetState extends State<OnboardingWidget>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 border: Border.all(
-                  color: DesignTokens.mint
+                  color: AppPalette.garden
                       .withValues(alpha: 1 - _handAnimation.value),
                   width: 2,
                 ),
@@ -227,7 +227,7 @@ class _OnboardingWidgetState extends State<OnboardingWidget>
           Icon(
             step.icon,
             size: size * 0.8,
-            color: DesignTokens.mint,
+            color: AppPalette.garden,
           ),
         ],
       ),
@@ -253,10 +253,10 @@ class _OnboardingWidgetState extends State<OnboardingWidget>
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   color: isActive
-                      ? DesignTokens.pink.withValues(alpha: 0.3)
-                      : DesignTokens.mint.withValues(alpha: 0.1),
+                      ? AppPalette.yolk.withValues(alpha: 0.3)
+                      : AppPalette.garden.withValues(alpha: 0.1),
                   border: Border.all(
-                    color: isActive ? DesignTokens.pink : DesignTokens.mint,
+                    color: isActive ? AppPalette.yolk : AppPalette.garden,
                     width: 2,
                   ),
                 ),
@@ -266,7 +266,7 @@ class _OnboardingWidgetState extends State<OnboardingWidget>
           Icon(
             step.icon,
             size: size * 0.6,
-            color: DesignTokens.pink,
+            color: AppPalette.yolk,
           ),
         ],
       ),
@@ -287,7 +287,7 @@ class _OnboardingWidgetState extends State<OnboardingWidget>
               width: 4,
               height: size * 0.6,
               decoration: BoxDecoration(
-                color: DesignTokens.mint.withValues(alpha: 0.3),
+                color: AppPalette.garden.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -298,7 +298,7 @@ class _OnboardingWidgetState extends State<OnboardingWidget>
             child: Icon(
               step.icon,
               size: size * 0.6,
-              color: DesignTokens.mint,
+              color: AppPalette.garden,
             ),
           ),
         ],
@@ -320,7 +320,7 @@ class _OnboardingWidgetState extends State<OnboardingWidget>
               width: 4,
               height: size * 0.6,
               decoration: BoxDecoration(
-                color: DesignTokens.orange.withValues(alpha: 0.3),
+                color: AppPalette.gardenDeep.withValues(alpha: 0.3),
                 borderRadius: BorderRadius.circular(2),
               ),
             ),
@@ -331,7 +331,7 @@ class _OnboardingWidgetState extends State<OnboardingWidget>
             child: Icon(
               step.icon,
               size: size * 0.6,
-              color: DesignTokens.orange,
+              color: AppPalette.gardenDeep,
             ),
           ),
         ],
@@ -453,11 +453,11 @@ class _OnboardingWidgetState extends State<OnboardingWidget>
                     padding: const EdgeInsets.symmetric(
                         horizontal: 32, vertical: 12),
                     decoration: BoxDecoration(
-                      color: DesignTokens.mint,
+                      color: AppPalette.garden,
                       borderRadius: BorderRadius.circular(24),
                       boxShadow: [
                         BoxShadow(
-                          color: DesignTokens.mint.withValues(alpha: 0.4),
+                          color: AppPalette.garden.withValues(alpha: 0.4),
                           blurRadius: 12,
                           offset: const Offset(0, 4),
                         ),
@@ -493,7 +493,7 @@ class _OnboardingWidgetState extends State<OnboardingWidget>
                   height: 8,
                   decoration: BoxDecoration(
                     color: index == _currentStep
-                        ? DesignTokens.mint
+                        ? AppPalette.garden
                         : Colors.white.withValues(alpha: 0.4),
                     borderRadius: BorderRadius.circular(4),
                   ),
@@ -544,7 +544,7 @@ class _OnboardingMaskPainter extends CustomPainter {
 
     // 绘制高亮气泡边框
     final borderPaint = Paint()
-      ..color = DesignTokens.mint
+      ..color = AppPalette.garden
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3;
 
@@ -552,7 +552,7 @@ class _OnboardingMaskPainter extends CustomPainter {
 
     // 绘制高亮边框发光效果
     final glowPaint = Paint()
-      ..color = DesignTokens.mint.withValues(alpha: 0.3)
+      ..color = AppPalette.garden.withValues(alpha: 0.3)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 8
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);

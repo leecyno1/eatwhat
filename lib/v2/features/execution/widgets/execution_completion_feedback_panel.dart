@@ -65,7 +65,7 @@ class _ExecutionCompletionFeedbackPanelState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('吃完记一笔', style: AppType.label),
+          Text('吃完记一笔', style: AppType.label),
           const SizedBox(height: AppSpacing.xs),
           Row(
             children: [

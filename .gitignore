@@ -13,6 +13,10 @@
 .codex-artifacts/
 tmp/
 migrate_working_dir/
+# Computer-use automation screenshots (may contain third-party login state)
+.cu_tmp/
+# Golden-test failure diff artifacts (debug output, not sources)
+test/goldens/failures/
 
 # Root-level generated data snapshots; keep app assets under assets/data tracked.
 /*.db

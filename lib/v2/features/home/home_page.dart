@@ -683,7 +683,7 @@ class _HomePageState extends State<HomePage> {
               switchInCurve: AppMotion.enter,
               switchOutCurve: AppMotion.enter,
               child: _isLoadingDeck || session == null
-                  ? const Center(
+                  ? Center(
                       key: ValueKey('taste-physical-loading'),
                       child: CircularProgressIndicator(
                         color: AppPalette.garden,

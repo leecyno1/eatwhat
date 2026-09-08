@@ -497,6 +497,74 @@ class GenerationService {
     return null;
   }
 
+  /// 创意融合生成：把用户选出的食材/口味标签交给模型组合成新菜，
+  /// 而不是在本地候选里各挑一道。提示词刻意简短，组合创意交给模型。
+  Future<List<RecipeModel>> generateFusionDishes({
+    required List<String> tags,
+    String? customRequirement,
+    int count = 4,
+  }) async {
+    final cleanedTags = tags
+        .map((t) => t.trim())
+        .where((t) => t.isNotEmpty)
+        .toSet()
+        .toList(growable: false);
+    if (cleanedTags.isEmpty || !isConfigured) return const [];
+
+    final requirement = (customRequirement?.trim().isNotEmpty ?? false)
+        ? '\n补充要求：${customRequirement!.trim()}'
+        : '';
+    final prompt = '用户想吃：${cleanedTags.join('、')}。$requirement\n'
+        '生成 $count 道把这些食材/口味融合在一起的创意菜'
+        '（必须是把它们组合成一道菜，不是各做一道）。\n'
+        '只输出 JSON：{"dishes":[{"name":"菜名",'
+        '"reason":"一句话为什么这样搭（20字内）",'
+        '"ingredients":["主料"],"tags":["口味"]}]}';
+
+    try {
+      final jsonMap = await _chatJson(
+        system: '你是创意主厨，擅长把给定食材组合成真实可做的融合菜。只输出 JSON。',
+        user: prompt,
+        temperature: 0.7,
+      );
+      final raw = jsonMap['dishes'];
+      if (raw is! List) return const [];
+      final stamp = DateTime.now().millisecondsSinceEpoch;
+      final dishes = <RecipeModel>[];
+      var index = 0;
+      for (final item in raw) {
+        if (item is! Map) continue;
+        final map = item.map((k, v) => MapEntry(k.toString(), v));
+        final name = (map['name']?.toString() ?? '').trim();
+        if (name.isEmpty) continue;
+        final reason = (map['reason']?.toString() ?? '').trim();
+        dishes.add(
+          RecipeModel(
+            id: 'ai_fusion_${stamp}_$index',
+            name: name,
+            description:
+                reason.isEmpty ? '把${cleanedTags.join('、')}组合成的一道创意菜。' : reason,
+            ingredients: (map['ingredients'] as List? ?? const [])
+                .map((e) => e.toString())
+                .where((e) => e.isNotEmpty)
+                .take(8)
+                .toList(),
+            tags: (map['tags'] as List? ?? const [])
+                .map((e) => e.toString())
+                .where((e) => e.isNotEmpty)
+                .take(6)
+                .toList(),
+            source: 'ai_fusion',
+          ),
+        );
+        index++;
+      }
+      return dishes;
+    } catch (_) {
+      return const [];
+    }
+  }
+
   Future<RecipeModel> generateRecipeForDish({
     required RecipeModel base,
     String? customRequirement,

@@ -1,5 +1,6 @@
 import 'package:eatwhat_app/v2/core/services/v2_favorites_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
+import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
 
 class SelectedTagsSheet extends StatefulWidget {
@@ -66,8 +67,8 @@ class _SelectedTagsSheetState extends State<SelectedTagsSheet> {
     final height = MediaQuery.of(context).size.height * 0.62;
     return Container(
       height: height,
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: AppPalette.rice,
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
@@ -86,7 +87,7 @@ class _SelectedTagsSheetState extends State<SelectedTagsSheet> {
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text(
                     '收藏这些偏好',
                     style: TextStyle(
@@ -115,13 +116,13 @@ class _SelectedTagsSheetState extends State<SelectedTagsSheet> {
                       final tag = widget.tags[index];
                       final isFav = _favorited.contains(tag.id);
                       return Material(
-                        color: Colors.white,
+                        color: AppPalette.rice,
                         borderRadius: BorderRadius.circular(14),
                         elevation: 1,
                         child: ListTile(
                           title: Text(
                             tag.label,
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontWeight: FontWeight.w700,
                               color: AppColors.textPrimary,
                             ),
@@ -130,7 +131,7 @@ class _SelectedTagsSheetState extends State<SelectedTagsSheet> {
                             tag.id,
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: AppColors.textSecondary,
                               fontSize: 12,
                             ),

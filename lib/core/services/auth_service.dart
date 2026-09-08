@@ -61,7 +61,7 @@ class AuthService {
     return remaining.inMinutes < 30; // 30分钟内过期时需要刷新
   }
 
-  /// Seed admin/user credentials for demos and reviews (管理员/用户测试账号).
+  /// Seed account shared by admin and default test user (管理员/测试用户共用).
   static const String seedUsername = '17600806220';
   static const String seedPassword = 'Iv19whot@123';
 
@@ -688,32 +688,48 @@ class AuthService {
     await prefs.setString(_keyUsers, json.encode(users));
   }
 
-  /// Creates the seeded admin/user account once if absent. The account is a
+  /// Creates the seeded shared account once if absent. One account serves
+  /// as both admin and default test user (用户明确要求共用同一账号); it is a
   /// full member (no trial expiry) so demo flows exercise the member path.
   static Future<void> _ensureSeedAccount() async {
+    await _ensureSeedUser(
+      id: 'seed-admin-001',
+      username: seedUsername,
+      email: '$seedUsername@seed.eatwhat',
+      nickname: '管理员',
+      password: seedPassword,
+      isMember: true,
+    );
+  }
+
+  static Future<void> _ensureSeedUser({
+    required String id,
+    required String username,
+    required String email,
+    required String nickname,
+    required String password,
+    bool isMember = false,
+  }) async {
     try {
-      final existing = await _getUserByUsernameOrEmail(
-        seedUsername,
-        '$seedUsername@seed.eatwhat',
-      );
+      final existing = await _getUserByUsernameOrEmail(username, email);
       if (existing != null) return;
       final now = DateTime.now();
       final user = User(
-        id: 'seed-admin-001',
-        username: seedUsername,
-        email: '$seedUsername@seed.eatwhat',
-        nickname: '管理员',
-        passwordHash: _hashPassword(seedPassword),
+        id: id,
+        username: username,
+        email: email,
+        nickname: nickname,
+        passwordHash: _hashPassword(password),
         createdAt: now,
         lastLoginAt: now,
-        userPreference: UserPreference(userId: 'seed-admin-001'),
-        isMember: true,
-        memberSince: now,
+        userPreference: UserPreference(userId: id),
+        isMember: isMember,
+        memberSince: isMember ? now : null,
       );
       await _saveUser(user);
-      debugPrint('种子账号已创建: $seedUsername');
+      debugPrint('种子账号已创建: $username');
     } catch (e) {
-      debugPrint('种子账号创建失败: $e');
+      debugPrint('种子账号创建失败: $username, $e');
     }
   }
 

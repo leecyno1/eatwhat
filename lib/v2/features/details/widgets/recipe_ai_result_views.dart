@@ -63,7 +63,7 @@ class WinePairingView extends StatelessWidget {
       children: [
         Text(
           data.name,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.w900,
             color: AppColors.textPrimary,
@@ -72,14 +72,14 @@ class WinePairingView extends StatelessWidget {
         const SizedBox(height: 8),
         Text(
           '${data.servingTemperature}${data.isEstimated ? '（估算）' : ''}',
-          style: const TextStyle(color: AppColors.textSecondary),
+          style: TextStyle(color: AppColors.textSecondary),
         ),
         const SizedBox(height: 14),
         sectionTitle('搭配理由'),
         const SizedBox(height: 10),
         Text(
           data.reason,
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.textPrimary,
             height: 1.5,
           ),
@@ -89,7 +89,7 @@ class WinePairingView extends StatelessWidget {
         const SizedBox(height: 10),
         Text(
           data.flavor,
-          style: const TextStyle(color: AppColors.textPrimary, height: 1.5),
+          style: TextStyle(color: AppColors.textPrimary, height: 1.5),
         ),
         const SizedBox(height: 14),
         sectionTitle('补充信息'),
@@ -128,7 +128,7 @@ class FortuneView extends StatelessWidget {
         const SizedBox(height: 10),
         Text(
           data.reason,
-          style: const TextStyle(color: AppColors.textPrimary, height: 1.5),
+          style: TextStyle(color: AppColors.textPrimary, height: 1.5),
         ),
         const SizedBox(height: 14),
         sectionTitle('神秘话语'),
@@ -144,7 +144,7 @@ class FortuneView extends StatelessWidget {
           ),
           child: Text(
             data.mysticalMessage,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textPrimary,
               fontWeight: FontWeight.w700,
               height: 1.5,
@@ -163,7 +163,7 @@ class FortuneView extends StatelessWidget {
 Widget sectionTitle(String text) {
   return Text(
     text,
-    style: const TextStyle(
+    style: TextStyle(
       fontSize: 16,
       fontWeight: FontWeight.w900,
       color: AppColors.textPrimary,
@@ -180,7 +180,7 @@ Widget keyValue(String k, String v) {
           width: 70,
           child: Text(
             k,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textSecondary,
               fontWeight: FontWeight.w600,
             ),
@@ -189,7 +189,7 @@ Widget keyValue(String k, String v) {
         Expanded(
           child: Text(
             v,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textPrimary,
               fontWeight: FontWeight.w700,
             ),
@@ -205,7 +205,7 @@ Widget metaRow({required String left, required String right}) {
     children: [
       Text(
         left,
-        style: const TextStyle(
+        style: TextStyle(
           color: AppColors.textSecondary,
           fontWeight: FontWeight.w700,
         ),
@@ -213,7 +213,7 @@ Widget metaRow({required String left, required String right}) {
       const Spacer(),
       Text(
         right,
-        style: const TextStyle(
+        style: TextStyle(
           color: AppColors.textPrimary,
           fontWeight: FontWeight.w900,
         ),
@@ -232,7 +232,7 @@ Widget bullet(String text) {
           width: 6,
           height: 6,
           margin: const EdgeInsets.only(top: 7),
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             color: AppColors.freshLime,
             shape: BoxShape.circle,
           ),
@@ -241,7 +241,7 @@ Widget bullet(String text) {
         Expanded(
           child: Text(
             text,
-            style: const TextStyle(
+            style: TextStyle(
               color: AppColors.textPrimary,
               height: 1.5,
             ),

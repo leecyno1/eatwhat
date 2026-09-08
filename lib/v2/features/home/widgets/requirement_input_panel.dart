@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_tokens.dart';
 
 class RequirementInputPanel extends StatelessWidget {
   const RequirementInputPanel({
@@ -30,10 +31,10 @@ class RequirementInputPanel extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   '今天有什么要求？',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppPalette.moonlight,
                     fontSize: 22,
                     fontWeight: FontWeight.w800,
                   ),
@@ -62,8 +63,8 @@ class RequirementInputPanel extends StatelessWidget {
                     onChanged: onChanged,
                     maxLines: 4,
                     minLines: 4,
-                    style: const TextStyle(
-                      color: Colors.white,
+                    style: TextStyle(
+                      color: AppPalette.moonlight,
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                     ),
@@ -93,8 +94,8 @@ class RequirementInputPanel extends StatelessWidget {
                           ),
                           label: Text(
                             suggestion,
-                            style: const TextStyle(
-                              color: Colors.white,
+                            style: TextStyle(
+                              color: AppPalette.moonlight,
                               fontWeight: FontWeight.w700,
                               fontSize: 12,
                             ),
@@ -106,10 +107,10 @@ class RequirementInputPanel extends StatelessWidget {
                 const SizedBox(height: 16),
                 Row(
                   children: [
-                    const Text(
+                    Text(
                       '提取到的口味标签',
                       style: TextStyle(
-                        color: Colors.white,
+                        color: AppPalette.moonlight,
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                       ),
@@ -164,8 +165,8 @@ class RequirementInputPanel extends StatelessWidget {
                             ),
                             child: Text(
                               label,
-                              style: const TextStyle(
-                                color: Colors.white,
+                              style: TextStyle(
+                                color: AppPalette.moonlight,
                                 fontSize: 12,
                                 fontWeight: FontWeight.w700,
                               ),

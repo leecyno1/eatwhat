@@ -2,9 +2,9 @@ import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
 
-/// How-to-eat actions as three gold-on-black cards — one glance, one tap.
-/// The preferred path (when the session constrained it) carries a lit gold
-/// border and a tiny 首选 badge.
+/// How-to-eat actions as three branded gold-on-black cards. Each channel
+/// carries its brand badge (美团黄 / 点评橙 / kitchen gold), the action
+/// name, and the channel it routes to.
 class ResultExecutionShortcuts extends StatelessWidget {
   const ResultExecutionShortcuts({
     super.key,
@@ -30,33 +30,45 @@ class ResultExecutionShortcuts extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Expanded(
-          child: _GoldActionCard(
+          child: _ChannelCard(
             key: const ValueKey('result-execution-delivery'),
             iconKey: const ValueKey('result-execution-delivery-icon'),
             icon: Icons.moped_rounded,
+            badgeColor: const Color(0xFFFFD100),
+            badgeInk: const Color(0xFF3A2E00),
             title: '外卖到家',
+            channel: '美团外卖',
+            channelColor: const Color(0xFFE6B800),
             preferred: _isPreferred(ExecutionPath.delivery),
             onTap: onDelivery,
           ),
         ),
         const SizedBox(width: AppSpacing.sm),
         Expanded(
-          child: _GoldActionCard(
+          child: _ChannelCard(
             key: const ValueKey('result-execution-cook'),
             iconKey: const ValueKey('result-execution-cook-icon'),
             icon: Icons.soup_kitchen_rounded,
+            badgeColor: GoldPalette.gold,
+            badgeInk: GoldPalette.nightDeep,
             title: '在家开火',
+            channel: '菜谱直出',
+            channelColor: GoldPalette.goldSoft,
             preferred: _isPreferred(ExecutionPath.cook),
             onTap: onCook,
           ),
         ),
         const SizedBox(width: AppSpacing.sm),
         Expanded(
-          child: _GoldActionCard(
+          child: _ChannelCard(
             key: const ValueKey('result-execution-dine-in'),
             iconKey: const ValueKey('result-execution-dine-in-icon'),
             icon: Icons.storefront_rounded,
+            badgeColor: const Color(0xFFFF6633),
+            badgeInk: const Color(0xFFFFF3EC),
             title: '出门堂食',
+            channel: '大众点评',
+            channelColor: const Color(0xFFFF8A5C),
             preferred: _isPreferred(ExecutionPath.dineIn),
             onTap: onDineIn,
           ),
@@ -66,32 +78,39 @@ class ResultExecutionShortcuts extends StatelessWidget {
   }
 }
 
-class _GoldActionCard extends StatefulWidget {
-  const _GoldActionCard({
+class _ChannelCard extends StatefulWidget {
+  const _ChannelCard({
     super.key,
     required this.iconKey,
     required this.icon,
+    required this.badgeColor,
+    required this.badgeInk,
     required this.title,
+    required this.channel,
+    required this.channelColor,
     required this.preferred,
     required this.onTap,
   });
 
   final Key iconKey;
   final IconData icon;
+  final Color badgeColor;
+  final Color badgeInk;
   final String title;
+  final String channel;
+  final Color channelColor;
   final bool preferred;
   final VoidCallback onTap;
 
   @override
-  State<_GoldActionCard> createState() => _GoldActionCardState();
+  State<_ChannelCard> createState() => _ChannelCardState();
 }
 
-class _GoldActionCardState extends State<_GoldActionCard> {
+class _ChannelCardState extends State<_ChannelCard> {
   bool _pressed = false;
 
   @override
   Widget build(BuildContext context) {
-    final gold = widget.preferred ? GoldPalette.gold : GoldPalette.goldSoft;
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),
       onTapUp: (_) => setState(() => _pressed = false),
@@ -110,7 +129,8 @@ class _GoldActionCardState extends State<_GoldActionCard> {
               : GoldPalette.panel,
           borderRadius: AppRadii.small,
           border: Border.all(
-            color: widget.preferred ? gold : GoldPalette.goldHairline,
+            color:
+                widget.preferred ? GoldPalette.gold : GoldPalette.goldHairline,
             width: widget.preferred ? 1.4 : 1,
           ),
           gradient: widget.preferred
@@ -127,27 +147,55 @@ class _GoldActionCardState extends State<_GoldActionCard> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-              widget.icon,
-              key: widget.iconKey,
-              size: 24,
-              color: gold,
+            // Brand badge: channel-colored tile with the channel icon.
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: widget.badgeColor,
+                borderRadius: BorderRadius.circular(11),
+                boxShadow: [
+                  BoxShadow(
+                    color: widget.badgeColor.withValues(alpha: 0.35),
+                    blurRadius: 10,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Icon(
+                widget.icon,
+                key: widget.iconKey,
+                size: 20,
+                color: widget.badgeInk,
+              ),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 7),
             Text(
               widget.title,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
+              style: const TextStyle(
                 color: GoldPalette.creamText,
                 fontSize: 13,
                 fontWeight: FontWeight.w700,
                 letterSpacing: 1.2,
               ),
             ),
+            const SizedBox(height: 2),
+            Text(
+              widget.channel,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: widget.channelColor,
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                letterSpacing: 0.8,
+              ),
+            ),
             if (widget.preferred) ...[
               const SizedBox(height: 3),
-              Text(
+              const Text(
                 '首选',
                 style: TextStyle(
                   color: GoldPalette.gold,

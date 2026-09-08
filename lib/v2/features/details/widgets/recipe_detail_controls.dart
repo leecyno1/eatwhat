@@ -1,4 +1,5 @@
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
+import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
 
 class ServingAdjuster extends StatelessWidget {
@@ -18,7 +19,7 @@ class ServingAdjuster extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppPalette.rice,
         borderRadius: BorderRadius.circular(999),
         border: Border.all(
           color: AppColors.sunsetOrange.withValues(alpha: 0.18),
@@ -35,7 +36,7 @@ class ServingAdjuster extends StatelessWidget {
           ),
           Text(
             '$servings 人份',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w800,
               color: AppColors.textPrimary,

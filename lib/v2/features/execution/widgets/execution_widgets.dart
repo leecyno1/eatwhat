@@ -99,7 +99,7 @@ class ExecutionLoadingState extends StatelessWidget {
           vertical: AppSpacing.md,
         ),
         decoration: AppDecorations.card(),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             SizedBox.square(
@@ -244,7 +244,7 @@ class ExecutionProxyPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('服务状态', style: AppType.label),
+          Text('服务状态', style: AppType.label),
           const SizedBox(height: AppSpacing.xs),
           Wrap(
             spacing: AppSpacing.xs,
@@ -338,7 +338,7 @@ class ExecutionProviderStatusPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('平台状态', style: AppType.label),
+          Text('平台状态', style: AppType.label),
           const SizedBox(height: AppSpacing.xs),
           Wrap(
             spacing: AppSpacing.xs,

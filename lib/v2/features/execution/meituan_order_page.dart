@@ -367,7 +367,7 @@ class _MeituanOrderPageState extends State<MeituanOrderPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('当前门店', style: AppType.microLabel),
+                  Text('当前门店', style: AppType.microLabel),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
                     result.merchantName.isEmpty
@@ -519,7 +519,7 @@ class _MeituanOrderPageState extends State<MeituanOrderPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('收货信息', style: AppType.section),
+          Text('收货信息', style: AppType.section),
           const SizedBox(height: 6),
           Text(
             '配送坐标使用当前位置，详细地址仅用于本次订单。',
@@ -573,7 +573,7 @@ class _MeituanOrderPageState extends State<MeituanOrderPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('美团订单预览', style: AppType.section),
+          Text('美团订单预览', style: AppType.section),
           const SizedBox(height: 8),
           Text('商品与优惠后合计：¥${preview.total.toStringAsFixed(2)}'),
           Text('配送费：¥${preview.shippingFee.toStringAsFixed(2)}'),

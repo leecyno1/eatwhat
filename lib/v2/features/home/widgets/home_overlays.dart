@@ -218,7 +218,7 @@ class HomeFirstUseGuideCard extends StatelessWidget {
               key: const ValueKey('home-guide-dismiss-button'),
               onPressed: onDismiss,
               style: FilledButton.styleFrom(
-                backgroundColor: AppPalette.leaf,
+                backgroundColor: AppPalette.garden,
                 foregroundColor: AppPalette.night,
               ),
               child: const Text('开始选择'),

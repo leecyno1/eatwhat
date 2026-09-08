@@ -59,7 +59,7 @@ class _TasteSignatureRailState extends State<TasteSignatureRail>
       children: [
         Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Text(
                 '偏好实体库',
                 style: TextStyle(
@@ -209,7 +209,7 @@ class _TasteSignatureCard extends StatelessWidget {
               const Spacer(),
               Text(
                 entry.title,
-                style: const TextStyle(
+                style: TextStyle(
                   color: AppColors.textPrimary,
                   fontSize: 16,
                   fontWeight: FontWeight.w800,

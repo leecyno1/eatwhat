@@ -44,7 +44,7 @@ class HomeRecentSuccessEntry extends StatelessWidget {
                     color: AppPalette.herb.withValues(alpha: 0.14),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.replay_rounded,
                     size: 15,
                     color: AppPalette.herb,

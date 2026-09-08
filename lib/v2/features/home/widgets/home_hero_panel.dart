@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_tokens.dart';
 
 class HomeHeroPanel extends StatelessWidget {
   const HomeHeroPanel({
@@ -56,10 +57,10 @@ class HomeHeroPanel extends StatelessWidget {
                   color: const Color(0xFF151219),
                   borderRadius: BorderRadius.circular(999),
                 ),
-                child: const Text(
+                child: Text(
                   'EAT WHAT',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppPalette.moonlight,
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1.6,
@@ -107,7 +108,7 @@ class HomeHeroPanel extends StatelessWidget {
               textInputAction: TextInputAction.done,
               onTapOutside: (_) => focusNode.unfocus(),
               onSubmitted: (_) => onSubmit(),
-              style: const TextStyle(
+              style: TextStyle(
                 color: AppColors.textPrimary,
                 fontSize: 16,
                 height: 1.6,

@@ -103,7 +103,7 @@ class RecipeIngredientsSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Text('食材清单', style: AppType.section),
             ),
             TextButton.icon(
@@ -131,7 +131,7 @@ class RecipeIngredientsSection extends StatelessWidget {
                     Container(
                       width: 8,
                       height: 8,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         color: AppColors.freshLime,
                         shape: BoxShape.circle,
                       ),
@@ -158,7 +158,7 @@ class RecipeIngredientsSection extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('替换建议', style: AppType.section),
+                Text('替换建议', style: AppType.section),
                 const SizedBox(height: AppSpacing.sm),
                 for (final item in substitutionSuggestions)
                   Padding(
@@ -235,7 +235,7 @@ class RecipeCookBriefSection extends StatelessWidget {
                     Text(
                       '照着做',
                       style: AppType.section.copyWith(
-                        color: AppPalette.rice,
+                        color: AppPalette.moonlight,
                         fontSize: 20,
                       ),
                     ),
@@ -243,7 +243,7 @@ class RecipeCookBriefSection extends StatelessWidget {
                     Text(
                       'HowToCook 原菜谱已整理成备料、步骤和计时任务。',
                       style: AppType.body.copyWith(
-                        color: AppPalette.rice.withValues(alpha: 0.72),
+                        color: AppPalette.moonlight.withValues(alpha: 0.72),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -304,8 +304,8 @@ class RecipeCookBriefSection extends StatelessWidget {
                   icon: const Icon(Icons.play_arrow_rounded, size: 20),
                   label: const Text('开始做'),
                   style: FilledButton.styleFrom(
-                    backgroundColor: AppPalette.yolk,
-                    foregroundColor: AppPalette.char,
+                    backgroundColor: AppPalette.garden,
+                    foregroundColor: AppPalette.night,
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(AppRadii.sm),
@@ -348,10 +348,10 @@ class _CookBriefChip extends StatelessWidget {
         vertical: AppSpacing.xs,
       ),
       decoration: BoxDecoration(
-        color: AppPalette.rice.withValues(alpha: 0.08),
+        color: AppPalette.moonlight.withValues(alpha: 0.08),
         borderRadius: AppRadii.capsule,
         border: Border.all(
-          color: AppPalette.rice.withValues(alpha: 0.12),
+          color: AppPalette.moonlight.withValues(alpha: 0.12),
         ),
       ),
       child: Row(
@@ -362,7 +362,7 @@ class _CookBriefChip extends StatelessWidget {
           Text(
             label,
             style: AppType.label.copyWith(
-              color: AppPalette.rice.withValues(alpha: 0.86),
+              color: AppPalette.moonlight.withValues(alpha: 0.86),
               fontSize: 12,
             ),
           ),
@@ -394,7 +394,7 @@ class RecipeStepsSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Expanded(child: Text('烹饪步骤', style: AppType.section)),
+            Expanded(child: Text('烹饪步骤', style: AppType.section)),
             RecipeInfoChip(
               Icons.check_circle_rounded,
               '完成 $completedCount/${steps.length}',
@@ -433,7 +433,7 @@ class RecipeStepsSection extends StatelessWidget {
                         isCompleted
                             ? Icons.check_rounded
                             : Icons.restaurant_menu_rounded,
-                        color: AppPalette.rice,
+                        color: AppPalette.moonlight,
                         size: 20,
                       ),
                     ),
@@ -686,7 +686,7 @@ class _RecipeShoppingListSheetState extends State<RecipeShoppingListSheet> {
           children: [
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text('购物清单', style: AppType.section),
                 ),
                 RecipeInfoChip(
@@ -803,7 +803,7 @@ class RelatedRecipesSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Expanded(
+            Expanded(
               child: Text('相似做法', style: AppType.section),
             ),
             TextButton(

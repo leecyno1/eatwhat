@@ -35,42 +35,42 @@ class AppRadii {
 class AppType {
   const AppType._();
 
-  static const TextStyle display = TextStyle(
+  static TextStyle display = TextStyle(
     fontSize: 32,
     fontWeight: FontWeight.w900,
     height: 1.08,
     color: AppPalette.gardenInk,
   );
 
-  static const TextStyle title = TextStyle(
+  static TextStyle title = TextStyle(
     fontSize: 24,
     fontWeight: FontWeight.w800,
     height: 1.12,
     color: AppPalette.gardenInk,
   );
 
-  static const TextStyle section = TextStyle(
+  static TextStyle section = TextStyle(
     fontSize: 18,
     fontWeight: FontWeight.w800,
     height: 1.2,
     color: AppPalette.gardenInk,
   );
 
-  static const TextStyle body = TextStyle(
+  static TextStyle body = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.w500,
     height: 1.45,
     color: AppPalette.inkSoft,
   );
 
-  static const TextStyle label = TextStyle(
+  static TextStyle label = TextStyle(
     fontSize: 12,
     fontWeight: FontWeight.w700,
     height: 1.2,
     color: AppPalette.inkSoft,
   );
 
-  static const TextStyle microLabel = TextStyle(
+  static TextStyle microLabel = TextStyle(
     fontSize: 11,
     fontWeight: FontWeight.w800,
     height: 1.15,
@@ -82,81 +82,99 @@ class AppType {
 class AppPalette {
   const AppPalette._();
 
-  static const Color garden = Color(0xFF2F9B4F);
-  static const Color gardenDeep = Color(0xFF20783B);
-  static const Color gardenInk = Color(0xFF123D2D);
-  static const Color gardenSoft = Color(0xFFE7F5E8);
-  static const Color gardenMist = Color(0xFFF4FAF3);
-  static const Color gardenBorder = Color(0xFFD3E7D5);
+  static bool get _isCream => AppThemeController.isCream;
+
+  // ---- 点缀原色（两主题通用，不随主题分发） ----
   static const Color tomato = Color(0xFFE4513F);
   static const Color chili = Color(0xFFF45B33);
   static const Color chiliDeep = Color(0xFFD9431F);
   static const Color yolk = Color(0xFFFFB545);
-  static const Color herb = garden;
-  static const Color _leafDark = Color(0xFF7ABF88);
+  static const Color grape = Color(0xFF8A7CF7);
+  static const Color ocean = Color(0xFF45A6D8);
+  static const Color negativeSurface = Color(0xFFFFE8E2);
 
-  /// Accent green — sage ink (墨绿) on the cream paper theme.
-  static Color get leaf =>
-      AppThemeController.isCream ? const Color(0xFF4A5D4E) : _leafDark;
-  static const Color broth = Color(0xFFFFF5E6);
-  static const Color cream = Color(0xFFFFFBF6);
-  static const Color rice = Color(0xFFFFFFFF);
-  static const Color char = Color(0xFF241712);
-  static const Color ink = Color(0xFF1D1D1F);
-  static const Color inkSoft = Color(0xFF5E5652);
-  static const Color inkMuted = Color(0xFF8D817A);
-  static const Color _night = Color(0xFF1C1C1E);
+  // ---- 夜场原色 ----
+  static const Color _night = Color(0xFF0B0B0D);
   static const Color _nightSurface = Color(0xFF242426);
   static const Color _nightElevated = Color(0xFF2C2C2E);
   static const Color _nightDivider = Color(0xFF3A3A3C);
   static const Color _moonlight = Color(0xFFEDEBE8);
   static const Color _moonMuted = Color(0xFF9B9691);
+  static const Color _leafDark = Color(0xFF7ABF88);
 
-  // Cream paper theme (米色纸感): warm rice canvas, cream cards, brown ink.
+  // ---- 米色纸感原色：warm rice canvas, cream cards, brown ink ----
   static const Color _creamCanvas = Color(0xFFF5EFE3);
   static const Color _creamSurface = Color(0xFFFCF8EF);
   static const Color _creamElevated = Color(0xFFF0E8D8);
   static const Color _creamDivider = Color(0xFFE2D8C4);
   static const Color _inkBrown = Color(0xFF2E2924);
   static const Color _mutedBrown = Color(0xFF8C8172);
+  static const Color _leafCream = Color(0xFF4A5D4E);
 
-  static Color get night => AppThemeController.isCream ? _creamCanvas : _night;
-  static Color get nightSurface =>
-      AppThemeController.isCream ? _creamSurface : _nightSurface;
-  static Color get nightElevated =>
-      AppThemeController.isCream ? _creamElevated : _nightElevated;
-  static Color get nightDivider =>
-      AppThemeController.isCream ? _creamDivider : _nightDivider;
-  static Color get moonlight =>
-      AppThemeController.isCream ? _inkBrown : _moonlight;
-  static Color get moonMuted =>
-      AppThemeController.isCream ? _mutedBrown : _moonMuted;
-  static const Color grape = Color(0xFF8A7CF7);
-  static const Color ocean = Color(0xFF45A6D8);
-  static const Color canvas = gardenMist;
-  static const Color surface = Color(0xFFFFFEFA);
-  static const Color surfaceMuted = Color(0xFFEEF7ED);
-  static const Color divider = gardenBorder;
-  static const Color positiveSurface = gardenSoft;
-  static const Color negativeSurface = Color(0xFFFFE8E2);
+  // ---- 主题分发的语义 token（夜场黑金 / 纸感米棕） ----
 
+  /// 品牌主强调：夜场香槟金 / 纸感印刷棕。
+  static Color get garden => _isCream ? _inkBrown : GoldPalette.gold;
+  static Color get gardenDeep =>
+      _isCream ? const Color(0xFF4A4238) : GoldPalette.goldSoft;
+  static Color get gardenInk => _isCream ? _inkBrown : GoldPalette.creamText;
+  static Color get gardenSoft => _isCream ? _creamSurface : GoldPalette.panel;
+  static Color get gardenMist =>
+      _isCream ? _creamCanvas : GoldPalette.nightDeep;
+  static Color get gardenBorder =>
+      _isCream ? _creamDivider : GoldPalette.goldHairline;
+  static Color get herb => garden;
+
+  /// Accent green — sage ink (墨绿) on the cream paper theme.
+  static Color get leaf => _isCream ? _leafCream : _leafDark;
+
+  /// 页面底与面板。
+  static Color get broth => _isCream ? _creamCanvas : GoldPalette.nightDeep;
+  static Color get cream => _isCream ? _creamSurface : GoldPalette.panel;
+  static Color get rice => _isCream ? _creamSurface : GoldPalette.panel;
+  static Color get canvas => gardenMist;
+  static Color get surface => _isCream ? _creamSurface : GoldPalette.panel;
+  static Color get surfaceMuted => _isCream ? _creamElevated : _nightElevated;
+  static Color get divider => gardenBorder;
+  static Color get positiveSurface =>
+      _isCream ? _creamElevated : GoldPalette.panel;
+
+  /// 深炭色：深色面板底 / 浅色底上的墨色文字。
+  static Color get char => _isCream ? _inkBrown : GoldPalette.panel;
+  static Color get ink => _isCream ? _inkBrown : GoldPalette.creamText;
+  static Color get inkSoft => _isCream ? _mutedBrown : GoldPalette.creamMuted;
+  static Color get inkMuted => _isCream ? _mutedBrown : GoldPalette.creamMuted;
+
+  /// 夜场语义（米色模式下映射为纸感对应位）。
+  static Color get night => _isCream ? _creamCanvas : _night;
+  static Color get nightSurface => _isCream ? _creamSurface : _nightSurface;
+  static Color get nightElevated => _isCream ? _creamElevated : _nightElevated;
+  static Color get nightDivider => _isCream ? _creamDivider : _nightDivider;
+  static Color get moonlight => _isCream ? _inkBrown : _moonlight;
+  static Color get moonMuted => _isCream ? _mutedBrown : _moonMuted;
+
+  // ---- 渐变 ----
   static const LinearGradient appetiteGradient = LinearGradient(
     colors: [chili, yolk],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
 
-  static const LinearGradient warmSurfaceGradient = LinearGradient(
-    colors: [cream, Color(0xFFFFEEE8)],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
+  static LinearGradient get warmSurfaceGradient => LinearGradient(
+        colors: _isCream
+            ? const [_creamSurface, _creamElevated]
+            : const [GoldPalette.panel, GoldPalette.nightDeep],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      );
 
-  static const LinearGradient gardenGradient = LinearGradient(
-    colors: [Color(0xFF39A85A), gardenDeep],
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-  );
+  static LinearGradient get gardenGradient => LinearGradient(
+        colors: _isCream
+            ? const [_inkBrown, Color(0xFF4A4238)]
+            : const [GoldPalette.gold, GoldPalette.goldSoft],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      );
 }
 
 class AppSurfaces {
@@ -253,19 +271,19 @@ class AppDecorations {
 
   static BoxDecoration card({
     Color color = AppSurfaces.glass,
-    Color borderColor = AppPalette.rice,
+    Color? borderColor,
     double radius = AppRadii.md,
   }) {
     return BoxDecoration(
       color: color,
       borderRadius: BorderRadius.circular(radius),
-      border: Border.all(color: borderColor),
+      border: Border.all(color: borderColor ?? AppPalette.rice),
     );
   }
 
   static BoxDecoration floating({
     Color color = AppSurfaces.glass,
-    Color borderColor = AppPalette.rice,
+    Color? borderColor,
     double radius = AppRadii.lg,
   }) {
     return card(
