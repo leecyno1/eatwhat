@@ -442,6 +442,56 @@ void main() {
     expect(find.text('这轮没有收束出合适的菜'), findsOneWidget);
   });
 
+  testWidgets('ResultPage 点「就吃这个」默认直达做菜页，不再弹重复的三选一页',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ResultPage(
+          imageGenerator: (_) async => null,
+          recommendations: const [
+            RecipeModel(
+              id: 'r1',
+              name: '番茄肥牛锅',
+              description: '热一点，有锅气。',
+              ingredients: ['番茄', '肥牛'],
+              steps: ['番茄炒出沙。', '加入热水煮 8 分钟。'],
+            ),
+          ],
+          // 不带 executionPreference → 无首选渠道，应回退到「菜谱直出」。
+          inferenceInput: const TasteInferenceInput(
+            likedTagIds: [],
+            likedTagLabels: ['家常'],
+            dislikedTagIds: [],
+            dislikedTagLabels: [],
+            skippedTagIds: [],
+            skippedTagLabels: [],
+            freeformRequirement: '',
+            historyPreferenceSummary: {},
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 900));
+
+    // 主 CTA 仍是明确的「就吃这个」。
+    expect(
+      find.byKey(const ValueKey('execution-entry-button')),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('execution-entry-button')));
+    await tester.pumpAndSettle();
+
+    // 一键直达做菜（菜谱直出）页，而不是重复的三选一「开吃方式」页。
+    expect(
+      find.byKey(const ValueKey('recipe-cooking-page-view')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('execution-home-page')), findsNothing);
+    expect(find.text('开吃方式'), findsNothing);
+  });
+
 
 
 

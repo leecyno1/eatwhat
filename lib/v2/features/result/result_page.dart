@@ -24,7 +24,6 @@ import 'package:eatwhat_app/v2/core/services/v2_recommendation_telemetry_service
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:eatwhat_app/v2/features/auth/auth_sheet.dart';
 import 'package:eatwhat_app/v2/features/details/recipe_detail_page.dart';
-import 'package:eatwhat_app/v2/features/execution/execution_sheet.dart';
 import 'package:eatwhat_app/v2/features/execution/meituan_menu_builder_page.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_choice_controller.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_choice_state_coordinator.dart';
@@ -565,8 +564,10 @@ class _ResultPageState extends State<ResultPage>
   void _confirm() {
     final currentChoice = _choiceController.currentChoice;
     if (currentChoice == null) return;
-    HapticFeedback.mediumImpact();
-    _feedback.recordRecipeChosen(currentChoice.id);
+    // 「就吃这个」= 一键直达首选渠道：结果页的三渠道卡片本身已是"点即直达"
+    // 的选择器（卡片上有「首选」徽标），这里不再打开重复的三选一中间页。
+    // 首选缺失时回退到「在家开火 / 菜谱直出」——离线必可用，永不落空。
+    // 震动、选菜与渠道埋点统一交给 _openExecutionShortcut，避免重复记录。
     unawaited(
       _recommendationTelemetry.recordSelection(
         context: _recommendationContext,
@@ -575,23 +576,10 @@ class _ResultPageState extends State<ResultPage>
         action: 'confirm',
       ),
     );
-    ExecutionSheet.show(
-      context,
-      recipe: currentChoice,
-      pairings: _pairings
-          .map(
-            (pairing) => PairingSelection(
-              category: pairing.category,
-              title: pairing.title,
-              subtitle: pairing.subtitle,
-            ),
-          )
-          .toList(),
-      sourceTags: _displayTags,
-      structuredConstraints: widget.inferenceInput?.structuredConstraints,
-      recommendationContext: _recommendationContext,
-      recommendationPosition: _positionFor(currentChoice),
-    );
+    final targetPath = _preferredPath == ExecutionPath.any
+        ? ExecutionPath.cook
+        : _preferredPath;
+    unawaited(_openExecutionShortcut(targetPath));
   }
 
   Future<void> _openExecutionShortcut(ExecutionPath path) async {
