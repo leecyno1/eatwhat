@@ -43,4 +43,23 @@ class ResultChoiceController {
       return item.id == recipe.id ? recipe : item;
     }).toList();
   }
+
+  /// Replaces the whole candidate list with an AI-refined ordering while
+  /// keeping the currently-viewed dish selected when it survives the
+  /// refinement (so an in-flight read isn't yanked away mid-look).
+  void replaceAllPreserving(List<RecipeModel> next) {
+    if (next.isEmpty) return;
+    final currentId = _currentChoice?.id;
+    _availableChoices = List<RecipeModel>.from(next);
+    RecipeModel? preserved;
+    if (currentId != null) {
+      for (final recipe in next) {
+        if (recipe.id == currentId) {
+          preserved = recipe;
+          break;
+        }
+      }
+    }
+    _currentChoice = preserved ?? next.first;
+  }
 }

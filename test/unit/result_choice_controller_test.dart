@@ -56,6 +56,68 @@ void main() {
       expect(controller.availableChoices.first.imageUrl, enriched.imageUrl);
       expect(controller.availableChoices.last.id, 'r2');
     });
+
+    test('replaceAllPreserving ignores an empty list', () {
+      final controller = ResultChoiceController([
+        _recipe('r1', '麻婆豆腐'),
+        _recipe('r2', '红烧肉'),
+      ]);
+
+      controller.replaceAllPreserving(const []);
+
+      expect(controller.availableChoices.map((r) => r.id), ['r1', 'r2']);
+      expect(controller.currentChoice?.id, 'r1');
+    });
+
+    test('replaceAllPreserving keeps the current dish when it survives', () {
+      final controller = ResultChoiceController([
+        _recipe('r1', '麻婆豆腐'),
+        _recipe('r2', '红烧肉'),
+        _recipe('r3', '宫保鸡丁'),
+      ]);
+      controller.select(_recipe('r2', '红烧肉'));
+
+      controller.replaceAllPreserving([
+        _recipe('r3', '宫保鸡丁'),
+        _recipe('r2', '红烧肉'),
+      ]);
+
+      expect(controller.availableChoices.map((r) => r.id), ['r3', 'r2']);
+      expect(controller.currentChoice?.id, 'r2');
+    });
+
+    test('replaceAllPreserving falls back to first when current is dropped',
+        () {
+      final controller = ResultChoiceController([
+        _recipe('r1', '麻婆豆腐'),
+        _recipe('r2', '红烧肉'),
+      ]);
+      controller.select(_recipe('r2', '红烧肉'));
+
+      controller.replaceAllPreserving([
+        _recipe('r9', '清蒸鲈鱼'),
+        _recipe('r8', '白灼虾'),
+      ]);
+
+      expect(controller.availableChoices.map((r) => r.id), ['r9', 'r8']);
+      expect(controller.currentChoice?.id, 'r9');
+    });
+
+    test('replaceAllPreserving replaces the whole candidate list', () {
+      final controller = ResultChoiceController([
+        _recipe('r1', '麻婆豆腐'),
+        _recipe('r2', '红烧肉'),
+        _recipe('r3', '宫保鸡丁'),
+      ]);
+
+      controller.replaceAllPreserving([
+        _recipe('r7', '番茄牛腩'),
+      ]);
+
+      expect(controller.availableChoices.map((r) => r.id), ['r7']);
+      expect(controller.currentChoice?.id, 'r7');
+      expect(controller.canReroll, isFalse);
+    });
   });
 }
 

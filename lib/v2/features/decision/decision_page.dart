@@ -176,7 +176,11 @@ class _DecisionPageState extends State<DecisionPage> {
         _finalCount = bundle.finalRecommendations.length;
         _stage = _DecisionStage.rerank;
       });
-      _finish();
+      // 把后台 AI 重排包（fullBundleFuture）一并交给结果页：本地包先秒出
+      // 导航，AI 包落地后由结果页换入重排候选与组合理由——修复此前
+      // fullBundleFuture 只更新了暂态文案、却被丢弃、导致结果页永远停在
+      // 本地候选（"AI 点菜师未启用"）的断线问题。
+      _finish(aiEnhancement: fullBundleFuture);
     } catch (error) {
       debugPrint('AI Error: $error');
       if (!mounted) return;

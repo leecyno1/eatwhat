@@ -192,6 +192,7 @@ class _ResultPageState extends State<ResultPage>
     _platformJumpService =
         widget.platformJumpService ?? const V2PlatformJumpService();
     _choiceController = ResultChoiceController(widget.recommendations);
+    _reasonsByRecipeId = Map<String, String>.from(widget.aiReasonsByRecipeId);
     _recommendationTelemetry = widget.recommendationTelemetryService ??
         V2RecommendationTelemetryService.instance;
     _recommendationContext = widget.recommendationContext ??
@@ -226,20 +227,57 @@ class _ResultPageState extends State<ResultPage>
 
   String? _enhancedAiSummary;
 
+  /// AI 点菜师后台重排状态：_aiEnhancing=增强中；_aiEnhanced=已换入 AI 结果。
+  bool _aiEnhancing = false;
+  bool _aiEnhanced = false;
+
+  /// 每道菜的推荐理由。初始沿用决策页带来的理由，AI 包落地后被覆盖合并。
+  late Map<String, String> _reasonsByRecipeId;
+
   /// Horizontal pager driving the big dish photos.
   final PageController _heroPageController = PageController();
 
   void _listenForAiEnhancement() {
     final future = widget.aiEnhancement;
     if (future == null) return;
+    setState(() => _aiEnhancing = true);
     future.then((bundle) {
       if (!mounted) return;
-      final summary = bundle.aiSummary?.trim();
-      if (summary == null || summary.isEmpty) return;
-      setState(() => _enhancedAiSummary = summary);
+      setState(() {
+        _aiEnhancing = false;
+        _aiEnhanced = true;
+        final summary = bundle.aiSummary?.trim();
+        if (summary != null && summary.isNotEmpty) {
+          _enhancedAiSummary = summary;
+        }
+        // 换入 AI 为每道菜写的组合理由（覆盖/合并本地理由）。
+        if (bundle.aiReasonsByRecipeId.isNotEmpty) {
+          _reasonsByRecipeId = {
+            ..._reasonsByRecipeId,
+            ...bundle.aiReasonsByRecipeId,
+          };
+        }
+        // 换入 AI 重排/融合后的候选（含智能组合菜）。
+        _applyAiCandidates(bundle.finalRecommendations);
+      });
     }).catchError((_) {
-      // The local copy stays in place if the background refine fails.
+      // 本地结果兜底：AI 失败仅熄灭"增强中"，不打扰现有本地候选。
+      if (!mounted) return;
+      setState(() => _aiEnhancing = false);
     });
+  }
+
+  /// AI 包落地后换入重排候选：保留当前正在看的菜（若仍在 AI 名单里），
+  /// 大图 PageView 落到其最新索引避免越界，并补齐新候选的缩略图与详情。
+  void _applyAiCandidates(List<RecipeModel> aiCandidates) {
+    if (aiCandidates.isEmpty) return;
+    _choiceController.replaceAllPreserving(aiCandidates);
+    final current = _choiceController.currentChoice;
+    if (current != null && _heroPageController.hasClients) {
+      _heroPageController.jumpToPage(_positionFor(current));
+    }
+    unawaited(_loadCandidateThumbnails());
+    _refreshCurrentChoiceState();
   }
 
   String? get _effectiveAiSummary {
@@ -379,12 +417,12 @@ class _ResultPageState extends State<ResultPage>
     try {
       final intro = await (widget.dishIntroLoader?.call(
             recipe,
-            widget.aiReasonsByRecipeId[recipe.id],
+            _reasonsByRecipeId[recipe.id],
             widget.inferenceInput?.freeformRequirement,
           ) ??
           _generation.generateDishIntroduction(
             recipe,
-            recommendationReason: widget.aiReasonsByRecipeId[recipe.id],
+            recommendationReason: _reasonsByRecipeId[recipe.id],
             userRequirement: widget.inferenceInput?.freeformRequirement,
           ));
       if (!mounted || _choiceController.currentChoice?.id != recipe.id) return;
@@ -884,6 +922,15 @@ class _ResultPageState extends State<ResultPage>
                           ),
                         ),
                         const SizedBox(height: AppSpacing.sm),
+                        // AI 点菜师增强状态：增强中 / 已重排。
+                        if (_aiEnhancing || _aiEnhanced) ...[
+                          _Reveal(
+                            controller: _entrance,
+                            interval: const (0.36, 0.74),
+                            child: _AiChefStatusChip(enhancing: _aiEnhancing),
+                          ),
+                          const SizedBox(height: AppSpacing.xs),
+                        ],
                         // One line of gold: why the chef picked this dish.
                         _Reveal(
                           controller: _entrance,
@@ -903,7 +950,7 @@ class _ResultPageState extends State<ResultPage>
                               currentChoiceId: currentChoice.id,
                               choices: choices,
                               recalledCount: widget.recalledCount,
-                              aiReasonsByRecipeId: widget.aiReasonsByRecipeId,
+                              aiReasonsByRecipeId: _reasonsByRecipeId,
                               thumbUrlByRecipeId: _thumbUrlByRecipeId,
                               onSelect: _selectChoiceWithHero,
                             ),
@@ -942,7 +989,7 @@ class _ResultPageState extends State<ResultPage>
       return '这轮没有收束出合适的菜，请调整口味签名后再试一次。';
     }
 
-    final reason = widget.aiReasonsByRecipeId[currentChoice.id];
+    final reason = _reasonsByRecipeId[currentChoice.id];
     if (reason != null && reason.trim().isNotEmpty) {
       return reason.trim();
     }
@@ -1090,6 +1137,54 @@ class _GoldTagChip extends StatelessWidget {
           letterSpacing: 0.8,
         ),
       ),
+    );
+  }
+}
+
+/// AI 点菜师增强状态徽章：黑玻璃体 + 金发丝描边 + 柔金文字。增强中显示
+/// 「增强中…」，AI 包落地后切为「已重排」，让后台换菜不显突兀。
+class _AiChefStatusChip extends StatelessWidget {
+  const _AiChefStatusChip({required this.enhancing});
+
+  final bool enhancing;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          key: ValueKey(enhancing ? 'ai-chef-enhancing' : 'ai-chef-enhanced'),
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+          decoration: BoxDecoration(
+            color: Colors.black.withValues(alpha: 0.42),
+            borderRadius: AppRadii.capsule,
+            border: Border.all(color: GoldPalette.goldHairline),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                enhancing
+                    ? Icons.auto_awesome_outlined
+                    : Icons.auto_awesome_rounded,
+                size: 12,
+                color: GoldPalette.gold,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                enhancing ? 'AI 点菜师增强中…' : 'AI 点菜师已重排',
+                style: const TextStyle(
+                  color: GoldPalette.goldSoft,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.8,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
