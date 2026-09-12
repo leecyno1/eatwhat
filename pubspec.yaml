@@ -90,14 +90,12 @@ dependencies:
 
   # 动画效果优化 - 已更新
   flutter_animate: ^4.5.0
-  lottie: ^3.2.0
 
   # 现代化UI库 - 已更新版本
   glassmorphism: ^3.0.0
   flutter_neumorphic: ^3.2.0
   flutter_staggered_animations: ^1.1.1
   shimmer: ^3.0.0
-  card_swiper: ^3.0.1
 
   # iPhone适配和高级UI - 已更新
   flutter_screenutil: ^5.9.3
@@ -117,9 +115,6 @@ dependencies:
   sqflite: ^2.4.1
   path: ^1.9.1
 
-  # 高级动画 - 使用兼容版本
-  rive: ^0.13.7
-
   # 现代化设计组件 - 已更新
   flutter_slidable: ^3.1.1
 
@@ -133,9 +128,6 @@ dependencies:
   # 错误监控和分析 - 核心监控依赖
   sentry_flutter: ^8.9.0  # 崩溃监控
 
-  # 依赖注入 - 为架构升级准备
-  get_it: ^8.0.2
-  injectable: ^2.4.4
   freezed_annotation: ^2.4.4
   flame_forge2d: ^0.19.2+2
   google_fonts: ^6.3.2
@@ -166,9 +158,6 @@ dev_dependencies:
   sqflite_common_ffi: ^2.3.4+4
   integration_test:
     sdk: flutter
-
-  # 依赖注入代码生成
-  injectable_generator: ^2.6.2
 
   # 代码分析增强
   very_good_analysis: ^6.0.0  # 更严格的代码分析规则

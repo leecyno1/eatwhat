@@ -1,21 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:get_it/get_it.dart';
 
 /// 通用测试设置
 class TestSetup {
   static void setupAll() {
     TestWidgetsFlutterBinding.ensureInitialized();
-    _setupServiceLocator();
   }
 
-  static void tearDownAll() {
-    GetIt.instance.reset();
-  }
-
-  static void _setupServiceLocator() {
-    // TODO: 注册测试用的Service
-    // 例如：GetIt.instance.registerSingleton<AuthService>(FakeAuthService());
-  }
+  static void tearDownAll() {}
 }
 
 /// 测试基础Matcher
