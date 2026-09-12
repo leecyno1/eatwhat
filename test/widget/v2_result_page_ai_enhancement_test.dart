@@ -1,8 +1,10 @@
 import 'dart:async';
 
+import 'package:eatwhat_app/core/models/analytics_event.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recommendation_resolution.dart';
 import 'package:eatwhat_app/v2/core/services/v2_phase2_recommendation_service.dart';
+import 'package:eatwhat_app/v2/core/services/v2_recommendation_telemetry_service.dart';
 import 'package:eatwhat_app/v2/features/result/result_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -103,5 +105,80 @@ void main() {
     expect(find.byKey(const ValueKey('ai-chef-enhancing')), findsNothing);
     expect(find.byKey(const ValueKey('ai-chef-enhanced')), findsNothing);
     expect(find.text('本地理由'), findsOneWidget);
+  });
+
+  group('遥测归因：程序性翻页不污染 hero_swipe', () {
+    late List<String> capturedActions;
+
+    V2RecommendationTelemetryService capturingTelemetry() {
+      return V2RecommendationTelemetryService(
+        sink: (type, properties) async {
+          if (type == AnalyticsEventType.recommendationClicked) {
+            capturedActions.add('${properties['action']}');
+          }
+        },
+      );
+    }
+
+    setUp(() => capturedActions = <String>[]);
+
+    testWidgets('缩略图点选途经中间页只记一次 candidate_tap', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ResultPage(
+            recommendations: const [
+              RecipeModel(id: 'r1', name: '麻婆豆腐', description: '一'),
+              RecipeModel(id: 'r2', name: '红烧肉', description: '二'),
+              RecipeModel(id: 'r3', name: '宫保鸡丁', description: '三'),
+              RecipeModel(id: 'r4', name: '清蒸鲈鱼', description: '四'),
+            ],
+            recommendationTelemetryService: capturingTelemetry(),
+          ),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 700));
+
+      await tester.tap(find.byKey(const ValueKey('result-candidate-r4')));
+      await tester.pumpAndSettle();
+
+      expect(capturedActions, ['candidate_tap']);
+      expect(capturedActions, isNot(contains('hero_swipe')));
+    });
+
+    testWidgets('AI 换菜跳页不产生 hero_swipe', (tester) async {
+      final completer = Completer<Phase2RecommendationBundle>();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ResultPage(
+            recommendations: const [
+              RecipeModel(id: 'r1', name: '麻婆豆腐', description: '一'),
+              RecipeModel(id: 'r2', name: '红烧肉', description: '二'),
+            ],
+            aiEnhancement: completer.future,
+            recommendationTelemetryService: capturingTelemetry(),
+          ),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 700));
+
+      completer.complete(
+        const Phase2RecommendationBundle(
+          recallLabels: ['辣'],
+          recalledCount: 2,
+          finalRecommendations: [
+            RecipeModel(id: 'r2', name: '红烧肉', description: '二'),
+            RecipeModel(id: 'r1', name: '麻婆豆腐', description: '一'),
+          ],
+          aiReasonsByRecipeId: {},
+          aiSummary: null,
+          isEstimated: false,
+          resolutionStatus: RecommendationResolutionStatus.aiResolved,
+          primarySource: 'unified_db',
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(capturedActions.where((a) => a == 'hero_swipe'), isEmpty);
+    });
   });
 }

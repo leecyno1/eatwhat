@@ -237,6 +237,11 @@ class _ResultPageState extends State<ResultPage>
   /// Horizontal pager driving the big dish photos.
   final PageController _heroPageController = PageController();
 
+  /// 程序性翻页期间静默 hero_swipe 埋点：AI 换菜的 jumpToPage 与缩略图点选
+  /// 的 animateToPage 都会触发 onPageChanged（后者还会途经中间页逐个触发），
+  /// 这些是代码驱动的翻页，不能记成用户主动滑动，否则推荐漏斗数据失真。
+  bool _muteHeroPageTelemetry = false;
+
   void _listenForAiEnhancement() {
     final future = widget.aiEnhancement;
     if (future == null) return;
@@ -274,7 +279,12 @@ class _ResultPageState extends State<ResultPage>
     _choiceController.replaceAllPreserving(aiCandidates);
     final current = _choiceController.currentChoice;
     if (current != null && _heroPageController.hasClients) {
+      _muteHeroPageTelemetry = true;
       _heroPageController.jumpToPage(_positionFor(current));
+      // jumpToPage 的 onPageChanged 回调在本帧布局时触发，帧末再解除静默。
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _muteHeroPageTelemetry = false;
+      });
     }
     unawaited(_loadCandidateThumbnails());
     _refreshCurrentChoiceState();
@@ -565,28 +575,37 @@ class _ResultPageState extends State<ResultPage>
     if (index < 0) return;
     _selectChoice(recipe);
     if (_heroPageController.hasClients) {
-      _heroPageController.animateToPage(
+      // 滑动动画途经的中间页会逐个触发 onPageChanged——静默埋点直到动画结束。
+      _muteHeroPageTelemetry = true;
+      _heroPageController
+          .animateToPage(
         index,
         duration: AppMotion.standard,
         curve: AppMotion.enter,
-      );
+      )
+          .whenComplete(() {
+        _muteHeroPageTelemetry = false;
+      });
     }
   }
 
   void _selectChoice(
     RecipeModel recipe, {
     String action = 'candidate_tap',
+    bool recordTelemetry = true,
   }) {
     if (!_choiceController.select(recipe)) return;
     HapticFeedback.selectionClick();
-    unawaited(
-      _recommendationTelemetry.recordSelection(
-        context: _recommendationContext,
-        recipeId: recipe.id,
-        position: _positionFor(recipe),
-        action: action,
-      ),
-    );
+    if (recordTelemetry) {
+      unawaited(
+        _recommendationTelemetry.recordSelection(
+          context: _recommendationContext,
+          recipeId: recipe.id,
+          position: _positionFor(recipe),
+          action: action,
+        ),
+      );
+    }
     final selectionState = _choiceStateCoordinator.prepareSelection(
       recipeId: recipe.id,
       enrichmentController: _enrichmentController,
@@ -854,6 +873,7 @@ class _ResultPageState extends State<ResultPage>
                     onPageChanged: (index) => _selectChoice(
                       choices[index],
                       action: 'hero_swipe',
+                      recordTelemetry: !_muteHeroPageTelemetry,
                     ),
                     itemBuilder: (context, index) {
                       final recipe = choices[index];

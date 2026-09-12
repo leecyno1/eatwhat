@@ -593,16 +593,31 @@ class _HomePageState extends State<HomePage> {
       height: 46,
       child: FilledButton.icon(
         key: const ValueKey('home-start-inference-button'),
-        onPressed: canStart && !_isTransitioning ? _submitGeneration : null,
+        // 零选择时保持可点：点击弹出引导提示，比静默禁用更能让新用户
+        // 明白下一步该做什么。
+        onPressed: _isTransitioning
+            ? null
+            : () {
+                if (canStart) {
+                  _submitGeneration();
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('先收下几个口味气泡，或写一句今天想吃的'),
+                    ),
+                  );
+                }
+              },
         icon: const Icon(Icons.auto_awesome_rounded, size: 17),
         label: Text(
           selectionCount == 0 ? '生成建议' : '生成 · $selectionCount',
           style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
         ),
         style: FilledButton.styleFrom(
-          backgroundColor: AppPalette.leaf,
+          backgroundColor:
+              canStart ? AppPalette.leaf : AppPalette.nightElevated,
           disabledBackgroundColor: AppPalette.nightElevated,
-          foregroundColor: AppPalette.night,
+          foregroundColor: canStart ? AppPalette.night : AppPalette.moonMuted,
           disabledForegroundColor: AppPalette.moonMuted,
           elevation: canStart ? 5 : 0,
           shadowColor: AppPalette.leaf.withValues(alpha: 0.3),
