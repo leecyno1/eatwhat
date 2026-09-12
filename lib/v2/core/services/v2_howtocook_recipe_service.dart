@@ -111,6 +111,9 @@ class V2HowToCookRecipeService {
       } else if (name.contains(query)) {
         score = 1;
       }
+      // 0 分 = 与目标菜名毫无文本关系，绝不接受——否则库里随便返回一行
+      // 都会把它的步骤错配给查询菜（AI 融合新菜最容易踩中）。
+      if (score == 0) continue;
       if (score > bestScore) {
         best = row;
         bestScore = score;

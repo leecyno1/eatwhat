@@ -519,7 +519,8 @@ class GenerationService {
         '（必须是把它们组合成一道菜，不是各做一道）。\n'
         '只输出 JSON：{"dishes":[{"name":"菜名",'
         '"reason":"一句话为什么这样搭（20字内）",'
-        '"ingredients":["主料"],"tags":["口味"]}]}';
+        '"ingredients":["主料"],"tags":["口味"],'
+        '"steps":["第一步做法","第二步做法","……4到6步，每步一句具体可执行的话"]}]}';
 
     try {
       final jsonMap = await _chatJson(
@@ -527,42 +528,62 @@ class GenerationService {
         user: prompt,
         temperature: 0.7,
       );
-      final raw = jsonMap['dishes'];
-      if (raw is! List) return const [];
-      final stamp = DateTime.now().millisecondsSinceEpoch;
-      final dishes = <RecipeModel>[];
-      var index = 0;
-      for (final item in raw) {
-        if (item is! Map) continue;
-        final map = item.map((k, v) => MapEntry(k.toString(), v));
-        final name = (map['name']?.toString() ?? '').trim();
-        if (name.isEmpty) continue;
-        final reason = (map['reason']?.toString() ?? '').trim();
-        dishes.add(
-          RecipeModel(
-            id: 'ai_fusion_${stamp}_$index',
-            name: name,
-            description:
-                reason.isEmpty ? '把${cleanedTags.join('、')}组合成的一道创意菜。' : reason,
-            ingredients: (map['ingredients'] as List? ?? const [])
-                .map((e) => e.toString())
-                .where((e) => e.isNotEmpty)
-                .take(8)
-                .toList(),
-            tags: (map['tags'] as List? ?? const [])
-                .map((e) => e.toString())
-                .where((e) => e.isNotEmpty)
-                .take(6)
-                .toList(),
-            source: 'ai_fusion',
-          ),
-        );
-        index++;
-      }
-      return dishes;
+      return parseFusionDishes(jsonMap, cleanedTags);
     } catch (_) {
       return const [];
     }
+  }
+
+  /// 把融合生成的 JSON 响应解析为菜品模型。steps 兼容字符串数组与
+  /// {"description": ...} 对象数组两种形态；抽成静态方法以便单测。
+  static List<RecipeModel> parseFusionDishes(
+    Map<String, dynamic> jsonMap,
+    List<String> cleanedTags,
+  ) {
+    final raw = jsonMap['dishes'];
+    if (raw is! List) return const [];
+    final stamp = DateTime.now().millisecondsSinceEpoch;
+    final dishes = <RecipeModel>[];
+    var index = 0;
+    for (final item in raw) {
+      if (item is! Map) continue;
+      final map = item.map((k, v) => MapEntry(k.toString(), v));
+      final name = (map['name']?.toString() ?? '').trim();
+      if (name.isEmpty) continue;
+      final reason = (map['reason']?.toString() ?? '').trim();
+      dishes.add(
+        RecipeModel(
+          id: 'ai_fusion_${stamp}_$index',
+          name: name,
+          description: reason.isEmpty
+              ? '把${cleanedTags.join('、')}组合成的一道创意菜。'
+              : reason,
+          ingredients: (map['ingredients'] as List? ?? const [])
+              .map((e) => e.toString())
+              .where((e) => e.isNotEmpty)
+              .take(8)
+              .toList(),
+          steps: (map['steps'] as List? ?? const [])
+              .map((e) {
+                if (e is Map && e['description'] != null) {
+                  return e['description'].toString();
+                }
+                return e.toString();
+              })
+              .where((e) => e.trim().isNotEmpty)
+              .take(8)
+              .toList(),
+          tags: (map['tags'] as List? ?? const [])
+              .map((e) => e.toString())
+              .where((e) => e.isNotEmpty)
+              .take(6)
+              .toList(),
+          source: 'ai_fusion',
+        ),
+      );
+      index++;
+    }
+    return dishes;
   }
 
   Future<RecipeModel> generateRecipeForDish({

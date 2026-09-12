@@ -861,4 +861,55 @@ void main() {
 
     expect(find.text('完成 1/2'), findsOneWidget);
   });
+
+  testWidgets('AI 融合菜自带步骤不被库匹配覆盖，做菜模式直接可用', (tester) async {
+    // 即便库里能搜到一道名字相近的菜，融合菜也应保留 AI 生成的步骤，
+    // 做菜模式（就吃这个直达）不应出现「没有可执行步骤」。
+    final service = V2HowToCookRecipeService(
+      searchLoader: (query, limit) async => [
+        {
+          'id': 'htc_unrelated',
+          'name': '可乐鸡翅',
+          'description': '库中无关的菜',
+        },
+      ],
+      completeLoader: (recipeId) async => {
+        'id': 'htc_unrelated',
+        'name': '可乐鸡翅',
+        'description': '库中无关的菜',
+        'ingredients': [
+          {'name': '鸡翅', 'amount': '6', 'unit': '只'},
+        ],
+        'steps': [
+          {'description': '不该覆盖融合菜的库步骤'},
+        ],
+      },
+      assetIndexLoader: () async => '{"items":[]}',
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: RecipeDetailPage(
+          recipe: const RecipeModel(
+            id: 'ai_fusion_1',
+            name: '麻辣豆腐牛肉粒盖饭',
+            description: '麻辣鲜香叠加牛肉的满足感',
+            ingredients: ['牛肉粒', '嫩豆腐', '米饭'],
+            steps: ['牛肉粒滑油至变色。', '下豆腐轻推入味。', '盖在热米饭上。'],
+            source: 'ai_fusion',
+          ),
+          startInCookingMode: true,
+          howToCookRecipeService: service,
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(find.byKey(const ValueKey('recipe-cooking-page-view')),
+        findsOneWidget);
+    expect(find.text('牛肉粒滑油至变色。'), findsOneWidget);
+    expect(find.text('不该覆盖融合菜的库步骤'), findsNothing);
+    expect(find.text('这道菜暂时没有可执行步骤。'), findsNothing);
+  });
 }

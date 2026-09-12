@@ -73,15 +73,22 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
 
   Future<void> _bootstrapHowToCookDetail() async {
     setState(() => _loadingHowToCookDetail = true);
+    // AI 融合菜自带模型生成的食材与步骤，HowToCook 库按名匹配必空或错配；
+    // 自带内容完整时跳过库匹配，避免被库中别的菜的步骤覆盖。
+    final hasAiAuthoredBody = _recipe.source == 'ai_fusion' &&
+        _recipe.ingredients.isNotEmpty &&
+        _recipe.steps.isNotEmpty;
     final hasAuthoritativeHowToCookBody = _isHowToCookSource(_recipe) &&
         _recipe.ingredients.isNotEmpty &&
         _recipe.steps.isNotEmpty;
-    final detail = hasAuthoritativeHowToCookBody
+    final skipLibraryLookup =
+        hasAuthoritativeHowToCookBody || hasAiAuthoredBody;
+    final detail = skipLibraryLookup
         ? null
         : await _howToCookRecipeService.findBestDetailForRecipe(_recipe);
     final enriched = hasAuthoritativeHowToCookBody
         ? _recipe.copyWith(source: 'HowToCook')
-        : detail == null
+        : (skipLibraryLookup || detail == null)
             ? _recipe
             : _recipe.copyWith(
                 description: detail.description.trim().isNotEmpty

@@ -263,4 +263,37 @@ void main() {
     expect(related, hasLength(1));
     expect(related.first.name, '可乐鸡翅');
   });
+
+  test('与目标菜名毫无关系的搜索结果不再错配（score=0 拒绝）', () async {
+    // 融合新菜名在库中无匹配时，即便底层搜索返回了无关行，也不能把
+    // 它的步骤安到查询菜头上。
+    final service = V2HowToCookRecipeService(
+      searchLoader: (query, limit) async => [
+        {
+          'id': 'htc_unrelated',
+          'name': '可乐鸡翅',
+          'description': '完全无关的菜',
+        },
+      ],
+      completeLoader: (recipeId) async => {
+        'id': 'htc_unrelated',
+        'name': '可乐鸡翅',
+        'steps': [
+          {'description': '不该出现的步骤'},
+        ],
+      },
+      assetIndexLoader: () async => '{"items":[]}',
+    );
+
+    final detail = await service.findBestDetailForRecipe(
+      const RecipeModel(
+        id: 'ai_fusion_1',
+        name: '麻辣豆腐牛肉粒盖饭',
+        description: 'AI 融合菜',
+        source: 'ai_fusion',
+      ),
+    );
+
+    expect(detail, isNull);
+  });
 }
