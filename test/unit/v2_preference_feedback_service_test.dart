@@ -49,4 +49,71 @@ void main() {
     expect(await service.getTagScore('HowToCook'), 0);
     expect(await service.getTagScore('酸梅汤'), 0);
   });
+
+  group('偏好分数时间衰减', () {
+    late DateTime fakeNow;
+
+    setUp(() {
+      fakeNow = DateTime(2026, 1, 1, 12);
+      V2PreferenceFeedbackService.debugClock = () => fakeNow;
+    });
+
+    tearDown(() {
+      V2PreferenceFeedbackService.debugClock = null;
+    });
+
+    test('即刻读取不衰减', () async {
+      final service = V2PreferenceFeedbackService.instance;
+      await service.recordPositiveTag('f_spicy', delta: 4);
+
+      expect(await service.getTagScore('f_spicy'), 4);
+    });
+
+    test('30 天前半衰，90 天约剩 1/8', () async {
+      final service = V2PreferenceFeedbackService.instance;
+      await service.recordPositiveTag('f_spicy', delta: 8);
+
+      fakeNow = fakeNow.add(const Duration(days: 30));
+      expect(await service.getTagScore('f_spicy'), 4);
+
+      fakeNow = fakeNow.add(const Duration(days: 60));
+      expect(await service.getTagScore('f_spicy'), 1);
+    });
+
+    test('衰减后新增量以全值入账', () async {
+      final service = V2PreferenceFeedbackService.instance;
+      await service.recordPositiveTag('f_spicy', delta: 4);
+
+      fakeNow = fakeNow.add(const Duration(days: 30));
+      expect(await service.getTagScore('f_spicy'), 2);
+
+      await service.recordPositiveTag('f_spicy', delta: 1);
+      expect(await service.getTagScore('f_spicy'), 3);
+    });
+
+    test('衰减到近零的旧信号在下次写入时被遗忘', () async {
+      final service = V2PreferenceFeedbackService.instance;
+      await service.recordPositiveTag('f_spicy', delta: 1);
+
+      fakeNow = fakeNow.add(const Duration(days: 200));
+      await service.recordPositiveTag('c_sichuan', delta: 1);
+
+      final scores = await service.getTagScores();
+      expect(scores.containsKey('f_spicy'), isFalse);
+      expect(scores['c_sichuan'], 1);
+    });
+
+    test('旧格式（无时间戳）按新鲜分数迁移，升级不丢历史', () async {
+      SharedPreferences.setMockInitialValues({
+        'v2_tag_scores_json': '{"f_spicy": 5}',
+      });
+      final service = V2PreferenceFeedbackService.instance;
+
+      expect(await service.getTagScore('f_spicy'), 5);
+
+      fakeNow = fakeNow.add(const Duration(days: 30));
+      // 5 × 0.5 = 2.5，round 半值远离零 → 3。
+      expect(await service.getTagScore('f_spicy'), 3);
+    });
+  });
 }
