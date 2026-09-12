@@ -351,7 +351,7 @@ class V2Phase2RecommendationService {
     final reasonsById = <String, String>{};
     for (final dish in generated) {
       final matched = await _matchLibraryDish(dish);
-      final recipe = matched ?? await _withGeneratedImage(dish);
+      final recipe = matched ?? await _withLibraryCousinImage(dish);
       resolved.add(recipe);
       if (dish.description.trim().isNotEmpty) {
         reasonsById[recipe.id] = dish.description.trim();
@@ -394,6 +394,72 @@ class V2Phase2RecommendationService {
     final nb = norm(b);
     if (na.isEmpty || nb.isEmpty) return false;
     return na == nb || na.contains(nb) || nb.contains(na);
+  }
+
+  /// 库里没有这道菜：先「借近亲图」——融合菜是 AI 现造的，不可能有预构建
+  /// 图，但它的食材/口味与库中某道菜高度接近时（如麻辣豆腐牛肉粒盖饭
+  /// 之于麻婆豆腐），借用近亲的预构建图比花字盘更有食欲，也符合
+  /// 「图片必须预构建、禁在线生成」的项目规则。借不到再退到在线生图。
+  Future<RecipeModel> _withLibraryCousinImage(RecipeModel dish) async {
+    if (dish.imageUrl?.trim().isNotEmpty ?? false) return dish;
+    final terms = {
+      ...dish.ingredients.take(3),
+      ...dish.tags.take(2),
+    }.where((e) => e.trim().isNotEmpty).toList();
+    if (terms.isNotEmpty) {
+      final candidates = <String, RecipeModel>{};
+      for (final term in terms) {
+        try {
+          final rows = await UnifiedRecipeDatabaseService.instance
+              .searchRecipes(term, limit: 5);
+          for (final row in rows) {
+            final candidate = RecipeModel.fromUnifiedDbRow(row);
+            if (candidate.imageUrl?.trim().isNotEmpty ?? false) {
+              candidates[candidate.id] = candidate;
+            }
+          }
+        } catch (_) {
+          // 单个词检索失败不影响其余词。
+        }
+      }
+      final cousin = pickImageCousin(dish, candidates.values);
+      if (cousin != null) return dish.copyWith(imageUrl: cousin.imageUrl);
+    }
+    return _withGeneratedImage(dish);
+  }
+
+  /// 在库候选中为融合菜挑选「近亲」：食材/口味信号重叠 ≥2 才借图，
+  /// 避免仅凭一个词撞上就挂上牵强配图。抽成静态纯函数以便单测。
+  static RecipeModel? pickImageCousin(
+    RecipeModel fusion,
+    Iterable<RecipeModel> candidates,
+  ) {
+    String norm(String value) =>
+        value.replaceAll(RegExp(r'[\s·\-—（）()]'), '').trim();
+    final tokens = {
+      ...fusion.ingredients.map(norm),
+      ...fusion.tags.map(norm),
+    }.where((e) => e.isNotEmpty).toSet();
+    if (tokens.isEmpty) return null;
+
+    RecipeModel? best;
+    var bestScore = 1; // 至少 2 个信号重叠才借图
+    for (final candidate in candidates) {
+      final haystack = norm(
+        '${candidate.name} '
+        '${candidate.ingredients.join(' ')} '
+        '${candidate.tags.join(' ')}',
+      );
+      var score = 0;
+      for (final token in tokens) {
+        if (haystack.contains(token)) score++;
+      }
+      if (score > bestScore) {
+        best = candidate;
+        bestScore = score;
+      }
+    }
+    return best;
   }
 
   /// 库里没有这道菜：让模型直接为它生成配图。

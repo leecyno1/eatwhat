@@ -540,6 +540,80 @@ void main() {
     expect(result.primarySource, 'unified_db');
     expect(result.finalRecommendations, isEmpty);
   });
+
+  group('pickImageCousin 融合菜借近亲图', () {
+    const fusion = RecipeModel(
+      id: 'ai_fusion_1',
+      name: '麻辣豆腐牛肉粒盖饭',
+      description: '麻辣鲜香',
+      ingredients: ['牛肉粒', '嫩豆腐'],
+      tags: ['麻辣'],
+      source: 'ai_fusion',
+    );
+
+    test('信号重叠 ≥2 时借到近亲的图', () {
+      final cousin = V2Phase2RecommendationService.pickImageCousin(
+        fusion,
+        const [
+          RecipeModel(
+            id: '42',
+            name: '麻婆豆腐',
+            description: '川菜经典',
+            ingredients: ['嫩豆腐', '牛肉末'],
+            tags: ['麻辣', '下饭'],
+            imageUrl: 'assets/images/prebuilt_dishes/mapo.jpg',
+          ),
+        ],
+      );
+
+      expect(cousin?.id, '42');
+      expect(cousin?.imageUrl, 'assets/images/prebuilt_dishes/mapo.jpg');
+    });
+
+    test('仅 1 个信号重叠不借图，避免牵强配图', () {
+      final cousin = V2Phase2RecommendationService.pickImageCousin(
+        fusion,
+        const [
+          RecipeModel(
+            id: '7',
+            name: '清蒸鲈鱼',
+            description: '清淡',
+            ingredients: ['鲈鱼'],
+            tags: ['清淡'],
+            imageUrl: 'assets/images/prebuilt_dishes/fish.jpg',
+          ),
+        ],
+      );
+
+      expect(cousin, isNull);
+    });
+
+    test('无可用信号或无候选时返回 null', () {
+      expect(
+        V2Phase2RecommendationService.pickImageCousin(
+          const RecipeModel(
+            id: 'ai_fusion_2',
+            name: '无名',
+            description: '',
+            source: 'ai_fusion',
+          ),
+          const [
+            RecipeModel(
+              id: '42',
+              name: '麻婆豆腐',
+              description: '',
+              imageUrl: 'a.jpg',
+            ),
+          ],
+        ),
+        isNull,
+      );
+      expect(
+        V2Phase2RecommendationService.pickImageCousin(fusion, const []),
+        isNull,
+      );
+    });
+  });
 }
 
 TasteInferenceInput _input() {
