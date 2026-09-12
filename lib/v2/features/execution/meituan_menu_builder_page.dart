@@ -27,16 +27,55 @@ class MeituanMenuBuilderPage extends StatefulWidget {
   State<MeituanMenuBuilderPage> createState() => _MeituanMenuBuilderPageState();
 }
 
-class _MeituanMenuBuilderPageState extends State<MeituanMenuBuilderPage> {
+class _MeituanMenuBuilderPageState extends State<MeituanMenuBuilderPage>
+    with WidgetsBindingObserver {
   late final MeituanDeliveryOrderClient _client;
   late Future<MeituanMerchantSearchResult> _future;
   GeoPoint? _location;
 
+  /// 已跳去外部浏览器授权、等待回前台核验结果。
+  bool _awaitingOAuthResult = false;
+
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _client = widget.client ?? MeituanDeliveryOrderClient();
     _future = _search();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && _awaitingOAuthResult) {
+      _awaitingOAuthResult = false;
+      _verifyOAuthResult();
+    }
+  }
+
+  /// 从外部浏览器授权回来：核验授权是否真正完成。此前授权失败（如美团
+  /// 授权页空白）时 App 毫无反馈，用户只能干等。
+  Future<void> _verifyOAuthResult() async {
+    try {
+      final status = await _client.getOAuthStatus();
+      if (!mounted) return;
+      if (status.connected) {
+        _refresh();
+        return;
+      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('授权未完成：请在美团授权页点「同意授权」；若授权页空白打不开，请返回后重试'),
+        ),
+      );
+    } catch (_) {
+      // 状态查询失败不打扰用户，授权页仍可重试。
+    }
   }
 
   Future<MeituanMerchantSearchResult> _search() async {
@@ -56,7 +95,9 @@ class _MeituanMenuBuilderPageState extends State<MeituanMenuBuilderPage> {
         authorizationUri,
         mode: LaunchMode.externalApplication,
       );
-      if (!launched && mounted) {
+      if (launched) {
+        _awaitingOAuthResult = true;
+      } else if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('暂时无法打开美团服务授权页')),
         );
@@ -77,7 +118,10 @@ class _MeituanMenuBuilderPageState extends State<MeituanMenuBuilderPage> {
   }
 
   void _refresh() {
-    setState(() => _future = _search());
+    // 注意：setState 回调不得返回 Future（_search 是 async），否则直接抛错。
+    setState(() {
+      _future = _search();
+    });
   }
 
   Widget _oauthRequiredState() {
