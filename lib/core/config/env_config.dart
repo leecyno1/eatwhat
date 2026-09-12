@@ -68,6 +68,8 @@ class EnvConfig {
     'MINIMAX_API_KEY': String.fromEnvironment('MINIMAX_API_KEY'),
     'MINIMAX_API_URL': String.fromEnvironment('MINIMAX_API_URL'),
     'MINIMAX_IMAGE_MODEL': String.fromEnvironment('MINIMAX_IMAGE_MODEL'),
+    'MINIMAX_CHAT_API_URL': String.fromEnvironment('MINIMAX_CHAT_API_URL'),
+    'MINIMAX_CHAT_MODEL': String.fromEnvironment('MINIMAX_CHAT_MODEL'),
     'PREBUILT_IMAGE_INDEX_URL':
         String.fromEnvironment('PREBUILT_IMAGE_INDEX_URL'),
     'PREBUILT_IMAGE_BASE_URL':
@@ -112,6 +114,8 @@ class EnvConfig {
   }
 
   // AI服务配置
+  // 已弃用：AI 服务独家使用 MiniMax（MINIMAX_API_KEY / MINIMAX_CHAT_API_URL）。
+  // 以下两个 getter 仅为兼容仍引用它们的旧代码保留，新代码禁止使用。
   static String get siliconFlowApiKey => _readEnv('SILICONFLOW_API_KEY');
 
   static String get siliconFlowApiUrl => _readEnv('SILICONFLOW_API_URL',
@@ -305,8 +309,7 @@ class EnvConfig {
   /// 验证必要的环境变量是否已配置
   static bool validateConfig() {
     final requiredVars = [
-      'SILICONFLOW_API_KEY',
-      'SILICONFLOW_API_URL',
+      'MINIMAX_API_KEY',
     ];
 
     final securityVars = [
@@ -339,7 +342,7 @@ class EnvConfig {
 
   /// 验证API密钥是否安全
   static bool validateApiKeySecurity() {
-    final apiKey = siliconFlowApiKey;
+    final apiKey = minimaxApiKey;
 
     // 检查API密钥是否为空
     if (apiKey.isEmpty) {
@@ -384,7 +387,7 @@ class EnvConfig {
     if (!debugMode) return;
 
     debugPrint('=== EnvConfig ===');
-    debugPrint('API URL: $siliconFlowApiUrl');
+    debugPrint('AI Chat API URL: $minimaxChatApiUrl');
     debugPrint('Model: $aiModelName');
     debugPrint('Max Tokens: $aiMaxTokens');
     debugPrint('Temperature: $aiTemperature');
