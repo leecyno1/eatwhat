@@ -53,6 +53,10 @@ class EnvConfig {
         String.fromEnvironment('DIANPING_DINE_IN_MATCH_PATH'),
     'JD_DELIVERY_MATCH_PATH': String.fromEnvironment('JD_DELIVERY_MATCH_PATH'),
     'EATWHAT_AUTH_BASE_URL': String.fromEnvironment('EATWHAT_AUTH_BASE_URL'),
+    'MEMBERSHIP_SIGNING_SEED':
+        String.fromEnvironment('MEMBERSHIP_SIGNING_SEED'),
+    'MEMBERSHIP_SIGNING_PUBLIC_KEY':
+        String.fromEnvironment('MEMBERSHIP_SIGNING_PUBLIC_KEY'),
     'PASSWORD_SALT': String.fromEnvironment('PASSWORD_SALT'),
     'JWT_SECRET': String.fromEnvironment('JWT_SECRET'),
     'ENCRYPTION_KEY': String.fromEnvironment('ENCRYPTION_KEY'),
@@ -144,6 +148,15 @@ class EnvConfig {
       _readEnv('EXECUTION_PROXY_AUTH_TOKEN');
 
   static String get eatWhatAuthBaseUrl => _readEnv('EATWHAT_AUTH_BASE_URL');
+
+  /// 会员凭证签发种子（仅本地联调：mock 服务端与客户端共用派生同一密钥对）。
+  /// 生产环境种子只留在服务端，客户端只配 [membershipSigningPublicKey]。
+  static String get membershipSigningSeed =>
+      _readEnv('MEMBERSHIP_SIGNING_SEED');
+
+  /// 会员凭证验签公钥（base64 的 Ed25519 公钥，生产环境内嵌）。
+  static String get membershipSigningPublicKey =>
+      _readEnv('MEMBERSHIP_SIGNING_PUBLIC_KEY');
 
   static String get executionProxyHealthPath => _readEnv(
         'EXECUTION_PROXY_HEALTH_PATH',

@@ -1,6 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:eatwhat_app/v2/core/services/membership_credential.dart';
+
+/// 会员凭证签发种子（仅本地联调；与客户端 .env 的 MEMBERSHIP_SIGNING_SEED
+/// 保持一致，双端派生同一 Ed25519 密钥对）。
+final String _signingSeed =
+    Platform.environment['MEMBERSHIP_SIGNING_SEED'] ?? 'eatwhat-dev-seed';
+
+/// 订单号 → 下单账号：签发会员凭证时绑定用。
+final Map<String, String> _orderUsers = {};
+
 Future<void> main(List<String> args) async {
   final port = args.isNotEmpty ? int.tryParse(args.first) ?? 8787 : 8787;
   final server = await HttpServer.bind(InternetAddress.loopbackIPv4, port);
@@ -81,9 +91,21 @@ Future<void> handleMockProxyRequest(
   // open a fake cashier page and poll the paid status.
   if (request.method == 'GET' &&
       request.uri.path == '/api/v1/payment/alipay/status') {
+    final orderId =
+        request.uri.queryParameters['orderId'] ?? 'mock-pay-order';
+    final userId = _orderUsers[orderId] ?? 'local-user';
+    final now = DateTime.now();
+    final credential = await MembershipCredentials.issue(
+      userId: userId,
+      orderId: orderId,
+      issuedAt: now,
+      expiresAt: now.add(const Duration(days: 365)),
+      signingKeyPair: await MembershipCredentials.keyPairFromSeed(_signingSeed),
+    );
     await _writeJson(request.response, HttpStatus.ok, {
       'status': 'paid',
-      'orderId': request.uri.queryParameters['orderId'] ?? 'mock-pay-order',
+      'orderId': orderId,
+      'membershipCredential': credential.toJson(),
     });
     return;
   }
@@ -172,6 +194,8 @@ Future<void> handleMockProxyRequest(
     case '/api/v1/payment/alipay/orders':
       final plan = body['plan']?.toString() ?? 'yearly';
       const orderId = 'mock-pay-20260822';
+      final userId = body['userId']?.toString().trim() ?? '';
+      if (userId.isNotEmpty) _orderUsers[orderId] = userId;
       await _writeJson(request.response, HttpStatus.ok, {
         'status': 'payment_required',
         'orderId': orderId,

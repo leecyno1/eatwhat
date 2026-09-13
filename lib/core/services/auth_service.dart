@@ -908,6 +908,10 @@ class User {
   /// the flag carries no expiry — kept for forward compatibility.
   final DateTime? memberExpiresAt;
 
+  /// 付费会员的服务端签发凭证（JSON 字符串）。仅付费升级时由
+  /// V2MembershipService 验签后写入；体验会员为 null。
+  final String? membershipCredential;
+
   /// Trial membership granted at registration, in days.
   static const int trialMemberDays = 7;
 
@@ -925,6 +929,7 @@ class User {
     this.isMember = false,
     this.memberSince,
     this.memberExpiresAt,
+    this.membershipCredential,
   });
 
   User copyWith({
@@ -941,6 +946,7 @@ class User {
     bool? isMember,
     DateTime? memberSince,
     DateTime? memberExpiresAt,
+    String? membershipCredential,
   }) {
     return User(
       id: id ?? this.id,
@@ -956,6 +962,7 @@ class User {
       isMember: isMember ?? this.isMember,
       memberSince: memberSince ?? this.memberSince,
       memberExpiresAt: memberExpiresAt ?? this.memberExpiresAt,
+      membershipCredential: membershipCredential ?? this.membershipCredential,
     );
   }
 
@@ -974,6 +981,7 @@ class User {
       'isMember': isMember,
       'memberSince': memberSince?.toIso8601String(),
       'memberExpiresAt': memberExpiresAt?.toIso8601String(),
+      'membershipCredential': membershipCredential,
     };
   }
 
@@ -998,6 +1006,7 @@ class User {
       memberExpiresAt: json['memberExpiresAt'] != null
           ? DateTime.parse(json['memberExpiresAt'])
           : null,
+      membershipCredential: json['membershipCredential']?.toString(),
     );
   }
 
