@@ -11,7 +11,6 @@ class ResultCandidateRail extends StatelessWidget {
     required this.currentChoiceId,
     required this.choices,
     this.recalledCount = 0,
-    this.aiReasonsByRecipeId = const {},
     this.thumbUrlByRecipeId = const {},
     required this.onSelect,
   });
@@ -19,7 +18,6 @@ class ResultCandidateRail extends StatelessWidget {
   final String currentChoiceId;
   final List<RecipeModel> choices;
   final int recalledCount;
-  final Map<String, String> aiReasonsByRecipeId;
   final Map<String, String> thumbUrlByRecipeId;
   final ValueChanged<RecipeModel> onSelect;
 

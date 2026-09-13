@@ -970,7 +970,6 @@ class _ResultPageState extends State<ResultPage>
                               currentChoiceId: currentChoice.id,
                               choices: choices,
                               recalledCount: widget.recalledCount,
-                              aiReasonsByRecipeId: _reasonsByRecipeId,
                               thumbUrlByRecipeId: _thumbUrlByRecipeId,
                               onSelect: _selectChoiceWithHero,
                             ),
