@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:eatwhat_app/core/services/auth_service.dart';
+import 'package:eatwhat_app/core/services/secure_storage_service.dart';
+import 'package:eatwhat_app/core/services/token_service.dart';
 import 'package:eatwhat_app/v2/core/external/platform/execution_proxy_client.dart';
 import 'package:eatwhat_app/v2/core/services/membership_credential.dart';
 import 'package:eatwhat_app/v2/core/services/v2_membership_service.dart';
@@ -81,6 +83,71 @@ void main() {
 
     expect(ok, isFalse);
   });
+
+  test('凭证被篡改后写入即被拦截降级（写侧强制）', () async {
+    final user = AuthService.currentUser!;
+    // 合法凭证写入：保留会员身份。
+    final valid = await _issueFor(user.id);
+    await AuthService.updateCurrentUser(
+      user.copyWith(
+        isMember: true,
+        membershipCredential: jsonEncode(valid.toJson()),
+      ),
+    );
+    expect(AuthService.currentUser!.isMember, isTrue);
+
+    // 篡改有效期（签名不变 → 验签必败）再写入：应立即被降级。
+    final tamperedMap = valid.toJson()
+      ..['expiresAt'] = DateTime.now()
+          .add(const Duration(days: 3650))
+          .millisecondsSinceEpoch;
+    await AuthService.updateCurrentUser(
+      AuthService.currentUser!
+          .copyWith(membershipCredential: jsonEncode(tamperedMap)),
+    );
+
+    expect(AuthService.currentUser!.isMember, isFalse);
+    expect(AuthService.currentUser!.membershipCredential, isNull);
+  });
+
+  test('凭证被篡改后重开会话即降级（读侧强制）', () async {
+    final user = AuthService.currentUser!;
+    final tamperedMap = (await _issueFor(user.id)).toJson()
+      ..['expiresAt'] = DateTime.now()
+          .add(const Duration(days: 3650))
+          .millisecondsSinceEpoch;
+    final tamperedUser = user.copyWith(
+      isMember: true,
+      membershipCredential: jsonEncode(tamperedMap),
+    );
+
+    await AuthService.logout();
+    // 把被篡改的会话直接写进存储，模拟本地数据被改写后冷启动恢复。
+    await SecureStorageService.setSecureJson(
+        'current_user', tamperedUser.toJson());
+    final pair = await TokenService.generateTokenPair(user.id);
+    await SecureStorageService.setSecureString('user_token', pair.accessToken);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('remember_me', true);
+
+    await AuthService.initialize();
+
+    expect(AuthService.currentUser, isNotNull);
+    expect(AuthService.currentUser!.isMember, isFalse);
+    expect(AuthService.currentUser!.membershipCredential, isNull);
+  });
+}
+
+Future<MembershipCredential> _issueFor(String userId) async {
+  final now = DateTime.now();
+  return MembershipCredentials.issue(
+    userId: userId,
+    orderId: 'order-1',
+    issuedAt: now,
+    expiresAt: now.add(const Duration(days: 365)),
+    signingKeyPair:
+        await MembershipCredentials.keyPairFromSeed('eatwhat-dev-seed'),
+  );
 }
 
 Map<String, dynamic> _decode(String raw) =>

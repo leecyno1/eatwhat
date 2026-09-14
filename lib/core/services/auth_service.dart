@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:eatwhat_app/v2/core/services/membership_credential.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -95,6 +96,7 @@ class AuthService {
           final tokenValidation = TokenService.validateToken(token);
           if (tokenValidation.isValid && tokenValidation.expiresAt != null) {
             _currentUser = User.fromJson(userMap);
+            await _enforceMembershipCredentialIntegrity();
             _authToken = token;
             _sessionExpiry = tokenValidation.expiresAt;
             _lastActivity = DateTime.now();
@@ -433,10 +435,38 @@ class AuthService {
     return PasswordHashUtil.verifyPassword(password, hash);
   }
 
+  /// 校验已持久化的会员凭证：篡改/伪造/过期/账号不符的付费会员身份
+  /// 直接降级（体验会员无凭证，不受影响）。未配验签钥匙的构建跳过校验，
+  /// 避免配置缺失误伤正常用户。
+  static Future<void> _enforceMembershipCredentialIntegrity() async {
+    final user = _currentUser;
+    if (user == null) return;
+    final raw = user.membershipCredential;
+    if (raw == null || raw.trim().isEmpty) return;
+    if (await MembershipCredentials.verificationKey() == null) return;
+
+    MembershipCredential? credential;
+    try {
+      credential = MembershipCredential.fromJson(jsonDecode(raw));
+    } catch (_) {
+      credential = null;
+    }
+    final valid = credential != null &&
+        await MembershipCredentials.verify(credential, expectedUserId: user.id);
+    if (valid) return;
+
+    debugPrint('[Auth] 会员凭证验签失败，已降级为非会员');
+    await updateCurrentUser(
+      user.copyWith(isMember: false, clearMembershipCredential: true),
+    );
+  }
+
   /// 设置当前用户
   static Future<void> _setCurrentUser(User user,
       {bool rememberMe = false}) async {
     _currentUser = user;
+    await _enforceMembershipCredentialIntegrity();
+    user = _currentUser!;
 
     // 生成JWT令牌对
     final tokenPair = await TokenService.generateTokenPair(user.id);
@@ -947,6 +977,7 @@ class User {
     DateTime? memberSince,
     DateTime? memberExpiresAt,
     String? membershipCredential,
+    bool clearMembershipCredential = false,
   }) {
     return User(
       id: id ?? this.id,
@@ -962,7 +993,9 @@ class User {
       isMember: isMember ?? this.isMember,
       memberSince: memberSince ?? this.memberSince,
       memberExpiresAt: memberExpiresAt ?? this.memberExpiresAt,
-      membershipCredential: membershipCredential ?? this.membershipCredential,
+      membershipCredential: clearMembershipCredential
+          ? null
+          : (membershipCredential ?? this.membershipCredential),
     );
   }
 
