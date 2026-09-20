@@ -2,6 +2,7 @@ import 'package:eatwhat_app/v2/core/data/models/meal_planning_direction.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
 import 'package:eatwhat_app/v2/core/services/v2_speech_input_service.dart';
+import 'package:eatwhat_app/v2/core/theme/app_theme_controller.dart';
 import 'package:eatwhat_app/v2/features/home/home_page.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/taste_signature_panel.dart';
 import 'package:flutter/material.dart';
@@ -325,28 +326,112 @@ void main() {
       expect(removedId, 'f_spicy');
     });
 
-    testWidgets('窄屏下物理首页不出现布局异常', (tester) async {
-      tester.view.physicalSize = const Size(1179, 2556);
+    testWidgets('320px 下真实点击筛选菜单仍写入推荐条件', (tester) async {
+      tester.view.physicalSize = const Size(960, 1704);
       tester.view.devicePixelRatio = 3;
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
-
+      TasteInferenceInput? captured;
       await tester.pumpWidget(
         MaterialApp(
           home: HomePage(
             initialCards: _cards,
             speechInputService: _FakeSpeechInputService(''),
+            decisionPageBuilder: (input) {
+              captured = input;
+              return _InputCapturePage(input: input);
+            },
           ),
         ),
       );
-      await _pumpFrames(tester, count: 14);
+      await _pumpFrames(tester);
 
+      for (final (control, option) in const [
+        ('meal-planning-direction-selector', 'meal-direction-experience'),
+        ('filter-type', 'taste-category-菜系'),
+        ('filter-budget', 'filter-budget-30'),
+        ('filter-party', 'filter-party-2'),
+        ('filter-execution', 'filter-execution-cook'),
+      ]) {
+        await tester.tap(find.byKey(ValueKey(control)));
+        await _pumpFrames(tester);
+        await tester.tap(find.byKey(ValueKey(option)));
+        await _pumpFrames(tester);
+      }
       expect(
-        find.byKey(const ValueKey('taste-physical-habitat')),
-        findsOneWidget,
+        tester
+            .widget<PopupMenuButton<String>>(
+              find.descendant(
+                of: find.byKey(const ValueKey('filter-type')),
+                matching: find.byType(PopupMenuButton<String>),
+              ),
+            )
+            .initialValue,
+        'cuisine',
       );
+      await tester.enterText(
+        find.byKey(const ValueKey('home-requirement-input')),
+        '两人晚餐',
+      );
+      await tester
+          .tap(find.byKey(const ValueKey('home-start-inference-button')));
+      await _pumpFrames(tester);
+      expect(captured?.planningDirection, MealPlanningDirection.experience);
+      expect(captured?.structuredConstraints.maxBudgetYuan, 30);
+      expect(captured?.structuredConstraints.partySize, 2);
+      expect(captured?.structuredConstraints.executionPreference,
+          TasteExecutionPreference.cook);
       expect(tester.takeException(), isNull);
     });
+
+    for (final size in const [Size(320, 568), Size(393, 852), Size(800, 600)]) {
+      for (final mode in AppThemeMode.values) {
+        testWidgets('${size.width}px ${mode.name} 首页所有顶部入口完整可点',
+            (tester) async {
+          tester.view.physicalSize = size * 3;
+          tester.view.devicePixelRatio = 3;
+          addTearDown(tester.view.resetPhysicalSize);
+          addTearDown(tester.view.resetDevicePixelRatio);
+          final originalMode = AppThemeController.mode.value;
+          AppThemeController.mode.value = mode;
+          addTearDown(() => AppThemeController.mode.value = originalMode);
+
+          await tester.pumpWidget(
+            MaterialApp(
+              home: HomePage(
+                initialCards: _cards,
+                speechInputService: _FakeSpeechInputService(''),
+              ),
+            ),
+          );
+          await _pumpFrames(tester, count: 14);
+          expect(tester.takeException(), isNull);
+
+          for (final key in const [
+            'meal-planning-direction-selector',
+            'filter-type',
+            'filter-budget',
+            'filter-party',
+            'filter-execution',
+            'taste-signature-button',
+            'home-theme-toggle',
+            'home-account-button',
+            'home-favorites-button',
+            'home-recent-button',
+          ]) {
+            final control = find.byKey(ValueKey(key));
+            expect(control.hitTestable(), findsOneWidget, reason: key);
+            final bounds = tester.getRect(control);
+            expect(bounds.left, greaterThanOrEqualTo(12), reason: key);
+            expect(bounds.right, lessThanOrEqualTo(size.width - 12),
+                reason: key);
+            expect(bounds.height, greaterThanOrEqualTo(32), reason: key);
+          }
+          expect(find.byKey(const ValueKey('taste-physical-habitat')),
+              findsOneWidget);
+        });
+      }
+    }
   });
 }
 

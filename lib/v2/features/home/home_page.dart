@@ -799,144 +799,170 @@ class _FreshCompactHeader extends StatelessWidget {
         habitSnapshot?.recommendedDirection == planningDirection;
     return SizedBox(
       key: const ValueKey('taste-entity-category-tabs'),
-      height: 40,
-      child: Row(
+      width: double.infinity,
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 4,
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
         children: [
-          _FilterIconPill<MealPlanningDirection>(
-            key: const ValueKey('meal-planning-direction-selector'),
-            icon: matchesHistory
-                ? Icons.auto_awesome_rounded
-                : Icons.psychology_alt_rounded,
-            tooltip: '习惯方向',
-            active: matchesHistory,
-            value: planningDirection,
-            options: [
-              for (final direction in MealPlanningDirection.values)
-                _FilterOption(
-                  key: 'meal-direction-${direction.name}',
-                  label: direction.label,
-                  value: direction,
+          SizedBox(
+            height: 40,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _FilterIconPill<MealPlanningDirection>(
+                  key: const ValueKey('meal-planning-direction-selector'),
+                  icon: matchesHistory
+                      ? Icons.auto_awesome_rounded
+                      : Icons.psychology_alt_rounded,
+                  tooltip: '习惯方向',
+                  active: matchesHistory,
+                  value: planningDirection,
+                  options: [
+                    for (final direction in MealPlanningDirection.values)
+                      _FilterOption(
+                        key: 'meal-direction-${direction.name}',
+                        label: direction.label,
+                        value: direction,
+                      ),
+                  ],
+                  onSelected: onPlanningDirectionChanged,
                 ),
-            ],
-            onSelected: onPlanningDirectionChanged,
-          ),
-          const SizedBox(width: 5),
-          _FilterIconPill<String>(
-            key: const ValueKey('filter-type'),
-            icon: Icons.category_rounded,
-            tooltip: '类型',
-            active: category != null && category!.isNotEmpty,
-            value: category ?? '__all__',
-            options: [
-              for (final item in _categories)
-                _FilterOption(
-                  key: 'taste-category-${item.label}',
-                  label: item.label,
-                  value: item.value ?? '__all__',
+                const SizedBox(width: 5),
+                _FilterIconPill<String>(
+                  key: const ValueKey('filter-type'),
+                  icon: Icons.category_rounded,
+                  tooltip: '类型',
+                  active: category != null && category!.isNotEmpty,
+                  value: category ?? '__all__',
+                  options: [
+                    for (final item in _categories)
+                      _FilterOption(
+                        key: 'taste-category-${item.label}',
+                        label: item.label,
+                        value: item.value ?? '__all__',
+                      ),
+                  ],
+                  onSelected: (value) =>
+                      onCategoryChanged(value == '__all__' ? null : value),
                 ),
-            ],
-            onSelected: (value) =>
-                onCategoryChanged(value == '__all__' ? null : value),
-          ),
-          const SizedBox(width: 5),
-          _FilterIconPill<int>(
-            key: const ValueKey('filter-budget'),
-            icon: Icons.payments_outlined,
-            tooltip: '预算',
-            active: constraints.maxBudgetYuan != null,
-            value: constraints.maxBudgetYuan ?? 0,
-            options: const [
-              _FilterOption(key: 'filter-budget-any', label: '不限', value: 0),
-              _FilterOption(key: 'filter-budget-30', label: '30 元内', value: 30),
-              _FilterOption(key: 'filter-budget-60', label: '60 元内', value: 60),
-              _FilterOption(
-                  key: 'filter-budget-100', label: '100 元内', value: 100),
-            ],
-            onSelected: (value) => onStructuredConstraintsChanged(
-              constraints.copyWith(
-                maxBudgetYuan: value == 0 ? null : value,
-                clearMaxBudgetYuan: value == 0,
-              ),
+                const SizedBox(width: 5),
+                _FilterIconPill<int>(
+                  key: const ValueKey('filter-budget'),
+                  icon: Icons.payments_outlined,
+                  tooltip: '预算',
+                  active: constraints.maxBudgetYuan != null,
+                  value: constraints.maxBudgetYuan ?? 0,
+                  options: const [
+                    _FilterOption(
+                        key: 'filter-budget-any', label: '不限', value: 0),
+                    _FilterOption(
+                        key: 'filter-budget-30', label: '30 元内', value: 30),
+                    _FilterOption(
+                        key: 'filter-budget-60', label: '60 元内', value: 60),
+                    _FilterOption(
+                        key: 'filter-budget-100', label: '100 元内', value: 100),
+                  ],
+                  onSelected: (value) => onStructuredConstraintsChanged(
+                    constraints.copyWith(
+                      maxBudgetYuan: value == 0 ? null : value,
+                      clearMaxBudgetYuan: value == 0,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 5),
+                _FilterIconPill<int>(
+                  key: const ValueKey('filter-party'),
+                  icon: Icons.group_outlined,
+                  tooltip: '人数',
+                  active: constraints.partySize != null,
+                  value: constraints.partySize ?? 0,
+                  options: const [
+                    _FilterOption(
+                        key: 'filter-party-any', label: '不限', value: 0),
+                    _FilterOption(
+                        key: 'filter-party-1', label: '1 人', value: 1),
+                    _FilterOption(
+                        key: 'filter-party-2', label: '2 人', value: 2),
+                    _FilterOption(
+                        key: 'filter-party-4', label: '4 人', value: 4),
+                  ],
+                  onSelected: (value) => onStructuredConstraintsChanged(
+                    constraints.copyWith(
+                      partySize: value == 0 ? null : value,
+                      clearPartySize: value == 0,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 5),
+                _FilterIconPill<TasteExecutionPreference>(
+                  key: const ValueKey('filter-execution'),
+                  icon: Icons.restaurant_rounded,
+                  tooltip: '方式',
+                  active: constraints.executionPreference !=
+                      TasteExecutionPreference.any,
+                  value: constraints.executionPreference,
+                  options: [
+                    for (final preference in TasteExecutionPreference.values)
+                      _FilterOption(
+                        key: 'filter-execution-${preference.name}',
+                        label: preference.label,
+                        value: preference,
+                      ),
+                  ],
+                  onSelected: (value) => onStructuredConstraintsChanged(
+                    constraints.copyWith(executionPreference: value),
+                  ),
+                ),
+              ],
             ),
           ),
-          const SizedBox(width: 5),
-          _FilterIconPill<int>(
-            key: const ValueKey('filter-party'),
-            icon: Icons.group_outlined,
-            tooltip: '人数',
-            active: constraints.partySize != null,
-            value: constraints.partySize ?? 0,
-            options: const [
-              _FilterOption(key: 'filter-party-any', label: '不限', value: 0),
-              _FilterOption(key: 'filter-party-1', label: '1 人', value: 1),
-              _FilterOption(key: 'filter-party-2', label: '2 人', value: 2),
-              _FilterOption(key: 'filter-party-4', label: '4 人', value: 4),
-            ],
-            onSelected: (value) => onStructuredConstraintsChanged(
-              constraints.copyWith(
-                partySize: value == 0 ? null : value,
-                clearPartySize: value == 0,
-              ),
-            ),
-          ),
-          const SizedBox(width: 5),
-          _FilterIconPill<TasteExecutionPreference>(
-            key: const ValueKey('filter-execution'),
-            icon: Icons.restaurant_rounded,
-            tooltip: '方式',
-            active:
-                constraints.executionPreference != TasteExecutionPreference.any,
-            value: constraints.executionPreference,
-            options: [
-              for (final preference in TasteExecutionPreference.values)
-                _FilterOption(
-                  key: 'filter-execution-${preference.name}',
-                  label: preference.label,
-                  value: preference,
+          SizedBox(
+            height: 40,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _HeaderSelectionSummary(
+                  likedCount: likedCount,
+                  blockedCount: blockedCount,
+                  onTap: onShowSignature,
                 ),
-            ],
-            onSelected: (value) => onStructuredConstraintsChanged(
-              constraints.copyWith(executionPreference: value),
+                const SizedBox(width: 5),
+                _HeaderAction(
+                  key: const ValueKey('home-theme-toggle'),
+                  icon: AppThemeController.isCream
+                      ? Icons.dark_mode_outlined
+                      : Icons.light_mode_outlined,
+                  tooltip: AppThemeController.isCream ? '切到黑色主题' : '切到米色主题',
+                  onTap: onToggleTheme,
+                ),
+                const SizedBox(width: 4),
+                _HeaderAction(
+                  key: const ValueKey('home-account-button'),
+                  icon: AuthService.isLoggedIn
+                      ? Icons.person_rounded
+                      : Icons.person_outline_rounded,
+                  tooltip: AuthService.isLoggedIn ? '账号与会员' : '登录 / 注册',
+                  color: AuthService.isLoggedIn ? AppPalette.leaf : null,
+                  onTap: onOpenAccount,
+                ),
+                const SizedBox(width: 5),
+                _HeaderAction(
+                  key: const ValueKey('home-favorites-button'),
+                  icon: Icons.favorite_border_rounded,
+                  tooltip: '收藏',
+                  onTap: onOpenFavorites,
+                ),
+                const SizedBox(width: 5),
+                _HeaderAction(
+                  key: const ValueKey('home-recent-button'),
+                  icon: Icons.history_rounded,
+                  tooltip: '吃过',
+                  onTap: onOpenRecent,
+                ),
+              ],
             ),
-          ),
-          const Spacer(),
-          _HeaderSelectionSummary(
-            likedCount: likedCount,
-            blockedCount: blockedCount,
-            onTap: onShowSignature,
-          ),
-          const SizedBox(width: 5),
-          _HeaderAction(
-            key: const ValueKey('home-theme-toggle'),
-            icon: AppThemeController.isCream
-                ? Icons.dark_mode_outlined
-                : Icons.light_mode_outlined,
-            tooltip: AppThemeController.isCream ? '切到黑色主题' : '切到米色主题',
-            onTap: onToggleTheme,
-          ),
-          const SizedBox(width: 4),
-          _HeaderAction(
-            key: const ValueKey('home-account-button'),
-            icon: AuthService.isLoggedIn
-                ? Icons.person_rounded
-                : Icons.person_outline_rounded,
-            tooltip: AuthService.isLoggedIn ? '账号与会员' : '登录 / 注册',
-            color: AuthService.isLoggedIn ? AppPalette.leaf : null,
-            onTap: onOpenAccount,
-          ),
-          const SizedBox(width: 5),
-          _HeaderAction(
-            key: const ValueKey('home-favorites-button'),
-            icon: Icons.favorite_border_rounded,
-            tooltip: '收藏',
-            onTap: onOpenFavorites,
-          ),
-          const SizedBox(width: 5),
-          _HeaderAction(
-            key: const ValueKey('home-recent-button'),
-            icon: Icons.history_rounded,
-            tooltip: '吃过',
-            onTap: onOpenRecent,
           ),
         ],
       ),
