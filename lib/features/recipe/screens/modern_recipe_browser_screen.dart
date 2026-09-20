@@ -8,7 +8,6 @@ import 'package:provider/provider.dart';
 
 import '../../../core/models/enhanced_recipe.dart';
 import '../../../core/services/firecrawl_recipe_crawler_service.dart';
-import '../../../core/utils/advanced_logger.dart';
 import '../../../core/error/global_error_handler.dart';
 import '../../../shared/widgets/glassmorphic_container.dart';
 import '../../../shared/widgets/modern_card.dart';
@@ -31,8 +30,6 @@ class _ModernRecipeBrowserScreenState extends State<ModernRecipeBrowserScreen>
   // 搜索和筛选
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
-  RecipeCategory? _selectedCategory;
-  RecipeDifficulty? _selectedDifficulty;
 
   // 显示模式
   bool _isGridView = true;

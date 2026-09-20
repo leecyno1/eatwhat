@@ -80,20 +80,4 @@ class FavoritesEmptyState extends StatelessWidget {
       ),
     );
   }
-
-  Widget _getEmptyIcon() {
-    return Container(
-      width: 100,
-      height: 100,
-      decoration: BoxDecoration(
-        color: Colors.grey[100],
-        shape: BoxShape.circle,
-      ),
-      child: Icon(
-        Icons.favorite_border,
-        size: 50,
-        color: Colors.grey[400],
-      ),
-    );
-  }
 }

@@ -406,7 +406,7 @@ class _GlassmorphismBubbleWidgetState extends State<GlassmorphismBubbleWidget>
   }
 
   double _getBubbleSize() {
-    final baseSize = widget.bubble.size ?? 100.0;
+    final baseSize = widget.bubble.size;
     return (baseSize * 0.8).clamp(minSize, maxSize);
   }
 

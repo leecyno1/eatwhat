@@ -7,8 +7,10 @@ import 'package:eatwhat_app/core/models/physical_entity.dart';
 import 'package:eatwhat_app/features/bubble/controllers/physical_entity_controller.dart';
 import 'package:eatwhat_app/features/style_preview/style_preview_screen.dart';
 
-// 简易假实现，避免在golden测试中触发插件/物理引擎等副作用
-class FakePhysicalEntityController extends PhysicalEntityController {
+// 不继承真实控制器，避免释放假实现从未初始化的服务。
+class FakePhysicalEntityController extends Fake
+    with ChangeNotifier
+    implements PhysicalEntityController {
   // 基础状态
   bool _isLoading = false;
   final List<PhysicalEntity> _entities = [
@@ -46,7 +48,6 @@ class FakePhysicalEntityController extends PhysicalEntityController {
 
   final List<PhysicalEntity> _liked = [];
   final List<PhysicalEntity> _disliked = [];
-  Size? _containerSize;
 
   // Exposed getters used by the screen
   @override
@@ -68,17 +69,10 @@ class FakePhysicalEntityController extends PhysicalEntityController {
   }
 
   @override
-  void dispose() {
-    // 避免触发真实控制器的资源释放逻辑（依赖外部服务/插件）
-  }
-
-  @override
   Future<void> initialize({Size? containerSize}) async {}
 
   @override
-  void updateContainerSize(Size size) {
-    _containerSize = size;
-  }
+  void updateContainerSize(Size size) {}
 
   @override
   void resetEntities() {
@@ -139,6 +133,19 @@ class FakePhysicalEntityController extends PhysicalEntityController {
 }
 
 void main() {
+  test('预览假控制器释放监听器且不触碰未初始化服务', () {
+    final controller = FakePhysicalEntityController();
+    controller.addListener(() {});
+    expect(ChangeNotifier.debugAssertNotDisposed(controller), isTrue);
+
+    expect(controller.dispose, returnsNormally);
+
+    expect(
+      () => ChangeNotifier.debugAssertNotDisposed(controller),
+      throwsFlutterError,
+    );
+  });
+
   testWidgets('StylePreviewScreen golden', (tester) async {
     // Fixed logical size for deterministic golden
     const size = Size(375, 812); // iPhone X-ish

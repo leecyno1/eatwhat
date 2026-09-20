@@ -9,7 +9,7 @@ class TagRepositoryV2 {
           '辣',
           'flavor',
           'local_fire_department',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'chili',
               colors: ['0xFFFF5252', '0xFFD32F2F'],
               particleEffect: 'steam')),
@@ -18,7 +18,7 @@ class TagRepositoryV2 {
           '甜',
           'flavor',
           'cake',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'circle',
               colors: ['0xFFFF4081', '0xFFF50057'],
               particleEffect: 'sparkle')),
@@ -27,7 +27,7 @@ class TagRepositoryV2 {
           '酸',
           'flavor',
           'local_bar',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'drop',
               colors: ['0xFFCDDC39', '0xFFAFB42B'],
               particleEffect: 'bubble')),
@@ -36,16 +36,14 @@ class TagRepositoryV2 {
           '咸',
           'flavor',
           'grain',
-          VisualConfig(
-              shapeType: 'hexagon',
-              colors: ['0xFF9E9E9E', '0xFF616161'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'hexagon', colors: ['0xFF9E9E9E', '0xFF616161'])),
       _buildTag(
           'f_fresh',
           '鲜',
           'flavor',
           'water_drop',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'drop',
               colors: ['0xFF03A9F4', '0xFF0288D1'],
               particleEffect: 'bubble')),
@@ -54,7 +52,7 @@ class TagRepositoryV2 {
           '麻',
           'flavor',
           'bolt',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'star',
               colors: ['0xFF673AB7', '0xFF512DA8'],
               particleEffect: 'sparkle')),
@@ -63,34 +61,28 @@ class TagRepositoryV2 {
           '蒜香',
           'flavor',
           'circle',
-          VisualConfig(
-              shapeType: 'squircle',
-              colors: ['0xFFEEEEEE', '0xFFBDBDBD'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'squircle', colors: ['0xFFEEEEEE', '0xFFBDBDBD'])),
       _buildTag(
           'f_bitter',
           '苦',
           'flavor',
           'coffee',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFF3E2723', '0xFF5D4037'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFF3E2723', '0xFF5D4037'])),
       _buildTag(
           'f_creamy',
           '奶香',
           'flavor',
           'icecream',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFFF9C4', '0xFFFFF176'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFFF9C4', '0xFFFFF176'])),
       _buildTag(
           'f_crispy',
           '酥脆',
           'flavor',
           'cookie',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'hexagon',
               colors: ['0xFFFFD54F', '0xFFFFCA28'],
               particleEffect: 'sparkle')),
@@ -99,16 +91,14 @@ class TagRepositoryV2 {
           '清淡',
           'flavor',
           'spa',
-          VisualConfig(
-              shapeType: 'leaf',
-              colors: ['0xFF81C784', '0xFF66BB6A'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'leaf', colors: ['0xFF81C784', '0xFF66BB6A'])),
       _buildTag(
           'f_rich',
           '浓郁',
           'flavor',
           'soup_kitchen',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'circle',
               colors: ['0xFF795548', '0xFF5D4037'],
               particleEffect: 'steam')),
@@ -117,7 +107,7 @@ class TagRepositoryV2 {
           '烟熏',
           'flavor',
           'smoking_rooms',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'cloud',
               colors: ['0xFF607D8B', '0xFF455A64'],
               particleEffect: 'steam')),
@@ -126,16 +116,14 @@ class TagRepositoryV2 {
           '药膳',
           'flavor',
           'medication',
-          VisualConfig(
-              shapeType: 'leaf',
-              colors: ['0xFF558B2F', '0xFF33691E'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'leaf', colors: ['0xFF558B2F', '0xFF33691E'])),
       _buildTag(
           'f_curry',
           '咖喱',
           'flavor',
           'restaurant',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'circle',
               colors: ['0xFFFFC107', '0xFFFFB300'],
               particleEffect: 'steam')),
@@ -147,64 +135,50 @@ class TagRepositoryV2 {
           '牛肉',
           'ingredient',
           'restaurant',
-          VisualConfig(
-              shapeType: 'squircle',
-              colors: ['0xFFD32F2F', '0xFFB71C1C'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'squircle', colors: ['0xFFD32F2F', '0xFFB71C1C'])),
       _buildTag(
           'i_pork',
           '猪肉',
           'ingredient',
           'savings',
-          VisualConfig(
-              shapeType: 'squircle',
-              colors: ['0xFFF48FB1', '0xFFF06292'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'squircle', colors: ['0xFFF48FB1', '0xFFF06292'])),
       _buildTag(
           'i_chicken',
           '鸡肉',
           'ingredient',
           'egg',
-          VisualConfig(
-              shapeType: 'squircle',
-              colors: ['0xFFFFB74D', '0xFFFFA726'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'squircle', colors: ['0xFFFFB74D', '0xFFFFA726'])),
       _buildTag(
           'i_lamb',
           '羊肉',
           'ingredient',
           'restaurant',
-          VisualConfig(
-              shapeType: 'squircle',
-              colors: ['0xFFE57373', '0xFFEF5350'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'squircle', colors: ['0xFFE57373', '0xFFEF5350'])),
       _buildTag(
           'i_duck',
           '鸭肉',
           'ingredient',
           'restaurant',
-          VisualConfig(
-              shapeType: 'squircle',
-              colors: ['0xFF8D6E63', '0xFF795548'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'squircle', colors: ['0xFF8D6E63', '0xFF795548'])),
       _buildTag(
           'i_goose',
           '鹅肉',
           'ingredient',
           'restaurant',
-          VisualConfig(
-              shapeType: 'squircle',
-              colors: ['0xFFA1887F', '0xFF8D6E63'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'squircle', colors: ['0xFFA1887F', '0xFF8D6E63'])),
       _buildTag(
           'i_offal',
           '内脏',
           'ingredient',
           'favorite',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFF880E4F', '0xFFAD1457'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFF880E4F', '0xFFAD1457'])),
 
       // Seafood
       _buildTag(
@@ -212,7 +186,7 @@ class TagRepositoryV2 {
           '海鲜',
           'ingredient',
           'set_meal',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'drop',
               colors: ['0xFF29B6F6', '0xFF0288D1'],
               particleEffect: 'bubble')),
@@ -221,7 +195,7 @@ class TagRepositoryV2 {
           '鱼',
           'ingredient',
           'set_meal',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'drop',
               colors: ['0xFF4FC3F7', '0xFF29B6F6'],
               particleEffect: 'bubble')),
@@ -230,28 +204,22 @@ class TagRepositoryV2 {
           '虾',
           'ingredient',
           'set_meal',
-          VisualConfig(
-              shapeType: 'chili',
-              colors: ['0xFFFFAB91', '0xFFFF8A65'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'chili', colors: ['0xFFFFAB91', '0xFFFF8A65'])),
       _buildTag(
           'i_crab',
           '蟹',
           'ingredient',
           'bug_report',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFF7043', '0xFFF4511E'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFF7043', '0xFFF4511E'])),
       _buildTag(
           'i_shellfish',
           '贝类',
           'ingredient',
           'donut_small',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFE0E0E0', '0xFFBDBDBD'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFE0E0E0', '0xFFBDBDBD'])),
 
       // Veg
       _buildTag(
@@ -259,64 +227,50 @@ class TagRepositoryV2 {
           '蔬菜',
           'ingredient',
           'grass',
-          VisualConfig(
-              shapeType: 'leaf',
-              colors: ['0xFF66BB6A', '0xFF43A047'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'leaf', colors: ['0xFF66BB6A', '0xFF43A047'])),
       _buildTag(
           'i_mushroom',
           '菌菇',
           'ingredient',
           'umbrella',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFF8D6E63', '0xFF6D4C41'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFF8D6E63', '0xFF6D4C41'])),
       _buildTag(
           'i_tofu',
           '豆腐',
           'ingredient',
           'crop_square',
-          VisualConfig(
-              shapeType: 'squircle',
-              colors: ['0xFFF5F5F5', '0xFFE0E0E0'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'squircle', colors: ['0xFFF5F5F5', '0xFFE0E0E0'])),
       _buildTag(
           'i_potato',
           '土豆',
           'ingredient',
           'circle',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFFE0B2', '0xFFFFCC80'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFFE0B2', '0xFFFFCC80'])),
       _buildTag(
           'i_tomato',
           '番茄',
           'ingredient',
           'circle',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFF5252', '0xFFFF1744'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFF5252', '0xFFFF1744'])),
       _buildTag(
           'i_eggplant',
           '茄子',
           'ingredient',
           'circle',
-          VisualConfig(
-              shapeType: 'chili',
-              colors: ['0xFF7E57C2', '0xFF673AB7'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'chili', colors: ['0xFF7E57C2', '0xFF673AB7'])),
       _buildTag(
           'i_corn',
           '玉米',
           'ingredient',
           'circle',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFFF176', '0xFFFFEE58'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFFF176', '0xFFFFEE58'])),
 
       // Other
       _buildTag(
@@ -324,19 +278,15 @@ class TagRepositoryV2 {
           '鸡蛋',
           'ingredient',
           'egg_alt',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFFEE58', '0xFFFDD835'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFFEE58', '0xFFFDD835'])),
       _buildTag(
           'i_cheese',
           '芝士',
           'ingredient',
           'circle',
-          VisualConfig(
-              shapeType: 'squircle',
-              colors: ['0xFFFFD54F', '0xFFFFCA28'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'squircle', colors: ['0xFFFFD54F', '0xFFFFCA28'])),
 
       // --- Staples (主食) ---
       _buildTag(
@@ -344,16 +294,14 @@ class TagRepositoryV2 {
           '米饭',
           'staple',
           'rice_bowl',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFFFFFF', '0xFFF5F5F5'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFFFFFF', '0xFFF5F5F5'])),
       _buildTag(
           'st_noodle',
           '面条',
           'staple',
           'ramen_dining',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'circle',
               colors: ['0xFFFFE0B2', '0xFFFFCC80'],
               particleEffect: 'steam')),
@@ -362,52 +310,42 @@ class TagRepositoryV2 {
           '面包',
           'staple',
           'bakery_dining',
-          VisualConfig(
-              shapeType: 'squircle',
-              colors: ['0xFFD7CCC8', '0xFFBCAAA4'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'squircle', colors: ['0xFFD7CCC8', '0xFFBCAAA4'])),
       _buildTag(
           'st_dumpling',
           '饺子',
           'staple',
           'circle',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFF5F5F5', '0xFFEEEEEE'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFF5F5F5', '0xFFEEEEEE'])),
       _buildTag(
           'st_pasta',
           '意面',
           'staple',
           'dinner_dining',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFFE0B2', '0xFFFFCC80'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFFE0B2', '0xFFFFCC80'])),
       _buildTag(
           'st_pizza',
           '披萨',
           'staple',
           'local_pizza',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFFAB91', '0xFFFF8A65'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFFAB91', '0xFFFF8A65'])),
       _buildTag(
           'st_burger',
           '汉堡',
           'staple',
           'lunch_dining',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFFCC80', '0xFFFFB74D'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFFCC80', '0xFFFFB74D'])),
       _buildTag(
           'st_porridge',
           '粥',
           'staple',
           'soup_kitchen',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'circle',
               colors: ['0xFFF5F5F5', '0xFFEEEEEE'],
               particleEffect: 'steam')),
@@ -419,7 +357,7 @@ class TagRepositoryV2 {
           '川菜',
           'cuisine',
           'whatshot',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'fire',
               colors: ['0xFFFF5722', '0xFFE64A19'],
               particleEffect: 'steam')),
@@ -428,16 +366,14 @@ class TagRepositoryV2 {
           '粤菜',
           'cuisine',
           'restaurant',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFF4CAF50', '0xFF388E3C'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFF4CAF50', '0xFF388E3C'])),
       _buildTag(
           'c_hunan',
           '湘菜',
           'cuisine',
           'local_fire_department',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'chili',
               colors: ['0xFFD32F2F', '0xFFB71C1C'],
               particleEffect: 'steam')),
@@ -446,52 +382,42 @@ class TagRepositoryV2 {
           '鲁菜',
           'cuisine',
           'restaurant',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFF795548', '0xFF5D4037'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFF795548', '0xFF5D4037'])),
       _buildTag(
           'c_jiangsu',
           '苏菜',
           'cuisine',
           'water',
-          VisualConfig(
-              shapeType: 'drop',
-              colors: ['0xFF4FC3F7', '0xFF29B6F6'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'drop', colors: ['0xFF4FC3F7', '0xFF29B6F6'])),
       _buildTag(
           'c_zhejiang',
           '浙菜',
           'cuisine',
           'water',
-          VisualConfig(
-              shapeType: 'drop',
-              colors: ['0xFF81C784', '0xFF66BB6A'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'drop', colors: ['0xFF81C784', '0xFF66BB6A'])),
       _buildTag(
           'c_fujian',
           '闽菜',
           'cuisine',
           'restaurant',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFFF176', '0xFFFFEE58'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFFF176', '0xFFFFEE58'])),
       _buildTag(
           'c_anhui',
           '徽菜',
           'cuisine',
           'landscape',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFF5D4037', '0xFF4E342E'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFF5D4037', '0xFF4E342E'])),
       _buildTag(
           'c_northeast',
           '东北菜',
           'cuisine',
           'kitchen',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'circle',
               colors: ['0xFF8D6E63', '0xFF795548'],
               particleEffect: 'steam')),
@@ -500,55 +426,43 @@ class TagRepositoryV2 {
           '西北菜',
           'cuisine',
           'restaurant',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFFB74D', '0xFFFFA726'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFFB74D', '0xFFFFA726'])),
       _buildTag(
           'c_yunnan',
           '云南菜',
           'cuisine',
           'local_florist',
-          VisualConfig(
-              shapeType: 'leaf',
-              colors: ['0xFF66BB6A', '0xFF43A047'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'leaf', colors: ['0xFF66BB6A', '0xFF43A047'])),
       _buildTag(
           'c_beijing',
           '京菜',
           'cuisine',
           'restaurant',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFB71C1C', '0xFF880E4F'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFB71C1C', '0xFF880E4F'])),
       _buildTag(
           'c_shanghai',
           '本帮菜',
           'cuisine',
           'restaurant',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFD32F2F', '0xFFC62828'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFD32F2F', '0xFFC62828'])),
       _buildTag(
           'c_taiwan',
           '台湾菜',
           'cuisine',
           'restaurant',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFFCC80', '0xFFFFB74D'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFFCC80', '0xFFFFB74D'])),
       _buildTag(
           'c_hongkong',
           '港式',
           'cuisine',
           'local_cafe',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFFAB91', '0xFFFF8A65'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFFAB91', '0xFFFF8A65'])),
 
       // Asian
       _buildTag(
@@ -556,43 +470,35 @@ class TagRepositoryV2 {
           '日料',
           'cuisine',
           'bento',
-          VisualConfig(
-              shapeType: 'squircle',
-              colors: ['0xFFFFCDD2', '0xFFEF9A9A'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'squircle', colors: ['0xFFFFCDD2', '0xFFEF9A9A'])),
       _buildTag(
           'c_korean',
           '韩餐',
           'cuisine',
           'rice_bowl',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFEF5350', '0xFFE53935'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFEF5350', '0xFFE53935'])),
       _buildTag(
           'c_thai',
           '泰餐',
           'cuisine',
           'spa',
-          VisualConfig(
-              shapeType: 'leaf',
-              colors: ['0xFF009688', '0xFF00796B'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'leaf', colors: ['0xFF009688', '0xFF00796B'])),
       _buildTag(
           'c_vietnamese',
           '越南菜',
           'cuisine',
           'grass',
-          VisualConfig(
-              shapeType: 'leaf',
-              colors: ['0xFF8BC34A', '0xFF7CB342'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'leaf', colors: ['0xFF8BC34A', '0xFF7CB342'])),
       _buildTag(
           'c_indian',
           '印度菜',
           'cuisine',
           'restaurant',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'circle',
               colors: ['0xFFFF9800', '0xFFF57C00'],
               particleEffect: 'steam')),
@@ -603,28 +509,22 @@ class TagRepositoryV2 {
           '西餐',
           'cuisine',
           'local_dining',
-          VisualConfig(
-              shapeType: 'hexagon',
-              colors: ['0xFFAB47BC', '0xFF8E24AA'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'hexagon', colors: ['0xFFAB47BC', '0xFF8E24AA'])),
       _buildTag(
           'c_french',
           '法餐',
           'cuisine',
           'wine_bar',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFF5C6BC0', '0xFF3F51B5'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFF5C6BC0', '0xFF3F51B5'])),
       _buildTag(
           'c_mexican',
           '墨西哥',
           'cuisine',
           'restaurant',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFF5722', '0xFFE64A19'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFF5722', '0xFFE64A19'])),
 
       // Other
       _buildTag(
@@ -632,7 +532,7 @@ class TagRepositoryV2 {
           '火锅',
           'cuisine',
           'soup_kitchen',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'circle',
               colors: ['0xFFFF7043', '0xFFF4511E'],
               particleEffect: 'steam')),
@@ -641,7 +541,7 @@ class TagRepositoryV2 {
           '烧烤',
           'cuisine',
           'kebab_dining',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'chili',
               colors: ['0xFF5D4037', '0xFF4E342E'],
               particleEffect: 'sparkle')),
@@ -650,10 +550,8 @@ class TagRepositoryV2 {
           '清真',
           'cuisine',
           'restaurant',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFF009688', '0xFF00796B'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFF009688', '0xFF00796B'])),
 
       // --- Scenes (场景) ---
       _buildTag(
@@ -661,16 +559,14 @@ class TagRepositoryV2 {
           '午餐',
           'scene',
           'wb_twilight',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFFCC80', '0xFFFFB74D'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFFCC80', '0xFFFFB74D'])),
       _buildTag(
           's_dinner',
           '晚餐',
           'scene',
           'nights_stay',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'circle',
               colors: ['0xFF5C6BC0', '0xFF3949AB'],
               particleEffect: 'glow')),
@@ -679,7 +575,7 @@ class TagRepositoryV2 {
           '夜宵',
           'scene',
           'bedtime',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'star',
               colors: ['0xFF3F51B5', '0xFF303F9F'],
               particleEffect: 'sparkle')),
@@ -688,25 +584,21 @@ class TagRepositoryV2 {
           '早午餐',
           'scene',
           'local_cafe',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFFCCBC', '0xFFFFAB91'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFFCCBC', '0xFFFFAB91'])),
       _buildTag(
           's_afternoon_tea',
           '下午茶',
           'scene',
           'coffee',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFF8BBD0', '0xFFF48FB1'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFF8BBD0', '0xFFF48FB1'])),
       _buildTag(
           's_party',
           '聚餐',
           'scene',
           'celebration',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'hexagon',
               colors: ['0xFFEC407A', '0xFFD81B60'],
               particleEffect: 'sparkle')),
@@ -715,16 +607,14 @@ class TagRepositoryV2 {
           '一人食',
           'scene',
           'person',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFBDBDBD', '0xFF9E9E9E'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFBDBDBD', '0xFF9E9E9E'])),
       _buildTag(
           's_date',
           '约会',
           'scene',
           'favorite',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'heart',
               colors: ['0xFFE91E63', '0xFFC2185B'],
               particleEffect: 'sparkle')),
@@ -733,25 +623,21 @@ class TagRepositoryV2 {
           '商务',
           'scene',
           'work',
-          VisualConfig(
-              shapeType: 'squircle',
-              colors: ['0xFF607D8B', '0xFF455A64'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'squircle', colors: ['0xFF607D8B', '0xFF455A64'])),
       _buildTag(
           's_healthy',
           '健康',
           'scene',
           'fitness_center',
-          VisualConfig(
-              shapeType: 'leaf',
-              colors: ['0xFF9CCC65', '0xFF7CB342'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'leaf', colors: ['0xFF9CCC65', '0xFF7CB342'])),
       _buildTag(
           's_comfort',
           '治愈',
           'scene',
           'self_improvement',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'circle',
               colors: ['0xFFFFCCBC', '0xFFFFAB91'],
               particleEffect: 'glow')),
@@ -760,19 +646,15 @@ class TagRepositoryV2 {
           '路边摊',
           'scene',
           'storefront',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFF7043', '0xFFF4511E'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFF7043', '0xFFF4511E'])),
       _buildTag(
           's_buffet',
           '自助',
           'scene',
           'restaurant_menu',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFAB47BC', '0xFF8E24AA'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFAB47BC', '0xFF8E24AA'])),
 
       // --- Dietary (饮食习惯) ---
       _buildTag(
@@ -780,28 +662,22 @@ class TagRepositoryV2 {
           '素食',
           'dietary',
           'spa',
-          VisualConfig(
-              shapeType: 'leaf',
-              colors: ['0xFF81C784', '0xFF66BB6A'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'leaf', colors: ['0xFF81C784', '0xFF66BB6A'])),
       _buildTag(
           'd_light',
           '轻食',
           'dietary',
           'local_florist',
-          VisualConfig(
-              shapeType: 'leaf',
-              colors: ['0xFFAED581', '0xFF9CCC65'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'leaf', colors: ['0xFFAED581', '0xFF9CCC65'])),
       _buildTag(
           'd_low_carb',
           '低碳',
           'dietary',
           'fitness_center',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFF4DB6AC', '0xFF26A69A'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFF4DB6AC', '0xFF26A69A'])),
 
       // --- Meta/Fun (趣味) ---
       _buildTag(
@@ -809,16 +685,14 @@ class TagRepositoryV2 {
           '随便',
           'meta',
           'shuffle',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFF9E9E9E', '0xFF616161'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFF9E9E9E', '0xFF616161'])),
       _buildTag(
           'm_surprise',
           '惊喜',
           'meta',
           'card_giftcard',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'star',
               colors: ['0xFFFF4081', '0xFFC51162'],
               particleEffect: 'sparkle')),
@@ -827,10 +701,8 @@ class TagRepositoryV2 {
           '便宜',
           'meta',
           'savings',
-          VisualConfig(
-              shapeType: 'circle',
-              colors: ['0xFFFFD54F', '0xFFFFCA28'],
-              particleEffect: 'none')),
+          const VisualConfig(
+              shapeType: 'circle', colors: ['0xFFFFD54F', '0xFFFFCA28'])),
 
       // --- Fortune (占卜) ---
       _buildTag(
@@ -838,7 +710,7 @@ class TagRepositoryV2 {
           '财运',
           'fortune',
           'savings',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'hexagon',
               colors: ['0xFFFFD54F', '0xFFFFB300'],
               particleEffect: 'glow')),
@@ -847,7 +719,7 @@ class TagRepositoryV2 {
           '事业运',
           'fortune',
           'speed',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'squircle',
               colors: ['0xFF42A5F5', '0xFF1E88E5'],
               particleEffect: 'glow')),
@@ -856,7 +728,7 @@ class TagRepositoryV2 {
           '社交运',
           'fortune',
           'person',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'circle',
               colors: ['0xFF4DB6AC', '0xFF26A69A'],
               particleEffect: 'bubble')),
@@ -865,7 +737,7 @@ class TagRepositoryV2 {
           '奇遇运',
           'fortune',
           'celebration',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'star',
               colors: ['0xFFFF7043', '0xFFFF5722'],
               particleEffect: 'sparkle')),
@@ -874,7 +746,7 @@ class TagRepositoryV2 {
           '专注运',
           'fortune',
           'bolt',
-          VisualConfig(
+          const VisualConfig(
               shapeType: 'drop',
               colors: ['0xFF7E57C2', '0xFF5E35B1'],
               particleEffect: 'glow')),

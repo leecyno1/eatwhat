@@ -580,8 +580,7 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
 
   /// 统一手势处理方法
   void _handleGesture(
-      PhysicalEntityController controller, entity, BubbleGesture gesture,
-      {DragUpdateDetails? details}) {
+      PhysicalEntityController controller, entity, BubbleGesture gesture) {
     switch (gesture) {
       case BubbleGesture.swipeUp:
         HapticFeedback.mediumImpact();

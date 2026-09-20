@@ -36,7 +36,6 @@ class TastePreferenceDatabase {
         mass: 0.9,
         radius: 35.0,
         bounciness: 0.85,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -64,8 +63,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFFFB3B3),
         mass: 1.1,
         radius: 37.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -76,7 +73,6 @@ class TastePreferenceDatabase {
         emoji: '🍯',
         primaryColor: const Color(0xFFF5DEB3),
         secondaryColor: const Color(0xFFFFFACD),
-        mass: 1.0,
         radius: 36.0,
         bounciness: 0.7,
         friction: 0.03,
@@ -149,10 +145,7 @@ class TastePreferenceDatabase {
         emoji: '🦀',
         primaryColor: const Color(0xFF4682B4),
         secondaryColor: const Color(0xFF87CEEB),
-        mass: 1.0,
         radius: 36.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -192,7 +185,6 @@ class TastePreferenceDatabase {
         emoji: '🍫',
         primaryColor: const Color(0xFF2F4F4F),
         secondaryColor: const Color(0xFF708090),
-        mass: 1.0,
         radius: 34.0,
         bounciness: 0.6,
         friction: 0.035,
@@ -207,7 +199,6 @@ class TastePreferenceDatabase {
         emoji: '🌶',
         primaryColor: const Color(0xFF556B2F),
         secondaryColor: const Color(0xFF9ACD32),
-        mass: 1.0,
         radius: 35.0,
         bounciness: 0.9,
         friction: 0.01,
@@ -296,8 +287,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFFFFACD),
         mass: 0.8,
         radius: 32.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -323,7 +312,6 @@ class TastePreferenceDatabase {
         emoji: '🐟',
         primaryColor: const Color(0xFFE6E6FA),
         secondaryColor: const Color(0xFFF8F8FF),
-        mass: 1.0,
         radius: 34.0,
         bounciness: 0.95,
         friction: 0.01,
@@ -339,7 +327,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFFFFACD),
         mass: 1.1,
         radius: 35.0,
-        bounciness: 0.8,
         friction: 0.025,
       ),
 
@@ -352,10 +339,7 @@ class TastePreferenceDatabase {
         emoji: '🧄',
         primaryColor: const Color(0xFFF5DEB3),
         secondaryColor: const Color(0xFFFFF8DC),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -380,7 +364,6 @@ class TastePreferenceDatabase {
         emoji: '🌰',
         primaryColor: const Color(0xFFDAA520),
         secondaryColor: const Color(0xFFFFD700),
-        mass: 1.0,
         radius: 34.0,
         bounciness: 0.75,
         friction: 0.03,
@@ -438,7 +421,6 @@ class TastePreferenceDatabase {
         emoji: '🐟',
         primaryColor: const Color(0xFFE6E6FA),
         secondaryColor: const Color(0xFFF8F8FF),
-        mass: 1.0,
         radius: 34.0,
         bounciness: 0.95,
         friction: 0.01,
@@ -454,7 +436,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFFFFACD),
         mass: 1.1,
         radius: 35.0,
-        bounciness: 0.8,
         friction: 0.025,
       ),
 
@@ -467,10 +448,7 @@ class TastePreferenceDatabase {
         emoji: '🧄',
         primaryColor: const Color(0xFFF5DEB3),
         secondaryColor: const Color(0xFFFFF8DC),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -495,7 +473,6 @@ class TastePreferenceDatabase {
         emoji: '🌰',
         primaryColor: const Color(0xFFDAA520),
         secondaryColor: const Color(0xFFFFD700),
-        mass: 1.0,
         radius: 34.0,
         bounciness: 0.75,
         friction: 0.03,
@@ -555,8 +532,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFFFFFE0),
         mass: 0.9,
         radius: 33.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       // 清爽类
@@ -628,8 +603,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFDEB887),
         mass: 1.1,
         radius: 35.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -640,7 +613,6 @@ class TastePreferenceDatabase {
         emoji: '🍛',
         primaryColor: const Color(0xFFDAA520),
         secondaryColor: const Color(0xFFFFD700),
-        mass: 1.0,
         radius: 34.0,
         bounciness: 0.75,
         friction: 0.025,
@@ -703,10 +675,7 @@ class TastePreferenceDatabase {
         emoji: '🍭',
         primaryColor: const Color(0xFFFF69B4),
         secondaryColor: const Color(0xFFFFB6C1),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -733,8 +702,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFF98FB98),
         mass: 0.9,
         radius: 33.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -759,10 +726,7 @@ class TastePreferenceDatabase {
         emoji: '🥜',
         primaryColor: const Color(0xFFFF6347),
         secondaryColor: const Color(0xFFFFB3B3),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -801,7 +765,6 @@ class TastePreferenceDatabase {
         emoji: '🍤',
         primaryColor: const Color(0xFFFF7F50),
         secondaryColor: const Color(0xFFFFA07A),
-        mass: 1.0,
         radius: 34.0,
         bounciness: 0.85,
         friction: 0.015,
@@ -817,8 +780,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFFFB3B3),
         mass: 1.1,
         radius: 35.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -831,8 +792,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFF708090),
         mass: 1.1,
         radius: 35.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -843,7 +802,6 @@ class TastePreferenceDatabase {
         emoji: '🥥',
         primaryColor: const Color(0xFFDAA520),
         secondaryColor: const Color(0xFFFFD700),
-        mass: 1.0,
         radius: 34.0,
         bounciness: 0.75,
         friction: 0.025,
@@ -887,8 +845,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFFFF4E6),
         mass: 0.9,
         radius: 33.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -929,8 +885,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFF5DEB3),
         mass: 0.9,
         radius: 33.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -969,10 +923,7 @@ class TastePreferenceDatabase {
         emoji: '🍅',
         primaryColor: const Color(0xFFFF6347),
         secondaryColor: const Color(0xFFFFB3B3),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -983,7 +934,6 @@ class TastePreferenceDatabase {
         emoji: '🥚',
         primaryColor: const Color(0xFFFFD700),
         secondaryColor: const Color(0xFFFFFACD),
-        mass: 1.0,
         radius: 34.0,
         bounciness: 0.7,
         friction: 0.03,
@@ -1055,8 +1005,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFDC143C),
         mass: 1.2,
         radius: 36.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1081,7 +1029,6 @@ class TastePreferenceDatabase {
         emoji: '🍜',
         primaryColor: const Color(0xFF8B4513),
         secondaryColor: const Color(0xFFDEB887),
-        mass: 1.0,
         radius: 34.0,
         bounciness: 0.7,
         friction: 0.03,
@@ -1131,8 +1078,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFE0F6FF),
         mass: 0.8,
         radius: 32.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1145,8 +1090,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFB0C4DE),
         mass: 1.3,
         radius: 37.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1185,10 +1128,7 @@ class TastePreferenceDatabase {
         emoji: '🐟',
         primaryColor: const Color(0xFF4682B4),
         secondaryColor: const Color(0xFF87CEEB),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1243,8 +1183,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFFFFFE0),
         mass: 1.1,
         radius: 35.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       // 饮食场景
@@ -1256,10 +1194,7 @@ class TastePreferenceDatabase {
         emoji: '🌅',
         primaryColor: const Color(0xFFFFD700),
         secondaryColor: const Color(0xFFFFF8DC),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1326,10 +1261,7 @@ class TastePreferenceDatabase {
         emoji: '💕',
         primaryColor: const Color(0xFFFF1493),
         secondaryColor: const Color(0xFFFFB6C1),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1356,8 +1288,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFFFD700),
         mass: 1.2,
         radius: 36.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1382,10 +1312,7 @@ class TastePreferenceDatabase {
         emoji: '📦',
         primaryColor: const Color(0xFFFF8C00),
         secondaryColor: const Color(0xFFFFE4B5),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1438,10 +1365,7 @@ class TastePreferenceDatabase {
         emoji: '🤗',
         primaryColor: const Color(0xFFFFB6C1),
         secondaryColor: const Color(0xFFFFC0CB),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1466,10 +1390,7 @@ class TastePreferenceDatabase {
         emoji: '🍺',
         primaryColor: const Color(0xFFDAA520),
         secondaryColor: const Color(0xFFFFD700),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1482,8 +1403,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFF8F8FF),
         mass: 0.7,
         radius: 31.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1494,10 +1413,7 @@ class TastePreferenceDatabase {
         emoji: '📚',
         primaryColor: const Color(0xFF4169E1),
         secondaryColor: const Color(0xFFB0C4DE),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1523,7 +1439,6 @@ class TastePreferenceDatabase {
         primaryColor: const Color(0xFF98FB98),
         secondaryColor: const Color(0xFFF0FFF0),
         mass: 0.6,
-        radius: 30.0,
         bounciness: 0.9,
         friction: 0.01,
       ),
@@ -1544,8 +1459,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFFFB3B3),
         mass: 1.3,
         radius: 37.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1558,8 +1471,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFF87CEEB),
         mass: 1.1,
         radius: 35.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1570,10 +1481,7 @@ class TastePreferenceDatabase {
         emoji: '🦢',
         primaryColor: const Color(0xFF87CEEB),
         secondaryColor: const Color(0xFFE0F6FF),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1656,8 +1564,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFF9370DB),
         mass: 1.1,
         radius: 35.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1668,7 +1574,6 @@ class TastePreferenceDatabase {
         emoji: '🌺',
         primaryColor: const Color(0xFFFF69B4),
         secondaryColor: const Color(0xFFFFB6C1),
-        mass: 1.0,
         radius: 34.0,
         bounciness: 0.85,
         friction: 0.015,
@@ -1684,8 +1589,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFFFD700),
         mass: 1.1,
         radius: 35.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1696,7 +1599,6 @@ class TastePreferenceDatabase {
         emoji: '🍮',
         primaryColor: const Color(0xFFFFD700),
         secondaryColor: const Color(0xFFFFF8DC),
-        mass: 1.0,
         radius: 34.0,
         bounciness: 0.7,
         friction: 0.03,
@@ -1727,8 +1629,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFFFB3B3),
         mass: 1.1,
         radius: 35.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1739,7 +1639,6 @@ class TastePreferenceDatabase {
         emoji: '🥭',
         primaryColor: const Color(0xFFDAA520),
         secondaryColor: const Color(0xFFFFD700),
-        mass: 1.0,
         radius: 34.0,
         bounciness: 0.85,
         friction: 0.015,
@@ -1781,10 +1680,7 @@ class TastePreferenceDatabase {
         emoji: '🥥',
         primaryColor: const Color(0xFFF5DEB3),
         secondaryColor: const Color(0xFFFFFACD),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       // 欧美特色
@@ -1796,10 +1692,7 @@ class TastePreferenceDatabase {
         emoji: '🍝',
         primaryColor: const Color(0xFF228B22),
         secondaryColor: const Color(0xFF90EE90),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1854,8 +1747,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFFFB3B3),
         mass: 1.1,
         radius: 35.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1882,8 +1773,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFF98FB98),
         mass: 0.9,
         radius: 33.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1925,8 +1814,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFB0C4DE),
         mass: 1.1,
         radius: 35.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1937,10 +1824,7 @@ class TastePreferenceDatabase {
         emoji: '🕌',
         primaryColor: const Color(0xFFDAA520),
         secondaryColor: const Color(0xFFFFD700),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -1965,10 +1849,7 @@ class TastePreferenceDatabase {
         emoji: '🌿',
         primaryColor: const Color(0xFF228B22),
         secondaryColor: const Color(0xFF90EE90),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
     ];
   }
@@ -2015,8 +1896,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFFFD700),
         mass: 0.9,
         radius: 33.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -2029,8 +1908,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFF8F8FF),
         mass: 0.8,
         radius: 32.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -2041,7 +1918,6 @@ class TastePreferenceDatabase {
         emoji: '🥑',
         primaryColor: const Color(0xFF228B22),
         secondaryColor: const Color(0xFF90EE90),
-        mass: 1.0,
         radius: 34.0,
         bounciness: 0.7,
         friction: 0.03,
@@ -2057,8 +1933,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFDEB887),
         mass: 1.2,
         radius: 36.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -2069,10 +1943,7 @@ class TastePreferenceDatabase {
         emoji: '☪️',
         primaryColor: const Color(0xFF32CD32),
         secondaryColor: const Color(0xFF98FB98),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -2083,10 +1954,7 @@ class TastePreferenceDatabase {
         emoji: '✡️',
         primaryColor: const Color(0xFF4169E1),
         secondaryColor: const Color(0xFFB0C4DE),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -2099,8 +1967,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFF0FFF0),
         mass: 0.7,
         radius: 31.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -2168,10 +2034,7 @@ class TastePreferenceDatabase {
         emoji: '🧬',
         primaryColor: const Color(0xFFFF69B4),
         secondaryColor: const Color(0xFFFFB6C1),
-        mass: 1.0,
         radius: 34.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -2226,8 +2089,6 @@ class TastePreferenceDatabase {
         secondaryColor: const Color(0xFFD3D3D3),
         mass: 0.9,
         radius: 33.0,
-        bounciness: 0.8,
-        friction: 0.02,
       ),
 
       PhysicalEntity(
@@ -2239,7 +2100,6 @@ class TastePreferenceDatabase {
         primaryColor: const Color(0xFF2F4F4F),
         secondaryColor: const Color(0xFF708090),
         mass: 0.6,
-        radius: 30.0,
         bounciness: 0.95,
         friction: 0.005,
       ),

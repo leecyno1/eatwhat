@@ -5,7 +5,6 @@ import '../controllers/bubble_controller.dart';
 import '../../recommendation/screens/recommendation_screen.dart';
 import '../widgets/modern_bubble_widget.dart';
 import '../../../shared/widgets/modern_loading_animation.dart';
-import '../../../shared/widgets/loading_button.dart';
 import '../../../shared/themes/design_tokens.dart';
 import '../../../shared/widgets/ui/greeting_header.dart';
 import '../../../shared/widgets/ui/stat_pill.dart';
@@ -23,7 +22,6 @@ class BubbleScreen extends StatefulWidget {
 
 class _BubbleScreenState extends State<BubbleScreen> with TickerProviderStateMixin {
   late AnimationController _backgroundController;
-  late Animation<Color?> _backgroundAnimation;
   bool _useEnhancedBubbles = true; // 控制是否使用增强气泡
 
   @override
@@ -38,11 +36,6 @@ class _BubbleScreenState extends State<BubbleScreen> with TickerProviderStateMix
       duration: const Duration(seconds: 10),
       vsync: this,
     );
-
-    _backgroundAnimation = ColorTween(
-      begin: const Color(0xFFFFF3E0), // 主色调 - 暖黄
-      end: const Color(0xFFE3F2FD), // 辅助色 - 淡蓝
-    ).animate(_backgroundController);
 
     _backgroundController.repeat(reverse: true);
 

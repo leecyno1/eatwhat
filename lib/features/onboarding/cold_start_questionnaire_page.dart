@@ -86,14 +86,6 @@ class _ColdStartQuestionnairePageState extends State<ColdStartQuestionnairePage>
     }
   }
 
-  /// 获取"下一步"或"完成"按钮文本
-  String _getNextButtonText() {
-    if (_currentPage == QuestionnaireQuestions.totalQuestions - 1) {
-      return '完成';
-    }
-    return '下一步';
-  }
-
   /// 处理完成问卷
   Future<void> _handleComplete() async {
     if (_isProcessing) return;

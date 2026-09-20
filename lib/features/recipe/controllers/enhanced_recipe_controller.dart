@@ -5,7 +5,6 @@ import '../../../core/services/firecrawl_recipe_crawler_service.dart';
 import '../../../core/services/real_mcp_firecrawl_service.dart';
 import '../../../core/services/unified_recipe_database_service.dart';
 import '../../../core/utils/advanced_logger.dart';
-import '../../../core/error/global_error_handler.dart';
 
 /// 增强菜谱控制器 - 管理菜谱数据和状态
 class EnhancedRecipeController extends ChangeNotifier {
@@ -35,7 +34,6 @@ class EnhancedRecipeController extends ChangeNotifier {
   Set<String> _selectedTags = {};
 
   // 分页
-  int _currentPage = 0;
   final int _pageSize = 20;
   bool _hasMoreData = true;
 
@@ -256,7 +254,7 @@ class EnhancedRecipeController extends ChangeNotifier {
       );
 
       // 合并新抓取的菜谱（使用真实MCP数据）
-      final newRecipes = (result.recipes as List<dynamic>)
+      final newRecipes = result.recipes
           .cast<EnhancedRecipe>()
           .where((newRecipe) =>
               !_recipes.any((existing) => existing.id == newRecipe.id))
@@ -415,7 +413,6 @@ class EnhancedRecipeController extends ChangeNotifier {
   }
 
   void _resetPagination() {
-    _currentPage = 0;
     _hasMoreData = true;
   }
 

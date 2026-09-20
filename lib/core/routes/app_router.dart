@@ -4,7 +4,6 @@ import '../../features/bubble/screens/bubble_screen.dart';
 import '../../features/bubble/screens/glassmorphism_bubble_screen.dart';
 import '../../features/recommendation/screens/recommendation_screen.dart';
 import '../../features/user/screens/user_profile_screen.dart';
-import '../../features/settings/screens/settings_screen.dart';
 import '../../features/settings/screens/pastel_settings_screen.dart';
 import '../../features/style_preview/style_preview_screen.dart';
 import '../../features/preferences/screens/taste_preferences_screen.dart';
@@ -86,24 +85,6 @@ class AppRouter {
       // 错误页面处理
       errorBuilder: (context, state) => _buildErrorPage(context, state),
     );
-  }
-
-  /// 构建页面
-  static Widget _buildPage(GoRouterState state) {
-    switch (state.matchedLocation) {
-      case home:
-        return const BubbleScreen();
-      case glassmorphismHome:
-        return const GlassmorphismBubbleScreen();
-      case recommendation:
-        return const RecommendationScreen();
-      case userProfile:
-        return const UserProfileScreen();
-      case settings:
-        return const SettingsScreen();
-      default:
-        return _buildErrorPage(null, state);
-    }
   }
 
   /// 构建错误页面

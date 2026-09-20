@@ -346,22 +346,6 @@ class _HistoryScreenState extends State<HistoryScreen> with TickerProviderStateM
     }
   }
 
-  /// 切换收藏状态
-  Future<void> _toggleFavorite(Food food) async {
-    try {
-      if (StorageService.isFoodFavorited(food.id)) {
-        await StorageService.removeFavoriteFood(food.id);
-      } else {
-        await StorageService.addFavoriteFood(food);
-      }
-
-      setState(() {}); // 刷新UI
-      HapticFeedback.lightImpact();
-    } catch (e) {
-      debugPrint('切换收藏失败: $e');
-    }
-  }
-
   /// 显示食物详情
   void _showFoodDetail(Food food) {
     // 这里可以导航到食物详情页面

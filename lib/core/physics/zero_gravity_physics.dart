@@ -8,7 +8,6 @@ class ZeroGravityPhysics {
   static const double _maxSpeed = 0.5; // 极大降低最大速度
   static const double _boundaryDamping = 0.8; // 极大增加边界阻尼
   static const double _airResistance = 0.98; // 更强的空气阻力
-  static const double _separationForce = 1.0; // 极大降低分离力强度
   static const double _minSeparationDistance = 1.02; // 微调分离距离
   static const double _viscosity = 0.10; // 液体粘滞系数（0-1，越大越粘）
   static const double _edgeViscosityBoost = 0.15; // 边缘额外粘滞，形成缓冲

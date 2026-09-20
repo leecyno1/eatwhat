@@ -5,7 +5,6 @@ import '../services/howtocook_database_service.dart';
 import '../services/vectorized_recommendation_engine.dart';
 import '../services/user_preference_manager.dart';
 import '../services/analytics_service.dart';
-import '../services/analytics_helper.dart';
 
 /// ========== 服务层 Providers ==========
 

@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 /// 食物模型
 class Food {
   final String id;

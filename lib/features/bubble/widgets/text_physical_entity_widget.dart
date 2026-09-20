@@ -47,7 +47,6 @@ class _TextPhysicalEntityWidgetState extends State<TextPhysicalEntityWidget>
   late Animation<double> _specialEffectAnimation;
 
   bool _isHovered = false;
-  bool _isPressed = false;
 
   @override
   void initState() {
@@ -449,16 +448,12 @@ class _TextPhysicalEntityWidgetState extends State<TextPhysicalEntityWidget>
   }
 
   void _handleTapDown() {
-    setState(() {
-      _isPressed = true;
-    });
+    setState(() {});
     _tapController.forward();
   }
 
   void _handleTapUp() {
-    setState(() {
-      _isPressed = false;
-    });
+    setState(() {});
     _tapController.reverse();
   }
 

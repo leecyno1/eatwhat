@@ -16,7 +16,6 @@ class PastelSettingsScreen extends StatefulWidget {
 class _PastelSettingsScreenState extends State<PastelSettingsScreen> {
   bool _enableHapticFeedback = true;
   bool _enableAnimations = true;
-  bool _enableSoundEffects = false;
   bool _enableNotifications = true;
   bool _enableDarkMode = false;
   bool _enableAutoSave = true;

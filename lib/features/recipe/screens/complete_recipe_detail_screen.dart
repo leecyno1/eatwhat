@@ -6,7 +6,6 @@ import 'package:provider/provider.dart';
 import '../../../core/models/enhanced_recipe.dart';
 import '../controllers/enhanced_recipe_controller.dart';
 import '../../../core/error/global_error_handler.dart';
-import '../../../shared/widgets/glassmorphic_container.dart';
 
 /// 完整菜谱详情界面 - 基于增强菜谱数据模型
 /// 展示从下厨房爬取的真实菜谱数据

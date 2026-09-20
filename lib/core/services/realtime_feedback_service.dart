@@ -26,7 +26,6 @@ class RealtimeFeedbackService {
   // 配置参数
   static const int _maxQueueSize = 100;
   static const Duration _batchProcessInterval = Duration(milliseconds: 500);
-  static const Duration _immediateActionThreshold = Duration(milliseconds: 100);
 
   /// 反馈事件流
   Stream<UserFeedbackEvent> get feedbackStream => _feedbackController.stream;

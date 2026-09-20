@@ -9,8 +9,6 @@ import '../../features/user/screens/user_profile_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
 import '../../features/recipe/screens/modern_recipe_browser_screen.dart';
-import '../../features/recipe/screens/modern_recipe_recommendation_screen.dart';
-import '../../features/recipe/screens/modern_recipe_detail_screen.dart';
 import '../../features/recipe/screens/complete_recipe_detail_screen.dart';
 import '../../features/howtocook/screens/howtocook_recipe_screen.dart';
 import '../utils/route_animations.dart';

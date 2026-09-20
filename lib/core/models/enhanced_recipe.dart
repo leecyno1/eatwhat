@@ -1,7 +1,4 @@
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
 import '../utils/advanced_logger.dart';
-import '../error/global_error_handler.dart';
 
 /// 增强的菜谱数据模型 - 基于下厨房结构分析
 class EnhancedRecipe {

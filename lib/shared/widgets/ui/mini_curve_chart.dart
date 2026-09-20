@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 import '../../../shared/themes/design_tokens.dart';
 
 /// A very lightweight mini curve chart (sparkline-like) with a highlighted point.

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 import '../../../core/models/recipe.dart';
-import '../../../core/theme/modern_theme.dart';
 import '../../../core/services/recipe_database_service.dart';
-import '../screens/recipe_detail_screen.dart';
 
 class RecipeCard extends StatelessWidget {
   final Recipe recipe;

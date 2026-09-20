@@ -521,23 +521,6 @@ class _ChannelSelectorDialogState extends State<ChannelSelectorDialog>
       widget.onDismiss?.call();
     }
   }
-
-  /// 显示渠道选择对话框 (静态方法)
-  static Future<void> showChannelSelector(
-    BuildContext context,
-    Food selectedFood, {
-    VoidCallback? onDismiss,
-  }) async {
-    return showDialog(
-      context: context,
-      barrierDismissible: true,
-      barrierColor: Colors.black54,
-      builder: (context) => ChannelSelectorDialog(
-        selectedFood: selectedFood,
-        onDismiss: onDismiss,
-      ),
-    );
-  }
 }
 
 /// 渠道选项

@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/food.dart';
-import '../models/bubble.dart';
 import '../models/user_preference.dart';
 import '../services/unified_food_data_service.dart';
 

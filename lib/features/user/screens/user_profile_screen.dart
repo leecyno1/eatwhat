@@ -304,10 +304,6 @@ class _UserProfileScreenState extends State<UserProfileScreen> with TickerProvid
     );
   }
 
-  BoxDecoration _buildBackgroundDecoration() {
-    return const BoxDecoration(color: DesignTokens.cream);
-  }
-
   void _logout() {
     showDialog(
       context: context,

@@ -42,7 +42,6 @@ class _PremiumPhysicalEntityWidgetState extends State<PremiumPhysicalEntityWidge
   late Animation<double> _floatAnimation;
 
   bool _isHovered = false;
-  bool _isPressed = false;
 
   @override
   void initState() {
@@ -352,16 +351,12 @@ class _PremiumPhysicalEntityWidgetState extends State<PremiumPhysicalEntityWidge
   }
 
   void _handleTapDown() {
-    setState(() {
-      _isPressed = true;
-    });
+    setState(() {});
     _tapController.forward();
   }
 
   void _handleTapUp() {
-    setState(() {
-      _isPressed = false;
-    });
+    setState(() {});
     _tapController.reverse();
   }
 

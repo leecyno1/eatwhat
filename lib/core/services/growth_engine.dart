@@ -1,8 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'dart:async';
 
-import '../utils/memory_manager.dart';
-
 /// 用户增长策略类型
 enum GrowthStrategy {
   viralSharing, // 病毒式分享
@@ -38,8 +36,6 @@ class GrowthEngine {
   static final GrowthEngine _instance = GrowthEngine._internal();
   factory GrowthEngine() => _instance;
   GrowthEngine._internal();
-
-  final MemoryManager _memoryManager = MemoryManager();
 
   // 增长数据
   final Map<String, UserGrowthProfile> _userProfiles = {};

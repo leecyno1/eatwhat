@@ -228,7 +228,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> with Ticker
                   children: [
                     // 食物名称
                     Text(
-                      food.name ?? '美食',
+                      food.name,
                       style: const TextStyle(
                           fontSize: 16, fontWeight: FontWeight.w800, color: DesignTokens.ink),
                       maxLines: 1,
@@ -387,7 +387,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> with Ticker
   /// 记录正向反馈
   void _recordPositiveFeedback(Food food, int index, double intensity) {
     final event = TasteFeedbackEvent(
-      recipeId: food.id ?? '',
+      recipeId: food.id,
       intensity: intensity,
       isPositive: true,
       recommendationIndex: index,
@@ -409,7 +409,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> with Ticker
   /// 记录负向反馈
   void _recordNegativeFeedback(Food food, int index, double intensity) {
     final event = TasteFeedbackEvent(
-      recipeId: food.id ?? '',
+      recipeId: food.id,
       intensity: intensity,
       isPositive: false,
       recommendationIndex: index,
@@ -728,16 +728,5 @@ class _RecommendationScreenState extends State<RecommendationScreen> with Ticker
         ),
       );
     }
-  }
-
-  /// 切换收藏状态
-  void _toggleFavorite(Food food) {
-    // TODO: 实现收藏功能
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${food.name} 已添加到收藏'),
-        duration: const Duration(seconds: 2),
-      ),
-    );
   }
 }

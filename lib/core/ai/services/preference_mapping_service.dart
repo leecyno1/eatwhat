@@ -445,16 +445,6 @@ class PreferenceMappingService {
     return null;
   }
 
-  double _calculatePreferenceVariance(Map<String, double> preferences) {
-    if (preferences.isEmpty) return 0.0;
-
-    final values = preferences.values.toList();
-    final mean = values.reduce((a, b) => a + b) / values.length;
-    final variance = values.map((e) => pow(e - mean, 2)).reduce((a, b) => a + b) / values.length;
-
-    return variance;
-  }
-
   // 占位实现的方法
   Future<List<PreferenceVector>> _getAllUserVectors() async {
     return []; // TODO: 实现获取所有用户向量

@@ -7,7 +7,7 @@ void main() {
 }
 
 class _PreviewApp extends StatelessWidget {
-  const _PreviewApp({super.key});
+  const _PreviewApp();
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

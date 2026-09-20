@@ -5,7 +5,6 @@
 // 运行方式: dart bin/meituan_cdp_login.dart <username> <password>
 
 import 'dart:io';
-import 'package:flutter/foundation.dart';
 import 'package:eatwhat_app/core/services/chrome_cdp_service.dart';
 import 'package:eatwhat_app/core/services/meituan_auth_service.dart';
 

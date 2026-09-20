@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import '../utils/performance_optimizer.dart';
 import '../services/analytics_service.dart';
-import '../models/analytics_event.dart';
 
 /// 性能监控服务
 /// 提供应用级别的性能监控和报告功能

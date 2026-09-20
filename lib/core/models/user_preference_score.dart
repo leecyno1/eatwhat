@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'dart:math' as math;
 
 /// 用户偏好评分模型

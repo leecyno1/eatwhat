@@ -25,7 +25,6 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
   late AnimationController _particleController;
 
   late Animation<double> _headerAnimation;
-  late Animation<double> _backgroundAnimation;
   late Animation<double> _particleAnimation;
 
   // 背景粒子系统
@@ -42,10 +41,6 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
       duration: const Duration(seconds: 30),
       vsync: this,
     );
-    _backgroundAnimation = Tween<double>(
-      begin: 0.0,
-      end: 2 * math.pi,
-    ).animate(_backgroundController);
 
     // 头部动画
     _headerController = AnimationController(

@@ -35,7 +35,6 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
   late Animation<double> _elevationAnimation;
   late Animation<double> _scaleAnimation;
   late Animation<double> _favoriteScaleAnimation;
-  late Animation<Color?> _favoriteColorAnimation;
   late Animation<double> _imageScaleAnimation;
   late Animation<double> _overlayOpacityAnimation;
 
@@ -87,14 +86,6 @@ class _AIEnhancedFoodCardState extends State<AIEnhancedFoodCard>
     ).animate(CurvedAnimation(
       parent: _favoriteController,
       curve: Curves.elasticOut,
-    ));
-
-    _favoriteColorAnimation = ColorTween(
-      begin: Colors.grey[400],
-      end: Colors.red,
-    ).animate(CurvedAnimation(
-      parent: _favoriteController,
-      curve: Curves.easeInOut,
     ));
 
     _imageScaleAnimation = Tween<double>(
