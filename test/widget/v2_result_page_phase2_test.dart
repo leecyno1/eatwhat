@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:eatwhat_app/core/models/analytics_event.dart';
@@ -10,10 +11,10 @@ import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
 import 'package:eatwhat_app/v2/core/external/platform/meituan_delivery_order_client.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
-import 'package:eatwhat_app/v2/core/services/prebuilt_dish_image_catalog_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_recommendation_telemetry_service.dart';
 import 'package:eatwhat_app/v2/features/result/result_page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -291,10 +292,6 @@ void main() {
     expect(find.byKey(const ValueKey('execution-entry-button')), findsNothing);
   });
 
-
-
-
-
   testWidgets('ResultPage 外卖后端未接入时入口直接降级且不弹登录', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -425,6 +422,275 @@ void main() {
     expect(meituanClient.lastKeyword, '椒麻鸡丝凉面');
   });
 
+  group('ResultPage 外卖异步生命周期', () {
+    const launcherChannel = MethodChannel('plugins.flutter.io/url_launcher');
+    final launchedUrls = <String>[];
+
+    setUp(() async {
+      await AuthService.logout();
+      launchedUrls.clear();
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(launcherChannel, (call) async {
+        if (call.method == 'launch') {
+          launchedUrls.add(call.arguments['url'] as String);
+        }
+        return true;
+      });
+    });
+
+    tearDown(() async {
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(launcherChannel, null);
+      await AuthService.logout();
+    });
+
+    Future<void> openDelivery(
+      WidgetTester tester,
+      _DelayedMeituanClient client,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ResultPage(
+            meituanOrderClient: client,
+            meituanLocationResolver: () async =>
+                const GeoPoint(latitude: 39.9042, longitude: 116.4074),
+            imageGenerator: (_) async => null,
+            dishIntroLoader: (_, __, ___) async => null,
+            recommendations: const [
+              RecipeModel(
+                id: 'lifecycle-recipe',
+                name: '番茄肥牛锅',
+                description: '家常热菜',
+                ingredients: ['番茄', '肥牛'],
+              ),
+            ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('result-execution-delivery')),
+      );
+      await tester.tap(find.byKey(const ValueKey('result-execution-delivery')));
+      await tester.pump();
+      expect(client.statusCalls, 1);
+    }
+
+    for (final signedIn in [false, true]) {
+      testWidgets('退出结果页后连接检查成功不再导航，已登录=$signedIn', (tester) async {
+        if (signedIn) {
+          final result = await AuthService.register(
+            username: 'lifecycle_user',
+            email: 'lifecycle@example.com',
+            password: 'Test1234',
+            confirmPassword: 'Test1234',
+          );
+          expect(result.success, isTrue, reason: result.message);
+        }
+        expect(AuthService.isLoggedIn, signedIn);
+        final client = _DelayedMeituanClient();
+        await openDelivery(tester, client);
+        await tester.pumpWidget(const MaterialApp(home: Text('已离开结果页')));
+        await tester.pumpAndSettle();
+
+        client.status.complete(const MeituanOAuthStatus(
+          connected: true,
+          requiresUserAuthorization: false,
+        ));
+        await tester.pumpAndSettle();
+
+        expect(tester.takeException(), isNull);
+        expect(find.text('已离开结果页'), findsOneWidget);
+        expect(find.byKey(const ValueKey('eatwhat-auth-sheet')), findsNothing);
+        expect(find.text('生成外卖菜单'), findsNothing);
+        expect(client.lastKeyword, isNull);
+        expect(launchedUrls, isEmpty);
+      });
+    }
+
+    testWidgets('退出结果页后连接检查未授权不再申请授权链接', (tester) async {
+      final client = _DelayedMeituanClient();
+      await openDelivery(tester, client);
+      await tester.pumpWidget(const MaterialApp(home: Text('已离开结果页')));
+      await tester.pumpAndSettle();
+
+      client.status.complete(const MeituanOAuthStatus(
+        connected: false,
+        requiresUserAuthorization: true,
+      ));
+      await tester.pumpAndSettle();
+
+      expect(client.authorizationCalls, 0);
+      expect(launchedUrls, isEmpty);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('退出结果页后连接检查失败不再打开外部页面', (tester) async {
+      final client = _DelayedMeituanClient();
+      await openDelivery(tester, client);
+      await tester.pumpWidget(const MaterialApp(home: Text('已离开结果页')));
+      await tester.pumpAndSettle();
+
+      client.status.completeError(StateError('status unavailable'));
+      await tester.pumpAndSettle();
+
+      expect(launchedUrls, isEmpty);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('页面仍存在时连接成功，取消登录不会进入菜单', (tester) async {
+      final client = _DelayedMeituanClient();
+      await openDelivery(tester, client);
+      client.status.complete(const MeituanOAuthStatus(
+        connected: true,
+        requiresUserAuthorization: false,
+      ));
+      await tester.pumpAndSettle();
+      final sheet = find.byKey(const ValueKey('eatwhat-auth-sheet'));
+      expect(sheet, findsOneWidget);
+
+      Navigator.of(tester.element(sheet)).pop();
+      await tester.pumpAndSettle();
+
+      expect(sheet, findsNothing);
+      expect(find.byType(ResultPage), findsOneWidget);
+      expect(find.text('生成外卖菜单'), findsNothing);
+      expect(AuthService.isLoggedIn, isFalse);
+      expect(client.lastKeyword, isNull);
+      expect(launchedUrls, isEmpty);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('页面仍存在且已登录时连接成功进入菜单', (tester) async {
+      final result = await AuthService.register(
+        username: 'lifecycle_user',
+        email: 'lifecycle@example.com',
+        password: 'Test1234',
+        confirmPassword: 'Test1234',
+      );
+      expect(result.success, isTrue, reason: result.message);
+      final client = _DelayedMeituanClient();
+      await openDelivery(tester, client);
+      client.status.complete(const MeituanOAuthStatus(
+        connected: true,
+        requiresUserAuthorization: false,
+      ));
+      await tester.pumpAndSettle();
+
+      expect(find.text('生成外卖菜单'), findsOneWidget);
+      expect(find.textContaining('锅气食堂'), findsOneWidget);
+      expect(find.byKey(const ValueKey('eatwhat-auth-sheet')), findsNothing);
+      expect(client.lastKeyword, '番茄肥牛锅');
+      expect(launchedUrls, isEmpty);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('页面仍存在时连接检查失败打开开放平台', (tester) async {
+      final client = _DelayedMeituanClient();
+      await openDelivery(tester, client);
+      client.status.completeError(StateError('status unavailable'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('美团服务暂时不可用，请先去开放平台完成接入'), findsOneWidget);
+      expect(launchedUrls, ['https://open.meituan.com/']);
+      expect(find.byKey(const ValueKey('eatwhat-auth-sheet')), findsNothing);
+      expect(client.authorizationCalls, 0);
+      expect(tester.takeException(), isNull);
+    });
+
+    for (final fails in [false, true]) {
+      testWidgets('页面仍存在时授权链接返回继续打开浏览器，失败=$fails', (tester) async {
+        final client = _DelayedMeituanClient();
+        await openDelivery(tester, client);
+        client.status.complete(const MeituanOAuthStatus(
+          connected: false,
+          requiresUserAuthorization: true,
+        ));
+        await tester.pumpAndSettle();
+        expect(client.authorizationCalls, 1);
+        expect(find.text('请先完成美团商家授权'), findsOneWidget);
+
+        if (fails) {
+          client.authorization
+              .completeError(StateError('authorize unavailable'));
+        } else {
+          client.authorization.complete(
+            Uri.parse('https://example.com/oauth/authorize'),
+          );
+        }
+        await tester.pumpAndSettle();
+
+        expect(launchedUrls, [
+          fails
+              ? 'https://open.meituan.com/'
+              : 'https://example.com/oauth/authorize',
+        ]);
+        expect(find.byKey(const ValueKey('eatwhat-auth-sheet')), findsNothing);
+        expect(tester.takeException(), isNull);
+      });
+    }
+
+    testWidgets('退出结果页后浏览器启动失败不再打开兜底页面', (tester) async {
+      final launch = Completer<bool>();
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(launcherChannel, (call) async {
+        if (call.method == 'launch') {
+          launchedUrls.add(call.arguments['url'] as String);
+          if (launchedUrls.length == 1) return launch.future;
+        }
+        return true;
+      });
+      final client = _DelayedMeituanClient();
+      await openDelivery(tester, client);
+      client.status.complete(const MeituanOAuthStatus(
+        connected: false,
+        requiresUserAuthorization: true,
+      ));
+      await tester.pumpAndSettle();
+      client.authorization.complete(
+        Uri.parse('https://example.com/oauth/authorize'),
+      );
+      await tester.pumpAndSettle();
+      expect(launchedUrls, ['https://example.com/oauth/authorize']);
+
+      await tester.pumpWidget(const MaterialApp(home: Text('已离开结果页')));
+      await tester.pumpAndSettle();
+      launch.completeError(PlatformException(code: 'launch_failed'));
+      await tester.pumpAndSettle();
+
+      expect(launchedUrls, ['https://example.com/oauth/authorize']);
+      expect(tester.takeException(), isNull);
+    });
+
+    for (final fails in [false, true]) {
+      testWidgets('退出结果页后授权链接返回不再打开浏览器，失败=$fails', (tester) async {
+        final client = _DelayedMeituanClient();
+        await openDelivery(tester, client);
+        client.status.complete(const MeituanOAuthStatus(
+          connected: false,
+          requiresUserAuthorization: true,
+        ));
+        await tester.pumpAndSettle();
+        expect(client.authorizationCalls, 1);
+        expect(find.text('请先完成美团商家授权'), findsOneWidget);
+
+        await tester.pumpWidget(const MaterialApp(home: Text('已离开结果页')));
+        await tester.pumpAndSettle();
+        if (fails) {
+          client.authorization
+              .completeError(StateError('authorize unavailable'));
+        } else {
+          client.authorization
+              .complete(Uri.parse('https://example.com/oauth/authorize'));
+        }
+        await tester.pumpAndSettle();
+
+        expect(launchedUrls, isEmpty);
+        expect(tester.takeException(), isNull);
+      });
+    }
+  });
+
   testWidgets('ResultPage 在服务异常导致空结果时展示正式中文错误语义', (tester) async {
     await tester.pumpWidget(
       const MaterialApp(
@@ -442,8 +708,7 @@ void main() {
     expect(find.text('这轮没有收束出合适的菜'), findsOneWidget);
   });
 
-  testWidgets('ResultPage 点「就吃这个」默认直达做菜页，不再弹重复的三选一页',
-      (tester) async {
+  testWidgets('ResultPage 点「就吃这个」默认直达做菜页，不再弹重复的三选一页', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: ResultPage(
@@ -491,17 +756,6 @@ void main() {
     expect(find.byKey(const ValueKey('execution-home-page')), findsNothing);
     expect(find.text('开吃方式'), findsNothing);
   });
-
-
-
-
-
-
-
-
-
-
-
 }
 
 class _UnconfiguredMeituanClient extends MeituanDeliveryOrderClient {
@@ -520,8 +774,8 @@ class _FakeMeituanMerchantClient extends MeituanDeliveryOrderClient {
   bool get isConfigured => true;
 
   @override
-  Future<MeituanOAuthStatus> getOAuthStatus() async =>
-      const MeituanOAuthStatus(connected: true, requiresUserAuthorization: false);
+  Future<MeituanOAuthStatus> getOAuthStatus() async => const MeituanOAuthStatus(
+      connected: true, requiresUserAuthorization: false);
 
   @override
   Future<MeituanMerchantSearchResult> searchMerchantResults({
@@ -541,6 +795,25 @@ class _FakeMeituanMerchantClient extends MeituanDeliveryOrderClient {
         ),
       ],
     );
+  }
+}
+
+class _DelayedMeituanClient extends _FakeMeituanMerchantClient {
+  final status = Completer<MeituanOAuthStatus>();
+  final authorization = Completer<Uri>();
+  int statusCalls = 0;
+  int authorizationCalls = 0;
+
+  @override
+  Future<MeituanOAuthStatus> getOAuthStatus() {
+    statusCalls++;
+    return status.future;
+  }
+
+  @override
+  Future<Uri> createOAuthAuthorizationUri() {
+    authorizationCalls++;
+    return authorization.future;
   }
 }
 

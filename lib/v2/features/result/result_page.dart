@@ -670,14 +670,16 @@ class _ResultPageState extends State<ResultPage>
           return;
         }
         // 代理在，但美团侧可能还没完成授权：探测连接状态，未连接则引导授权。
+        final MeituanOAuthStatus status;
         try {
-          final status = await deliveryClient.getOAuthStatus();
-          if (!status.connected) {
-            await _openMeituanAuthorization(deliveryClient);
-            return;
-          }
+          status = await deliveryClient.getOAuthStatus();
         } catch (_) {
           await _openMeituanOpenPlatform('美团服务暂时不可用，请先去开放平台完成接入');
+          return;
+        }
+        if (!mounted) return;
+        if (!status.connected) {
+          await _openMeituanAuthorization(deliveryClient);
           return;
         }
         // Ordering gate: Meituan orders belong to an eatwhat account; a
@@ -731,9 +733,8 @@ class _ResultPageState extends State<ResultPage>
 
   /// 外卖未接入时的兜底引导：直接打开美团开放平台注册页。
   Future<void> _openMeituanOpenPlatform(String tip) async {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tip)));
-    }
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tip)));
     try {
       await launchUrl(
         Uri.parse('https://open.meituan.com/'),
@@ -748,15 +749,16 @@ class _ResultPageState extends State<ResultPage>
   Future<void> _openMeituanAuthorization(
     MeituanDeliveryOrderClient client,
   ) async {
-    if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('请先完成美团商家授权')),
-      );
-    }
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('请先完成美团商家授权')),
+    );
     try {
       final uri = await client.createOAuthAuthorizationUri();
+      if (!mounted) return;
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (_) {
+      if (!mounted) return;
       try {
         await launchUrl(
           Uri.parse('https://open.meituan.com/'),
