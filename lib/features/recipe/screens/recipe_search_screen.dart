@@ -11,7 +11,9 @@ import 'complete_recipe_detail_screen.dart';
 /// 菜谱搜索界面 - Phase 2 新增
 /// 集成真实搜索功能和智能推荐
 class RecipeSearchScreen extends StatefulWidget {
-  const RecipeSearchScreen({super.key});
+  const RecipeSearchScreen({super.key, this.crawlerService});
+
+  final RealXiachufangCrawlerService? crawlerService;
 
   @override
   State<RecipeSearchScreen> createState() => _RecipeSearchScreenState();
@@ -23,7 +25,8 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> with TickerProv
   late Animation<double> _fadeAnimation;
 
   final TextEditingController _textController = TextEditingController();
-  final RealXiachufangCrawlerService _crawlerService = RealXiachufangCrawlerService();
+  late final RealXiachufangCrawlerService _crawlerService =
+      widget.crawlerService ?? RealXiachufangCrawlerService();
 
   List<Recipe> _searchResults = [];
   List<String> _searchHistory = [];
@@ -574,6 +577,7 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> with TickerProv
           debugPrint('搜索进度: $message');
         },
       );
+      if (!mounted) return;
 
       if (result.success) {
         setState(() {
@@ -602,6 +606,7 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> with TickerProv
         );
       }
     } catch (e) {
+      if (!mounted) return;
       setState(() {
         _searchResults = [];
         _hasSearched = true;
