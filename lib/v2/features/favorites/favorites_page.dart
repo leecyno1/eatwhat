@@ -27,6 +27,7 @@ class _FavoritesPageV2State extends State<FavoritesPageV2>
 
   late final TabController _tabController;
   bool _loading = true;
+  bool _loadFailed = false;
   Set<String> _favoriteTagIds = {};
   Set<String> _favoriteDishIds = {};
   List<RecipeModel> _favoriteRecipes = [];
@@ -45,22 +46,38 @@ class _FavoritesPageV2State extends State<FavoritesPageV2>
   }
 
   Future<void> _load() async {
-    await _db.ensureInitialized();
-
-    final favTags = await _favorites.getFavoriteTagIds();
-    final favDishIds = await _favorites.getFavoriteDishIds();
-
-    final rows =
-        await _db.fetchRecipesByDishIds(favDishIds.toList(), limit: 200);
-    final mapped = rows.map(RecipeModel.fromUnifiedDbRow).toList();
-
     if (!mounted) return;
-    setState(() {
-      _favoriteTagIds = favTags;
-      _favoriteDishIds = favDishIds;
-      _favoriteRecipes = mapped;
-      _loading = false;
-    });
+    if (_loadFailed) {
+      setState(() {
+        _loading = true;
+        _loadFailed = false;
+      });
+    }
+    try {
+      await _db.ensureInitialized();
+
+      final favTags = await _favorites.getFavoriteTagIds();
+      final favDishIds = await _favorites.getFavoriteDishIds();
+      final rows =
+          await _db.fetchRecipesByDishIds(favDishIds.toList(), limit: 200);
+      final mapped = rows.map(RecipeModel.fromUnifiedDbRow).toList();
+
+      if (!mounted) return;
+      setState(() {
+        _favoriteTagIds = favTags;
+        _favoriteDishIds = favDishIds;
+        _favoriteRecipes = mapped;
+        _loadFailed = false;
+        _loading = false;
+      });
+    } catch (error) {
+      debugPrint('Failed to load favorites: $error');
+      if (!mounted) return;
+      setState(() {
+        _loadFailed = true;
+        _loading = false;
+      });
+    }
   }
 
   Future<void> _toggleTag(String tagId) async {
@@ -109,13 +126,19 @@ class _FavoritesPageV2State extends State<FavoritesPageV2>
       ),
       body: _loading
           ? const Center(child: CircularProgressIndicator())
-          : TabBarView(
-              controller: _tabController,
-              children: [
-                _buildFavoriteTags(),
-                _buildFavoriteRecipes(),
-              ],
-            ),
+          : _loadFailed
+              ? _empty(
+                  title: '收藏加载失败',
+                  subtitle: '暂时无法读取收藏，请重试。',
+                  onRetry: _load,
+                )
+              : TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildFavoriteTags(),
+                    _buildFavoriteRecipes(),
+                  ],
+                ),
     );
   }
 
@@ -280,7 +303,11 @@ class _FavoritesPageV2State extends State<FavoritesPageV2>
     );
   }
 
-  Widget _empty({required String title, required String subtitle}) {
+  Widget _empty({
+    required String title,
+    required String subtitle,
+    VoidCallback? onRetry,
+  }) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(24),
@@ -305,6 +332,14 @@ class _FavoritesPageV2State extends State<FavoritesPageV2>
               ),
               textAlign: TextAlign.center,
             ),
+            if (onRetry != null) ...[
+              const SizedBox(height: 16),
+              FilledButton.icon(
+                onPressed: onRetry,
+                icon: const Icon(Icons.refresh),
+                label: const Text('重试'),
+              ),
+            ],
           ],
         ),
       ),

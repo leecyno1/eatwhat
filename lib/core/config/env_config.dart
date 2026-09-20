@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show debugPrint;
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// 环境变量配置管理类
@@ -108,6 +108,7 @@ class EnvConfig {
 
   /// 初始化环境配置
   static Future<void> init() async {
+    if (kIsWeb) return;
     try {
       await dotenv.load(isOptional: true);
       debugPrint('Environment configuration loaded successfully');

@@ -133,6 +133,7 @@ dependencies:
   google_fonts: ^6.3.2
   vibration: ^3.1.4
   speech_to_text: ^7.3.0
+  sqflite_common_ffi_web: 1.0.1+1
 
 dev_dependencies:
   flutter_test:
@@ -186,7 +187,6 @@ flutter:
 
   # 资源文件
   assets:
-    - .env
     - assets/images/
     - assets/images/card_game/
     - assets/images/prebuilt_dishes/

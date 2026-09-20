@@ -1,3 +1,5 @@
+import 'package:eatwhat_app/core/services/web_recipe_database.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -18,6 +20,7 @@ class HowToCookDatabaseService {
   }
 
   Future<Database> _initDatabase() async {
+    if (kIsWeb) return openWebRecipeDatabase(_databaseName);
     String databasesPath = await getDatabasesPath();
     String path = join(databasesPath, _databaseName);
 

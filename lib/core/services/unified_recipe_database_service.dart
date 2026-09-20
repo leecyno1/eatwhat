@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:eatwhat_app/core/services/web_recipe_database.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_pairing_model.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -17,7 +18,12 @@ class UnifiedRecipeDatabaseService {
   Future<Database>? _databaseFuture;
 
   Future<Database> get _db async {
-    return _databaseFuture ??= _initDatabase();
+    return _databaseFuture ??= _initDatabase().catchError(
+      (Object error, StackTrace stackTrace) {
+        _databaseFuture = null;
+        Error.throwWithStackTrace(error, stackTrace);
+      },
+    );
   }
 
   Future<void> ensureInitialized() async {
@@ -25,6 +31,7 @@ class UnifiedRecipeDatabaseService {
   }
 
   Future<Database> _initDatabase() async {
+    if (kIsWeb) return openWebRecipeDatabase(_databaseName);
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, _databaseName);
     await _syncDatabaseFromAssets(path);
