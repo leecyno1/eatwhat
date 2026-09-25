@@ -18,6 +18,12 @@
 - `POST /api/v1/delivery/order-previews`
 - `POST /api/v1/delivery/orders`
 
+AI 文本生成链路（MiniMax 密钥只留服务端，见下文「AI 文本生成」）：
+
+- `POST /api/v1/ai/chat/completions`
+
+会员支付链路由同一网关域名转发到独立的 `payment_server.dart`（见下文「支付与会员链路」）。
+
 平台密钥、签名、用户授权和交易权限全部留在代理后端。客户端只接收候选与官方承载链接。
 
 生产链路分两层：
@@ -192,6 +198,9 @@ export EXECUTION_PROXY_BIND_ADDRESS=0.0.0.0
 export EXECUTION_PROXY_PORT=8787
 export EXECUTION_PROXY_REQUIRED_TOKEN=<由登录系统签发或网关校验的令牌>
 export EXECUTION_PROXY_JWT_SECRET=<与吃什么登录系统签发 JWT 相同的服务端密钥>
+export MINIMAX_API_KEY=<MiniMax 密钥，只留在服务端>
+export MINIMAX_CHAT_API_URL=https://api.minimaxi.com/v1
+export EXECUTION_PROXY_AI_UPSTREAM_TIMEOUT_MS=90000
 export MEITUAN_EXECUTION_ADAPTER_URL=https://<adapter-host>/meituan/delivery-match
 export MEITUAN_MERCHANT_SEARCH_ADAPTER_URL=https://<adapter-host>/merchants/search
 export MEITUAN_PRODUCT_SEARCH_ADAPTER_URL=https://<adapter-host>/products/search
@@ -317,6 +326,35 @@ GET /health
 - 京东外卖：通过 `open.jd.com` 获批应用完成秒送商品匹配与官方承载链接生成。
 - 大众点评：按获批能力完成到店/外卖匹配，并返回点评 App/H5 链接。
 - 无商品直达权限时，返回搜索链接并设置 `supportsPrefillCart=false`。
+
+## AI 文本生成（MiniMax 代理）
+
+```text
+POST /api/v1/ai/chat/completions
+```
+
+生产模式客户端不打包任何 AI 密钥：本地 `MINIMAX_API_KEY` 为空且配置了 `EXECUTION_PROXY_BASE_URL` 时，
+`GenerationService` 自动把所有文本生成（推荐精排、菜品简介、总结）切到该路由；本地联调有密钥时仍直连上游。
+
+- Headers：与其他路由一致的网关鉴权（用户 JWT / `X-Execution-Proxy-Token`）
+- Body：OpenAI 兼容的 `chat/completions` 请求原样透传（model、messages、response_format 等），不做配送字段校验
+- 上游：`MINIMAX_CHAT_API_URL` 基址去尾斜杠后拼 `/chat/completions`，服务端注入 `Authorization: Bearer <MINIMAX_API_KEY>`
+- 成功：上游 JSON 原样返回，网关补 `requestId`
+- 失败：上游状态码与 JSON 原样透传（保留 `400` 语义，客户端据此做无 `response_format` 重试）
+- 超时：`EXECUTION_PROXY_AI_UPSTREAM_TIMEOUT_MS`（默认 90000ms；配送接口仍用 `EXECUTION_PROXY_UPSTREAM_TIMEOUT_MS` 的 6s）
+
+图像生成不走该路由：生产菜品图一律使用预构建图库（`ENABLE_LIVE_DISH_IMAGE_GENERATION=false`）。
+
+## 支付与会员链路（payment_server.dart）
+
+客户端的 `EXECUTION_PROXY_BASE_URL` 同时承载会员支付路径；生产网关（如 nginx）把以下路由转发到
+`scripts/payment_server.dart`（监听地址与端口见 `.env.example` 支付服务端段）：
+
+- `POST /api/v1/payment/alipay/orders`：创建支付宝 WAP 支付单，返回 `status: "payment_required"` 与 `payUrl`
+- `GET /api/v1/payment/alipay/status?orderId=`：轮询订单状态；`paid` 时返回服务端 Ed25519 签发的 `membershipCredential`，客户端验签（fail closed）
+- `POST /api/v1/payment/alipay/notify`：支付宝异步回调（需公网可达），RSA2 验签通过后标记已支付并签发凭证
+
+支付宝商户私钥、支付宝公钥、会员签发种子全部只通过环境变量配置在服务端，不进仓库、不进客户端。
 
 ## 客户端当前行为
 

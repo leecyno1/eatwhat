@@ -15,7 +15,7 @@
 
 ## 当前项目映射
 
-- `SILICONFLOW_API_URL` 实际映射为 MiniMax 文本 OpenAI 兼容地址
+- `MINIMAX_CHAT_API_URL=https://api.minimaxi.com/v1`（文本 OpenAI 兼容地址；早期 `SILICONFLOW_API_URL` 兼容映射已随 SILICONFLOW 键退役）
 - `AI_MODEL_NAME=MiniMax-M2.7`
 - `MINIMAX_API_URL=https://api.minimaxi.com/v1/image_generation`
 - `MINIMAX_IMAGE_MODEL=image-01`
@@ -48,8 +48,7 @@
 
 当前 `.env` 中保存的是开发态直连配置，只适合本地开发和内部测试。
 
-- 当前项目这把 `sk-cp-...` key 已经实测可调用 `POST /v1/image_generation`，文本与图片都能返回有效结果。
+- 当前本地联调 key 已实测可调用 `POST /v1/image_generation`，文本与图片都能返回有效结果。
 - 如果出现 `status_code=1004` / `Authorization` / `secret key` 相关报错，优先检查是否用了旧环境变量覆盖了项目 `.env`。
 - 如果出现 `status_code=1033` 这类 `system error`，更可能是服务端瞬时波动，建议直接重试。
-- 如果你要上架 iOS App，不应把正式 API Key 放在 Flutter 客户端。
-- 生产环境应改成后端代理或临时凭证方案。
+- 上架生产：客户端不配置任何 MiniMax 密钥，只配置 `EXECUTION_PROXY_BASE_URL`，AI 文本调用经执行代理 `POST /api/v1/ai/chat/completions` 转发（见 [EXECUTION_PROXY_API.md](EXECUTION_PROXY_API.md)）。

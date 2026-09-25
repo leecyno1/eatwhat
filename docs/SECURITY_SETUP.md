@@ -14,10 +14,16 @@ cp .env.example .env
 
 ### 2. 配置API密钥
 
-在 `.env` 文件中设置您的真实API密钥：
+AI 服务独家使用 MiniMax，且区分两种模式（详见 `EXECUTION_PROXY_API.md`）：
 
 ```env
-SILICONFLOW_API_KEY=your_real_api_key_here
+# 本地开发联调（客户端直连 MiniMax）：
+MINIMAX_API_KEY=your_real_api_key_here
+
+# 生产构建：客户端不配置任何 AI 密钥，只配置执行代理地址，
+# AI 文本调用经代理转发，MiniMax 密钥只留服务端：
+# EXECUTION_PROXY_BASE_URL=https://your-proxy-host
+# EXECUTION_PROXY_AUTH_TOKEN=your_proxy_token
 ```
 
 ### 3. 生成安全密钥
@@ -69,25 +75,25 @@ print(generate_key(64))  # 生成64位
 
 ```env
 DEBUG_MODE=false
-LOG_AI_REQUESTS=false
 ```
 
 ### 2. 使用环境变量
 
-在生产环境中，建议使用系统环境变量而非 `.env` 文件：
+生产客户端**不配置任何 AI、平台或支付密钥**，只配置代理地址：
 
 ```bash
-export SILICONFLOW_API_KEY="your_real_api_key"
-export PASSWORD_SALT="your_random_salt"
-export JWT_SECRET="your_jwt_secret"
-export ENCRYPTION_KEY="your_encryption_key"
+export EXECUTION_PROXY_BASE_URL="https://your-proxy-host"
+export EXECUTION_PROXY_AUTH_TOKEN="your_proxy_token"
 ```
+
+MiniMax、美团/饿了么/点评、支付宝商户密钥只配置在对应服务端
+（`execution_proxy_server.dart` / 适配器 / `payment_server.dart`），绝不导出给客户端构建。
 
 ## 📝 安全检查清单
 
 - [ ] `.env` 文件已添加到 `.gitignore`
 - [ ] 所有默认密钥已替换为随机生成的值
-- [ ] API密钥已设置为真实值
+- [ ] 客户端构建不包含任何 AI/平台/支付密钥（只配置 `EXECUTION_PROXY_BASE_URL`）
 - [ ] 生产环境禁用了调试模式
 - [ ] 定期轮换敏感密钥
 - [ ] 不要在代码中硬编码敏感信息
@@ -105,7 +111,7 @@ export ENCRYPTION_KEY="your_encryption_key"
 ### 配置验证失败
 如果看到 "Configuration validation failed" 错误：
 1. 检查 `.env` 文件是否存在
-2. 验证所有必需的环境变量是否已设置
+2. 确认 `MINIMAX_API_KEY` 与 `EXECUTION_PROXY_BASE_URL` 至少配置其一（本地直连或代理模式）
 3. 确保API密钥不是占位符值
 
 ### API密钥验证失败

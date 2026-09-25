@@ -21,46 +21,32 @@
 
 ### 1.1 环境变量配置
 
-创建不同环境的配置文件：
+AI 服务独家使用 MiniMax，密钥策略分两层（详见 `SECURITY_SETUP.md` 与 `EXECUTION_PROXY_API.md`）：
+
+- **本地/联调**：客户端 `.env` 可直配 MiniMax 密钥直连上游
+- **Staging/生产**：客户端只配置执行代理地址；MiniMax、平台、支付密钥全部只留在服务端
 
 #### `.env.development`
 ```bash
-# 开发环境配置
-ENVIRONMENT=development
-API_BASE_URL=https://dev-api.eatwhat.app
-SILICONFLOW_API_URL=https://api.siliconflow.cn/v1
-SILICONFLOW_API_KEY=your_dev_api_key
+# 本地联调（直连 MiniMax，禁止打进生产构建）
+MINIMAX_API_KEY=your_dev_api_key
+MINIMAX_CHAT_API_URL=https://api.minimaxi.com/v1
 ENABLE_AI_RECOMMENDATIONS=true
-ENABLE_DEBUG_MODE=true
-ENABLE_ANALYTICS=false
-AI_CACHE_DURATION=300
+DEBUG_MODE=true
+AI_CACHE_DURATION=24
 ```
 
-#### `.env.staging`
+#### `.env.staging` / `.env.production`
 ```bash
-# 测试环境配置
-ENVIRONMENT=staging
-API_BASE_URL=https://staging-api.eatwhat.app
-SILICONFLOW_API_URL=https://api.siliconflow.cn/v1
-SILICONFLOW_API_KEY=your_staging_api_key
+# 客户端不含任何 AI/平台/支付密钥
+EXECUTION_PROXY_BASE_URL=https://staging-api.eatwhat.app
+EXECUTION_PROXY_AUTH_TOKEN=your_proxy_token
 ENABLE_AI_RECOMMENDATIONS=true
-ENABLE_DEBUG_MODE=false
-ENABLE_ANALYTICS=true
-AI_CACHE_DURATION=600
+DEBUG_MODE=false
+AI_CACHE_DURATION=24
 ```
 
-#### `.env.production`
-```bash
-# 生产环境配置
-ENVIRONMENT=production
-API_BASE_URL=https://api.eatwhat.app
-SILICONFLOW_API_URL=https://api.siliconflow.cn/v1
-SILICONFLOW_API_KEY=your_prod_api_key
-ENABLE_AI_RECOMMENDATIONS=true
-ENABLE_DEBUG_MODE=false
-ENABLE_ANALYTICS=true
-AI_CACHE_DURATION=1800
-```
+服务端（`execution_proxy_server.dart`、平台适配器、`payment_server.dart`）的密钥通过服务器环境变量注入，键名见 `.env.example` 各服务端段，不进客户端构建。
 
 ### 1.2 Flutter版本和依赖
 
@@ -278,6 +264,9 @@ EatWhat is a revolutionary AI-powered food recommendation app that helps you dis
 
 ### 4.1 GitHub Actions配置
 
+> 注意：`ENV_PRODUCTION` secret 只允许包含客户端安全键（`EXECUTION_PROXY_*` 等），
+> 严禁放入 MiniMax、平台或支付密钥——客户端构建不打包任何密钥。
+
 #### `.github/workflows/deploy.yml`
 ```yaml
 name: Deploy EatWhat App
@@ -408,76 +397,17 @@ jobs:
 
 ### 5.1 应用性能监控
 
-#### Firebase Analytics配置
-```dart
-// lib/core/analytics/analytics_service.dart
-import 'package:firebase_analytics/firebase_analytics.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+项目使用自研埋点服务 `lib/core/services/analytics_service.dart`（当前无 Firebase 依赖，默认本地模式）：
 
-class AnalyticsService {
-  static final FirebaseAnalytics _analytics = FirebaseAnalytics.instance;
-  static final FirebaseCrashlytics _crashlytics = FirebaseCrashlytics.instance;
-  
-  // 用户行为追踪
-  static Future<void> trackBubbleSelection(String bubbleType) async {
-    await _analytics.logEvent(
-      name: 'bubble_selection',
-      parameters: {'bubble_type': bubbleType},
-    );
-  }
-  
-  static Future<void> trackFoodRecommendation(String foodId, double score) async {
-    await _analytics.logEvent(
-      name: 'food_recommendation',
-      parameters: {
-        'food_id': foodId,
-        'recommendation_score': score,
-      },
-    );
-  }
-  
-  static Future<void> trackUserRetention(int daysSinceInstall) async {
-    await _analytics.logEvent(
-      name: 'user_retention',
-      parameters: {'days_since_install': daysSinceInstall},
-    );
-  }
-}
-```
+- 事件批处理与定时 flush，异步非阻塞，不影响主流程响应性
+- 会话 ID、页面栈追踪与用户身份绑定（登录/登出时切换）
+- 通过 `setMode` 预留 Firebase/Sentry/自建服务器扩展点
+
+如需启用云端模式，在 `pubspec.yaml` 添加对应依赖后按官方文档接入。
 
 ### 5.2 商业化数据追踪
 
-```dart
-// 收益追踪
-static Future<void> trackRevenue({
-  required double amount,
-  required String currency,
-  required String source,
-}) async {
-  await _analytics.logEvent(
-    name: 'revenue_generated',
-    parameters: {
-      'value': amount,
-      'currency': currency,
-      'source': source,
-    },
-  );
-}
-
-// 转化率追踪
-static Future<void> trackConversion({
-  required String funnelStep,
-  required bool converted,
-}) async {
-  await _analytics.logEvent(
-    name: 'conversion_tracking',
-    parameters: {
-      'funnel_step': funnelStep,
-      'converted': converted,
-    },
-  );
-}
-```
+商业化事件按现有 `trackEvent` 通用接口上报（如会员购买漏斗），项目未内置专用收益/转化追踪方法；后续如需 `trackRevenue` 类标准电商事件，在 `AnalyticsService` 中扩展。
 
 ## 🚀 阶段六：上线检查清单
 
