@@ -1,4 +1,5 @@
 import 'package:eatwhat_app/v2/core/services/membership_credential.dart';
+import 'package:eatwhat_app/v2/core/services/membership_verification.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -27,8 +28,29 @@ void main() {
     final credential = await issueDemo();
 
     expect(
-      await MembershipCredentials.verify(credential, expectedUserId: 'user-1'),
+      await MembershipVerification.verify(credential, expectedUserId: 'user-1'),
       isTrue,
+    );
+  });
+
+  test('显式公钥验签：正确密钥通过，错误密钥失败', () async {
+    final credential = await issueDemo();
+
+    final rightKey = await MembershipCredentials.publicKeyFromSeed(seed);
+    final wrongKey =
+        await MembershipCredentials.publicKeyFromSeed('another-seed');
+
+    expect(
+      await MembershipCredentials.verify(
+        credential,
+        key: rightKey,
+        expectedUserId: 'user-1',
+      ),
+      isTrue,
+    );
+    expect(
+      await MembershipCredentials.verify(credential, key: wrongKey),
+      isFalse,
     );
   });
 
@@ -43,14 +65,14 @@ void main() {
       signature: credential.signature,
     );
 
-    expect(await MembershipCredentials.verify(tampered), isFalse);
+    expect(await MembershipVerification.verify(tampered), isFalse);
   });
 
   test('种子不同则验签失败', () async {
     final credential = await issueDemo();
     dotenv.testLoad(fileInput: 'MEMBERSHIP_SIGNING_SEED=another-seed');
 
-    expect(await MembershipCredentials.verify(credential), isFalse);
+    expect(await MembershipVerification.verify(credential), isFalse);
   });
 
   test('过期凭证不通过', () async {
@@ -58,14 +80,17 @@ void main() {
       expiresAt: DateTime.now().subtract(const Duration(days: 1)),
     );
 
-    expect(await MembershipCredentials.verify(credential), isFalse);
+    expect(await MembershipVerification.verify(credential), isFalse);
   });
 
   test('凭证绑定的账号不一致则不通过', () async {
     final credential = await issueDemo();
 
     expect(
-      await MembershipCredentials.verify(credential, expectedUserId: 'user-2'),
+      await MembershipVerification.verify(
+        credential,
+        expectedUserId: 'user-2',
+      ),
       isFalse,
     );
   });
@@ -74,7 +99,7 @@ void main() {
     dotenv.clean();
     final credential = await issueDemo();
 
-    expect(await MembershipCredentials.verify(credential), isFalse);
+    expect(await MembershipVerification.verify(credential), isFalse);
   });
 
   test('fromJson 拒绝残缺数据', () {

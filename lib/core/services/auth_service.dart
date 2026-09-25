@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:eatwhat_app/v2/core/services/membership_credential.dart';
+import 'package:eatwhat_app/v2/core/services/membership_verification.dart';
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -443,7 +444,7 @@ class AuthService {
     if (user == null) return;
     final raw = user.membershipCredential;
     if (raw == null || raw.trim().isEmpty) return;
-    if (await MembershipCredentials.verificationKey() == null) return;
+    if (await MembershipVerification.verificationKey() == null) return;
 
     MembershipCredential? credential;
     try {
@@ -452,7 +453,8 @@ class AuthService {
       credential = null;
     }
     final valid = credential != null &&
-        await MembershipCredentials.verify(credential, expectedUserId: user.id);
+        await MembershipVerification.verify(credential,
+            expectedUserId: user.id);
     if (valid) return;
 
     debugPrint('[Auth] 会员凭证验签失败，已降级为非会员');
@@ -917,6 +919,48 @@ class AuthService {
 
 /// 用户模型
 class User {
+
+  User({
+    required this.id,
+    required this.username,
+    required this.email,
+    required this.nickname,
+    required this.passwordHash,
+    this.avatar,
+    required this.createdAt,
+    this.updatedAt,
+    required this.lastLoginAt,
+    required this.userPreference,
+    this.isMember = false,
+    this.memberSince,
+    this.memberExpiresAt,
+    this.membershipCredential,
+  });
+
+  factory User.fromJson(Map<String, dynamic> json) {
+    return User(
+      id: json['id'],
+      username: json['username'],
+      email: json['email'],
+      nickname: json['nickname'],
+      passwordHash: json['passwordHash'],
+      avatar: json['avatar'],
+      createdAt: DateTime.parse(json['createdAt']),
+      updatedAt:
+          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
+      lastLoginAt: DateTime.parse(json['lastLoginAt']),
+      userPreference: UserPreference.fromJson(json['userPreference']),
+      // Older stored accounts predate the membership fields.
+      isMember: (json['isMember'] as bool?) ?? false,
+      memberSince: json['memberSince'] != null
+          ? DateTime.parse(json['memberSince'])
+          : null,
+      memberExpiresAt: json['memberExpiresAt'] != null
+          ? DateTime.parse(json['memberExpiresAt'])
+          : null,
+      membershipCredential: json['membershipCredential']?.toString(),
+    );
+  }
   final String id;
   final String username;
   final String email;
@@ -944,23 +988,6 @@ class User {
 
   /// Trial membership granted at registration, in days.
   static const int trialMemberDays = 7;
-
-  User({
-    required this.id,
-    required this.username,
-    required this.email,
-    required this.nickname,
-    required this.passwordHash,
-    this.avatar,
-    required this.createdAt,
-    this.updatedAt,
-    required this.lastLoginAt,
-    required this.userPreference,
-    this.isMember = false,
-    this.memberSince,
-    this.memberExpiresAt,
-    this.membershipCredential,
-  });
 
   User copyWith({
     String? id,
@@ -1018,31 +1045,6 @@ class User {
     };
   }
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      id: json['id'],
-      username: json['username'],
-      email: json['email'],
-      nickname: json['nickname'],
-      passwordHash: json['passwordHash'],
-      avatar: json['avatar'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt:
-          json['updatedAt'] != null ? DateTime.parse(json['updatedAt']) : null,
-      lastLoginAt: DateTime.parse(json['lastLoginAt']),
-      userPreference: UserPreference.fromJson(json['userPreference']),
-      // Older stored accounts predate the membership fields.
-      isMember: (json['isMember'] as bool?) ?? false,
-      memberSince: json['memberSince'] != null
-          ? DateTime.parse(json['memberSince'])
-          : null,
-      memberExpiresAt: json['memberExpiresAt'] != null
-          ? DateTime.parse(json['memberExpiresAt'])
-          : null,
-      membershipCredential: json['membershipCredential']?.toString(),
-    );
-  }
-
   /// Whether the membership is currently active — the flag is set and the
   /// period (if any) has not ended yet.
   bool get isMembershipActive {
@@ -1065,25 +1067,19 @@ class User {
 
 /// 认证结果
 class AuthResult {
-  final bool success;
-  final String message;
-  final User? user;
 
   AuthResult({
     required this.success,
     required this.message,
     this.user,
   });
+  final bool success;
+  final String message;
+  final User? user;
 }
 
 /// 会话信息
 class SessionInfo {
-  final String userId;
-  final DateTime? sessionExpiry;
-  final DateTime? lastActivity;
-  final bool isExpired;
-  final Duration? timeRemaining;
-  final bool shouldRefresh;
 
   SessionInfo({
     required this.userId,
@@ -1093,6 +1089,12 @@ class SessionInfo {
     this.timeRemaining,
     required this.shouldRefresh,
   });
+  final String userId;
+  final DateTime? sessionExpiry;
+  final DateTime? lastActivity;
+  final bool isExpired;
+  final Duration? timeRemaining;
+  final bool shouldRefresh;
 
   @override
   String toString() {

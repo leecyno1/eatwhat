@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
 import 'package:cryptography/cryptography.dart';
-import 'package:eatwhat_app/core/config/env_config.dart';
 
 /// 会员凭证：服务端（支付确认后）用 Ed25519 私钥签发，客户端用内嵌公钥验签。
 /// 取代「轮询到 paid 就本地升级」的裸信任——本地存储被篡改也无法伪造签名。
+///
+/// 本文件保持纯 Dart（不依赖 Flutter/EnvConfig），以便支付服务端与 mock
+/// 服务端以 `dart run` 直接复用同一契约。客户端的公钥解析见
+/// [membership_verification.dart]。
 class MembershipCredential {
   const MembershipCredential({
     required this.userId,
@@ -122,32 +125,18 @@ class MembershipCredentials {
     );
   }
 
-  /// 客户端验签公钥：优先用内嵌公钥（生产）；否则用开发种子派生（本地联调）。
-  /// 两者都没有 → null（调用方应拒绝升级，fail closed）。
-  static Future<SimplePublicKey?> verificationKey() async {
-    final embedded = EnvConfig.membershipSigningPublicKey.trim();
-    if (embedded.isNotEmpty) {
-      return SimplePublicKey(
-        base64Decode(embedded),
-        type: KeyPairType.ed25519,
-      );
-    }
-    final seed = EnvConfig.membershipSigningSeed.trim();
-    if (seed.isEmpty) return null;
-    return publicKeyFromSeed(seed);
-  }
-
   /// 验签 + 有效期 + 账号绑定。任何一项不过都视为无效。
+  /// 公钥由调用方显式提供：客户端经 MembershipVerification 从 EnvConfig
+  /// 解析，服务端在测试中从种子派生。
   static Future<bool> verify(
     MembershipCredential credential, {
+    required SimplePublicKey key,
     String? expectedUserId,
   }) async {
     if (credential.isExpired) return false;
     if (expectedUserId != null && credential.userId != expectedUserId) {
       return false;
     }
-    final key = await verificationKey();
-    if (key == null) return false;
     try {
       return await _algorithm.verify(
         utf8.encode(credential.canonicalPayload),

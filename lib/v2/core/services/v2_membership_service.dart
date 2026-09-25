@@ -4,6 +4,7 @@ import 'package:eatwhat_app/core/services/auth_service.dart';
 import 'package:eatwhat_app/v2/core/external/platform/execution_proxy_client.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_exceptions.dart';
 import 'package:eatwhat_app/v2/core/services/membership_credential.dart';
+import 'package:eatwhat_app/v2/core/services/membership_verification.dart';
 import 'package:flutter/foundation.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -73,7 +74,7 @@ class V2MembershipService {
           final user = AuthService.currentUser;
           final valid = credential != null &&
               user != null &&
-              await MembershipCredentials.verify(
+              await MembershipVerification.verify(
                 credential,
                 expectedUserId: user.id,
               );

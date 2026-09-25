@@ -39,7 +39,7 @@ void main() {
 
   test('支付成功且凭证验签通过才升级，并持久化凭证', () async {
     final userId = AuthService.currentUser!.id;
-    final client = _FakePaymentClient(userId: userId, seed: seed);
+    final client = _FakePaymentClient(userId: userId);
     final service = V2MembershipService(client: client);
 
     final ok = await service.waitForPaymentAndUpgrade('order-1');
@@ -76,7 +76,7 @@ void main() {
   });
 
   test('凭证绑定账号与当前登录账号不符：拒绝升级', () async {
-    final client = _FakePaymentClient(userId: 'someone-else', seed: seed);
+    final client = _FakePaymentClient(userId: 'someone-else');
     final service = V2MembershipService(client: client);
 
     final ok = await service.waitForPaymentAndUpgrade('order-1');
