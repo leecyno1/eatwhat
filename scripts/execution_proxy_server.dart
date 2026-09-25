@@ -26,7 +26,8 @@ Future<void> main(List<String> args) async {
     ..writeln('POST /api/v1/delivery/order-previews')
     ..writeln('POST /api/v1/delivery/orders')
     ..writeln('GET  /api/v1/delivery/oauth/status')
-    ..writeln('POST /api/v1/delivery/oauth/authorize');
+    ..writeln('POST /api/v1/delivery/oauth/authorize')
+    ..writeln('POST /api/v1/ai/chat/completions');
 
   ProcessSignal.sigint.watch().listen((_) async {
     await server.close(force: true);
@@ -234,7 +235,8 @@ class ExecutionProxyServer {
     Map<String, dynamic> body,
   ) {
     if (requestKind == ExecutionProxyRequestKind.oauthStatus ||
-        requestKind == ExecutionProxyRequestKind.oauthAuthorize) {
+        requestKind == ExecutionProxyRequestKind.oauthAuthorize ||
+        requestKind == ExecutionProxyRequestKind.aiChatCompletions) {
       return null;
     }
     if (requestKind == ExecutionProxyRequestKind.productSearch &&
@@ -288,15 +290,12 @@ class ExecutionProxyServer {
     required String requestId,
     required String eatWhatUserId,
   }) async {
+    final timeout = adapter.upstreamTimeout ?? config.upstreamTimeout;
     try {
-      final upstreamRequest =
-          adapter.requestKind == ExecutionProxyRequestKind.oauthStatus
-              ? await _httpClient
-                  .getUrl(adapter.upstreamUri!)
-                  .timeout(config.upstreamTimeout)
-              : await _httpClient
-                  .postUrl(adapter.upstreamUri!)
-                  .timeout(config.upstreamTimeout);
+      final upstreamRequest = adapter.requestKind ==
+              ExecutionProxyRequestKind.oauthStatus
+          ? await _httpClient.getUrl(adapter.upstreamUri!).timeout(timeout)
+          : await _httpClient.postUrl(adapter.upstreamUri!).timeout(timeout);
       upstreamRequest.headers
         ..contentType = ContentType.json
         ..set(HttpHeaders.acceptHeader, ContentType.json.mimeType)
@@ -312,12 +311,9 @@ class ExecutionProxyServer {
         upstreamRequest.write(jsonEncode(body));
       }
 
-      final upstreamResponse =
-          await upstreamRequest.close().timeout(config.upstreamTimeout);
-      final rawResponse = await utf8.decoder
-          .bind(upstreamResponse)
-          .join()
-          .timeout(config.upstreamTimeout);
+      final upstreamResponse = await upstreamRequest.close().timeout(timeout);
+      final rawResponse =
+          await utf8.decoder.bind(upstreamResponse).join().timeout(timeout);
 
       if (upstreamResponse.statusCode < 200 ||
           upstreamResponse.statusCode >= 300) {
@@ -447,6 +443,10 @@ class ExecutionProxyServerConfig {
           environment['EXECUTION_PROXY_UPSTREAM_TIMEOUT_MS'] ?? '',
         ) ??
         6000;
+    final aiTimeoutMilliseconds = int.tryParse(
+          environment['EXECUTION_PROXY_AI_UPSTREAM_TIMEOUT_MS'] ?? '',
+        ) ??
+        90000;
 
     ExecutionProxyAdapterConfig adapter({
       required String route,
@@ -551,6 +551,20 @@ class ExecutionProxyServerConfig {
         urlKey: 'DIANPING_DINE_IN_ADAPTER_URL',
         tokenKey: 'DIANPING_DINE_IN_ADAPTER_TOKEN',
       ),
+      // AI 聊天代理：MiniMax 密钥只留在本服务端，客户端不打包密钥。
+      // MINIMAX_CHAT_API_URL 是基址（如 https://api.minimaxi.com/v1），
+      // 与客户端 .env 同名键语义一致。
+      ExecutionProxyAdapterConfig(
+        route: '/api/v1/ai/chat/completions',
+        platform: 'minimax',
+        displayName: 'AI 生成（MiniMax）',
+        upstreamUrl:
+            '${(environment['MINIMAX_CHAT_API_URL'] ?? '').trim().replaceAll(RegExp(r'/+$'), '')}'
+            '/chat/completions',
+        upstreamToken: environment['MINIMAX_API_KEY'] ?? '',
+        requestKind: ExecutionProxyRequestKind.aiChatCompletions,
+        upstreamTimeout: Duration(milliseconds: aiTimeoutMilliseconds),
+      ),
     ];
 
     return ExecutionProxyServerConfig(
@@ -652,6 +666,7 @@ class ExecutionProxyAdapterConfig {
     required this.upstreamUrl,
     this.upstreamToken = '',
     this.requestKind = ExecutionProxyRequestKind.deliveryMatch,
+    this.upstreamTimeout,
   });
 
   final String route;
@@ -660,6 +675,10 @@ class ExecutionProxyAdapterConfig {
   final String upstreamUrl;
   final String upstreamToken;
   final ExecutionProxyRequestKind requestKind;
+
+  /// 该适配器单独的上游超时；空 = 用服务级 [ExecutionProxyServerConfig.upstreamTimeout]。
+  /// AI 聊天补全这类慢上游需要明显长于配送接口的超时。
+  final Duration? upstreamTimeout;
 
   Uri? get upstreamUri {
     final uri = Uri.tryParse(upstreamUrl.trim());
@@ -678,6 +697,7 @@ enum ExecutionProxyRequestKind {
   orderSubmit,
   oauthStatus,
   oauthAuthorize,
+  aiChatCompletions,
 }
 
 Future<void> _writeError(

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:eatwhat_app/core/config/env_config.dart';
+import 'package:eatwhat_app/core/services/auth_service.dart';
 import 'package:eatwhat_app/v2/core/data/models/ai_generation_models.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/services/v2_ai_cache_service.dart';
@@ -10,8 +11,10 @@ import 'package:flutter/foundation.dart';
 /// V2 生成服务（模块 2）
 ///
 /// 说明：
-/// - 开发阶段可用 `.env` 直连（不建议发布到商店）。
-/// - 生产阶段建议走后端代理/短期 token，客户端不放 secret。
+/// - 生产配置 EXECUTION_PROXY_BASE_URL 且不打包 MINIMAX_API_KEY，
+///   AI 文本调用经执行代理转发（密钥只留服务端）。
+/// - 开发阶段可在 `.env` 放 MINIMAX_API_KEY 直连 MiniMax（不建议发布到商店）；
+///   本地密钥存在时优先直连。
 class GenerationService {
   GenerationService._internal();
   static final GenerationService instance = GenerationService._internal();
@@ -22,6 +25,16 @@ class GenerationService {
   String get _baseUrl => EnvConfig.minimaxChatApiUrl;
   String get _apiKey => EnvConfig.minimaxApiKey;
   String get _textModel => EnvConfig.minimaxChatModel;
+
+  /// 代理模式：本地无密钥但配置了执行代理。请求头只带代理令牌/用户 JWT，
+  /// 不携带任何 MiniMax 密钥。
+  bool get _useAiProxy =>
+      _apiKey.trim().isEmpty &&
+      EnvConfig.executionProxyBaseUrl.trim().isNotEmpty;
+
+  String get _proxyChatCompletionsUrl =>
+      '${EnvConfig.executionProxyBaseUrl.trim().replaceAll(RegExp(r'/+$'), '')}'
+      '/api/v1/ai/chat/completions';
 
   String get _imageModel => EnvConfig.aiImageModelName;
   String get _miniMaxImageModel => EnvConfig.minimaxImageModel.trim().isNotEmpty
@@ -38,7 +51,7 @@ class GenerationService {
 
   double get _temperature => EnvConfig.aiTemperature;
 
-  bool get isConfigured => _apiKey.trim().isNotEmpty;
+  bool get isConfigured => _apiKey.trim().isNotEmpty || _useAiProxy;
   bool get _isMiniMaxTextApi =>
       _baseUrl.contains('api.minimaxi.com') ||
       _baseUrl.contains('api.minimax.io');
@@ -48,6 +61,21 @@ class GenerationService {
       headers: {
         'Authorization': 'Bearer $_apiKey',
         'Content-Type': 'application/json',
+      },
+      sendTimeout: Duration(seconds: _timeoutSeconds),
+      receiveTimeout: Duration(seconds: _timeoutSeconds),
+    );
+  }
+
+  Options _proxyOptions() {
+    final userToken = AuthService.authToken ?? '';
+    final serviceToken = EnvConfig.executionProxyAuthToken.trim();
+    return Options(
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        if (userToken.isNotEmpty) 'Authorization': 'Bearer $userToken',
+        if (serviceToken.isNotEmpty) 'X-Execution-Proxy-Token': serviceToken,
       },
       sendTimeout: Duration(seconds: _timeoutSeconds),
       receiveTimeout: Duration(seconds: _timeoutSeconds),
@@ -71,7 +99,7 @@ class GenerationService {
     double? temperature,
   }) async {
     if (!isConfigured) {
-      throw StateError('AI 未配置：缺少 MINIMAX_API_KEY');
+      throw StateError('AI 未配置：缺少 MINIMAX_API_KEY 或 EXECUTION_PROXY_BASE_URL');
     }
 
     Object? lastError;
@@ -127,6 +155,13 @@ class GenerationService {
       data['response_format'] = {'type': 'json_object'};
     }
 
+    if (_useAiProxy) {
+      return _dio.post(
+        _proxyChatCompletionsUrl,
+        options: _proxyOptions(),
+        data: data,
+      );
+    }
     return _dio.post(
       '$_baseUrl/chat/completions',
       options: _options(),
@@ -555,9 +590,8 @@ class GenerationService {
         RecipeModel(
           id: 'ai_fusion_${stamp}_$index',
           name: name,
-          description: reason.isEmpty
-              ? '把${cleanedTags.join('、')}组合成的一道创意菜。'
-              : reason,
+          description:
+              reason.isEmpty ? '把${cleanedTags.join('、')}组合成的一道创意菜。' : reason,
           ingredients: (map['ingredients'] as List? ?? const [])
               .map((e) => e.toString())
               .where((e) => e.isNotEmpty)
@@ -701,7 +735,6 @@ class GenerationService {
       return const AiRefinedRecommendations(
         recipeIds: [],
         reasonsById: {},
-        summary: null,
         isEstimated: true,
       );
     }
@@ -717,7 +750,6 @@ class GenerationService {
       final fallback = AiRefinedRecommendations(
         recipeIds: candidateIds.take(limit).toList(),
         reasonsById: const {},
-        summary: null,
         isEstimated: true,
       );
       await _cache.setJson(cacheKey, fallback.toJson());
@@ -838,7 +870,6 @@ class GenerationService {
         recipeIds: orderedIds.take(limit).toList(),
         reasonsById: reasonsById,
         summary: summary.isEmpty ? null : summary,
-        isEstimated: false,
       );
 
       await _cache.setJson(cacheKey, result.toJson());
@@ -847,7 +878,6 @@ class GenerationService {
       final fallback = AiRefinedRecommendations(
         recipeIds: candidateIds.take(limit).toList(),
         reasonsById: const {},
-        summary: null,
         isEstimated: true,
       );
       await _cache.setJson(cacheKey, fallback.toJson());

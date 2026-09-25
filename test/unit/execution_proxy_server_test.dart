@@ -370,6 +370,206 @@ void main() {
     );
     expect((body['error'] as Map<String, dynamic>)['message'], '无权访问该接口');
   });
+
+  group('AI 聊天代理路由', () {
+    test('转发到 MiniMax 上游并携带服务端密钥，不做配送字段校验', () async {
+      final upstreamRequest = Completer<Map<String, dynamic>>();
+      final upstream = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      servers.add(upstream);
+      upstream.listen((request) async {
+        final body = jsonDecode(await utf8.decoder.bind(request).join())
+            as Map<String, dynamic>;
+        upstreamRequest.complete({
+          'path': request.uri.path,
+          'body': body,
+          'authorization':
+              request.headers.value(HttpHeaders.authorizationHeader),
+          'userId': request.headers.value('x-eatwhat-user-id'),
+        });
+        request.response
+          ..statusCode = HttpStatus.ok
+          ..headers.contentType = ContentType.json
+          ..write(
+            jsonEncode({
+              'choices': [
+                {
+                  'message': {
+                    'content': '{"intro":"代理生成的简介"}',
+                  },
+                },
+              ],
+            }),
+          );
+        await request.response.close();
+      });
+
+      const route = '/api/v1/ai/chat/completions';
+      final proxyServer = await _startProxy(
+        adapters: {
+          route: ExecutionProxyAdapterConfig(
+            route: route,
+            platform: 'minimax',
+            displayName: 'AI 生成（MiniMax）',
+            upstreamUrl: 'http://127.0.0.1:${upstream.port}/chat/completions',
+            upstreamToken: 'server-side-minimax-key',
+            requestKind: ExecutionProxyRequestKind.aiChatCompletions,
+          ),
+        },
+        servers: servers,
+        proxies: proxies,
+      );
+      final client = HttpClient();
+      clients.add(client);
+
+      final chatBody = {
+        'model': 'MiniMax-M2.7',
+        'messages': [
+          {'role': 'system', 'content': '只输出 JSON'},
+          {'role': 'user', 'content': '写一句菜品简介'},
+        ],
+        'stream': false,
+      };
+      final response = await _postJson(
+        client,
+        Uri.parse('http://127.0.0.1:${proxyServer.port}$route'),
+        chatBody,
+      );
+      final responseBody = await _readResponse(response);
+      final forwarded = await upstreamRequest.future;
+
+      expect(response.statusCode, HttpStatus.ok);
+      expect(
+        responseBody['choices'][0]['message']['content'],
+        '{"intro":"代理生成的简介"}',
+      );
+      expect(responseBody['requestId'], isNotNull);
+      expect(forwarded['path'], '/chat/completions');
+      expect(forwarded['body'], chatBody);
+      expect(forwarded['authorization'], 'Bearer server-side-minimax-key');
+      expect(forwarded['userId'], 'local-eatwhat-user');
+    });
+
+    test('AI 上游错误状态与 JSON 原样透传（保留 400 语义）', () async {
+      final upstream = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      servers.add(upstream);
+      upstream.listen((request) async {
+        await utf8.decoder.bind(request).join();
+        request.response
+          ..statusCode = HttpStatus.badRequest
+          ..headers.contentType = ContentType.json
+          ..write(
+            jsonEncode({
+              'base_resp': {
+                'status_code': 1004,
+                'status_msg': 'invalid api key',
+              },
+            }),
+          );
+        await request.response.close();
+      });
+
+      const route = '/api/v1/ai/chat/completions';
+      final proxyServer = await _startProxy(
+        adapters: {
+          route: ExecutionProxyAdapterConfig(
+            route: route,
+            platform: 'minimax',
+            displayName: 'AI 生成（MiniMax）',
+            upstreamUrl: 'http://127.0.0.1:${upstream.port}/chat/completions',
+            upstreamToken: 'server-side-minimax-key',
+            requestKind: ExecutionProxyRequestKind.aiChatCompletions,
+          ),
+        },
+        servers: servers,
+        proxies: proxies,
+      );
+      final client = HttpClient();
+      clients.add(client);
+
+      final response = await _postJson(
+        client,
+        Uri.parse('http://127.0.0.1:${proxyServer.port}$route'),
+        {'model': 'm', 'messages': []},
+      );
+      final body = await _readResponse(response);
+
+      expect(response.statusCode, HttpStatus.badRequest);
+      expect((body['base_resp'] as Map)['status_code'], 1004);
+    });
+
+    test('AI 适配器使用独立的更长上游超时', () async {
+      final upstream = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
+      servers.add(upstream);
+      upstream.listen((request) async {
+        await utf8.decoder.bind(request).join();
+        await Future<void>.delayed(const Duration(milliseconds: 150));
+        request.response
+          ..statusCode = HttpStatus.ok
+          ..headers.contentType = ContentType.json
+          ..write(jsonEncode({'choices': []}));
+        await request.response.close();
+      });
+
+      const route = '/api/v1/ai/chat/completions';
+      final proxy = ExecutionProxyServer(
+        ExecutionProxyServerConfig(
+          bindAddress: InternetAddress.loopbackIPv4,
+          port: 0,
+          requiredToken: '',
+          upstreamTimeout: const Duration(milliseconds: 30),
+          adapters: {
+            route: ExecutionProxyAdapterConfig(
+              route: route,
+              platform: 'minimax',
+              displayName: 'AI 生成（MiniMax）',
+              upstreamUrl: 'http://127.0.0.1:${upstream.port}/chat/completions',
+              upstreamToken: 'k',
+              requestKind: ExecutionProxyRequestKind.aiChatCompletions,
+              upstreamTimeout: const Duration(seconds: 2),
+            ),
+          },
+        ),
+      );
+      final proxyServer = await proxy.start();
+      servers.add(proxyServer);
+      proxies.add(proxy);
+      final client = HttpClient();
+      clients.add(client);
+
+      final response = await _postJson(
+        client,
+        Uri.parse('http://127.0.0.1:${proxyServer.port}$route'),
+        {'model': 'm', 'messages': []},
+      );
+      final body = await _readResponse(response);
+
+      expect(response.statusCode, HttpStatus.ok);
+      expect(body['choices'], isNotNull);
+    });
+
+    test('fromEnvironment 组装 AI 路由：URL 拼接与独立超时', () {
+      final config = ExecutionProxyServerConfig.fromEnvironment({
+        'MINIMAX_CHAT_API_URL': 'https://api.minimaxi.com/v1',
+        'MINIMAX_API_KEY': 'server-side-key',
+        'EXECUTION_PROXY_AI_UPSTREAM_TIMEOUT_MS': '12345',
+      });
+      final ai = config.adapters['/api/v1/ai/chat/completions'];
+
+      expect(ai, isNotNull);
+      expect(ai!.upstreamUrl, 'https://api.minimaxi.com/v1/chat/completions');
+      expect(ai.upstreamToken, 'server-side-key');
+      expect(ai.requestKind, ExecutionProxyRequestKind.aiChatCompletions);
+      expect(ai.upstreamTimeout, const Duration(milliseconds: 12345));
+
+      final slashSuffix = ExecutionProxyServerConfig.fromEnvironment({
+        'MINIMAX_CHAT_API_URL': 'https://api.minimaxi.com/v1/',
+      }).adapters['/api/v1/ai/chat/completions'];
+      expect(
+        slashSuffix!.upstreamUrl,
+        'https://api.minimaxi.com/v1/chat/completions',
+      );
+    });
+  });
 }
 
 Future<HttpServer> _startProxy({

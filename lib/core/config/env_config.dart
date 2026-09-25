@@ -322,23 +322,21 @@ class EnvConfig {
 
   /// 验证必要的环境变量是否已配置
   static bool validateConfig() {
-    final requiredVars = [
-      'MINIMAX_API_KEY',
-    ];
+    // AI 可用性：本地直连需要 MiniMax 密钥；代理模式（生产）只要配置了
+    // 执行代理即可，密钥只留在服务端。
+    if (minimaxApiKey.isEmpty && executionProxyBaseUrl.trim().isEmpty) {
+      debugPrint(
+        'Missing required environment variable: '
+        'MINIMAX_API_KEY (or EXECUTION_PROXY_BASE_URL for proxy mode)',
+      );
+      return false;
+    }
 
     final securityVars = [
       'PASSWORD_SALT',
       'JWT_SECRET',
       'ENCRYPTION_KEY',
     ];
-
-    // 检查必需变量
-    for (final varName in requiredVars) {
-      if (_readEnv(varName).isEmpty) {
-        debugPrint('Missing required environment variable: $varName');
-        return false;
-      }
-    }
 
     // 检查安全变量是否使用默认值
     for (final varName in securityVars) {
