@@ -6,11 +6,7 @@ import '../../../shared/themes/design_tokens.dart';
 import 'onboarding_service.dart';
 
 /// 手势引导步骤配置
-class OnboardingStep {
-  final String title;
-  final String description;
-  final IconData icon;
-  final String gesturePath; // 手势动画路径
+class OnboardingStep { // 手势动画路径
 
   const OnboardingStep({
     required this.title,
@@ -18,6 +14,10 @@ class OnboardingStep {
     required this.icon,
     required this.gesturePath,
   });
+  final String title;
+  final String description;
+  final IconData icon;
+  final String gesturePath;
 }
 
 /// 新手引导遮罩组件 - 使用 OverlayEntry 实现
@@ -71,12 +71,12 @@ class OnboardingOverlay {
 
 /// 新手引导组件
 class OnboardingWidget extends StatefulWidget {
-  final List<OnboardingStep> steps;
 
   const OnboardingWidget({
     super.key,
     required this.steps,
   });
+  final List<OnboardingStep> steps;
 
   @override
   State<OnboardingWidget> createState() => _OnboardingWidgetState();
@@ -189,7 +189,7 @@ class _OnboardingWidgetState extends State<OnboardingWidget>
   }
 
   Widget _buildHandWidget(OnboardingStep step) {
-    final size = 80.0;
+    const size = 80.0;
 
     switch (step.gesturePath) {
       case 'tap':
@@ -502,13 +502,13 @@ class _OnboardingWidgetState extends State<OnboardingWidget>
 
 /// 自定义遮罩画笔 - 实现气泡高亮效果
 class _OnboardingMaskPainter extends CustomPainter {
-  final Offset highlightCenter;
-  final double highlightRadius;
 
   _OnboardingMaskPainter({
     required this.highlightCenter,
     required this.highlightRadius,
   });
+  final Offset highlightCenter;
+  final double highlightRadius;
 
   @override
   void paint(Canvas canvas, Size size) {

@@ -5,6 +5,14 @@ import 'package:flutter/material.dart';
 /// 提供 1-5 星评分或滑动条形式的反馈选择
 /// 支持点击和拖动操作
 class TasteFeedbackSlider extends StatefulWidget {
+
+  const TasteFeedbackSlider({
+    super.key,
+    required this.onChanged,
+    this.initialValue = 0.5,
+    this.label = '请选择反馈强度',
+    this.useStarRating = true,
+  });
   /// 回调函数，传出强度值（0.0-1.0）
   final ValueChanged<double> onChanged;
 
@@ -16,14 +24,6 @@ class TasteFeedbackSlider extends StatefulWidget {
 
   /// 是否使用星评分模式，false 则使用滑动条模式
   final bool useStarRating;
-
-  const TasteFeedbackSlider({
-    super.key,
-    required this.onChanged,
-    this.initialValue = 0.5,
-    this.label = '请选择反馈强度',
-    this.useStarRating = true,
-  });
 
   @override
   State<TasteFeedbackSlider> createState() => _TasteFeedbackSliderState();
@@ -256,7 +256,6 @@ Future<void> showTasteFeedbackDialog({
         child: TasteFeedbackSlider(
           label: isPositive ? '喜欢这个推荐吗？' : '为什么不喜欢？',
           initialValue: isPositive ? 0.6 : 0.4,
-          useStarRating: true,
           onChanged: onFeedback,
         ),
       ),

@@ -1,13 +1,10 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
 /// 外卖搜索栏组件
 class DeliverySearchBar extends StatefulWidget {
-  final Function(String) onSearch;
-  final String? hintText;
-  final bool showHistory;
-  final int maxHistoryItems;
 
   const DeliverySearchBar({
     super.key,
@@ -16,6 +13,10 @@ class DeliverySearchBar extends StatefulWidget {
     this.showHistory = true,
     this.maxHistoryItems = 10,
   });
+  final Function(String) onSearch;
+  final String? hintText;
+  final bool showHistory;
+  final int maxHistoryItems;
 
   @override
   State<DeliverySearchBar> createState() => _DeliverySearchBarState();
@@ -103,9 +104,7 @@ class _DeliverySearchBarState extends State<DeliverySearchBar> {
   }
 
   void _clearHistory() {
-    setState(() {
-      _searchHistory.clear();
-    });
+    setState(_searchHistory.clear);
     _saveSearchHistory();
   }
 
@@ -297,7 +296,6 @@ class _DeliverySearchBarState extends State<DeliverySearchBar> {
                             borderRadius: BorderRadius.circular(16),
                             border: Border.all(
                               color: Colors.orange[200]!,
-                              width: 1,
                             ),
                           ),
                           child: Text(
@@ -323,10 +321,6 @@ class _DeliverySearchBarState extends State<DeliverySearchBar> {
 
 /// 搜索建议项组件
 class SearchSuggestionItem extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  final VoidCallback onTap;
-  final VoidCallback? onRemove;
 
   const SearchSuggestionItem({
     super.key,
@@ -335,6 +329,10 @@ class SearchSuggestionItem extends StatelessWidget {
     required this.onTap,
     this.onRemove,
   });
+  final String text;
+  final IconData icon;
+  final VoidCallback onTap;
+  final VoidCallback? onRemove;
 
   @override
   Widget build(BuildContext context) {

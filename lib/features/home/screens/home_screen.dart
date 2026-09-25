@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+
+import '../../../screens/phase3_demo_screen.dart';
 import '../../../shared/themes/design_tokens.dart';
 import '../../bubble/screens/enhanced_physical_entity_screen.dart';
 import '../../recipe/screens/recipe_demo_screen.dart';
 import '../../recipe/screens/recipe_list_screen.dart';
-import '../../../screens/phase3_demo_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

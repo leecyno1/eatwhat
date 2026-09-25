@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 
 /// 搜索建议组件
 class SearchSuggestions extends StatelessWidget {
-  final List<String> suggestions;
-  final List<String> searchHistory;
-  final Function(String) onSuggestionSelected;
-  final Function(String) onHistorySelected;
 
   const SearchSuggestions({
     super.key,
@@ -14,6 +10,10 @@ class SearchSuggestions extends StatelessWidget {
     required this.onSuggestionSelected,
     required this.onHistorySelected,
   });
+  final List<String> suggestions;
+  final List<String> searchHistory;
+  final Function(String) onSuggestionSelected;
+  final Function(String) onHistorySelected;
 
   @override
   Widget build(BuildContext context) {

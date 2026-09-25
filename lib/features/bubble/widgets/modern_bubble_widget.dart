@@ -1,22 +1,13 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 
 import '../../../core/models/bubble.dart';
 import '../../../core/theme/modern_theme.dart';
 
 /// 现代化气泡组件 - 支持完整手势交互
 class ModernBubbleWidget extends StatefulWidget {
-  final Bubble bubble;
-  final bool isSelected;
-  final int gradientIndex;
-  final VoidCallback? onTap;
-  final VoidCallback? onSwipeUp;
-  final VoidCallback? onSwipeDown;
-  final VoidCallback? onSwipeLeft;
-  final VoidCallback? onSwipeRight;
-  final VoidCallback? onLongPress;
 
   const ModernBubbleWidget({
     super.key,
@@ -30,6 +21,15 @@ class ModernBubbleWidget extends StatefulWidget {
     this.onSwipeRight,
     this.onLongPress,
   });
+  final Bubble bubble;
+  final bool isSelected;
+  final int gradientIndex;
+  final VoidCallback? onTap;
+  final VoidCallback? onSwipeUp;
+  final VoidCallback? onSwipeDown;
+  final VoidCallback? onSwipeLeft;
+  final VoidCallback? onSwipeRight;
+  final VoidCallback? onLongPress;
 
   @override
   State<ModernBubbleWidget> createState() => _ModernBubbleWidgetState();

@@ -3,15 +3,15 @@ import '../../../shared/themes/design_tokens.dart';
 
 /// A very lightweight mini curve chart (sparkline-like) with a highlighted point.
 class MiniCurveChart extends StatelessWidget {
-  final List<double> points; // normalized 0..1
-  final int highlightIndex;
-  final Color lineColor;
 
   const MiniCurveChart(
       {super.key,
       required this.points,
       this.highlightIndex = -1,
       this.lineColor = DesignTokens.pink});
+  final List<double> points; // normalized 0..1
+  final int highlightIndex;
+  final Color lineColor;
 
   @override
   Widget build(BuildContext context) {
@@ -25,18 +25,18 @@ class MiniCurveChart extends StatelessWidget {
 }
 
 class _CurvePainter extends CustomPainter {
+
+  _CurvePainter({required this.points, required this.highlightIndex, required this.color});
   final List<double> points;
   final int highlightIndex;
   final Color color;
-
-  _CurvePainter({required this.points, required this.highlightIndex, required this.color});
 
   @override
   void paint(Canvas canvas, Size size) {
     if (points.isEmpty) return;
     final path = Path();
     final stepX = size.width / (points.length - 1);
-    final y = (double v) => size.height - v * size.height;
+    double y(double v) => size.height - v * size.height;
 
     // Smooth cubic path
     path.moveTo(0, y(points.first));

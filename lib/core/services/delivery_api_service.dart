@@ -36,7 +36,7 @@ class DeliveryApiService {
         }
 
         final List meals = data['meals'];
-        return meals.map((meal) => _mealToFoodItem(meal)).toList();
+        return meals.map(_mealToFoodItem).toList();
       } else {
         throw Exception('Failed to load meals from API');
       }
@@ -64,7 +64,7 @@ class DeliveryApiService {
   /// 获取随机菜品，用于外卖页面的推荐
   Future<List<FoodItem>> getRecommendedFoods({int count = 5}) async {
     try {
-      List<FoodItem> recommendedFoods = [];
+      final List<FoodItem> recommendedFoods = [];
       for (int i = 0; i < count; i++) {
         final response = await http.get(Uri.parse('${_baseUrl}random.php'));
         if (response.statusCode == 200) {

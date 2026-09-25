@@ -292,7 +292,6 @@ class AppV2Router {
           name: 'v2_recipe_detail_demo',
           builder: (context, state) => RecipeDetailPage(
             recipe: demoRecipes.first,
-            howToCookRecipeService: null,
           ),
         ),
         GoRoute(

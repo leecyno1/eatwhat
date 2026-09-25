@@ -35,7 +35,7 @@ void main() async {
       final recipe = recipes[i];
       print('\n${i + 1}. 菜谱: ${recipe.name}');
       print(
-          '   📝 描述: ${recipe.description.length > 50 ? recipe.description.substring(0, 50) + '...' : recipe.description}');
+          '   📝 描述: ${recipe.description.length > 50 ? '${recipe.description.substring(0, 50)}...' : recipe.description}');
       print('   ⏱️ 烹饪时间: ${recipe.cookingTime}');
       print('   👥 份量: ${recipe.servings}');
       print('   🔥 步骤数量: ${recipe.steps.length}');

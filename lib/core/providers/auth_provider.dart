@@ -2,11 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// 用户认证状态
 class AuthState {
-  final String? userId;
-  final String? username;
-  final bool isAuthenticated;
-  final bool isLoading;
-  final String? error;
 
   const AuthState({
     this.userId,
@@ -15,6 +10,11 @@ class AuthState {
     this.isLoading = false,
     this.error,
   });
+  final String? userId;
+  final String? username;
+  final bool isAuthenticated;
+  final bool isLoading;
+  final String? error;
 
   AuthState copyWith({
     String? userId,
@@ -39,7 +39,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   /// 登录
   Future<void> login(String username, String password) async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true);
 
     try {
       // 模拟登录逻辑
@@ -51,7 +51,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
           userId: 'user_${username.hashCode}',
           username: username,
           isAuthenticated: true,
-          isLoading: false,
         );
       } else {
         throw Exception('用户名或密码不能为空');
@@ -66,7 +65,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   /// 注册
   Future<void> register(String username, String password) async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true);
 
     try {
       // 模拟注册逻辑
@@ -77,7 +76,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
           userId: 'user_${username.hashCode}',
           username: username,
           isAuthenticated: true,
-          isLoading: false,
         );
       } else {
         throw Exception('用户名不能为空且密码至少6位');
@@ -97,7 +95,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   /// 清空错误
   void clearError() {
-    state = state.copyWith(error: null);
+    state = state.copyWith();
   }
 }
 

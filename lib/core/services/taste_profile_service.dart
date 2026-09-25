@@ -3,9 +3,9 @@ import 'package:flutter/foundation.dart';
 /// 味觉画像服务
 /// 负责将46维味觉向量降维到主要维度，用于雷达图可视化展示
 class TasteProfileService {
-  static final TasteProfileService _instance = TasteProfileService._internal();
   factory TasteProfileService() => _instance;
   TasteProfileService._internal();
+  static final TasteProfileService _instance = TasteProfileService._internal();
 
   // 主要维度分组（用于雷达图展示）
   static const List<String> primaryDimensions = [

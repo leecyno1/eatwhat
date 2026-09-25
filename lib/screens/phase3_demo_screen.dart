@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../core/ai/models/user_behavior_models.dart';
 import '../core/ai/engines/ai_preference_learning_engine.dart';
-import '../core/ai/services/smart_conversational_recommender.dart';
+import '../core/ai/models/user_behavior_models.dart';
 import '../core/ai/services/preference_mapping_service.dart';
+import '../core/ai/services/smart_conversational_recommender.dart';
 import '../core/ai/widgets/real_time_preference_adjustment_screen.dart';
 
 /// Phase 3 AI驱动的智能推荐演示界面
 /// 展示AI偏好学习、智能对话推荐、偏好映射和实时调整功能
 class Phase3DemoScreen extends StatefulWidget {
-  const Phase3DemoScreen({Key? key}) : super(key: key);
+  const Phase3DemoScreen({super.key});
 
   @override
   State<Phase3DemoScreen> createState() => _Phase3DemoScreenState();
@@ -33,7 +33,7 @@ class _Phase3DemoScreenState extends State<Phase3DemoScreen> with TickerProvider
   bool _isInitialized = false;
   bool _isLoading = true;
   int _currentFeatureIndex = 0;
-  String _demoUserId = 'demo_user_001';
+  final String _demoUserId = 'demo_user_001';
 
   // 演示数据
   Map<String, dynamic> _userInsights = {};
@@ -239,12 +239,12 @@ class _Phase3DemoScreenState extends State<Phase3DemoScreen> with TickerProvider
       ),
       actions: [
         IconButton(
-          onPressed: () => _showAIInsights(),
+          onPressed: _showAIInsights,
           icon: const Icon(Icons.analytics, color: Colors.blue),
           tooltip: 'AI分析报告',
         ),
         IconButton(
-          onPressed: () => _refreshDemo(),
+          onPressed: _refreshDemo,
           icon: const Icon(Icons.refresh, color: Colors.green),
           tooltip: '刷新演示',
         ),
@@ -423,7 +423,7 @@ class _Phase3DemoScreenState extends State<Phase3DemoScreen> with TickerProvider
       children: [
         _buildSectionTitle('🎯 AI智能推荐结果'),
         ...(_recommendations.isNotEmpty
-            ? _recommendations.take(3).map((rec) => _buildRecommendationCard(rec)).toList()
+            ? _recommendations.take(3).map(_buildRecommendationCard).toList()
             : [_buildPlaceholderCard('正在分析您的偏好，生成个性化推荐...')]),
         const SizedBox(height: 16),
         _buildInsightsCard(),
@@ -870,7 +870,7 @@ class _Phase3DemoScreenState extends State<Phase3DemoScreen> with TickerProvider
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ] else ...[
             const Text(
               '正在分析偏好关系...',
@@ -918,7 +918,7 @@ class _Phase3DemoScreenState extends State<Phase3DemoScreen> with TickerProvider
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ],
       ),
@@ -1052,7 +1052,7 @@ class _Phase3DemoScreenState extends State<Phase3DemoScreen> with TickerProvider
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
-        onPressed: () => _openPreferenceAdjustment(),
+        onPressed: _openPreferenceAdjustment,
         icon: const Icon(Icons.tune, color: Colors.white),
         label: const Text(
           '打开偏好调整界面',
@@ -1165,9 +1165,7 @@ class _Phase3DemoScreenState extends State<Phase3DemoScreen> with TickerProvider
       MaterialPageRoute(
         builder: (context) => RealTimePreferenceAdjustmentScreen(
           userId: _demoUserId,
-          onPreferencesUpdated: () {
-            _refreshDemo();
-          },
+          onPreferencesUpdated: _refreshDemo,
         ),
       ),
     );
@@ -1274,11 +1272,6 @@ class _Phase3DemoScreenState extends State<Phase3DemoScreen> with TickerProvider
 
 /// Phase 3 功能特性
 class Phase3Feature {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color color;
-  final String description;
 
   Phase3Feature({
     required this.title,
@@ -1287,4 +1280,9 @@ class Phase3Feature {
     required this.color,
     required this.description,
   });
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color color;
+  final String description;
 }

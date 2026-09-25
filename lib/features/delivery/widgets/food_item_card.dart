@@ -3,12 +3,12 @@ import '../../../core/models/food_item.dart';
 
 /// 经过优化的菜品卡片
 class FoodItemCard extends StatelessWidget {
-  final FoodItem foodItem;
 
   const FoodItemCard({
     super.key,
     required this.foodItem,
   });
+  final FoodItem foodItem;
 
   @override
   Widget build(BuildContext context) {
@@ -116,11 +116,6 @@ class FoodItemCard extends StatelessWidget {
 
 /// 菜品网格组件
 class FoodItemGrid extends StatelessWidget {
-  final List<FoodItem> foodItems;
-  final Function(FoodItem)? onItemTap;
-  final bool showRestaurantInfo;
-  final int crossAxisCount;
-  final double childAspectRatio;
 
   const FoodItemGrid({
     super.key,
@@ -130,6 +125,11 @@ class FoodItemGrid extends StatelessWidget {
     this.crossAxisCount = 2,
     this.childAspectRatio = 0.8,
   });
+  final List<FoodItem> foodItems;
+  final Function(FoodItem)? onItemTap;
+  final bool showRestaurantInfo;
+  final int crossAxisCount;
+  final double childAspectRatio;
 
   @override
   Widget build(BuildContext context) {
@@ -154,9 +154,6 @@ class FoodItemGrid extends StatelessWidget {
 
 /// 菜品列表组件
 class FoodItemList extends StatelessWidget {
-  final List<FoodItem> foodItems;
-  final Function(FoodItem)? onItemTap;
-  final bool showRestaurantInfo;
 
   const FoodItemList({
     super.key,
@@ -164,6 +161,9 @@ class FoodItemList extends StatelessWidget {
     this.onItemTap,
     this.showRestaurantInfo = false,
   });
+  final List<FoodItem> foodItems;
+  final Function(FoodItem)? onItemTap;
+  final bool showRestaurantInfo;
 
   @override
   Widget build(BuildContext context) {
@@ -185,9 +185,6 @@ class FoodItemList extends StatelessWidget {
 
 // 食物分类卡片
 class FoodCategoryCard extends StatelessWidget {
-  final String name;
-  final String? imageUrl;
-  final VoidCallback? onTap;
 
   const FoodCategoryCard({
     super.key,
@@ -195,6 +192,9 @@ class FoodCategoryCard extends StatelessWidget {
     this.imageUrl,
     this.onTap,
   });
+  final String name;
+  final String? imageUrl;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -248,10 +248,6 @@ class FoodCategoryCard extends StatelessWidget {
 
 // 推荐卡片组件
 class RecommendationCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final List<FoodItem> foods;
-  final VoidCallback? onSeeMore;
 
   const RecommendationCard({
     super.key,
@@ -260,6 +256,10 @@ class RecommendationCard extends StatelessWidget {
     required this.foods,
     this.onSeeMore,
   });
+  final String title;
+  final String subtitle;
+  final List<FoodItem> foods;
+  final VoidCallback? onSeeMore;
 
   @override
   Widget build(BuildContext context) {

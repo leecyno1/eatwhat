@@ -2,10 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../shared/themes/design_tokens.dart';
 
 class StatPill extends StatelessWidget {
-  final IconData icon;
-  final String value;
-  final String label;
-  final Color color;
 
   const StatPill(
       {super.key,
@@ -13,6 +9,10 @@ class StatPill extends StatelessWidget {
       required this.value,
       required this.label,
       this.color = DesignTokens.mint});
+  final IconData icon;
+  final String value;
+  final String label;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {

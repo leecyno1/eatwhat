@@ -1,14 +1,4 @@
 class NutritionInfo {
-  final num calories;
-  final num protein;
-  final num carbs;
-  final num fat;
-  final num fiber;
-  final num sodium;
-  final num sugar;
-  final num? vitaminC;
-  final num? calcium;
-  final num? iron;
 
   const NutritionInfo({
     required this.calories,
@@ -50,6 +40,16 @@ class NutritionInfo {
       iron: readNumOrNull('iron'),
     );
   }
+  final num calories;
+  final num protein;
+  final num carbs;
+  final num fat;
+  final num fiber;
+  final num sodium;
+  final num sugar;
+  final num? vitaminC;
+  final num? calcium;
+  final num? iron;
 
   Map<String, dynamic> toJson() {
     return {
@@ -68,12 +68,6 @@ class NutritionInfo {
 }
 
 class NutritionAnalysis {
-  final NutritionInfo nutrition;
-  final int healthScore;
-  final List<String> balanceAdvice;
-  final List<String> dietaryTags;
-  final String servingSize;
-  final bool isEstimated;
 
   const NutritionAnalysis({
     required this.nutrition,
@@ -122,9 +116,15 @@ class NutritionAnalysis {
         final v = (json['servingSize']?.toString() ?? '').trim();
         return v.isNotEmpty ? v : '1人份';
       })(),
-      isEstimated: (json['isEstimated'] == true),
+      isEstimated: json['isEstimated'] == true,
     );
   }
+  final NutritionInfo nutrition;
+  final int healthScore;
+  final List<String> balanceAdvice;
+  final List<String> dietaryTags;
+  final String servingSize;
+  final bool isEstimated;
 
   Map<String, dynamic> toJson() {
     return {
@@ -139,15 +139,6 @@ class NutritionAnalysis {
 }
 
 class WinePairing {
-  final String name;
-  final String type;
-  final String reason;
-  final String servingTemperature;
-  final String? glassType;
-  final String? alcoholContent;
-  final String flavor;
-  final String? origin;
-  final bool isEstimated;
 
   const WinePairing({
     required this.name,
@@ -179,9 +170,18 @@ class WinePairing {
           : readString('alcoholContent'),
       flavor: readString('flavor', fallback: '清爽'),
       origin: readString('origin').isEmpty ? null : readString('origin'),
-      isEstimated: (json['isEstimated'] == true),
+      isEstimated: json['isEstimated'] == true,
     );
   }
+  final String name;
+  final String type;
+  final String reason;
+  final String servingTemperature;
+  final String? glassType;
+  final String? alcoholContent;
+  final String flavor;
+  final String? origin;
+  final bool isEstimated;
 
   Map<String, dynamic> toJson() {
     return {
@@ -199,20 +199,6 @@ class WinePairing {
 }
 
 class FortuneResult {
-  final String id;
-  final String type;
-  final String date;
-  final String dishName;
-  final String reason;
-  final int luckyIndex;
-  final String description;
-  final List<String> tips;
-  final String difficulty;
-  final int cookingTime;
-  final String mysticalMessage;
-  final List<String>? ingredients;
-  final List<String>? steps;
-  final bool isEstimated;
 
   const FortuneResult({
     required this.id,
@@ -272,9 +258,23 @@ class FortuneResult {
       mysticalMessage: readString('mysticalMessage', fallback: '锅铲一响，烦恼退散。'),
       ingredients: readStringListOrNull('ingredients'),
       steps: readStringListOrNull('steps'),
-      isEstimated: (json['isEstimated'] == true),
+      isEstimated: json['isEstimated'] == true,
     );
   }
+  final String id;
+  final String type;
+  final String date;
+  final String dishName;
+  final String reason;
+  final int luckyIndex;
+  final String description;
+  final List<String> tips;
+  final String difficulty;
+  final int cookingTime;
+  final String mysticalMessage;
+  final List<String>? ingredients;
+  final List<String>? steps;
+  final bool isEstimated;
 
   Map<String, dynamic> toJson() {
     return {
@@ -303,10 +303,6 @@ String _todayString() {
 }
 
 class AiRefinedRecommendations {
-  final List<String> recipeIds;
-  final Map<String, String> reasonsById;
-  final String? summary;
-  final bool isEstimated;
 
   const AiRefinedRecommendations({
     required this.recipeIds,
@@ -338,9 +334,13 @@ class AiRefinedRecommendations {
       recipeIds: ids,
       reasonsById: reasons,
       summary: summary.isEmpty ? null : summary,
-      isEstimated: (json['isEstimated'] == true),
+      isEstimated: json['isEstimated'] == true,
     );
   }
+  final List<String> recipeIds;
+  final Map<String, String> reasonsById;
+  final String? summary;
+  final bool isEstimated;
 
   Map<String, dynamic> toJson() {
     return {

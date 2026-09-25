@@ -4,11 +4,6 @@ import '../../../core/models/cart_item.dart';
 /// 购物车商品卡片组件
 /// 显示商品图片、名称、规格、价格和数量控制
 class CartItemCard extends StatelessWidget {
-  final CartItem item;
-  final VoidCallback? onIncrement;
-  final VoidCallback? onDecrement;
-  final VoidCallback? onDelete;
-  final ValueChanged<int>? onQuantityChanged;
 
   const CartItemCard({
     super.key,
@@ -18,6 +13,11 @@ class CartItemCard extends StatelessWidget {
     this.onDelete,
     this.onQuantityChanged,
   });
+  final CartItem item;
+  final VoidCallback? onIncrement;
+  final VoidCallback? onDecrement;
+  final VoidCallback? onDelete;
+  final ValueChanged<int>? onQuantityChanged;
 
   @override
   Widget build(BuildContext context) {

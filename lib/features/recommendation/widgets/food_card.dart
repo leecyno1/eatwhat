@@ -3,10 +3,6 @@ import '../../../core/models/food.dart';
 
 /// 食物推荐卡片组件
 class FoodCard extends StatefulWidget {
-  final Food food;
-  final VoidCallback? onTap;
-  final VoidCallback? onFavorite;
-  final bool showFavoriteButton;
 
   const FoodCard({
     super.key,
@@ -15,6 +11,10 @@ class FoodCard extends StatefulWidget {
     this.onFavorite,
     this.showFavoriteButton = true,
   });
+  final Food food;
+  final VoidCallback? onTap;
+  final VoidCallback? onFavorite;
+  final bool showFavoriteButton;
 
   @override
   State<FoodCard> createState() => _FoodCardState();

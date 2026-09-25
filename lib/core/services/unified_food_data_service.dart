@@ -12,9 +12,9 @@ import 'vectorized_recommendation_engine.dart';
 /// 统一食物数据服务 - Phase 1 核心架构
 /// 将推荐系统完全切换到菜谱数据库作为单一数据源
 class UnifiedFoodDataService {
-  static final UnifiedFoodDataService _instance = UnifiedFoodDataService._internal();
   factory UnifiedFoodDataService() => _instance;
   UnifiedFoodDataService._internal();
+  static final UnifiedFoodDataService _instance = UnifiedFoodDataService._internal();
 
   final RecipeDatabaseService _recipeService = RecipeDatabaseService();
   final UserPreferenceManager _preferenceManager = UserPreferenceManager();
@@ -412,12 +412,6 @@ class UnifiedFoodDataService {
 
 /// 用户偏好数据结构
 class UserPreferenceData {
-  final List<String> tasteTags;
-  final List<String>? cuisineTags;
-  final List<String> ingredientTags;
-  final List<String> favoriteRecipeIds;
-  final List<String> dislikedRecipeIds;
-  final RecipeDifficulty? difficultyPreference;
 
   UserPreferenceData({
     required this.tasteTags,
@@ -427,6 +421,12 @@ class UserPreferenceData {
     required this.dislikedRecipeIds,
     this.difficultyPreference,
   });
+  final List<String> tasteTags;
+  final List<String>? cuisineTags;
+  final List<String> ingredientTags;
+  final List<String> favoriteRecipeIds;
+  final List<String> dislikedRecipeIds;
+  final RecipeDifficulty? difficultyPreference;
 
   @override
   String toString() {
@@ -436,8 +436,8 @@ class UserPreferenceData {
 
 /// 评分食物
 class ScoredFood {
-  final Food food;
-  final double score;
 
   ScoredFood({required this.food, required this.score});
+  final Food food;
+  final double score;
 }

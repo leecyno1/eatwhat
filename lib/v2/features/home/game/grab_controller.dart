@@ -149,8 +149,8 @@ class GrabGestureHandler extends PositionComponent
 
     switch (outcome) {
       case GrabReleaseOutcome.collect:
-        entity.endGrab(flingVelocity: null);
-        entity.collect(withFeedback: true);
+        entity.endGrab();
+        entity.collect();
         break;
       case GrabReleaseOutcome.reject:
         entity.endGrab(flingVelocity: fling);

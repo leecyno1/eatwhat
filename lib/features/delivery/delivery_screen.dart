@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../core/services/delivery_api_service.dart';
+
 import '../../core/models/food_item.dart';
+import '../../core/services/delivery_api_service.dart';
 import 'widgets/food_item_card.dart';
 
 class DeliveryScreen extends StatefulWidget {
@@ -60,7 +61,7 @@ class _DeliveryScreenState extends State<DeliveryScreen> {
                 ),
                 filled: true,
                 fillColor: Theme.of(context).cardColor,
-                contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                contentPadding: const EdgeInsets.symmetric(),
               ),
               onSubmitted: _searchFood,
             ),

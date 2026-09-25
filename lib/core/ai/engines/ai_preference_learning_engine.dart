@@ -1,16 +1,17 @@
 import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 
-import '../models/user_behavior_models.dart';
 import '../../models/recipe.dart';
 import '../../services/real_xiachufang_crawler_service.dart';
+import '../models/user_behavior_models.dart';
 
 /// AI偏好学习引擎 - Phase 3 核心AI组件
 /// 基于机器学习算法实现用户偏好的智能学习与预测
 class AIPreferenceLearningEngine {
-  static final AIPreferenceLearningEngine _instance = AIPreferenceLearningEngine._internal();
   factory AIPreferenceLearningEngine() => _instance;
   AIPreferenceLearningEngine._internal();
+  static final AIPreferenceLearningEngine _instance = AIPreferenceLearningEngine._internal();
 
   // 用户偏好档案存储
   final Map<String, UserPreferenceProfile> _userProfiles = {};
@@ -232,7 +233,7 @@ class AIPreferenceLearningEngine {
   /// 更新用户档案
   Future<void> _updateUserProfile(UserBehaviorData behavior) async {
     final userId = behavior.userId;
-    var profile = _userProfiles[userId] ??
+    final profile = _userProfiles[userId] ??
         UserPreferenceProfile(
           userId: userId,
           preferenceVector: PreferenceVector.defaultVector(),
@@ -437,7 +438,7 @@ class AIPreferenceLearningEngine {
     for (final taste in recipe.tasteProfile) {
       final userPref = vector.tastePreferences[taste];
       if (userPref != null && userPref > 0.7) {
-        reasons.add('👅 符合您对${taste}口味的偏好');
+        reasons.add('👅 符合您对$taste口味的偏好');
         break;
       }
     }
@@ -457,7 +458,7 @@ class AIPreferenceLearningEngine {
     for (final scenario in recipe.scenarioTags) {
       final scenarioPref = vector.scenarioPreferences[scenario];
       if (scenarioPref != null && scenarioPref > 0.6) {
-        reasons.add('🎭 适合${scenario}场景');
+        reasons.add('🎭 适合$scenario场景');
         break;
       }
     }
@@ -604,10 +605,6 @@ class AIPreferenceLearningEngine {
 
 /// AI学习配置
 class AILearningConfig {
-  final int batchLearningSize;
-  final double learningRate;
-  final double decayRate;
-  final int maxBehaviorHistory;
 
   AILearningConfig({
     this.batchLearningSize = 10,
@@ -615,6 +612,10 @@ class AILearningConfig {
     this.decayRate = 0.95,
     this.maxBehaviorHistory = 1000,
   });
+  final int batchLearningSize;
+  final double learningRate;
+  final double decayRate;
+  final int maxBehaviorHistory;
 }
 
 /// 全局偏好统计
@@ -641,13 +642,13 @@ enum FeedbackType {
 
 /// 推荐结果
 class RecipeRecommendation {
-  final Recipe recipe;
-  final double score;
-  final List<String> reasons;
 
   RecipeRecommendation({
     required this.recipe,
     required this.score,
     required this.reasons,
   });
+  final Recipe recipe;
+  final double score;
+  final List<String> reasons;
 }

@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
 import '../../features/bubble/screens/bubble_screen.dart';
 import '../../features/bubble/screens/glassmorphism_bubble_screen.dart';
+import '../../features/metrics/metrics_dashboard_screen.dart';
+import '../../features/preferences/screens/taste_preferences_screen.dart';
 import '../../features/recommendation/screens/recommendation_screen.dart';
-import '../../features/user/screens/user_profile_screen.dart';
 import '../../features/settings/screens/pastel_settings_screen.dart';
 import '../../features/style_preview/style_preview_screen.dart';
-import '../../features/preferences/screens/taste_preferences_screen.dart';
-import '../../features/metrics/metrics_dashboard_screen.dart';
+import '../../features/user/screens/user_profile_screen.dart';
 
 /// 应用路由配置
 class AppRouter {
@@ -83,7 +84,7 @@ class AppRouter {
       ],
 
       // 错误页面处理
-      errorBuilder: (context, state) => _buildErrorPage(context, state),
+      errorBuilder: _buildErrorPage,
     );
   }
 

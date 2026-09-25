@@ -8,6 +8,49 @@ part 'user_preference.g.dart';
 /// 使用Hive进行本地存储
 @HiveType(typeId: 4)
 class UserPreference extends HiveObject {
+
+  UserPreference({
+    String? id,
+    required this.userId,
+    List<String>? likedBubbles,
+    List<String>? dislikedBubbles,
+    List<String>? ignoredBubbles,
+    Map<String, int>? bubbleInteractionCount,
+    DateTime? lastUpdated,
+    Map<String, double>? bubbleWeights,
+    List<String>? favoriteFoods,
+    List<String>? dislikedFoods,
+    Map<String, double>? cuisinePreferences,
+    Map<String, double>? tastePreferences,
+  })  : id = id ?? const Uuid().v4(),
+        likedBubbles = likedBubbles ?? [],
+        dislikedBubbles = dislikedBubbles ?? [],
+        ignoredBubbles = ignoredBubbles ?? [],
+        bubbleInteractionCount = bubbleInteractionCount ?? {},
+        lastUpdated = lastUpdated ?? DateTime.now(),
+        bubbleWeights = bubbleWeights ?? {},
+        favoriteFoods = favoriteFoods ?? [],
+        dislikedFoods = dislikedFoods ?? [],
+        cuisinePreferences = cuisinePreferences ?? {},
+        tastePreferences = tastePreferences ?? {};
+
+  /// 从JSON创建 (用于API, 而非Hive)
+  factory UserPreference.fromJson(Map<String, dynamic> json) {
+    return UserPreference(
+      id: json['id'],
+      userId: json['userId'],
+      likedBubbles: List<String>.from(json['likedBubbles'] ?? []),
+      dislikedBubbles: List<String>.from(json['dislikedBubbles'] ?? []),
+      ignoredBubbles: List<String>.from(json['ignoredBubbles'] ?? []),
+      bubbleInteractionCount: Map<String, int>.from(json['bubbleInteractionCount'] ?? {}),
+      lastUpdated: DateTime.parse(json['lastUpdated'] ?? DateTime.now().toIso8601String()),
+      bubbleWeights: Map<String, double>.from(json['bubbleWeights'] ?? {}),
+      favoriteFoods: List<String>.from(json['favoriteFoods'] ?? []),
+      dislikedFoods: List<String>.from(json['dislikedFoods'] ?? []),
+      cuisinePreferences: Map<String, double>.from(json['cuisinePreferences'] ?? {}),
+      tastePreferences: Map<String, double>.from(json['tastePreferences'] ?? {}),
+    );
+  }
   @HiveField(0)
   final String id;
 
@@ -43,31 +86,6 @@ class UserPreference extends HiveObject {
 
   @HiveField(11)
   final Map<String, double> tastePreferences;
-
-  UserPreference({
-    String? id,
-    required this.userId,
-    List<String>? likedBubbles,
-    List<String>? dislikedBubbles,
-    List<String>? ignoredBubbles,
-    Map<String, int>? bubbleInteractionCount,
-    DateTime? lastUpdated,
-    Map<String, double>? bubbleWeights,
-    List<String>? favoriteFoods,
-    List<String>? dislikedFoods,
-    Map<String, double>? cuisinePreferences,
-    Map<String, double>? tastePreferences,
-  })  : id = id ?? const Uuid().v4(),
-        likedBubbles = likedBubbles ?? [],
-        dislikedBubbles = dislikedBubbles ?? [],
-        ignoredBubbles = ignoredBubbles ?? [],
-        bubbleInteractionCount = bubbleInteractionCount ?? {},
-        lastUpdated = lastUpdated ?? DateTime.now(),
-        bubbleWeights = bubbleWeights ?? {},
-        favoriteFoods = favoriteFoods ?? [],
-        dislikedFoods = dislikedFoods ?? [],
-        cuisinePreferences = cuisinePreferences ?? {},
-        tastePreferences = tastePreferences ?? {};
 
   /// 复制并修改属性
   UserPreference copyWith({
@@ -116,24 +134,6 @@ class UserPreference extends HiveObject {
       'cuisinePreferences': cuisinePreferences,
       'tastePreferences': tastePreferences,
     };
-  }
-
-  /// 从JSON创建 (用于API, 而非Hive)
-  factory UserPreference.fromJson(Map<String, dynamic> json) {
-    return UserPreference(
-      id: json['id'],
-      userId: json['userId'],
-      likedBubbles: List<String>.from(json['likedBubbles'] ?? []),
-      dislikedBubbles: List<String>.from(json['dislikedBubbles'] ?? []),
-      ignoredBubbles: List<String>.from(json['ignoredBubbles'] ?? []),
-      bubbleInteractionCount: Map<String, int>.from(json['bubbleInteractionCount'] ?? {}),
-      lastUpdated: DateTime.parse(json['lastUpdated'] ?? DateTime.now().toIso8601String()),
-      bubbleWeights: Map<String, double>.from(json['bubbleWeights'] ?? {}),
-      favoriteFoods: List<String>.from(json['favoriteFoods'] ?? []),
-      dislikedFoods: List<String>.from(json['dislikedFoods'] ?? []),
-      cuisinePreferences: Map<String, double>.from(json['cuisinePreferences'] ?? {}),
-      tastePreferences: Map<String, double>.from(json['tastePreferences'] ?? {}),
-    );
   }
 
   /// 更新气泡偏好

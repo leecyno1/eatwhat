@@ -167,7 +167,6 @@ class _WeightSheetState extends State<_WeightSheet> {
               const Text('0'),
               Expanded(
                 child: Slider(
-                  min: 0,
                   max: 5,
                   divisions: 5,
                   value: _value,

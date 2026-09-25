@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
 
 /// 粒子类型
 enum ParticleType {
@@ -12,16 +13,6 @@ enum ParticleType {
 
 /// 单个粒子
 class Particle {
-  Offset position;
-  Offset velocity;
-  double size;
-  double life;
-  double maxLife;
-  Color color;
-  double rotation;
-  double rotationSpeed;
-  ParticleType type;
-  double opacity;
 
   Particle({
     required this.position,
@@ -35,6 +26,16 @@ class Particle {
     required this.type,
     this.opacity = 1.0,
   });
+  Offset position;
+  Offset velocity;
+  double size;
+  double life;
+  double maxLife;
+  Color color;
+  double rotation;
+  double rotationSpeed;
+  ParticleType type;
+  double opacity;
 
   /// 更新粒子状态
   void update(double deltaTime) {
@@ -65,17 +66,17 @@ class Particle {
 
 /// 粒子系统管理器
 class ParticleSystemManager {
+
+  ParticleSystemManager({
+    this.maxParticles = 100,
+    this.containerSize = const Size(400, 600),
+  });
   final List<Particle> _particles = [];
   final math.Random _random = math.Random();
 
   // 系统配置
   int maxParticles;
   Size containerSize;
-
-  ParticleSystemManager({
-    this.maxParticles = 100,
-    this.containerSize = const Size(400, 600),
-  });
 
   /// 添加爆炸效果
   void addExplosion({
@@ -87,7 +88,7 @@ class ParticleSystemManager {
     for (int i = 0; i < count; i++) {
       if (_particles.length >= maxParticles) break;
 
-      final angle = (_random.nextDouble() * 2 * math.pi);
+      final angle = _random.nextDouble() * 2 * math.pi;
       final speed = 100 + _random.nextDouble() * 200;
       final velocity = Offset(
         math.cos(angle) * speed,
@@ -230,14 +231,14 @@ class ParticleSystemManager {
 
 /// 粒子系统渲染组件
 class ParticleSystemWidget extends StatefulWidget {
-  final ParticleSystemManager manager;
-  final Widget? child;
 
   const ParticleSystemWidget({
     super.key,
     required this.manager,
     this.child,
   });
+  final ParticleSystemManager manager;
+  final Widget? child;
 
   @override
   State<ParticleSystemWidget> createState() => _ParticleSystemWidgetState();
@@ -294,9 +295,9 @@ class _ParticleSystemWidgetState extends State<ParticleSystemWidget> with Ticker
 
 /// 粒子绘制器
 class ParticlePainter extends CustomPainter {
-  final List<Particle> particles;
 
   ParticlePainter(this.particles);
+  final List<Particle> particles;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -464,7 +465,6 @@ class ParticleEffects {
           math.Random().nextDouble() * containerSize.height * 0.3,
         ),
         type: ParticleType.star,
-        count: 20,
         color: [Colors.yellow, Colors.orange, Colors.red][i % 3],
       );
     }

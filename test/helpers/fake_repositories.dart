@@ -1,4 +1,5 @@
 /// Fake Repository 实现用于测试
+library;
 
 /// Fake AuthRepository
 class FakeAuthRepository {

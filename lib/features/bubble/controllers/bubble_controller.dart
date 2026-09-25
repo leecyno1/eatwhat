@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import '../../../core/models/bubble.dart';
 import '../../../core/models/bubble_factory.dart';
 import '../../../core/models/food.dart';
 import '../../../core/models/user_preference.dart';
-import '../../../core/services/storage_service.dart';
 import '../../../core/physics/improved_bubble_physics.dart';
+import '../../../core/services/collaborative_filtering_service.dart';
+import '../../../core/services/realtime_feedback_service.dart';
+import '../../../core/services/storage_service.dart';
+import '../../../core/services/synchronization_manager.dart';
 import '../../../core/services/unified_food_data_service.dart';
 import '../../../core/services/user_preference_manager.dart' show UserActionType;
-import '../../../core/services/realtime_feedback_service.dart';
-import '../../../core/services/synchronization_manager.dart';
-import '../../../core/services/collaborative_filtering_service.dart';
-import '../../../core/utils/performance_optimizer.dart';
 import '../../../core/utils/analytics_helper.dart';
+import '../../../core/utils/performance_optimizer.dart';
 
 /// 优化后的气泡控制器 - Phase 2 实时反馈版本
 /// 集成实时反馈服务和同步管理器
 class BubbleController extends DebouncedNotifier {
+
+  BubbleController();
   final List<Bubble> _bubbles = [];
   final List<Bubble> _selectedBubbles = [];
   final List<Food> _recommendedFoods = [];
@@ -50,8 +53,6 @@ class BubbleController extends DebouncedNotifier {
   bool get isLoading => _isLoading;
   bool get isGeneratingRecommendations => _isGeneratingRecommendations;
   int get selectedCount => _selectedBubbles.length;
-
-  BubbleController();
 
   /// 初始化控制器，加载必要数据并创建气泡
   /// [screenSize] 用于初始化气泡在屏幕上的智能分布位置
@@ -376,7 +377,7 @@ class BubbleController extends DebouncedNotifier {
     debugPrint('使用备用推荐策略');
 
     final fallbackFoods = [
-      Food(
+      const Food(
         id: 'fallback_001',
         name: '红烧肉',
         description: '经典家常菜，肉香浓郁，肉质软烂',
@@ -385,7 +386,7 @@ class BubbleController extends DebouncedNotifier {
         price: 35.0,
         tasteAttributes: ['甜', '咸', '香'],
       ),
-      Food(
+      const Food(
         id: 'fallback_002',
         name: '麻婆豆腐',
         description: '川菜经典，麻辣鲜香，豆腐嫩滑',
@@ -394,7 +395,7 @@ class BubbleController extends DebouncedNotifier {
         price: 18.0,
         tasteAttributes: ['麻', '辣', '鲜'],
       ),
-      Food(
+      const Food(
         id: 'fallback_003',
         name: '西红柿炒蛋',
         description: '简单家常菜，酸甜可口，营养丰富',

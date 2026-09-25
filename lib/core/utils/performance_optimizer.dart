@@ -1,15 +1,16 @@
+import 'dart:async';
+import 'dart:collection';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
-import 'dart:async';
-import 'dart:collection';
 
 /// 性能优化器 - 负责应用的全局性能优化
 /// 支持帧渲染监控、动画Widget追踪等功能
 class PerformanceOptimizer {
-  static final PerformanceOptimizer _instance = PerformanceOptimizer._internal();
   factory PerformanceOptimizer() => _instance;
   PerformanceOptimizer._internal();
+  static final PerformanceOptimizer _instance = PerformanceOptimizer._internal();
 
   // 性能监控
   final List<double> _frameTimes = [];
@@ -260,14 +261,14 @@ class DebouncedNotifier extends ChangeNotifier {
 
 /// 对象池 - 重用对象减少GC压力
 class ObjectPool<T> {
-  final T Function() _factory;
-  final void Function(T)? _reset;
-  final Queue<T> _pool = Queue<T>();
-  final int _maxSize;
 
   ObjectPool(this._factory, {void Function(T)? reset, int maxSize = 50})
       : _reset = reset,
         _maxSize = maxSize;
+  final T Function() _factory;
+  final void Function(T)? _reset;
+  final Queue<T> _pool = Queue<T>();
+  final int _maxSize;
 
   /// 获取对象
   T acquire() {

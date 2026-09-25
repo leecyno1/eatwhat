@@ -1,8 +1,10 @@
 import 'dart:convert';
 import 'dart:math' as math;
+
 import 'package:crypto/crypto.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter/foundation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 import '../config/env_config.dart';
 
 /// 安全存储服务
@@ -71,7 +73,7 @@ class SecureStorageService {
 
   /// 存储JSON对象
   static Future<bool> setSecureJson(String key, Map<String, dynamic> value) async {
-    return await setSecureString(key, json.encode(value));
+    return setSecureString(key, json.encode(value));
   }
 
   /// 获取JSON对象
@@ -185,18 +187,18 @@ class SecureStorageService {
 
 /// 加密数据结构
 class EncryptedData {
-  final String ciphertext;
-  final String iv;
 
   EncryptedData({required this.ciphertext, required this.iv});
+  final String ciphertext;
+  final String iv;
 }
 
 /// 简单的XOR加密实现（用于演示，生产环境建议使用更强的加密）
 class _SimpleCipher {
-  final Uint8List _key;
-  final Uint8List _iv;
 
   _SimpleCipher(this._key, this._iv);
+  final Uint8List _key;
+  final Uint8List _iv;
 
   Uint8List process(List<int> data) {
     final result = Uint8List(data.length);
@@ -211,7 +213,7 @@ class _SimpleCipher {
 
   Uint8List _generateKeyStream(int length) {
     final keyStream = Uint8List(length);
-    var state = List<int>.from(_iv);
+    final state = List<int>.from(_iv);
 
     for (int i = 0; i < length; i++) {
       // 简单的密钥流生成

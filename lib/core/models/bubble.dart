@@ -30,23 +30,7 @@ enum BubbleGesture {
 }
 
 /// 气泡模型
-class Bubble {
-  final String id;
-  final BubbleType type;
-  final String name;
-  final String? icon;
-  final String? description;
-  final Color color;
-  double size;
-  double currentDisplaySize; // 用于碰撞检测的实际显示大小
-  Offset position;
-  Offset velocity;
-  double weight;
-  bool isSelected;
-  bool isVisible;
-  double opacity;
-  int clickCount; // 新增点击次数字段
-  bool isBeingDragged; // 新增拖拽状态字段
+class Bubble { // 新增拖拽状态字段
 
   Bubble({
     String? id,
@@ -66,7 +50,41 @@ class Bubble {
     this.clickCount = 0, // 初始化点击次数为0
     this.isBeingDragged = false, // 初始化拖拽状态为false
   })  : id = id ?? const Uuid().v4(),
-        currentDisplaySize = currentDisplaySize ?? size; // 初始化
+        currentDisplaySize = currentDisplaySize ?? size;
+
+  /// 从JSON创建气泡
+  factory Bubble.fromJson(Map<String, dynamic> json) {
+    return Bubble(
+      id: json['id'],
+      type: BubbleType.values[json['type']],
+      name: json['name'],
+      icon: json['icon'],
+      description: json['description'],
+      color: Color(json['color']),
+      size: json['size']?.toDouble() ?? 50.0,
+      weight: json['weight']?.toDouble() ?? 1.0,
+      isSelected: json['isSelected'] ?? false,
+      isVisible: json['isVisible'] ?? true,
+      opacity: json['opacity']?.toDouble() ?? 1.0,
+      clickCount: json['clickCount'] ?? 0, // 从fromJson恢复
+    );
+  }
+  final String id;
+  final BubbleType type;
+  final String name;
+  final String? icon;
+  final String? description;
+  final Color color;
+  double size;
+  double currentDisplaySize; // 用于碰撞检测的实际显示大小
+  Offset position;
+  Offset velocity;
+  double weight;
+  bool isSelected;
+  bool isVisible;
+  double opacity;
+  int clickCount; // 新增点击次数字段
+  bool isBeingDragged; // 初始化
 
   /// 复制气泡并修改部分属性
   Bubble copyWith({
@@ -123,24 +141,6 @@ class Bubble {
       'opacity': opacity,
       'clickCount': clickCount, // 添加到toJson
     };
-  }
-
-  /// 从JSON创建气泡
-  factory Bubble.fromJson(Map<String, dynamic> json) {
-    return Bubble(
-      id: json['id'],
-      type: BubbleType.values[json['type']],
-      name: json['name'],
-      icon: json['icon'],
-      description: json['description'],
-      color: Color(json['color']),
-      size: json['size']?.toDouble() ?? 50.0,
-      weight: json['weight']?.toDouble() ?? 1.0,
-      isSelected: json['isSelected'] ?? false,
-      isVisible: json['isVisible'] ?? true,
-      opacity: json['opacity']?.toDouble() ?? 1.0,
-      clickCount: json['clickCount'] ?? 0, // 从fromJson恢复
-    );
   }
 
   @override

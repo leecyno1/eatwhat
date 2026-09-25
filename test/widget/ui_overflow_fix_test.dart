@@ -1,7 +1,7 @@
+import 'package:eatwhat_app/core/models/recipe.dart';
+import 'package:eatwhat_app/features/recipe/widgets/recipe_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:eatwhat_app/features/recipe/widgets/recipe_card.dart';
-import 'package:eatwhat_app/core/models/recipe.dart';
 
 void main() {
   group('UI溢出修复验证测试', () {
@@ -32,7 +32,7 @@ void main() {
         reviewCount: 1234,
         authorId: 'u1',
         authorName: 'tester',
-        createdAt: DateTime(2024, 1, 1),
+        createdAt: DateTime(2024),
         updatedAt: DateTime(2024, 1, 2),
         seasonalInfo: SeasonalInfo(),
         equipment: CookingEquipment(),
@@ -62,12 +62,12 @@ void main() {
 
     testWidgets('ModernRecipeRecommendationScreen应该处理小屏幕', (WidgetTester tester) async {
       // 设置小屏幕尺寸
-      await tester.binding.setSurfaceSize(Size(300, 600));
+      await tester.binding.setSurfaceSize(const Size(300, 600));
 
       await tester.pumpWidget(
-        MaterialApp(
+        const MaterialApp(
           home: Scaffold(
-            body: Container(
+            body: SizedBox(
               width: 300,
               height: 600,
               child: Text('Modern Recipe Screen Test'),
@@ -94,15 +94,14 @@ void main() {
                     flex: 2,
                     child: Container(
                       color: Colors.red,
-                      child: Text('测试文本1'),
+                      child: const Text('测试文本1'),
                     ),
                   ),
-                  SizedBox(width: 8),
+                  const SizedBox(width: 8),
                   Flexible(
-                    flex: 1,
                     child: Container(
                       color: Colors.blue,
-                      child: Text('测试文本2'),
+                      child: const Text('测试文本2'),
                     ),
                   ),
                 ],

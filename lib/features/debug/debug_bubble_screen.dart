@@ -1,11 +1,12 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'dart:async';
 
-import '../bubble/controllers/physical_entity_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import '../../core/debug/bubble_debug_overlay.dart';
-import '../bubble/widgets/physical_entity_widget.dart';
 import '../../core/models/bubble.dart'; // 添加BubbleGesture导入
+import '../bubble/controllers/physical_entity_controller.dart';
+import '../bubble/widgets/physical_entity_widget.dart';
 
 /// 调试专用气泡屏幕 - 用于Chrome Web调试
 class DebugBubbleScreen extends StatefulWidget {

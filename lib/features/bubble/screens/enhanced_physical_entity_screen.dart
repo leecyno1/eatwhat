@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../controllers/physical_entity_controller.dart';
-import '../widgets/physical_entity_widget.dart';
-import '../../recommendation/screens/enhanced_recommendation_screen.dart';
+import '../../../core/config/performance_flags.dart';
+import '../../../core/models/bubble.dart'; // 添加BubbleGesture导入
+import '../../../core/services/growth_engine.dart';
 import '../../../core/services/recommendation_engine.dart';
 import '../../../shared/widgets/animated_title_simple.dart';
-import '../../../core/services/growth_engine.dart';
-import '../../../core/models/bubble.dart'; // 添加BubbleGesture导入
-import '../../../core/config/performance_flags.dart';
+import '../../recommendation/screens/enhanced_recommendation_screen.dart';
+import '../controllers/physical_entity_controller.dart';
+import '../widgets/physical_entity_widget.dart';
 
 /// 增强版物理实体界面 - 新的UI设计
 class EnhancedPhysicalEntityScreen extends StatefulWidget {
@@ -115,14 +115,13 @@ class _EnhancedPhysicalEntityScreenState
         clipBehavior: Clip.none, // 允许子组件溢出
         children: [
           // 中心标题 - 扩大字体和动画范围
-          Positioned.fill(
+          const Positioned.fill(
             child: Center(
               child: AnimatedTitleSimple(
                 title: '吃什么',
                 fontSize: 56, // 大幅增加字体大小
                 textColor: Colors.black87,
                 questionMarkColor: Colors.black54,
-                showQuestionMarks: true,
               ),
             ),
           ),
@@ -147,7 +146,6 @@ class _EnhancedPhysicalEntityScreenState
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: Colors.black.withValues(alpha: 0.1),
-          width: 1,
         ),
       ),
       child: Row(
@@ -182,7 +180,7 @@ class _EnhancedPhysicalEntityScreenState
                 color: Colors.orange.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(6),
               ),
-              child: Icon(
+              child: const Icon(
                 Icons.refresh,
                 size: 16,
                 color: Colors.orange,
@@ -276,7 +274,6 @@ class _EnhancedPhysicalEntityScreenState
                       child: Container(
                         decoration: BoxDecoration(
                           gradient: RadialGradient(
-                            center: Alignment.center,
                             colors: [
                               Colors.white.withValues(alpha: 0.1),
                               Colors.transparent,
@@ -357,15 +354,15 @@ class _EnhancedPhysicalEntityScreenState
 
   /// 构建加载状态
   Widget _buildLoadingState() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const CircularProgressIndicator(
+          CircularProgressIndicator(
             valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFFD700)),
           ),
-          const SizedBox(height: 16),
-          const Text(
+          SizedBox(height: 16),
+          Text(
             '正在初始化口味偏好...',
             style: TextStyle(
               color: Colors.black54,
@@ -535,7 +532,7 @@ class _EnhancedPhysicalEntityScreenState
     HapticFeedback.mediumImpact();
   }
 
-  void _generateRecommendations(PhysicalEntityController controller) async {
+  Future<void> _generateRecommendations(PhysicalEntityController controller) async {
     await controller.generateRecommendations();
 
     // 尝试使用新的 RecommendationEngine 生成带打分推荐
@@ -625,10 +622,6 @@ class _EnhancedPhysicalEntityScreenState
 
 /// 简单的状态指示器组件
 class StatusIndicator extends StatelessWidget {
-  final String text;
-  final IconData icon;
-  final Color color;
-  final bool isActive;
 
   const StatusIndicator({
     super.key,
@@ -637,6 +630,10 @@ class StatusIndicator extends StatelessWidget {
     required this.color,
     this.isActive = false,
   });
+  final String text;
+  final IconData icon;
+  final Color color;
+  final bool isActive;
 
   @override
   Widget build(BuildContext context) {
@@ -649,7 +646,6 @@ class StatusIndicator extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: isActive ? color : Colors.grey,
-          width: 1,
         ),
       ),
       child: Row(

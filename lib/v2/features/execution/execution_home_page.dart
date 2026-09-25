@@ -9,11 +9,11 @@ import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart
 import 'package:eatwhat_app/v2/core/services/v2_recommendation_telemetry_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
+import 'package:eatwhat_app/v2/features/auth/auth_sheet.dart';
 import 'package:eatwhat_app/v2/features/details/howtocook_library_page.dart';
 import 'package:eatwhat_app/v2/features/details/recipe_detail_page.dart';
 import 'package:eatwhat_app/v2/features/execution/controllers/execution_completion_controller.dart'
     as execution_completion;
-import 'package:eatwhat_app/v2/features/auth/auth_sheet.dart';
 import 'package:eatwhat_app/v2/features/execution/meituan_menu_builder_page.dart';
 import 'package:eatwhat_app/v2/features/execution/meituan_order_page.dart';
 import 'package:eatwhat_app/v2/features/execution/widgets/execution_completion_feedback_panel.dart';

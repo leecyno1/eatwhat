@@ -2,12 +2,6 @@ import 'package:flutter/material.dart';
 
 /// 可视化规范：为口味/偏好键提供颜色与图标建议
 class TasteVisualSpec {
-  final IconData? materialIcon;
-  final String? emoji;
-  final Color color;
-  final String label;
-  final String shapeType;
-  final String particleEffect;
 
   const TasteVisualSpec({
     this.materialIcon,
@@ -17,6 +11,12 @@ class TasteVisualSpec {
     this.shapeType = 'circle',
     this.particleEffect = 'none',
   });
+  final IconData? materialIcon;
+  final String? emoji;
+  final Color color;
+  final String label;
+  final String shapeType;
+  final String particleEffect;
 }
 
 /// 统一的口味映射（示例+规则化补全）。
@@ -52,7 +52,6 @@ class TasteVisualMapping {
       emoji: '🍭',
       color: Colors.pink.shade400,
       label: '甜',
-      shapeType: 'circle',
       particleEffect: 'sparkle',
     ),
     '咸': TasteVisualSpec(
@@ -61,7 +60,6 @@ class TasteVisualMapping {
       color: Colors.blueGrey.shade500,
       label: '咸',
       shapeType: 'hexagon',
-      particleEffect: 'none',
     ),
     '鲜': TasteVisualSpec(
       materialIcon: Icons.restaurant_menu,
@@ -139,7 +137,6 @@ class TasteVisualMapping {
         emoji: '🍯',
         color: Colors.pink.shade400,
         label: k,
-        shapeType: 'circle',
         particleEffect: 'sparkle',
       );
     }
@@ -150,7 +147,6 @@ class TasteVisualMapping {
         color: Colors.blueGrey.shade500,
         label: k,
         shapeType: 'hexagon',
-        particleEffect: 'none',
       );
     }
     if (k.contains('鲜') || k.contains('海') || k.contains('清')) {
@@ -180,8 +176,6 @@ class TasteVisualMapping {
       emoji: '🍽️',
       color: Colors.blue.shade400,
       label: k,
-      shapeType: 'circle',
-      particleEffect: 'none',
     );
   }
 }

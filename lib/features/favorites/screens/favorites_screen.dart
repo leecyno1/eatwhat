@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../../core/services/storage_service.dart';
+
 import '../../../core/models/food.dart';
+import '../../../core/services/storage_service.dart';
 import '../../recommendation/widgets/food_card.dart';
 import '../widgets/favorites_empty_state.dart';
 

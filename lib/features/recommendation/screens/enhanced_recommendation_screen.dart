@@ -2,22 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
-import '../controllers/recommendation_controller.dart';
-import '../widgets/food_card.dart';
-import '../../../shared/widgets/animated_title.dart';
-import '../../../shared/widgets/like_dislike_controls.dart';
 // 暂时移除动态主题服务以解决气泡乱窜问题
 // import '../../../core/theme/dynamic_theme_service.dart';
 import '../../../core/models/food.dart';
-import '../../../core/services/recommendation_engine.dart';
-import '../widgets/recommendation_showcase.dart';
 import '../../../core/models/physical_entity.dart';
+import '../../../core/services/recommendation_engine.dart';
+import '../../../shared/widgets/animated_title.dart';
+import '../../../shared/widgets/like_dislike_controls.dart';
+import '../controllers/recommendation_controller.dart';
+import '../widgets/food_card.dart';
+import '../widgets/recommendation_showcase.dart';
 
 /// 增强版推荐界面 - 匹配主界面风格
 class EnhancedRecommendationScreen extends StatefulWidget {
-  final List<Food> recommendedFoods; // 旧纯 Food 列表兼容
-  final List<ScoredFood>? scoredFoods; // 新增：带分数与拆解
-  final List<PhysicalEntity> selectedPreferences;
 
   const EnhancedRecommendationScreen({
     super.key,
@@ -25,6 +22,9 @@ class EnhancedRecommendationScreen extends StatefulWidget {
     required this.selectedPreferences,
     this.scoredFoods,
   });
+  final List<Food> recommendedFoods; // 旧纯 Food 列表兼容
+  final List<ScoredFood>? scoredFoods; // 新增：带分数与拆解
+  final List<PhysicalEntity> selectedPreferences;
 
   @override
   State<EnhancedRecommendationScreen> createState() => _EnhancedRecommendationScreenState();
@@ -162,10 +162,9 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
                     borderRadius: BorderRadius.circular(20),
                     border: Border.all(
                       color: Colors.white.withValues(alpha: 0.3),
-                      width: 1,
                     ),
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.arrow_back_ios,
                     color: Colors.black87,
                     size: 20,
@@ -184,16 +183,15 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
           const SizedBox(height: 20),
 
           // 动画标题
-          SimpleAnimatedTitle(
+          const SimpleAnimatedTitle(
             title: '为您推荐',
             fontSize: 36,
-            textColor: Colors.black87,
           ),
 
           const SizedBox(height: 8),
 
           // 副标题
-          Text(
+          const Text(
             '基于您的口味偏好精心挑选',
             style: TextStyle(
               color: Colors.black54,
@@ -214,9 +212,9 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
+          const Text(
             '您的偏好',
-            style: const TextStyle(
+            style: TextStyle(
               color: Colors.black87,
               fontSize: 14,
               fontWeight: FontWeight.w600,
@@ -244,7 +242,6 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
                       BoxShadow(
                         color: preference.primaryColor.withValues(alpha: 0.3),
                         blurRadius: 8,
-                        spreadRadius: 0,
                       ),
                     ],
                   ),
@@ -362,7 +359,7 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
 
   /// 构建空状态
   Widget _buildEmptyState() {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -371,7 +368,7 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
             size: 80,
             color: Colors.black54,
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16),
           Text(
             '暂无推荐',
             style: TextStyle(
@@ -380,7 +377,7 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
               color: Colors.black87,
             ),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8),
           Text(
             '请返回选择更多偏好',
             style: TextStyle(
@@ -444,7 +441,7 @@ class _EnhancedRecommendationScreenState extends State<EnhancedRecommendationScr
                   icon: Icons.list_alt,
                   color: const Color(0xFFFFD700),
                   onPressed:
-                      widget.recommendedFoods.isNotEmpty ? () => _showAllRecommendations() : null,
+                      widget.recommendedFoods.isNotEmpty ? _showAllRecommendations : null,
                 ),
               ),
             ],

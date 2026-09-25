@@ -1,15 +1,15 @@
 import 'dart:math';
 
-import '../models/user_behavior_models.dart';
 import '../engines/ai_preference_learning_engine.dart';
+import '../models/user_behavior_models.dart';
 
 /// 智能对话推荐系统 - Phase 3 AI驱动的会话式推荐
 /// 通过自然语言交互提供个性化菜谱推荐
 class SmartConversationalRecommender {
-  static final SmartConversationalRecommender _instance =
-      SmartConversationalRecommender._internal();
   factory SmartConversationalRecommender() => _instance;
   SmartConversationalRecommender._internal();
+  static final SmartConversationalRecommender _instance =
+      SmartConversationalRecommender._internal();
 
   final AIPreferenceLearningEngine _aiEngine = AIPreferenceLearningEngine();
 
@@ -55,7 +55,7 @@ class SmartConversationalRecommender {
   }) async {
     final context = _conversations[userId];
     if (context == null) {
-      return await startConversation(userId);
+      return startConversation(userId);
     }
 
     // 更新对话历史
@@ -177,26 +177,26 @@ class SmartConversationalRecommender {
   }) async {
     switch (actionType) {
       case QuickActionType.surpriseMe:
-        return await _handleSurpriseMe(userId);
+        return _handleSurpriseMe(userId);
 
       case QuickActionType.quickStart:
-        return await _handleQuickStart(userId);
+        return _handleQuickStart(userId);
 
       case QuickActionType.browseCategory:
         final category = actionData?['category'] as String?;
-        return await _handleBrowseCategory(userId, category);
+        return _handleBrowseCategory(userId, category);
 
       case QuickActionType.filterByTime:
         final maxTime = actionData?['maxTime'] as int?;
-        return await _handleFilterByTime(userId, maxTime);
+        return _handleFilterByTime(userId, maxTime);
 
       case QuickActionType.filterByDifficulty:
         final difficulty = actionData?['difficulty'] as String?;
-        return await _handleFilterByDifficulty(userId, difficulty);
+        return _handleFilterByDifficulty(userId, difficulty);
 
       case QuickActionType.nutritionFocus:
         final nutritionType = actionData?['nutritionType'] as String?;
-        return await _handleNutritionFocus(userId, nutritionType);
+        return _handleNutritionFocus(userId, nutritionType);
     }
   }
 
@@ -273,19 +273,19 @@ class SmartConversationalRecommender {
       String userId, UserIntent intent, ConversationContext context) async {
     switch (intent.type) {
       case IntentType.requestRecommendation:
-        return await _handleRecommendationRequest(userId, intent, context);
+        return _handleRecommendationRequest(userId, intent, context);
 
       case IntentType.specifyPreference:
-        return await _handlePreferenceSpecification(userId, intent, context);
+        return _handlePreferenceSpecification(userId, intent, context);
 
       case IntentType.askQuestion:
-        return await _handleQuestion(userId, intent, context);
+        return _handleQuestion(userId, intent, context);
 
       case IntentType.expressConstraint:
-        return await _handleConstraint(userId, intent, context);
+        return _handleConstraint(userId, intent, context);
 
       case IntentType.requestInfo:
-        return await _handleInfoRequest(userId, intent, context);
+        return _handleInfoRequest(userId, intent, context);
 
       case IntentType.casual:
         return _handleCasualChat(intent);
@@ -298,10 +298,9 @@ class SmartConversationalRecommender {
     final specificRequest =
         intent.entities['dish'] ?? intent.entities['cuisine'] ?? intent.entities['ingredient'];
 
-    return await getSmartRecommendations(
+    return getSmartRecommendations(
       userId: userId,
       specificRequest: specificRequest,
-      count: 5,
     );
   }
 
@@ -433,7 +432,7 @@ class SmartConversationalRecommender {
     );
 
     return ConversationResponse(
-      message: '🍽️ 为您推荐${categoryName}分类下的精选菜谱：',
+      message: '🍽️ 为您推荐$categoryName分类下的精选菜谱：',
       recommendations: recommendations,
       suggestions: ['看其他分类', '这些不错', '换个风味'],
       contextActions: [ContextAction.browseCategories, ContextAction.showMore],
@@ -451,7 +450,7 @@ class SmartConversationalRecommender {
     );
 
     return ConversationResponse(
-      message: '⏰ 为您推荐${timeLimit}分钟内能完成的菜谱：',
+      message: '⏰ 为您推荐$timeLimit分钟内能完成的菜谱：',
       recommendations: recommendations,
       suggestions: ['15分钟内', '1小时内', '时间不限'],
       contextActions: [ContextAction.adjustTimeFilter],
@@ -469,7 +468,7 @@ class SmartConversationalRecommender {
     );
 
     return ConversationResponse(
-      message: '👨‍🍳 为您推荐${difficultyLevel}级别的菜谱：',
+      message: '👨‍🍳 为您推荐$difficultyLevel级别的菜谱：',
       recommendations: recommendations,
       suggestions: ['新手级', '进阶级', '大师级'],
       contextActions: [ContextAction.adjustDifficultyFilter],
@@ -487,7 +486,7 @@ class SmartConversationalRecommender {
     );
 
     return ConversationResponse(
-      message: '🥗 为您推荐${nutrition}的健康菜谱：',
+      message: '🥗 为您推荐$nutrition的健康菜谱：',
       recommendations: recommendations,
       suggestions: ['低卡路里', '高蛋白', '富含维生素'],
       contextActions: [ContextAction.nutritionInfo],
@@ -558,7 +557,7 @@ class SmartConversationalRecommender {
         ? '推荐相似的菜谱'
         : '推荐不同风格的菜谱';
 
-    return await _aiEngine.getIntelligentRecommendations(
+    return _aiEngine.getIntelligentRecommendations(
       userId: userId,
       count: 3,
       contextHint: contextHint,
@@ -593,11 +592,11 @@ class SmartConversationalRecommender {
     final cuisine = intent.entities['cuisine'];
 
     if (taste != null && cuisine != null) {
-      return '您喜欢${taste}的${cuisine}，我会重点推荐这类菜谱。';
+      return '您喜欢$taste的$cuisine，我会重点推荐这类菜谱。';
     } else if (taste != null) {
-      return '您偏爱${taste}口味，我会为您推荐更多这种口味的菜谱。';
+      return '您偏爱$taste口味，我会为您推荐更多这种口味的菜谱。';
     } else if (cuisine != null) {
-      return '您对${cuisine}感兴趣，我会多推荐这个菜系的菜谱。';
+      return '您对$cuisine感兴趣，我会多推荐这个菜系的菜谱。';
     }
 
     return '您的偏好我都记下了。';
@@ -650,6 +649,12 @@ class SmartConversationalRecommender {
 
 /// 对话上下文
 class ConversationContext {
+
+  ConversationContext({
+    required this.userId,
+    required this.sessionId,
+    required this.startTime,
+  });
   final String userId;
   final String sessionId;
   final DateTime startTime;
@@ -662,12 +667,6 @@ class ConversationContext {
   final Map<String, dynamic> preferences = {};
 
   UserIntent? currentIntent;
-
-  ConversationContext({
-    required this.userId,
-    required this.sessionId,
-    required this.startTime,
-  });
 
   void addUserMessage(String message, Map<String, dynamic>? contextData) {
     messageHistory.add(ConversationMessage(
@@ -711,10 +710,6 @@ class ConversationContext {
 
 /// 对话消息
 class ConversationMessage {
-  final bool isUser;
-  final String content;
-  final DateTime timestamp;
-  final Map<String, dynamic>? contextData;
 
   ConversationMessage({
     required this.isUser,
@@ -722,14 +717,14 @@ class ConversationMessage {
     required this.timestamp,
     this.contextData,
   });
+  final bool isUser;
+  final String content;
+  final DateTime timestamp;
+  final Map<String, dynamic>? contextData;
 }
 
 /// 用户反馈
 class UserFeedback {
-  final String recipeId;
-  final FeedbackType feedbackType;
-  final String? comment;
-  final DateTime timestamp;
 
   UserFeedback({
     required this.recipeId,
@@ -737,6 +732,10 @@ class UserFeedback {
     this.comment,
     required this.timestamp,
   });
+  final String recipeId;
+  final FeedbackType feedbackType;
+  final String? comment;
+  final DateTime timestamp;
 }
 
 /// 意图识别器
@@ -813,15 +812,15 @@ class ResponseGenerator {
 
 /// 用户意图
 class UserIntent {
-  final IntentType type;
-  final double confidence;
-  final Map<String, String> entities;
 
   UserIntent({
     required this.type,
     required this.confidence,
     required this.entities,
   });
+  final IntentType type;
+  final double confidence;
+  final Map<String, String> entities;
 }
 
 /// 意图类型
@@ -836,11 +835,6 @@ enum IntentType {
 
 /// 对话响应
 class ConversationResponse {
-  final String message;
-  final List<RecipeRecommendation>? recommendations;
-  final List<String> suggestions;
-  final List<ContextAction> contextActions;
-  final NextSteps nextSteps;
 
   ConversationResponse({
     required this.message,
@@ -849,6 +843,11 @@ class ConversationResponse {
     required this.contextActions,
     required this.nextSteps,
   });
+  final String message;
+  final List<RecipeRecommendation>? recommendations;
+  final List<String> suggestions;
+  final List<ContextAction> contextActions;
+  final NextSteps nextSteps;
 }
 
 /// 上下文动作

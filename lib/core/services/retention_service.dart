@@ -3,10 +3,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// 用户留存追踪服务
 class RetentionService {
-  static final RetentionService _instance = RetentionService._internal();
   factory RetentionService() => _instance;
 
   RetentionService._internal();
+  static final RetentionService _instance = RetentionService._internal();
 
   /// 记录用户首次启动日期
   Future<void> recordFirstLaunch(String userId) async {

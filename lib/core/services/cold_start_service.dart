@@ -5,13 +5,13 @@ import '../models/user_preference.dart';
 
 /// 冷启动服务 - 处理问卷答案到味觉向量的映射
 class ColdStartService {
+  factory ColdStartService() => _instance;
+  ColdStartService._internal();
   static const String _questionnaireKey = 'cold_start_questionnaire_completed';
   static const String _userPreferenceKey = 'user_preference_initialized';
 
   /// 单例模式
   static final ColdStartService _instance = ColdStartService._internal();
-  factory ColdStartService() => _instance;
-  ColdStartService._internal();
 
   /// 检查是否已完成冷启动问卷
   Future<bool> isQuestionnaireCompleted() async {

@@ -1,76 +1,7 @@
 import '../utils/advanced_logger.dart';
 
 /// 增强的菜谱数据模型 - 基于下厨房结构分析
-class EnhancedRecipe {
-  /// 基础信息
-  final String id;
-  final String name;
-  final String description;
-  final String? author;
-  final String? authorAvatar;
-  final DateTime? createTime;
-  final DateTime? updateTime;
-
-  /// 评价和互动
-  final double rating; // 评分 (0-5)
-  final int reviewCount; // 评论数
-  final int favoriteCount; // 收藏数
-  final int makeCount; // 制作次数 ("XX人做过")
-  final int viewCount; // 浏览次数
-
-  /// 分类信息 - 基于下厨房分类体系
-  final RecipeCategory category;
-  final List<String> tags; // 标签：家常菜、快手菜等
-  final List<String> occasions; // 场合：早餐、下午茶等
-  final List<String> effects; // 功效：减肥、美容等
-  final List<String> crowds; // 人群：儿童、老人等
-  final String? cuisineType; // 菜系：川菜、粤菜等
-
-  /// 制作信息
-  final RecipeDifficulty difficulty;
-  final Duration prepTime; // 准备时间
-  final Duration cookTime; // 烹饪时间
-  final Duration totalTime; // 总时间
-  final int servings; // 份数
-  final String? equipment; // 所需设备
-  final List<String> methods; // 烹饪方法：煎、炒、炸等
-
-  /// 食材信息
-  final List<RecipeIngredient> ingredients;
-  final List<RecipeIngredient>? seasonings; // 调料单独列出
-
-  /// 制作步骤
-  final List<RecipeStep> steps;
-
-  /// 营养信息
-  final RecipeNutrition nutrition;
-
-  /// 口味特征 - AI推荐用
-  final List<String> tasteAttributes; // 辣、甜、酸等
-  final double spiceLevel; // 辣度等级 (0-5)
-  final List<String> allergens; // 过敏源信息
-
-  /// 媒体资源
-  final String? coverImage;
-  final List<String> images;
-  final String? video;
-
-  /// 提示和技巧
-  final List<RecipeTip>? tips;
-  final String? notes; // 小贴士
-
-  /// 相关推荐
-  final List<String>? relatedRecipeIds;
-  final List<String>? substitutions; // 食材替换建议
-
-  /// 来源信息
-  final RecipeSource source;
-  final String? originalUrl;
-
-  /// 质量控制
-  final bool isVerified; // 是否经过验证
-  final RecipeStatus status;
-  final Map<String, dynamic>? metadata; // 额外元数据
+class EnhancedRecipe { // 额外元数据
 
   const EnhancedRecipe({
     required this.id,
@@ -181,56 +112,6 @@ class EnhancedRecipe {
     }
   }
 
-  /// 转换为JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'description': description,
-      'author': author,
-      'author_avatar': authorAvatar,
-      'create_time': createTime?.toIso8601String(),
-      'update_time': updateTime?.toIso8601String(),
-      'rating': rating,
-      'review_count': reviewCount,
-      'favorite_count': favoriteCount,
-      'make_count': makeCount,
-      'view_count': viewCount,
-      'category': category.name,
-      'tags': tags,
-      'occasions': occasions,
-      'effects': effects,
-      'crowds': crowds,
-      'cuisine_type': cuisineType,
-      'difficulty': difficulty.name,
-      'prep_time': prepTime.inMinutes,
-      'cook_time': cookTime.inMinutes,
-      'total_time': totalTime.inMinutes,
-      'servings': servings,
-      'equipment': equipment,
-      'methods': methods,
-      'ingredients': ingredients.map((i) => i.toJson()).toList(),
-      'seasonings': seasonings?.map((s) => s.toJson()).toList(),
-      'steps': steps.map((s) => s.toJson()).toList(),
-      'nutrition': nutrition.toJson(),
-      'taste_attributes': tasteAttributes,
-      'spice_level': spiceLevel,
-      'allergens': allergens,
-      'cover_image': coverImage,
-      'images': images,
-      'video': video,
-      'tips': tips?.map((t) => t.toJson()).toList(),
-      'notes': notes,
-      'related_recipes': relatedRecipeIds,
-      'substitutions': substitutions,
-      'source': source.name,
-      'original_url': originalUrl,
-      'is_verified': isVerified,
-      'status': status.name,
-      'metadata': metadata,
-    };
-  }
-
   /// 从JSON创建
   factory EnhancedRecipe.fromJson(Map<String, dynamic> json) {
     return EnhancedRecipe(
@@ -288,6 +169,125 @@ class EnhancedRecipe {
       ),
       metadata: json['metadata'],
     );
+  }
+  /// 基础信息
+  final String id;
+  final String name;
+  final String description;
+  final String? author;
+  final String? authorAvatar;
+  final DateTime? createTime;
+  final DateTime? updateTime;
+
+  /// 评价和互动
+  final double rating; // 评分 (0-5)
+  final int reviewCount; // 评论数
+  final int favoriteCount; // 收藏数
+  final int makeCount; // 制作次数 ("XX人做过")
+  final int viewCount; // 浏览次数
+
+  /// 分类信息 - 基于下厨房分类体系
+  final RecipeCategory category;
+  final List<String> tags; // 标签：家常菜、快手菜等
+  final List<String> occasions; // 场合：早餐、下午茶等
+  final List<String> effects; // 功效：减肥、美容等
+  final List<String> crowds; // 人群：儿童、老人等
+  final String? cuisineType; // 菜系：川菜、粤菜等
+
+  /// 制作信息
+  final RecipeDifficulty difficulty;
+  final Duration prepTime; // 准备时间
+  final Duration cookTime; // 烹饪时间
+  final Duration totalTime; // 总时间
+  final int servings; // 份数
+  final String? equipment; // 所需设备
+  final List<String> methods; // 烹饪方法：煎、炒、炸等
+
+  /// 食材信息
+  final List<RecipeIngredient> ingredients;
+  final List<RecipeIngredient>? seasonings; // 调料单独列出
+
+  /// 制作步骤
+  final List<RecipeStep> steps;
+
+  /// 营养信息
+  final RecipeNutrition nutrition;
+
+  /// 口味特征 - AI推荐用
+  final List<String> tasteAttributes; // 辣、甜、酸等
+  final double spiceLevel; // 辣度等级 (0-5)
+  final List<String> allergens; // 过敏源信息
+
+  /// 媒体资源
+  final String? coverImage;
+  final List<String> images;
+  final String? video;
+
+  /// 提示和技巧
+  final List<RecipeTip>? tips;
+  final String? notes; // 小贴士
+
+  /// 相关推荐
+  final List<String>? relatedRecipeIds;
+  final List<String>? substitutions; // 食材替换建议
+
+  /// 来源信息
+  final RecipeSource source;
+  final String? originalUrl;
+
+  /// 质量控制
+  final bool isVerified; // 是否经过验证
+  final RecipeStatus status;
+  final Map<String, dynamic>? metadata;
+
+  /// 转换为JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+      'author': author,
+      'author_avatar': authorAvatar,
+      'create_time': createTime?.toIso8601String(),
+      'update_time': updateTime?.toIso8601String(),
+      'rating': rating,
+      'review_count': reviewCount,
+      'favorite_count': favoriteCount,
+      'make_count': makeCount,
+      'view_count': viewCount,
+      'category': category.name,
+      'tags': tags,
+      'occasions': occasions,
+      'effects': effects,
+      'crowds': crowds,
+      'cuisine_type': cuisineType,
+      'difficulty': difficulty.name,
+      'prep_time': prepTime.inMinutes,
+      'cook_time': cookTime.inMinutes,
+      'total_time': totalTime.inMinutes,
+      'servings': servings,
+      'equipment': equipment,
+      'methods': methods,
+      'ingredients': ingredients.map((i) => i.toJson()).toList(),
+      'seasonings': seasonings?.map((s) => s.toJson()).toList(),
+      'steps': steps.map((s) => s.toJson()).toList(),
+      'nutrition': nutrition.toJson(),
+      'taste_attributes': tasteAttributes,
+      'spice_level': spiceLevel,
+      'allergens': allergens,
+      'cover_image': coverImage,
+      'images': images,
+      'video': video,
+      'tips': tips?.map((t) => t.toJson()).toList(),
+      'notes': notes,
+      'related_recipes': relatedRecipeIds,
+      'substitutions': substitutions,
+      'source': source.name,
+      'original_url': originalUrl,
+      'is_verified': isVerified,
+      'status': status.name,
+      'metadata': metadata,
+    };
   }
 
   /// 辅助方法 - 解析分类
@@ -507,14 +507,7 @@ enum RecipeSource {
 }
 
 /// 食材信息类
-class RecipeIngredient {
-  final String name; // 食材名称
-  final String? amount; // 用量
-  final String? unit; // 单位
-  final bool isMain; // 是否主料
-  final String? notes; // 备注
-  final String? category; // 食材分类
-  final List<String>? alternatives; // 替换选项
+class RecipeIngredient { // 替换选项
 
   const RecipeIngredient({
     required this.name,
@@ -525,18 +518,6 @@ class RecipeIngredient {
     this.category,
     this.alternatives,
   });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'name': name,
-      'amount': amount,
-      'unit': unit,
-      'is_main': isMain,
-      'notes': notes,
-      'category': category,
-      'alternatives': alternatives,
-    };
-  }
 
   factory RecipeIngredient.fromJson(Map<String, dynamic> json) {
     return RecipeIngredient(
@@ -553,21 +534,32 @@ class RecipeIngredient {
   factory RecipeIngredient.fromMap(Map<String, dynamic> map) {
     return RecipeIngredient.fromJson(map);
   }
+  final String name; // 食材名称
+  final String? amount; // 用量
+  final String? unit; // 单位
+  final bool isMain; // 是否主料
+  final String? notes; // 备注
+  final String? category; // 食材分类
+  final List<String>? alternatives;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'name': name,
+      'amount': amount,
+      'unit': unit,
+      'is_main': isMain,
+      'notes': notes,
+      'category': category,
+      'alternatives': alternatives,
+    };
+  }
 
   @override
   String toString() => '$name ${amount ?? ''} ${unit ?? ''}';
 }
 
 /// 制作步骤类
-class RecipeStep {
-  final int order; // 步骤顺序
-  final String description; // 步骤描述
-  final Duration? duration; // 耗时
-  final String? image; // 步骤图片
-  final String? video; // 步骤视频
-  final List<String>? tips; // 步骤提示
-  final String? equipment; // 所需工具
-  final int? temperature; // 温度（如烘焙）
+class RecipeStep { // 温度（如烘焙）
 
   const RecipeStep({
     required this.order,
@@ -579,19 +571,6 @@ class RecipeStep {
     this.equipment,
     this.temperature,
   });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'order': order,
-      'description': description,
-      'duration': duration?.inMinutes,
-      'image': image,
-      'video': video,
-      'tips': tips,
-      'equipment': equipment,
-      'temperature': temperature,
-    };
-  }
 
   factory RecipeStep.fromJson(Map<String, dynamic> json) {
     return RecipeStep(
@@ -609,23 +588,34 @@ class RecipeStep {
   factory RecipeStep.fromMap(Map<String, dynamic> map) {
     return RecipeStep.fromJson(map);
   }
+  final int order; // 步骤顺序
+  final String description; // 步骤描述
+  final Duration? duration; // 耗时
+  final String? image; // 步骤图片
+  final String? video; // 步骤视频
+  final List<String>? tips; // 步骤提示
+  final String? equipment; // 所需工具
+  final int? temperature;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'order': order,
+      'description': description,
+      'duration': duration?.inMinutes,
+      'image': image,
+      'video': video,
+      'tips': tips,
+      'equipment': equipment,
+      'temperature': temperature,
+    };
+  }
 
   @override
   String toString() => '步骤$order: $description';
 }
 
 /// 营养信息类
-class RecipeNutrition {
-  final double calories; // 卡路里
-  final double protein; // 蛋白质(g)
-  final double carbs; // 碳水化合物(g)
-  final double fat; // 脂肪(g)
-  final double fiber; // 纤维(g)
-  final double sugar; // 糖分(g)
-  final double sodium; // 钠(mg)
-  final double cholesterol; // 胆固醇(mg)
-  final Map<String, double>? vitamins; // 维生素
-  final Map<String, double>? minerals; // 矿物质
+class RecipeNutrition { // 矿物质
 
   const RecipeNutrition({
     this.calories = 0,
@@ -639,21 +629,6 @@ class RecipeNutrition {
     this.vitamins,
     this.minerals,
   });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'calories': calories,
-      'protein': protein,
-      'carbs': carbs,
-      'fat': fat,
-      'fiber': fiber,
-      'sugar': sugar,
-      'sodium': sodium,
-      'cholesterol': cholesterol,
-      'vitamins': vitamins,
-      'minerals': minerals,
-    };
-  }
 
   factory RecipeNutrition.fromJson(Map<String, dynamic> json) {
     return RecipeNutrition(
@@ -673,14 +648,35 @@ class RecipeNutrition {
   factory RecipeNutrition.fromMap(Map<String, dynamic> map) {
     return RecipeNutrition.fromJson(map);
   }
+  final double calories; // 卡路里
+  final double protein; // 蛋白质(g)
+  final double carbs; // 碳水化合物(g)
+  final double fat; // 脂肪(g)
+  final double fiber; // 纤维(g)
+  final double sugar; // 糖分(g)
+  final double sodium; // 钠(mg)
+  final double cholesterol; // 胆固醇(mg)
+  final Map<String, double>? vitamins; // 维生素
+  final Map<String, double>? minerals;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'calories': calories,
+      'protein': protein,
+      'carbs': carbs,
+      'fat': fat,
+      'fiber': fiber,
+      'sugar': sugar,
+      'sodium': sodium,
+      'cholesterol': cholesterol,
+      'vitamins': vitamins,
+      'minerals': minerals,
+    };
+  }
 }
 
 /// 制作提示类
-class RecipeTip {
-  final String title; // 提示标题
-  final String content; // 提示内容
-  final RecipeTipType type; // 提示类型
-  final int? stepOrder; // 关联步骤（可选）
+class RecipeTip { // 关联步骤（可选）
 
   const RecipeTip({
     required this.title,
@@ -688,15 +684,6 @@ class RecipeTip {
     this.type = RecipeTipType.general,
     this.stepOrder,
   });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'title': title,
-      'content': content,
-      'type': type.name,
-      'step_order': stepOrder,
-    };
-  }
 
   factory RecipeTip.fromJson(Map<String, dynamic> json) {
     return RecipeTip(
@@ -712,6 +699,19 @@ class RecipeTip {
 
   factory RecipeTip.fromMap(Map<String, dynamic> map) {
     return RecipeTip.fromJson(map);
+  }
+  final String title; // 提示标题
+  final String content; // 提示内容
+  final RecipeTipType type; // 提示类型
+  final int? stepOrder;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'title': title,
+      'content': content,
+      'type': type.name,
+      'step_order': stepOrder,
+    };
   }
 }
 

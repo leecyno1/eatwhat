@@ -1,6 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'dart:ui';
 
 /// Glassmorphism主题系统 - 现代化毛玻璃效果
 class GlassmorphismTheme {
@@ -62,7 +63,7 @@ class GlassmorphismTheme {
                   color: Colors.white.withOpacity(0.2),
                   width: 1.5,
                 ),
-            boxShadow: [
+            boxShadow: const [
               BoxShadow(
                 color: shadowColor,
                 blurRadius: shadowBlurRadius,
@@ -120,19 +121,19 @@ class GlassmorphismTheme {
     EdgeInsetsGeometry? padding,
   }) {
     return ButtonStyle(
-      backgroundColor: MaterialStateProperty.all(
+      backgroundColor: WidgetStateProperty.all(
         (backgroundColor ?? Colors.white).withOpacity(0.2),
       ),
-      padding: MaterialStateProperty.all(
+      padding: WidgetStateProperty.all(
         padding ?? EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
       ),
-      shape: MaterialStateProperty.all(
+      shape: WidgetStateProperty.all(
         RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius ?? 12.r),
         ),
       ),
-      elevation: MaterialStateProperty.all(0),
-      shadowColor: MaterialStateProperty.all(Colors.transparent),
+      elevation: WidgetStateProperty.all(0),
+      shadowColor: WidgetStateProperty.all(Colors.transparent),
     );
   }
 
@@ -153,14 +154,12 @@ class GlassmorphismTheme {
         borderRadius: BorderRadius.circular(12.r),
         borderSide: BorderSide(
           color: (borderColor ?? Colors.white).withOpacity(0.3),
-          width: 1,
         ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.r),
         borderSide: BorderSide(
           color: (borderColor ?? Colors.white).withOpacity(0.3),
-          width: 1,
         ),
       ),
       focusedBorder: OutlineInputBorder(
@@ -193,9 +192,6 @@ class GlassmorphismTheme {
 
 /// 动画渐变背景组件
 class AnimatedGradientBackground extends StatefulWidget {
-  final List<List<Color>> gradientSets;
-  final Duration duration;
-  final Widget child;
 
   const AnimatedGradientBackground({
     super.key,
@@ -203,6 +199,9 @@ class AnimatedGradientBackground extends StatefulWidget {
     required this.duration,
     required this.child,
   });
+  final List<List<Color>> gradientSets;
+  final Duration duration;
+  final Widget child;
 
   @override
   State<AnimatedGradientBackground> createState() => _AnimatedGradientBackgroundState();
@@ -212,7 +211,7 @@ class _AnimatedGradientBackgroundState extends State<AnimatedGradientBackground>
     with TickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
-  int _currentIndex = 0;
+  final int _currentIndex = 0;
 
   @override
   void initState() {

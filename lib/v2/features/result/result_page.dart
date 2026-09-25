@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:eatwhat_app/core/services/unified_recipe_database_service.dart';
 import 'package:eatwhat_app/core/services/auth_service.dart';
+import 'package:eatwhat_app/core/services/unified_recipe_database_service.dart';
 import 'package:eatwhat_app/v2/core/data/models/ai_generation_models.dart';
 import 'package:eatwhat_app/v2/core/data/models/dish_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
@@ -32,9 +32,9 @@ import 'package:eatwhat_app/v2/features/result/controllers/result_image_state_co
 import 'package:eatwhat_app/v2/features/result/controllers/result_pairing_suggestion_controller.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_action_bar.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_candidate_rail.dart';
-import 'package:eatwhat_app/v2/features/result/widgets/result_hero_media.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_execution_shortcuts.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_feedback_band.dart';
+import 'package:eatwhat_app/v2/features/result/widgets/result_hero_media.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_pairing_band.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_status_panels.dart';
 import 'package:flutter/material.dart';
@@ -839,7 +839,6 @@ class _ResultPageState extends State<ResultPage>
               ),
               child: ResultPrimaryConfirmBar(
                 onConfirm: _confirm,
-                confirmLabel: '就吃这个',
               ),
             ),
       body: currentChoice == null

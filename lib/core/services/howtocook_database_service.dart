@@ -1,18 +1,18 @@
+import 'dart:io';
+
 import 'package:eatwhat_app/core/services/web_recipe_database.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
-import 'dart:io';
-import 'dart:typed_data';
 
 class HowToCookDatabaseService {
+  factory HowToCookDatabaseService() => _instance;
+  HowToCookDatabaseService._internal();
   static const String _databaseName = 'howtocook_enhanced_recipes.db';
   Database? _database;
 
   static final HowToCookDatabaseService _instance = HowToCookDatabaseService._internal();
-  factory HowToCookDatabaseService() => _instance;
-  HowToCookDatabaseService._internal();
 
   Future<Database> get database async {
     _database ??= await _initDatabase();
@@ -21,19 +21,18 @@ class HowToCookDatabaseService {
 
   Future<Database> _initDatabase() async {
     if (kIsWeb) return openWebRecipeDatabase(_databaseName);
-    String databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, _databaseName);
+    final String databasesPath = await getDatabasesPath();
+    final String path = join(databasesPath, _databaseName);
 
     // 检查数据库是否存在，如果不存在则从assets复制
-    bool exists = await databaseExists(path);
+    final bool exists = await databaseExists(path);
     if (!exists) {
       await _copyDatabaseFromAssets(path);
     }
 
-    return await openDatabase(
+    return openDatabase(
       path,
       version: 1,
-      readOnly: false, // 允许写入以便SQLite可以设置版本信息
     );
   }
 
@@ -43,8 +42,8 @@ class HowToCookDatabaseService {
       await Directory(dirname(path)).create(recursive: true);
 
       // 从assets复制数据库文件
-      ByteData data = await rootBundle.load('assets/data/$_databaseName');
-      List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+      final ByteData data = await rootBundle.load('assets/data/$_databaseName');
+      final List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
       await File(path).writeAsBytes(bytes);
 
       print('数据库已从assets复制到: $path');
@@ -56,7 +55,7 @@ class HowToCookDatabaseService {
   }
 
   Future<void> _createEmptyDatabase(String path) async {
-    Database db = await openDatabase(path, version: 1, onCreate: (db, version) async {
+    final Database db = await openDatabase(path, version: 1, onCreate: (db, version) async {
       // 创建基础表结构（备用方案）
       await db.execute('''
         CREATE TABLE howtocook_recipes (
@@ -109,13 +108,13 @@ class HowToCookDatabaseService {
   // 获取所有菜谱
   Future<List<Map<String, dynamic>>> getAllRecipes() async {
     final db = await database;
-    return await db.query('howtocook_recipes', orderBy: 'name ASC');
+    return db.query('howtocook_recipes', orderBy: 'name ASC');
   }
 
   // 根据分类获取菜谱
   Future<List<Map<String, dynamic>>> getRecipesByCategory(String category) async {
     final db = await database;
-    return await db.query(
+    return db.query(
       'howtocook_recipes',
       where: 'category = ?',
       whereArgs: [category],
@@ -126,7 +125,7 @@ class HowToCookDatabaseService {
   // 根据难度获取菜谱
   Future<List<Map<String, dynamic>>> getRecipesByDifficulty(int difficulty) async {
     final db = await database;
-    return await db.query(
+    return db.query(
       'howtocook_recipes',
       where: 'difficulty = ?',
       whereArgs: [difficulty],
@@ -137,7 +136,7 @@ class HowToCookDatabaseService {
   // 搜索菜谱
   Future<List<Map<String, dynamic>>> searchRecipes(String query) async {
     final db = await database;
-    return await db.query(
+    return db.query(
       'howtocook_recipes',
       where: 'name LIKE ? OR description LIKE ?',
       whereArgs: ['%$query%', '%$query%'],
@@ -156,7 +155,7 @@ class HowToCookDatabaseService {
   // 获取菜谱的食材
   Future<List<Map<String, dynamic>>> getRecipeIngredients(String recipeId) async {
     final db = await database;
-    return await db.query(
+    return db.query(
       'howtocook_ingredients',
       where: 'recipe_id = ?',
       whereArgs: [recipeId],
@@ -167,7 +166,7 @@ class HowToCookDatabaseService {
   // 获取菜谱的制作步骤
   Future<List<Map<String, dynamic>>> getRecipeSteps(String recipeId) async {
     final db = await database;
-    return await db.query(
+    return db.query(
       'howtocook_steps',
       where: 'recipe_id = ?',
       whereArgs: [recipeId],
@@ -189,7 +188,7 @@ class HowToCookDatabaseService {
 
     if (recipeResult.isEmpty) return null;
 
-    Map<String, dynamic> recipe = Map.from(recipeResult.first);
+    final Map<String, dynamic> recipe = Map.from(recipeResult.first);
 
     // 获取食材
     recipe['ingredients'] = await getRecipeIngredients(recipeId);
@@ -222,8 +221,8 @@ class HowToCookDatabaseService {
   }) async {
     final db = await database;
 
-    List<String> whereClauses = [];
-    List<dynamic> whereArgs = [];
+    final List<String> whereClauses = [];
+    final List<dynamic> whereArgs = [];
 
     if (category != null && category != 'all') {
       whereClauses.add('category = ?');
@@ -241,9 +240,9 @@ class HowToCookDatabaseService {
       whereArgs.add('%$searchQuery%');
     }
 
-    String whereClause = whereClauses.isNotEmpty ? whereClauses.join(' AND ') : '';
+    final String whereClause = whereClauses.isNotEmpty ? whereClauses.join(' AND ') : '';
 
-    return await db.query(
+    return db.query(
       'howtocook_recipes',
       where: whereClause.isNotEmpty ? whereClause : null,
       whereArgs: whereArgs.isNotEmpty ? whereArgs : null,

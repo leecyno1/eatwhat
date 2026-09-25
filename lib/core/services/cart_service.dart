@@ -5,12 +5,12 @@ import '../models/cart_item.dart';
 /// 购物车服务 - 单例模式
 /// 负责购物车数据的增删改查和持久化存储
 class CartService {
+  factory CartService() => _instance;
+  CartService._internal();
   static const String _cartBoxName = 'cart_box';
   static late Box<dynamic> _cartBox;
 
   static final CartService _instance = CartService._internal();
-  factory CartService() => _instance;
-  CartService._internal();
 
   final List<CartItem> _items = [];
 

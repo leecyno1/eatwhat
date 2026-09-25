@@ -4,11 +4,6 @@ import 'package:flutter/material.dart';
 /// 味觉雷达图组件
 /// 使用CustomPaint绘制雷达图，展示用户味觉画像
 class TasteRadarChart extends StatelessWidget {
-  final Map<String, double> data; // 维度 -> 值
-  final double maxValue; // 最大值（用于标准化）
-  final Color fillColor;
-  final Color borderColor;
-  final double size;
 
   const TasteRadarChart({
     super.key,
@@ -18,6 +13,11 @@ class TasteRadarChart extends StatelessWidget {
     this.borderColor = const Color(0xFF6366F1),
     this.size = 300,
   });
+  final Map<String, double> data; // 维度 -> 值
+  final double maxValue; // 最大值（用于标准化）
+  final Color fillColor;
+  final Color borderColor;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
@@ -37,10 +37,6 @@ class TasteRadarChart extends StatelessWidget {
 }
 
 class _RadarChartPainter extends CustomPainter {
-  final Map<String, double> data;
-  final double maxValue;
-  final Color fillColor;
-  final Color borderColor;
 
   _RadarChartPainter({
     required this.data,
@@ -48,6 +44,10 @@ class _RadarChartPainter extends CustomPainter {
     required this.fillColor,
     required this.borderColor,
   });
+  final Map<String, double> data;
+  final double maxValue;
+  final Color fillColor;
+  final Color borderColor;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -235,13 +235,6 @@ class _RadarChartPainter extends CustomPainter {
 
 /// 味觉雷达图包装组件，支持编辑模式
 class TasteRadarChartInteractive extends StatefulWidget {
-  final Map<String, double> data;
-  final double maxValue;
-  final Color fillColor;
-  final Color borderColor;
-  final double size;
-  final bool isEditing;
-  final ValueChanged<Map<String, double>>? onDataChanged;
 
   const TasteRadarChartInteractive({
     super.key,
@@ -253,6 +246,13 @@ class TasteRadarChartInteractive extends StatefulWidget {
     this.isEditing = false,
     this.onDataChanged,
   });
+  final Map<String, double> data;
+  final double maxValue;
+  final Color fillColor;
+  final Color borderColor;
+  final double size;
+  final bool isEditing;
+  final ValueChanged<Map<String, double>>? onDataChanged;
 
   @override
   State<TasteRadarChartInteractive> createState() => _TasteRadarChartInteractiveState();
@@ -328,7 +328,6 @@ class _TasteRadarChartInteractiveState extends State<TasteRadarChartInteractive>
 }
 
 class _InteractiveRadarChartPainter extends _RadarChartPainter {
-  final int? selectedIndex;
 
   _InteractiveRadarChartPainter({
     required super.data,
@@ -337,6 +336,7 @@ class _InteractiveRadarChartPainter extends _RadarChartPainter {
     required super.borderColor,
     this.selectedIndex,
   });
+  final int? selectedIndex;
 
   @override
   void paint(Canvas canvas, Size size) {

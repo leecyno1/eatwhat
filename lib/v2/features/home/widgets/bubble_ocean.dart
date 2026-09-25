@@ -211,7 +211,7 @@ class _BubbleOceanState extends State<BubbleOcean> {
                                   alpha: 0.4,
                                 ),
                                 blurRadius: 20,
-                                offset: Offset(0, 10),
+                                offset: const Offset(0, 10),
                               ),
                             ],
                           ),

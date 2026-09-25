@@ -1,5 +1,6 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:eatwhat_app/core/services/performance_monitor.dart';
+import 'package:flutter_test/flutter_test.dart';
+
 import '../../../test/core/services/mock_analytics_service.dart';
 
 void main() {
@@ -29,8 +30,8 @@ void main() {
     });
 
     test('应该能记录页面加载时间', () {
-      monitor.recordPageLoad('home_page', Duration(milliseconds: 500));
-      monitor.recordPageLoad('detail_page', Duration(milliseconds: 300));
+      monitor.recordPageLoad('home_page', const Duration(milliseconds: 500));
+      monitor.recordPageLoad('detail_page', const Duration(milliseconds: 300));
 
       final report = monitor.getReport();
       expect(report.pageLoadTimes['home_page'], equals(500.0));
@@ -38,9 +39,9 @@ void main() {
     });
 
     test('应该能记录页面访问次数', () {
-      monitor.recordPageLoad('home_page', Duration(milliseconds: 100));
-      monitor.recordPageLoad('home_page', Duration(milliseconds: 100));
-      monitor.recordPageLoad('home_page', Duration(milliseconds: 100));
+      monitor.recordPageLoad('home_page', const Duration(milliseconds: 100));
+      monitor.recordPageLoad('home_page', const Duration(milliseconds: 100));
+      monitor.recordPageLoad('home_page', const Duration(milliseconds: 100));
 
       final report = monitor.getReport();
       expect(report.pageViewCounts['home_page'], equals(3));
@@ -57,7 +58,7 @@ void main() {
 
     test('应该能开始和结束性能追踪', () async {
       final tracker = monitor.startTracking('data_fetch');
-      await Future.delayed(Duration(milliseconds: 10));
+      await Future.delayed(const Duration(milliseconds: 10));
       tracker.end();
 
       // 追踪应该完成
@@ -65,7 +66,7 @@ void main() {
     });
 
     test('应该能生成性能报告', () {
-      monitor.recordPageLoad('page1', Duration(milliseconds: 200));
+      monitor.recordPageLoad('page1', const Duration(milliseconds: 200));
       monitor.recordInteraction('click');
 
       final report = monitor.getReport();
@@ -75,7 +76,7 @@ void main() {
     });
 
     test('应该能重置监控数据', () {
-      monitor.recordPageLoad('page1', Duration(milliseconds: 200));
+      monitor.recordPageLoad('page1', const Duration(milliseconds: 200));
       monitor.recordInteraction('click');
 
       monitor.reset();
@@ -93,7 +94,7 @@ void main() {
       }
 
       // 等待至少1秒以确保sessionDuration > 0
-      await Future.delayed(Duration(seconds: 1, milliseconds: 100));
+      await Future.delayed(const Duration(seconds: 1, milliseconds: 100));
 
       final report = monitor.getReport();
       final interactionsPerMinute = report.toMap()['interactions_per_minute'];
@@ -122,7 +123,7 @@ void main() {
       final tracker = monitor.startTracking('test_operation');
       expect(tracker.operationName, equals('test_operation'));
 
-      await Future.delayed(Duration(milliseconds: 50));
+      await Future.delayed(const Duration(milliseconds: 50));
       tracker.end();
 
       // 操作应该被记录
@@ -132,7 +133,7 @@ void main() {
       final tracker1 = monitor.startTracking('operation1');
       final tracker2 = monitor.startTracking('operation2');
 
-      await Future.delayed(Duration(milliseconds: 10));
+      await Future.delayed(const Duration(milliseconds: 10));
 
       tracker1.end();
       tracker2.end();
@@ -144,7 +145,7 @@ void main() {
   group('PerformanceReport', () {
     test('应该能创建性能报告', () {
       final report = PerformanceReport(
-        sessionDuration: Duration(seconds: 60),
+        sessionDuration: const Duration(seconds: 60),
         totalInteractions: 10,
         avgFrameTime: 15.5,
         droppedFrameRate: 0.05,
@@ -161,7 +162,7 @@ void main() {
 
     test('应该能转换为Map', () {
       final report = PerformanceReport(
-        sessionDuration: Duration(seconds: 30),
+        sessionDuration: const Duration(seconds: 30),
         totalInteractions: 5,
         avgFrameTime: 16.0,
         droppedFrameRate: 0.1,
@@ -199,7 +200,7 @@ void main() {
 
     test('应该能计算每分钟交互次数', () {
       final report = PerformanceReport(
-        sessionDuration: Duration(seconds: 60),
+        sessionDuration: const Duration(seconds: 60),
         totalInteractions: 30,
         avgFrameTime: 16.0,
         droppedFrameRate: 0.05,
@@ -231,7 +232,7 @@ void main() {
 
     test('应该能转换为字符串', () {
       final report = PerformanceReport(
-        sessionDuration: Duration(seconds: 120),
+        sessionDuration: const Duration(seconds: 120),
         totalInteractions: 20,
         avgFrameTime: 15.75,
         droppedFrameRate: 0.12,

@@ -1,6 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 import '../../../core/models/enhanced_recipe.dart';
@@ -9,14 +9,14 @@ import '../../../core/utils/advanced_logger.dart';
 
 /// 现代化菜谱推荐界面 - 基于HowToCook数据
 class ModernRecipeRecommendationScreen extends StatefulWidget {
-  final List<String>? preferredCategories;
-  final String? searchKeyword;
 
   const ModernRecipeRecommendationScreen({
     super.key,
     this.preferredCategories,
     this.searchKeyword,
   });
+  final List<String>? preferredCategories;
+  final String? searchKeyword;
 
   @override
   State<ModernRecipeRecommendationScreen> createState() => _ModernRecipeRecommendationScreenState();
@@ -98,7 +98,7 @@ class _ModernRecipeRecommendationScreenState extends State<ModernRecipeRecommend
 
       _logger.info('查询到 ${maps.length} 条原始数据', tag: 'ModernRecipeRecommendation');
 
-      final recipes = maps.map((map) => _mapToEnhancedRecipe(map)).toList();
+      final recipes = maps.map(_mapToEnhancedRecipe).toList();
       final categories = recipes.map((r) => r.category.label).toSet().toList();
 
       setState(() {
@@ -599,7 +599,7 @@ class _ModernRecipeRecommendationScreenState extends State<ModernRecipeRecommend
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      child: Container(
+      child: SizedBox(
         height: 120,
         child: Row(
           children: [

@@ -1,15 +1,16 @@
 import 'package:flutter/foundation.dart';
-import '../models/restaurant.dart';
+
 import '../models/food_item.dart';
+import '../models/restaurant.dart';
 import '../models/user_preference.dart';
 import 'delivery_api_service.dart';
 
 /// 外卖推荐服务
 class DeliveryRecommendationService {
-  static final DeliveryRecommendationService _instance =
-      DeliveryRecommendationService._internal();
   factory DeliveryRecommendationService() => _instance;
   DeliveryRecommendationService._internal();
+  static final DeliveryRecommendationService _instance =
+      DeliveryRecommendationService._internal();
 
   final DeliveryApiService _apiService = DeliveryApiService();
 
@@ -29,7 +30,6 @@ class DeliveryRecommendationService {
           keyword: keyword,
           latitude: latitude,
           longitude: longitude,
-          pageSize: 10,
         );
         allRestaurants.addAll(restaurants);
       }

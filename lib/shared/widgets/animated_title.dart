@@ -1,14 +1,11 @@
-import 'package:flutter/material.dart';
-import 'floating_question_marks.dart';
 import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+
+import 'floating_question_marks.dart';
 
 /// 动画标题组件 - "吃什么"
 class AnimatedTitle extends StatefulWidget {
-  final String title;
-  final double fontSize;
-  final Color textColor;
-  final Color questionMarkColor;
-  final bool showQuestionMarks;
 
   const AnimatedTitle({
     super.key,
@@ -18,6 +15,11 @@ class AnimatedTitle extends StatefulWidget {
     this.questionMarkColor = Colors.white,
     this.showQuestionMarks = true,
   });
+  final String title;
+  final double fontSize;
+  final Color textColor;
+  final Color questionMarkColor;
+  final bool showQuestionMarks;
 
   @override
   State<AnimatedTitle> createState() => _AnimatedTitleState();
@@ -91,12 +93,11 @@ class _AnimatedTitleState extends State<AnimatedTitle> with TickerProviderStateM
           // 背景浮动问号装饰 - 使用Container限制边界
           if (widget.showQuestionMarks)
             Positioned.fill(
-              child: Container(
+              child: SizedBox(
                 width: 400,
                 height: 150,
                 child: ClipRect(
                   child: FloatingQuestionMarks(
-                    count: 8, // 增加问号数量
                     areaWidth: 400, // 扩大动画区域
                     areaHeight: 150,
                     color: widget.questionMarkColor.withValues(alpha: 0.15),
@@ -186,7 +187,7 @@ class _AnimatedTitleState extends State<AnimatedTitle> with TickerProviderStateM
               top: 0,
               width: 120,
               height: 150,
-              child: Container(
+              child: SizedBox(
                 width: 120,
                 height: 150,
                 child: AnimatedBuilder(
@@ -221,7 +222,7 @@ class _AnimatedTitleState extends State<AnimatedTitle> with TickerProviderStateM
               top: 0,
               width: 120,
               height: 150,
-              child: Container(
+              child: SizedBox(
                 width: 120,
                 height: 150,
                 child: AnimatedBuilder(
@@ -268,9 +269,6 @@ class _AnimatedTitleState extends State<AnimatedTitle> with TickerProviderStateM
 
 /// 简化版动画标题（用于其他页面）
 class SimpleAnimatedTitle extends StatefulWidget {
-  final String title;
-  final double fontSize;
-  final Color textColor;
 
   const SimpleAnimatedTitle({
     super.key,
@@ -278,6 +276,9 @@ class SimpleAnimatedTitle extends StatefulWidget {
     this.fontSize = 32,
     this.textColor = Colors.black87,
   });
+  final String title;
+  final double fontSize;
+  final Color textColor;
 
   @override
   State<SimpleAnimatedTitle> createState() => _SimpleAnimatedTitleState();

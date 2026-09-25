@@ -1,10 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
+
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
-import 'package:html/parser.dart' as html_parser;
 import 'package:html/dom.dart' as dom;
+import 'package:html/parser.dart' as html_parser;
+import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
 
 import '../models/recipe.dart';
@@ -12,9 +13,9 @@ import '../models/recipe.dart';
 /// 真实下厨房数据爬取服务
 /// 从 https://www.xiachufang.com 爬取真实菜谱数据
 class RealXiachufangCrawlerService {
-  static final RealXiachufangCrawlerService _instance = RealXiachufangCrawlerService._internal();
   factory RealXiachufangCrawlerService() => _instance;
   RealXiachufangCrawlerService._internal();
+  static final RealXiachufangCrawlerService _instance = RealXiachufangCrawlerService._internal();
 
   final List<Recipe> _crawledRecipes = [];
   final Map<String, dynamic> _crawlStats = {};
@@ -259,7 +260,7 @@ class RealXiachufangCrawlerService {
 
       for (final element in recipeElements) {
         final href = element.attributes['href'];
-        if (href != null && !href.isEmpty) {
+        if (href != null && href.isNotEmpty) {
           final fullUrl = href.startsWith('http') ? href : '$baseUrl$href';
           if (!links.contains(fullUrl)) {
             links.add(fullUrl);
@@ -338,7 +339,6 @@ class RealXiachufangCrawlerService {
         tasteIntensity: _createTasteIntensity(category),
         spiceLevel: _inferSpiceLevel(category, name),
         origin: category,
-        isAuthentic: true,
         cookingTechniques: _inferCookingTechniques(steps),
         ingredientSubstitutes: {},
         costEstimate: 20.0 + Random().nextDouble() * 80.0,
@@ -692,11 +692,6 @@ class RealXiachufangCrawlerService {
 
 /// 爬取结果数据模型
 class CrawlResult {
-  final bool success;
-  final String message;
-  final int recipesCount;
-  final List<String>? categories;
-  final Duration? duration;
 
   CrawlResult({
     required this.success,
@@ -705,6 +700,11 @@ class CrawlResult {
     this.categories,
     this.duration,
   });
+  final bool success;
+  final String message;
+  final int recipesCount;
+  final List<String>? categories;
+  final Duration? duration;
 
   @override
   String toString() =>

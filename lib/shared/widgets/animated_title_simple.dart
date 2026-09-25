@@ -1,13 +1,9 @@
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
 
 // 简化版的动画标题，去除所有 OverflowBox - 更新
 class AnimatedTitleSimple extends StatefulWidget {
-  final String title;
-  final double fontSize;
-  final Color textColor;
-  final Color questionMarkColor;
-  final bool showQuestionMarks;
 
   const AnimatedTitleSimple({
     super.key,
@@ -17,6 +13,11 @@ class AnimatedTitleSimple extends StatefulWidget {
     this.questionMarkColor = Colors.orange,
     this.showQuestionMarks = true,
   });
+  final String title;
+  final double fontSize;
+  final Color textColor;
+  final Color questionMarkColor;
+  final bool showQuestionMarks;
 
   @override
   State<AnimatedTitleSimple> createState() => _AnimatedTitleSimpleState();
@@ -58,7 +59,6 @@ class _AnimatedTitleSimpleState extends State<AnimatedTitleSimple> with TickerPr
       width: 400,
       height: 150,
       child: Stack(
-        clipBehavior: Clip.hardEdge,
         alignment: Alignment.center,
         children: [
           // 主标题
@@ -96,13 +96,12 @@ class _AnimatedTitleSimpleState extends State<AnimatedTitleSimple> with TickerPr
                           color: Colors.white,
                           letterSpacing: 6,
                           shadows: [
-                            Shadow(
-                              offset: const Offset(2, 2),
+                            const Shadow(
+                              offset: Offset(2, 2),
                               blurRadius: 4,
                               color: Colors.black26,
                             ),
                             Shadow(
-                              offset: const Offset(0, 0),
                               blurRadius: 20,
                               color: widget.textColor.withOpacity(0.5),
                             ),

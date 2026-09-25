@@ -1,10 +1,10 @@
 import 'package:flame_forge2d/flame_forge2d.dart';
 
 class WallBody extends BodyComponent {
-  final Vector2 start;
-  final Vector2 end;
 
   WallBody(this.start, this.end);
+  final Vector2 start;
+  final Vector2 end;
 
   @override
   Body createBody() {
@@ -14,7 +14,6 @@ class WallBody extends BodyComponent {
       ..restitution = 0.0;
     final bodyDef = BodyDef(
       position: Vector2.zero(),
-      type: BodyType.static,
     );
 
     return world.createBody(bodyDef)..createFixture(fixtureDef);

@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import '../../../shared/themes/design_tokens.dart';
 
 class GreetingHeader extends StatelessWidget {
+
+  const GreetingHeader(
+      {super.key, required this.title, required this.subtitle, this.avatarUrl, this.onAvatarTap});
   final String title;
   final String subtitle;
   final String? avatarUrl;
   final VoidCallback? onAvatarTap;
-
-  const GreetingHeader(
-      {super.key, required this.title, required this.subtitle, this.avatarUrl, this.onAvatarTap});
 
   @override
   Widget build(BuildContext context) {

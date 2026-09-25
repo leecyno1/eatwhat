@@ -21,12 +21,6 @@ enum LogLevel {
 
 /// 日志条目数据结构
 class LogEntry {
-  final DateTime timestamp;
-  final LogLevel level;
-  final String message;
-  final String? tag;
-  final StackTrace? stackTrace;
-  final Map<String, dynamic>? extra;
 
   LogEntry({
     required this.timestamp,
@@ -37,17 +31,6 @@ class LogEntry {
     this.extra,
   });
 
-  Map<String, dynamic> toJson() {
-    return {
-      'timestamp': timestamp.toIso8601String(),
-      'level': level.name,
-      'message': message,
-      'tag': tag,
-      'stackTrace': stackTrace?.toString(),
-      'extra': extra,
-    };
-  }
-
   factory LogEntry.fromJson(Map<String, dynamic> json) {
     return LogEntry(
       timestamp: DateTime.parse(json['timestamp']),
@@ -57,6 +40,23 @@ class LogEntry {
       stackTrace: json['stackTrace'] != null ? StackTrace.fromString(json['stackTrace']) : null,
       extra: json['extra'],
     );
+  }
+  final DateTime timestamp;
+  final LogLevel level;
+  final String message;
+  final String? tag;
+  final StackTrace? stackTrace;
+  final Map<String, dynamic>? extra;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'timestamp': timestamp.toIso8601String(),
+      'level': level.name,
+      'message': message,
+      'tag': tag,
+      'stackTrace': stackTrace?.toString(),
+      'extra': extra,
+    };
   }
 
   @override
@@ -76,10 +76,10 @@ class LogEntry {
 
 /// 高级日志系统 - 支持结构化日志、本地存储、远程上报
 class AdvancedLogger {
-  static AdvancedLogger? _instance;
-  static AdvancedLogger get instance => _instance ??= AdvancedLogger._internal();
 
   AdvancedLogger._internal();
+  static AdvancedLogger? _instance;
+  static AdvancedLogger get instance => _instance ??= AdvancedLogger._internal();
 
   // 配置选项
   LogLevel _minLogLevel = kDebugMode ? LogLevel.debug : LogLevel.info;
@@ -318,7 +318,7 @@ class AdvancedLogger {
 
       // 写入日志
       final logLine = '${entry.toString()}\n';
-      file.writeAsStringSync(logLine, mode: FileMode.append, flush: false);
+      file.writeAsStringSync(logLine, mode: FileMode.append);
     } catch (e) {
       developer.log('Failed to write log to file: $e');
     }

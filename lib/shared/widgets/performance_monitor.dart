@@ -1,13 +1,11 @@
+import 'dart:developer' as developer;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'dart:developer' as developer;
 
 /// 性能监控组件
 /// 监控FPS、内存使用等性能指标
 class PerformanceMonitor extends StatefulWidget {
-  final Widget child;
-  final bool showOverlay;
-  final VoidCallback? onPerformanceIssue;
 
   const PerformanceMonitor({
     super.key,
@@ -15,6 +13,9 @@ class PerformanceMonitor extends StatefulWidget {
     this.showOverlay = false,
     this.onPerformanceIssue,
   });
+  final Widget child;
+  final bool showOverlay;
+  final VoidCallback? onPerformanceIssue;
 
   @override
   State<PerformanceMonitor> createState() => _PerformanceMonitorState();

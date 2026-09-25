@@ -1,15 +1,18 @@
 import 'dart:convert';
 import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../models/recipe.dart';
 import '../models/user_preference_score.dart';
-import 'user_preference_manager.dart';
 import 'real_xiachufang_crawler_service.dart';
+import 'user_preference_manager.dart';
 
 /// 菜谱数据库服务
 class RecipeDatabaseService {
+  factory RecipeDatabaseService() => _instance;
+  RecipeDatabaseService._internal();
   static const String _recipesKey = 'cached_recipes';
   static const String _favoritesKey = 'favorite_recipes';
   static const String _bookmarksKey = 'bookmarked_recipes';
@@ -22,8 +25,6 @@ class RecipeDatabaseService {
   final Set<String> _bookmarkIds = {};
 
   static final RecipeDatabaseService _instance = RecipeDatabaseService._internal();
-  factory RecipeDatabaseService() => _instance;
-  RecipeDatabaseService._internal();
 
   /// 初始化数据库
   Future<void> initialize() async {
@@ -103,7 +104,7 @@ class RecipeDatabaseService {
       if (recipesJson != null) {
         final recipesList = List<Map<String, dynamic>>.from(jsonDecode(recipesJson));
         _recipes.clear();
-        _recipes.addAll(recipesList.map((json) => Recipe.fromJson(json)));
+        _recipes.addAll(recipesList.map(Recipe.fromJson));
       }
     } catch (e) {
       debugPrint('加载缓存数据时出错: $e');
@@ -158,14 +159,14 @@ class RecipeDatabaseService {
         ingredients: [
           RecipeIngredient(name: '鸡胸肉', amount: '300', unit: '克', isMain: true),
           RecipeIngredient(name: '花生米', amount: '100', unit: '克', isMain: true),
-          RecipeIngredient(name: '干辣椒', amount: '10', unit: '个', isMain: false),
-          RecipeIngredient(name: '花椒', amount: '1', unit: '茶匙', isMain: false),
-          RecipeIngredient(name: '生抽', amount: '2', unit: '汤匙', isMain: false),
-          RecipeIngredient(name: '老抽', amount: '1', unit: '茶匙', isMain: false),
-          RecipeIngredient(name: '料酒', amount: '1', unit: '汤匙', isMain: false),
-          RecipeIngredient(name: '白糖', amount: '1', unit: '茶匙', isMain: false),
-          RecipeIngredient(name: '盐', amount: '1', unit: '茶匙', isMain: false),
-          RecipeIngredient(name: '淀粉', amount: '1', unit: '汤匙', isMain: false),
+          RecipeIngredient(name: '干辣椒', amount: '10', unit: '个'),
+          RecipeIngredient(name: '花椒', amount: '1', unit: '茶匙'),
+          RecipeIngredient(name: '生抽', amount: '2', unit: '汤匙'),
+          RecipeIngredient(name: '老抽', amount: '1', unit: '茶匙'),
+          RecipeIngredient(name: '料酒', amount: '1', unit: '汤匙'),
+          RecipeIngredient(name: '白糖', amount: '1', unit: '茶匙'),
+          RecipeIngredient(name: '盐', amount: '1', unit: '茶匙'),
+          RecipeIngredient(name: '淀粉', amount: '1', unit: '汤匙'),
         ],
         steps: [
           CookingStep(
@@ -240,13 +241,13 @@ class RecipeDatabaseService {
         tags: ['粤菜', '清淡', '白切', '鸡肉'],
         ingredients: [
           RecipeIngredient(name: '整鸡', amount: '1', unit: '只', isMain: true),
-          RecipeIngredient(name: '生姜', amount: '50', unit: '克', isMain: false),
-          RecipeIngredient(name: '大葱', amount: '2', unit: '根', isMain: false),
-          RecipeIngredient(name: '料酒', amount: '2', unit: '汤匙', isMain: false),
-          RecipeIngredient(name: '盐', amount: '1', unit: '茶匙', isMain: false),
-          RecipeIngredient(name: '生抽', amount: '3', unit: '汤匙', isMain: false),
-          RecipeIngredient(name: '香油', amount: '1', unit: '汤匙', isMain: false),
-          RecipeIngredient(name: '白糖', amount: '1', unit: '茶匙', isMain: false),
+          RecipeIngredient(name: '生姜', amount: '50', unit: '克'),
+          RecipeIngredient(name: '大葱', amount: '2', unit: '根'),
+          RecipeIngredient(name: '料酒', amount: '2', unit: '汤匙'),
+          RecipeIngredient(name: '盐', amount: '1', unit: '茶匙'),
+          RecipeIngredient(name: '生抽', amount: '3', unit: '汤匙'),
+          RecipeIngredient(name: '香油', amount: '1', unit: '汤匙'),
+          RecipeIngredient(name: '白糖', amount: '1', unit: '茶匙'),
         ],
         steps: [
           CookingStep(
@@ -321,15 +322,15 @@ class RecipeDatabaseService {
         tags: ['家常菜', '红烧', '猪肉', '下饭菜'],
         ingredients: [
           RecipeIngredient(name: '五花肉', amount: '500', unit: '克', isMain: true),
-          RecipeIngredient(name: '冰糖', amount: '30', unit: '克', isMain: false),
-          RecipeIngredient(name: '生抽', amount: '3', unit: '汤匙', isMain: false),
-          RecipeIngredient(name: '老抽', amount: '1', unit: '汤匙', isMain: false),
-          RecipeIngredient(name: '料酒', amount: '2', unit: '汤匙', isMain: false),
-          RecipeIngredient(name: '生姜', amount: '20', unit: '克', isMain: false),
-          RecipeIngredient(name: '大葱', amount: '1', unit: '根', isMain: false),
-          RecipeIngredient(name: '八角', amount: '2', unit: '个', isMain: false),
-          RecipeIngredient(name: '桂皮', amount: '1', unit: '小块', isMain: false),
-          RecipeIngredient(name: '盐', amount: '1', unit: '茶匙', isMain: false),
+          RecipeIngredient(name: '冰糖', amount: '30', unit: '克'),
+          RecipeIngredient(name: '生抽', amount: '3', unit: '汤匙'),
+          RecipeIngredient(name: '老抽', amount: '1', unit: '汤匙'),
+          RecipeIngredient(name: '料酒', amount: '2', unit: '汤匙'),
+          RecipeIngredient(name: '生姜', amount: '20', unit: '克'),
+          RecipeIngredient(name: '大葱', amount: '1', unit: '根'),
+          RecipeIngredient(name: '八角', amount: '2', unit: '个'),
+          RecipeIngredient(name: '桂皮', amount: '1', unit: '小块'),
+          RecipeIngredient(name: '盐', amount: '1', unit: '茶匙'),
         ],
         steps: [
           CookingStep(
@@ -405,13 +406,13 @@ class RecipeDatabaseService {
         ingredients: [
           RecipeIngredient(name: '嫩豆腐', amount: '400', unit: '克', isMain: true),
           RecipeIngredient(name: '肉末', amount: '100', unit: '克', isMain: true),
-          RecipeIngredient(name: '豆瓣酱', amount: '2', unit: '汤匙', isMain: false),
-          RecipeIngredient(name: '生抽', amount: '1', unit: '汤匙', isMain: false),
-          RecipeIngredient(name: '花椒粉', amount: '1', unit: '茶匙', isMain: false),
-          RecipeIngredient(name: '大蒜', amount: '3', unit: '瓣', isMain: false),
-          RecipeIngredient(name: '生姜', amount: '1', unit: '小块', isMain: false),
-          RecipeIngredient(name: '青蒜', amount: '2', unit: '根', isMain: false),
-          RecipeIngredient(name: '水淀粉', amount: '2', unit: '汤匙', isMain: false),
+          RecipeIngredient(name: '豆瓣酱', amount: '2', unit: '汤匙'),
+          RecipeIngredient(name: '生抽', amount: '1', unit: '汤匙'),
+          RecipeIngredient(name: '花椒粉', amount: '1', unit: '茶匙'),
+          RecipeIngredient(name: '大蒜', amount: '3', unit: '瓣'),
+          RecipeIngredient(name: '生姜', amount: '1', unit: '小块'),
+          RecipeIngredient(name: '青蒜', amount: '2', unit: '根'),
+          RecipeIngredient(name: '水淀粉', amount: '2', unit: '汤匙'),
         ],
         steps: [
           CookingStep(
@@ -487,12 +488,12 @@ class RecipeDatabaseService {
         ingredients: [
           RecipeIngredient(name: '排骨', amount: '500', unit: '克', isMain: true),
           RecipeIngredient(name: '冬瓜', amount: '400', unit: '克', isMain: true),
-          RecipeIngredient(name: '生姜', amount: '20', unit: '克', isMain: false),
-          RecipeIngredient(name: '大葱', amount: '1', unit: '根', isMain: false),
-          RecipeIngredient(name: '料酒', amount: '1', unit: '汤匙', isMain: false),
-          RecipeIngredient(name: '盐', amount: '1', unit: '茶匙', isMain: false),
-          RecipeIngredient(name: '胡椒粉', amount: '1', unit: '茶匙', isMain: false),
-          RecipeIngredient(name: '香菜', amount: '2', unit: '根', isMain: false),
+          RecipeIngredient(name: '生姜', amount: '20', unit: '克'),
+          RecipeIngredient(name: '大葱', amount: '1', unit: '根'),
+          RecipeIngredient(name: '料酒', amount: '1', unit: '汤匙'),
+          RecipeIngredient(name: '盐', amount: '1', unit: '茶匙'),
+          RecipeIngredient(name: '胡椒粉', amount: '1', unit: '茶匙'),
+          RecipeIngredient(name: '香菜', amount: '2', unit: '根'),
         ],
         steps: [
           CookingStep(
@@ -629,7 +630,7 @@ class RecipeDatabaseService {
       await _loadSampleRecipes();
     }
 
-    var filteredRecipes = _recipes.where((recipe) {
+    final filteredRecipes = _recipes.where((recipe) {
       // 关键词搜索
       if (query != null && query.isNotEmpty) {
         final lowerQuery = query.toLowerCase();

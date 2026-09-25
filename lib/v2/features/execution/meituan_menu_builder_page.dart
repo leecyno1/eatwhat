@@ -186,7 +186,7 @@ class _MeituanMenuBuilderPageState extends State<MeituanMenuBuilderPage>
     // missing, but any path that lands here anyway gets a clear state page
     // instead of a raw network error from the search future.
     if (!_client.isConfigured) {
-      return ExecutionUnavailableState(
+      return const ExecutionUnavailableState(
         title: '外卖服务暂未接入',
         description: '美团点餐正在联调中。可以先收藏这道菜，或看看怎么做。',
       );

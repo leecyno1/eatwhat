@@ -3,6 +3,15 @@ import 'package:flutter/foundation.dart';
 
 /// 口味反馈事件
 class TasteFeedbackEvent {
+
+  TasteFeedbackEvent({
+    required this.recipeId,
+    required this.intensity,
+    required this.isPositive,
+    DateTime? timestamp,
+    this.recommendationIndex = 0,
+    this.tasteVector,
+  }) : timestamp = timestamp ?? DateTime.now();
   /// 菜谱ID
   final String recipeId;
 
@@ -21,15 +30,6 @@ class TasteFeedbackEvent {
   /// 菜谱口味特征向量（46维）
   final List<double>? tasteVector;
 
-  TasteFeedbackEvent({
-    required this.recipeId,
-    required this.intensity,
-    required this.isPositive,
-    DateTime? timestamp,
-    this.recommendationIndex = 0,
-    this.tasteVector,
-  }) : timestamp = timestamp ?? DateTime.now();
-
   @override
   String toString() {
     return 'TasteFeedbackEvent(recipeId: $recipeId, intensity: $intensity, '
@@ -39,6 +39,15 @@ class TasteFeedbackEvent {
 
 /// 用户味觉向量（46维口味特征）
 class TasteVector {
+
+  TasteVector([List<double>? initialVector])
+      : _vector = initialVector ?? List.filled(46, 0.0);
+
+  /// 从JSON创建
+  factory TasteVector.fromJson(Map<String, dynamic> json) {
+    final vector = List<double>.from(json['vector'] ?? []);
+    return TasteVector(vector);
+  }
   /// 46维口味特征向量
   /// 索引对应口味类型：
   /// 0-9: 基本口味（甜、酸、苦、辣、咸、鲜、油腻、清淡、香、涩）
@@ -47,9 +56,6 @@ class TasteVector {
   /// 30-39: 菜系（中餐八大菜系、川、粤、苏、浙、闽、湘、徽、鲁、其他中餐、西餐、日韩料理、其他）
   /// 40-45: 其他特征（辣度、麻度、甜度、油腻度、清淡度、浓郁度）
   final List<double> _vector;
-
-  TasteVector([List<double>? initialVector])
-      : _vector = initialVector ?? List.filled(46, 0.0);
 
   /// 获取向量副本
   List<double> get values => List<double>.from(_vector);
@@ -113,12 +119,6 @@ class TasteVector {
   /// 转换为JSON
   Map<String, dynamic> toJson() => {'vector': _vector};
 
-  /// 从JSON创建
-  factory TasteVector.fromJson(Map<String, dynamic> json) {
-    final vector = List<double>.from(json['vector'] ?? []);
-    return TasteVector(vector);
-  }
-
   @override
   String toString() {
     return 'TasteVector(magnitude: ${sqrt(_vector.fold<double>(0, (sum, v) => sum + v * v)).toStringAsFixed(3)})';
@@ -130,10 +130,10 @@ class TasteVector {
 /// 使用梯度下降算法在线更新用户味觉向量
 /// 每次反馈后增量更新，无需全量重算
 class IncrementalLearningService {
-  /// 单例模式
-  static final IncrementalLearningService _instance = IncrementalLearningService._internal();
   factory IncrementalLearningService() => _instance;
   IncrementalLearningService._internal();
+  /// 单例模式
+  static final IncrementalLearningService _instance = IncrementalLearningService._internal();
 
   /// 学习率
   static const double _defaultLearningRate = 0.01;
@@ -203,17 +203,17 @@ class IncrementalLearningService {
   /// 负向反馈：减少对应口味维度的权重
   Future<void> _incrementalLearn(TasteFeedbackEvent event) async {
     // 获取或创建口味向量
-    List<double> tasteVector = event.tasteVector ?? _getDefaultTasteVector(event.recipeId);
+    final List<double> tasteVector = event.tasteVector ?? _getDefaultTasteVector(event.recipeId);
 
     // 计算梯度
-    List<double> gradient = _computeGradient(
+    final List<double> gradient = _computeGradient(
       tasteVector: tasteVector,
       isPositive: event.isPositive,
       intensity: event.intensity,
     );
 
     // 应用梯度下降更新
-    _userTasteVector.gradientUpdate(gradient, learningRate: _defaultLearningRate);
+    _userTasteVector.gradientUpdate(gradient);
 
     // 归一化
     _userTasteVector.normalize();
@@ -236,7 +236,7 @@ class IncrementalLearningService {
     final sign = isPositive ? 1.0 : -1.0;
     final scaledLearningRate = _defaultLearningRate * intensity * sign;
 
-    List<double> gradient = [];
+    final List<double> gradient = [];
     for (int i = 0; i < 46; i++) {
       final targetValue = i < tasteVector.length ? tasteVector[i] : 0.0;
       final currentValue = _userTasteVector[i];

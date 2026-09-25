@@ -4,12 +4,12 @@ import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
 
 class SelectedTagsSheet extends StatefulWidget {
-  final List<SelectedTag> tags;
 
   const SelectedTagsSheet({
     super.key,
     required this.tags,
   });
+  final List<SelectedTag> tags;
 
   static Future<void> show(
     BuildContext context, {
@@ -69,7 +69,7 @@ class _SelectedTagsSheetState extends State<SelectedTagsSheet> {
       height: height,
       decoration: BoxDecoration(
         color: AppPalette.rice,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
       ),
       child: Column(
         children: [
@@ -174,11 +174,11 @@ class _SelectedTagsSheetState extends State<SelectedTagsSheet> {
 }
 
 class SelectedTag {
-  final String id;
-  final String label;
 
   const SelectedTag({
     required this.id,
     required this.label,
   });
+  final String id;
+  final String label;
 }

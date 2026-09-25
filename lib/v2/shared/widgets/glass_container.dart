@@ -3,10 +3,6 @@ import 'package:glassmorphism/glassmorphism.dart';
 import '../../core/theme/app_colors.dart';
 
 class GlassContainer extends StatelessWidget {
-  final double width;
-  final double height;
-  final Widget child;
-  final double borderRadius;
 
   const GlassContainer({
     super.key,
@@ -15,6 +11,10 @@ class GlassContainer extends StatelessWidget {
     required this.child,
     this.borderRadius = 20,
   });
+  final double width;
+  final double height;
+  final Widget child;
+  final double borderRadius;
 
   @override
   Widget build(BuildContext context) {

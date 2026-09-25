@@ -1,6 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 import '../../../core/models/enhanced_recipe.dart';
@@ -9,12 +9,12 @@ import '../../../core/utils/advanced_logger.dart';
 
 /// 现代化菜谱详情界面
 class ModernRecipeDetailScreen extends StatefulWidget {
-  final EnhancedRecipe recipe;
 
   const ModernRecipeDetailScreen({
     super.key,
     required this.recipe,
   });
+  final EnhancedRecipe recipe;
 
   @override
   State<ModernRecipeDetailScreen> createState() => _ModernRecipeDetailScreenState();
@@ -199,12 +199,9 @@ class _ModernRecipeDetailScreenState extends State<ModernRecipeDetailScreen>
                   color: Colors.black.withOpacity(0.3),
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: IconButton(
-                  icon: const Icon(Icons.share, color: Colors.white),
-                  onPressed: () {
-                    // 实现分享功能
-                    HapticFeedback.lightImpact();
-                  },
+                child: const IconButton(
+                  icon: Icon(Icons.share, color: Colors.white),
+                  onPressed: HapticFeedback.lightImpact,
                 ),
               ),
             ],
@@ -514,10 +511,7 @@ class _ModernRecipeDetailScreenState extends State<ModernRecipeDetailScreen>
       floatingActionButton: ScaleTransition(
         scale: _heroAnimation,
         child: FloatingActionButton.extended(
-          onPressed: () {
-            // 实现开始烹饪功能
-            HapticFeedback.mediumImpact();
-          },
+          onPressed: HapticFeedback.mediumImpact,
           backgroundColor: Colors.orange[600],
           icon: const Icon(Icons.play_arrow, color: Colors.white),
           label: const Text(

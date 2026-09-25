@@ -13,11 +13,6 @@ enum PageTransitionType {
 
 /// 现代化页面切换动画组件
 class ModernPageTransition extends StatelessWidget {
-  final Widget child;
-  final PageTransitionType type;
-  final Duration duration;
-  final Curve curve;
-  final Offset? slideDirection;
 
   const ModernPageTransition({
     super.key,
@@ -27,6 +22,11 @@ class ModernPageTransition extends StatelessWidget {
     this.curve = Curves.easeInOut,
     this.slideDirection,
   });
+  final Widget child;
+  final PageTransitionType type;
+  final Duration duration;
+  final Curve curve;
+  final Offset? slideDirection;
 
   @override
   Widget build(BuildContext context) {
@@ -136,9 +136,9 @@ class ModernPageTransition extends StatelessWidget {
 
 /// 形变裁剪器
 class _MorphingClipper extends CustomClipper<Path> {
-  final double progress;
 
   _MorphingClipper(this.progress);
+  final double progress;
 
   @override
   Path getClip(Size size) {
@@ -190,9 +190,6 @@ class _MorphingClipper extends CustomClipper<Path> {
 
 /// 底部导航页面切换动画
 class BottomNavPageTransition extends StatelessWidget {
-  final Widget child;
-  final int currentIndex;
-  final int previousIndex;
 
   const BottomNavPageTransition({
     super.key,
@@ -200,6 +197,9 @@ class BottomNavPageTransition extends StatelessWidget {
     required this.currentIndex,
     required this.previousIndex,
   });
+  final Widget child;
+  final int currentIndex;
+  final int previousIndex;
 
   @override
   Widget build(BuildContext context) {
@@ -223,9 +223,6 @@ class BottomNavPageTransition extends StatelessWidget {
 
 /// 卡片展开动画
 class CardExpandTransition extends StatelessWidget {
-  final Widget child;
-  final bool isExpanded;
-  final Duration duration;
 
   const CardExpandTransition({
     super.key,
@@ -233,6 +230,9 @@ class CardExpandTransition extends StatelessWidget {
     required this.isExpanded,
     this.duration = const Duration(milliseconds: 300),
   });
+  final Widget child;
+  final bool isExpanded;
+  final Duration duration;
 
   @override
   Widget build(BuildContext context) {
@@ -259,9 +259,6 @@ class CardExpandTransition extends StatelessWidget {
 
 /// 列表项入场动画
 class ListItemTransition extends StatelessWidget {
-  final Widget child;
-  final int index;
-  final Duration delay;
 
   const ListItemTransition({
     super.key,
@@ -269,6 +266,9 @@ class ListItemTransition extends StatelessWidget {
     required this.index,
     this.delay = const Duration(milliseconds: 100),
   });
+  final Widget child;
+  final int index;
+  final Duration delay;
 
   @override
   Widget build(BuildContext context) {
@@ -289,14 +289,14 @@ class ListItemTransition extends StatelessWidget {
 
 /// 悬浮按钮动画
 class FloatingActionButtonTransition extends StatelessWidget {
-  final Widget child;
-  final bool isVisible;
 
   const FloatingActionButtonTransition({
     super.key,
     required this.child,
     required this.isVisible,
   });
+  final Widget child;
+  final bool isVisible;
 
   @override
   Widget build(BuildContext context) {
@@ -318,14 +318,14 @@ class FloatingActionButtonTransition extends StatelessWidget {
 
 /// 搜索栏展开动画
 class SearchBarTransition extends StatelessWidget {
-  final Widget child;
-  final bool isExpanded;
 
   const SearchBarTransition({
     super.key,
     required this.child,
     required this.isExpanded,
   });
+  final Widget child;
+  final bool isExpanded;
 
   @override
   Widget build(BuildContext context) {
@@ -345,14 +345,14 @@ class SearchBarTransition extends StatelessWidget {
 
 /// 模态框动画
 class ModalTransition extends StatelessWidget {
-  final Widget child;
-  final bool isShowing;
 
   const ModalTransition({
     super.key,
     required this.child,
     required this.isShowing,
   });
+  final Widget child;
+  final bool isShowing;
 
   @override
   Widget build(BuildContext context) {
@@ -378,14 +378,14 @@ class ModalTransition extends StatelessWidget {
 
 /// 拖拽反馈动画
 class DragFeedbackTransition extends StatelessWidget {
-  final Widget child;
-  final bool isDragging;
 
   const DragFeedbackTransition({
     super.key,
     required this.child,
     required this.isDragging,
   });
+  final Widget child;
+  final bool isDragging;
 
   @override
   Widget build(BuildContext context) {

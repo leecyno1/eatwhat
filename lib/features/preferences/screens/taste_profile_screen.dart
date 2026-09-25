@@ -4,8 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/services/taste_profile_service.dart';
 import '../../../core/services/user_preference_service.dart';
-import '../../../shared/widgets/taste_radar_chart.dart';
 import '../../../core/theme/glassmorphism_theme.dart';
+import '../../../shared/widgets/taste_radar_chart.dart';
 
 /// 味觉画像可视化页面
 /// 展示用户的口味偏好雷达图，支持编辑和重置
@@ -343,7 +343,6 @@ class _TasteProfileScreenState extends State<TasteProfileScreen>
               child: Center(
                 child: TasteRadarChart(
                   data: _tasteProfile,
-                  maxValue: 10.0,
                   fillColor: Theme.of(context).primaryColor,
                   borderColor: Theme.of(context).primaryColor,
                 ),
@@ -626,7 +625,7 @@ class _TasteProfileScreenState extends State<TasteProfileScreen>
               child: OutlinedButton.icon(
                 onPressed: _resetProfile,
                 icon: const Icon(Icons.refresh, color: Colors.white),
-                label: Text(
+                label: const Text(
                   '重置口味画像',
                   style: TextStyle(color: Colors.white),
                 ),

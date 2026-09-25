@@ -8,11 +8,11 @@ import '../utils/advanced_logger.dart';
 /// 基于Firecrawl MCP工具实现的智能菜谱数据抓取服务
 /// 支持批量抓取、增量更新、数据清洗和结构化处理
 class RealFirecrawlRecipeCrawlerService {
+
+  RealFirecrawlRecipeCrawlerService._internal();
   static RealFirecrawlRecipeCrawlerService? _instance;
   static RealFirecrawlRecipeCrawlerService get instance =>
       _instance ??= RealFirecrawlRecipeCrawlerService._internal();
-
-  RealFirecrawlRecipeCrawlerService._internal();
 
   final AdvancedLogger _logger = AdvancedLogger.instance;
 
@@ -158,7 +158,7 @@ class RealFirecrawlRecipeCrawlerService {
           tag: 'RealCrawler');
 
       // 使用Firecrawl批量抓取
-      final batchSize = 10; // 批量处理大小
+      const batchSize = 10; // 批量处理大小
       for (int i = 0; i < limitedUrls.length; i += batchSize) {
         final batch = limitedUrls.skip(i).take(batchSize).toList();
 
@@ -271,7 +271,7 @@ class RealFirecrawlRecipeCrawlerService {
         tag: 'RealCrawler');
 
     // 临时实现：返回模拟的菜谱URLs
-    return await _simulateFirecrawlMap(url);
+    return _simulateFirecrawlMap(url);
   }
 
   /// 模拟Firecrawl Map功能
@@ -332,7 +332,7 @@ class RealFirecrawlRecipeCrawlerService {
         tag: 'RealCrawler');
 
     // 这里应该是真实的Firecrawl批量抓取调用
-    return await _simulateFirecrawlBatchScrape(urls);
+    return _simulateFirecrawlBatchScrape(urls);
   }
 
   /// 模拟Firecrawl批量抓取

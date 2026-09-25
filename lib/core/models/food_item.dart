@@ -34,25 +34,7 @@ enum MealType {
 
 /// 外卖平台菜品模型
 /// 扩展基础Food模型，添加外卖平台特有的属性
-class FoodItem extends Food {
-  final String restaurantId;
-  final String? categoryId;
-  final String? categoryName;
-  final double originalPrice; // 原价
-  final double? discountPrice; // 折扣价
-  final bool isAvailable; // 是否有货
-  final int? stock; // 库存数量
-  final int salesCount; // 销量
-  final List<FoodSpec> specs; // 规格选项
-  final List<String> allergens; // 过敏原信息
-  final FoodItemPlatform platform; // 平台来源
-  final String? platformItemId; // 平台商品ID
-  final bool isRecommended; // 是否推荐
-  final bool isNew; // 是否新品
-  final bool isHot; // 是否热销
-  @override
-  final int? preparationTime; // 制作时间（分钟）
-  final Map<String, dynamic>? platformData; // 平台原始数据
+class FoodItem extends Food { // 平台原始数据
 
   FoodItem({
     required super.id,
@@ -176,6 +158,73 @@ class FoodItem extends Food {
     );
   }
 
+  /// 从JSON创建FoodItem对象
+  factory FoodItem.fromJson(Map<String, dynamic> json) {
+    final specs = <FoodSpec>[];
+    if (json['specs'] != null) {
+      for (final spec in json['specs']) {
+        specs.add(FoodSpec.fromJson(Map<String, dynamic>.from(spec)));
+      }
+    }
+
+    return FoodItem(
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      description: json['description'],
+      cuisineType: json['cuisineType'] ?? '其他',
+      tasteAttributes: List<String>.from(json['tasteAttributes'] ?? []),
+      ingredients: List<String>.from(json['ingredients'] ?? []),
+      scenarios: json['scenarios'] != null ? List<String>.from(json['scenarios']) : null,
+      calories: json['calories'],
+      rating: (json['rating'] ?? 0.0).toDouble(),
+      ratingCount: json['ratingCount'] ?? 0,
+      imageUrl: json['imageUrl'],
+      nutritionFacts:
+          json['nutritionFacts'] != null ? Map<String, double>.from(json['nutritionFacts']) : null,
+      price: json['price']?.toDouble(),
+      restaurant: json['restaurant'],
+      isFavorite: json['isFavorite'] ?? false,
+      restaurantId: json['restaurantId'] ?? '',
+      categoryId: json['categoryId'],
+      categoryName: json['categoryName'],
+      originalPrice: (json['originalPrice'] ?? 0.0).toDouble(),
+      discountPrice: json['discountPrice']?.toDouble(),
+      isAvailable: json['isAvailable'] ?? true,
+      stock: json['stock'],
+      salesCount: json['salesCount'] ?? 0,
+      specs: specs,
+      allergens: List<String>.from(json['allergens'] ?? []),
+      platform: FoodItemPlatform.values.firstWhere(
+        (e) => e.name == (json['platform'] ?? 'unknown'),
+        orElse: () => FoodItemPlatform.unknown,
+      ),
+      platformItemId: json['platformItemId'],
+      isRecommended: json['isRecommended'] ?? false,
+      isNew: json['isNew'] ?? false,
+      isHot: json['isHot'] ?? false,
+      preparationTime: json['preparationTime'],
+      platformData: json['platformData'],
+    );
+  }
+  final String restaurantId;
+  final String? categoryId;
+  final String? categoryName;
+  final double originalPrice; // 原价
+  final double? discountPrice; // 折扣价
+  final bool isAvailable; // 是否有货
+  final int? stock; // 库存数量
+  final int salesCount; // 销量
+  final List<FoodSpec> specs; // 规格选项
+  final List<String> allergens; // 过敏原信息
+  final FoodItemPlatform platform; // 平台来源
+  final String? platformItemId; // 平台商品ID
+  final bool isRecommended; // 是否推荐
+  final bool isNew; // 是否新品
+  final bool isHot; // 是否热销
+  @override
+  final int? preparationTime; // 制作时间（分钟）
+  final Map<String, dynamic>? platformData;
+
   /// 获取当前有效价格
   double get currentPrice {
     return discountPrice ?? originalPrice;
@@ -189,7 +238,7 @@ class FoodItem extends Food {
   /// 折扣百分比
   double? get discountPercentage {
     if (!hasDiscount) return null;
-    return ((originalPrice - discountPrice!) / originalPrice * 100);
+    return (originalPrice - discountPrice!) / originalPrice * 100;
   }
 
   /// 获取价格显示文本
@@ -417,64 +466,10 @@ class FoodItem extends Food {
       'platformData': platformData,
     };
   }
-
-  /// 从JSON创建FoodItem对象
-  factory FoodItem.fromJson(Map<String, dynamic> json) {
-    final specs = <FoodSpec>[];
-    if (json['specs'] != null) {
-      for (final spec in json['specs']) {
-        specs.add(FoodSpec.fromJson(Map<String, dynamic>.from(spec)));
-      }
-    }
-
-    return FoodItem(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      description: json['description'],
-      cuisineType: json['cuisineType'] ?? '其他',
-      tasteAttributes: List<String>.from(json['tasteAttributes'] ?? []),
-      ingredients: List<String>.from(json['ingredients'] ?? []),
-      scenarios: json['scenarios'] != null ? List<String>.from(json['scenarios']) : null,
-      calories: json['calories'],
-      rating: (json['rating'] ?? 0.0).toDouble(),
-      ratingCount: json['ratingCount'] ?? 0,
-      imageUrl: json['imageUrl'],
-      nutritionFacts:
-          json['nutritionFacts'] != null ? Map<String, double>.from(json['nutritionFacts']) : null,
-      price: json['price']?.toDouble(),
-      restaurant: json['restaurant'],
-      isFavorite: json['isFavorite'] ?? false,
-      restaurantId: json['restaurantId'] ?? '',
-      categoryId: json['categoryId'],
-      categoryName: json['categoryName'],
-      originalPrice: (json['originalPrice'] ?? 0.0).toDouble(),
-      discountPrice: json['discountPrice']?.toDouble(),
-      isAvailable: json['isAvailable'] ?? true,
-      stock: json['stock'],
-      salesCount: json['salesCount'] ?? 0,
-      specs: specs,
-      allergens: List<String>.from(json['allergens'] ?? []),
-      platform: FoodItemPlatform.values.firstWhere(
-        (e) => e.name == (json['platform'] ?? 'unknown'),
-        orElse: () => FoodItemPlatform.unknown,
-      ),
-      platformItemId: json['platformItemId'],
-      isRecommended: json['isRecommended'] ?? false,
-      isNew: json['isNew'] ?? false,
-      isHot: json['isHot'] ?? false,
-      preparationTime: json['preparationTime'],
-      platformData: json['platformData'],
-    );
-  }
 }
 
 /// 食品规格模型
 class FoodSpec {
-  final String id;
-  final String name;
-  final double price;
-  final bool isDefault;
-  final Map<String, dynamic>? attributes;
 
   FoodSpec({
     required this.id,
@@ -516,6 +511,11 @@ class FoodSpec {
       attributes: json['attributes'],
     );
   }
+  final String id;
+  final String name;
+  final double price;
+  final bool isDefault;
+  final Map<String, dynamic>? attributes;
 
   Map<String, dynamic> toJson() {
     return {

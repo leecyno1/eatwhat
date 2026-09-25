@@ -1,5 +1,7 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
+
+import 'package:flutter/material.dart';
+
 import '../models/physical_entity.dart';
 
 /// 零重力物理引擎 - 处理实体在零重力环境下的运动和碰撞
@@ -121,8 +123,8 @@ class ZeroGravityPhysics {
     );
 
     // 然后应用阻力（基础空气阻力 + 液体粘滞）
-    final base = _airResistance;
-    double viscous = 1.0 - _viscosity;
+    const base = _airResistance;
+    const double viscous = 1.0 - _viscosity;
     entity.velocity = Offset(
       entity.velocity.dx * base * viscous,
       entity.velocity.dy * base * viscous,

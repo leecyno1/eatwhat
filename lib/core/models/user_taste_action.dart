@@ -3,11 +3,6 @@ import 'physical_entity.dart';
 
 /// 用户味觉行为事件
 class UserTasteAction {
-  final String userId;
-  final String nodeId; // entity id
-  final PhysicalEntityType nodeType;
-  final double weightDelta;
-  final DateTime timestamp;
 
   UserTasteAction({
     required this.userId,
@@ -16,6 +11,24 @@ class UserTasteAction {
     required this.weightDelta,
     DateTime? timestamp,
   }) : timestamp = timestamp ?? DateTime.now();
+
+  factory UserTasteAction.fromJson(Map<String, dynamic> json) {
+    return UserTasteAction(
+      userId: json['userId'] as String,
+      nodeId: json['nodeId'] as String,
+      nodeType: PhysicalEntityType.values.firstWhere(
+        (type) => describeEnum(type) == json['nodeType'],
+        orElse: () => PhysicalEntityType.taste,
+      ),
+      weightDelta: (json['weightDelta'] as num).toDouble(),
+      timestamp: DateTime.parse(json['timestamp'] as String),
+    );
+  }
+  final String userId;
+  final String nodeId; // entity id
+  final PhysicalEntityType nodeType;
+  final double weightDelta;
+  final DateTime timestamp;
 
   UserTasteAction copyWith({
     String? userId,
@@ -40,17 +53,4 @@ class UserTasteAction {
         'weightDelta': weightDelta,
         'timestamp': timestamp.toIso8601String(),
       };
-
-  factory UserTasteAction.fromJson(Map<String, dynamic> json) {
-    return UserTasteAction(
-      userId: json['userId'] as String,
-      nodeId: json['nodeId'] as String,
-      nodeType: PhysicalEntityType.values.firstWhere(
-        (type) => describeEnum(type) == json['nodeType'],
-        orElse: () => PhysicalEntityType.taste,
-      ),
-      weightDelta: (json['weightDelta'] as num).toDouble(),
-      timestamp: DateTime.parse(json['timestamp'] as String),
-    );
-  }
 }

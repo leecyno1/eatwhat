@@ -8,10 +8,10 @@ import '../utils/advanced_logger.dart';
 /// 这个服务演示如何在生产环境中集成Firecrawl MCP工具
 /// 包含平台通道集成架构和实际的数据抓取演示
 class RealMCPFirecrawlService {
-  static RealMCPFirecrawlService? _instance;
-  static RealMCPFirecrawlService get instance => _instance ??= RealMCPFirecrawlService._internal();
 
   RealMCPFirecrawlService._internal();
+  static RealMCPFirecrawlService? _instance;
+  static RealMCPFirecrawlService get instance => _instance ??= RealMCPFirecrawlService._internal();
 
   final AdvancedLogger _logger = AdvancedLogger.instance;
 
@@ -177,7 +177,7 @@ class RealMCPFirecrawlService {
       _updateProgress(RecipeCrawlPhase.processingRecipes);
 
       // 第三步：批量抓取菜谱详情
-      final batchSize = 3; // 真实MCP建议较小的批量大小
+      const batchSize = 3; // 真实MCP建议较小的批量大小
 
       for (int i = 0; i < limitedUrls.length; i += batchSize) {
         final batch = limitedUrls.skip(i).take(batchSize).toList();
@@ -459,7 +459,7 @@ class RealMCPFirecrawlService {
 - 糖 1勺
 - 盐 适量
 
-## ${name}的做法
+## $name的做法
 
 1. 准备所有食材，清洗干净
 2. 按照配方处理食材

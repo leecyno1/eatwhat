@@ -160,15 +160,15 @@ class _RecipeDemoScreenState extends State<RecipeDemoScreen> {
                         // 基本信息
                         Row(
                           children: [
-                            Icon(Icons.star, color: Colors.amber, size: 16),
+                            const Icon(Icons.star, color: Colors.amber, size: 16),
                             const SizedBox(width: 4),
                             Text('${recipe.rating}'),
                             const SizedBox(width: 16),
-                            Icon(Icons.access_time, color: Colors.grey, size: 16),
+                            const Icon(Icons.access_time, color: Colors.grey, size: 16),
                             const SizedBox(width: 4),
                             Text('${recipe.totalTime}分钟'),
                             const SizedBox(width: 16),
-                            Icon(Icons.people, color: Colors.grey, size: 16),
+                            const Icon(Icons.people, color: Colors.grey, size: 16),
                             const SizedBox(width: 4),
                             Text('${recipe.servings}人份'),
                           ],
@@ -223,7 +223,7 @@ class _RecipeDemoScreenState extends State<RecipeDemoScreen> {
                                     ],
                                   ),
                                 ))
-                            .toList(),
+                            ,
                         const SizedBox(height: 24),
 
                         // 制作步骤
@@ -305,7 +305,7 @@ class _RecipeDemoScreenState extends State<RecipeDemoScreen> {
                                     ],
                                   ),
                                 ))
-                            .toList(),
+                            ,
 
                         // 营养信息
                         const SizedBox(height: 24),

@@ -7,12 +7,12 @@ import '../../features/bubble/controllers/physical_entity_controller.dart';
 import '../../features/bubble/widgets/text_physical_entity_widget.dart';
 import '../../shared/themes/design_tokens.dart';
 import '../../shared/widgets/ui/greeting_header.dart';
+import '../../shared/widgets/ui/mini_curve_chart.dart';
+import '../../shared/widgets/ui/percent_card.dart';
+import '../../shared/widgets/ui/primary_cta_button.dart';
+import '../../shared/widgets/ui/progress_arc.dart';
 import '../../shared/widgets/ui/rounded_card.dart';
 import '../../shared/widgets/ui/stat_pill.dart';
-import '../../shared/widgets/ui/primary_cta_button.dart';
-import '../../shared/widgets/ui/percent_card.dart';
-import '../../shared/widgets/ui/progress_arc.dart';
-import '../../shared/widgets/ui/mini_curve_chart.dart';
 
 /// 将全新的柔和风格与气泡互动体验融合的示例页面。
 class StylePreviewScreen extends StatefulWidget {
@@ -51,17 +51,15 @@ class _StylePreviewScreenState extends State<StylePreviewScreen> {
                   const GreetingHeader(
                     title: 'Hi, Elizabeth 👋',
                     subtitle: 'Mon, 23 July',
-                    avatarUrl: null,
                   ),
                   const SizedBox(height: DesignTokens.md),
-                  Row(
-                    children: const [
+                  const Row(
+                    children: [
                       Expanded(
                         child: StatPill(
                           icon: Icons.local_fire_department_rounded,
                           value: '44',
                           label: 'Total',
-                          color: DesignTokens.mint,
                         ),
                       ),
                       SizedBox(width: DesignTokens.md),
@@ -91,11 +89,11 @@ class _StylePreviewScreenState extends State<StylePreviewScreen> {
                     subtitle: '偏好探索进度',
                   ),
                   const SizedBox(height: DesignTokens.lg),
-                  RoundedCard(
+                  const RoundedCard(
                     padding: EdgeInsets.zero,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Padding(
                           padding: EdgeInsets.fromLTRB(20, 16, 20, 8),
                           child: Text('Monthly vibe', style: DesignTokens.h3),
@@ -112,10 +110,10 @@ class _StylePreviewScreenState extends State<StylePreviewScreen> {
                     ),
                   ),
                   const SizedBox(height: DesignTokens.lg),
-                  RoundedCard(
+                  const RoundedCard(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text('Flavor focus', style: DesignTokens.h3),
                         SizedBox(height: 8),
                         ProgressArc(value: 0.65),
@@ -167,7 +165,6 @@ class _BubbleInteractionCardState extends State<_BubbleInteractionCard> {
 
     return RoundedCard(
       color: DesignTokens.surface,
-      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -190,7 +187,7 @@ class _BubbleInteractionCardState extends State<_BubbleInteractionCard> {
               borderRadius: DesignTokens.bigRadius,
               child: Container(
                 key: _boardKey,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -343,7 +340,6 @@ class _BubbleEntityTile extends StatelessWidget {
         isSelected: entity.isSelected,
         isLiked: isLiked,
         isDisliked: isDisliked,
-        scale: 1.0,
       ),
     );
   }
@@ -360,10 +356,10 @@ class _PreferenceRecap extends StatelessWidget {
     final disliked = controller.dislikedEntities.map((e) => e.name).toList();
 
     if (liked.isEmpty && disliked.isEmpty) {
-      return RoundedCard(
+      return const RoundedCard(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
+          children: [
             Text('快速提示', style: DesignTokens.h3),
             SizedBox(height: DesignTokens.sm),
             Text('向上滑表示喜欢，向下滑表示不喜欢，左右滑可以收藏或跳过。', style: DesignTokens.body),

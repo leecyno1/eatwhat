@@ -133,13 +133,13 @@ class _HomeGenerationTransitionOverlayState
                               ),
                             ),
                           ),
-                          SizedBox(
+                          const SizedBox(
                             width: 88,
                             height: 88,
                             child: CircularProgressIndicator(
                               strokeWidth: 1.6,
                               strokeCap: StrokeCap.round,
-                              valueColor: const AlwaysStoppedAnimation(
+                              valueColor: AlwaysStoppedAnimation(
                                 GoldPalette.gold,
                               ),
                             ),

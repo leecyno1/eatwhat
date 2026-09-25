@@ -2,15 +2,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 /// 用户偏好状态
 class PreferenceState {
-  final Map<String, dynamic> preferences;
-  final bool isLoading;
-  final String? error;
 
   const PreferenceState({
     this.preferences = const {},
     this.isLoading = false,
     this.error,
   });
+  final Map<String, dynamic> preferences;
+  final bool isLoading;
+  final String? error;
 
   PreferenceState copyWith({
     Map<String, dynamic>? preferences,
@@ -31,7 +31,7 @@ class PreferenceNotifier extends StateNotifier<PreferenceState> {
 
   /// 设置偏好
   Future<void> setPreference(String key, dynamic value) async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true);
 
     try {
       final newPreferences = Map<String, dynamic>.from(state.preferences);
@@ -69,7 +69,7 @@ class PreferenceNotifier extends StateNotifier<PreferenceState> {
 
   /// 批量设置偏好
   Future<void> setPreferences(Map<String, dynamic> preferences) async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true);
 
     try {
       final newPreferences = Map<String, dynamic>.from(state.preferences);

@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:eatwhat_app/core/physics/zero_gravity_physics.dart';
 import 'package:eatwhat_app/core/models/physical_entity.dart';
 import 'package:eatwhat_app/core/models/physical_entity_factory.dart';
+import 'package:eatwhat_app/core/physics/zero_gravity_physics.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 /// 气泡物理系统专项测试 - 验证混乱运动修复
 void main() {

@@ -1,5 +1,5 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:eatwhat_app/core/error/app_exception.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('AppException', () {
@@ -45,7 +45,7 @@ void main() {
 
   group('ExceptionFactory', () {
     test('应该将FormatException转换为DataException', () {
-      final formatException = FormatException('Invalid format');
+      const formatException = FormatException('Invalid format');
       final result = ExceptionFactory.create(formatException, null);
 
       expect(result, isA<DataException>());
@@ -79,7 +79,7 @@ void main() {
     });
 
     test('应该支持自定义消息', () {
-      final exception = FormatException('Original');
+      const exception = FormatException('Original');
       final result = ExceptionFactory.create(
         exception,
         null,

@@ -1,16 +1,17 @@
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../controllers/bubble_controller.dart';
-import '../../recommendation/screens/recommendation_screen.dart';
-import '../widgets/modern_bubble_widget.dart';
-import '../../../shared/widgets/modern_loading_animation.dart';
-import '../../../shared/themes/design_tokens.dart';
-import '../../../shared/widgets/ui/greeting_header.dart';
-import '../../../shared/widgets/ui/stat_pill.dart';
-import '../../../shared/widgets/ui/primary_cta_button.dart';
-import '../../../shared/widgets/preference_saved_toast.dart';
+import 'package:provider/provider.dart';
+
 import '../../../core/utils/analytics_helper.dart';
+import '../../../shared/themes/design_tokens.dart';
+import '../../../shared/widgets/modern_loading_animation.dart';
+import '../../../shared/widgets/preference_saved_toast.dart';
+import '../../../shared/widgets/ui/greeting_header.dart';
+import '../../../shared/widgets/ui/primary_cta_button.dart';
+import '../../../shared/widgets/ui/stat_pill.dart';
+import '../../recommendation/screens/recommendation_screen.dart';
+import '../controllers/bubble_controller.dart';
+import '../widgets/modern_bubble_widget.dart';
 
 /// 气泡主界面
 class BubbleScreen extends StatefulWidget {
@@ -92,7 +93,6 @@ class _BubbleScreenState extends State<BubbleScreen> with TickerProviderStateMix
                       icon: Icons.bubble_chart_rounded,
                       value: '${controller.bubbles.length}',
                       label: '口味',
-                      color: DesignTokens.mint,
                     ),
                   ),
                   const SizedBox(width: 10),
@@ -105,7 +105,7 @@ class _BubbleScreenState extends State<BubbleScreen> with TickerProviderStateMix
                     ),
                   ),
                   const SizedBox(width: 10),
-                  Expanded(
+                  const Expanded(
                     child: StatPill(
                       icon: Icons.timer_rounded,
                       value: '今日',
@@ -140,7 +140,7 @@ class _BubbleScreenState extends State<BubbleScreen> with TickerProviderStateMix
       builder: (context, controller, child) {
         if (!controller.isInitialized) {
           return const Center(
-            child: ModernLoadingAnimation(size: 60, color: Colors.orange, message: '气泡加载中...'),
+            child: ModernLoadingAnimation(color: Colors.orange, message: '气泡加载中...'),
           );
         }
 

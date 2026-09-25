@@ -1,26 +1,12 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'dart:math' as math;
+
 import '../../../core/services/howtocook_database_service.dart';
 
 // HowToCook菜谱数据模型
 class HowToCookRecipe {
-  final String id;
-  final String name;
-  final String description;
-  final int difficulty; // 1-5星级
-  final String category;
-  final String subcategory;
-  final List<RecipeIngredient> ingredients;
-  final List<RecipeStep> steps;
-  final List<String> notes;
-  final List<String> tools;
-  final int? cookingTime;
-  final int servings;
-  final String githubUrl;
-  final String markdownContent;
-  final DateTime createdAt;
-  final DateTime updatedAt;
 
   HowToCookRecipe({
     required this.id,
@@ -63,14 +49,25 @@ class HowToCookRecipe {
       updatedAt: DateTime.parse(json['updated_at'] ?? DateTime.now().toIso8601String()),
     );
   }
+  final String id;
+  final String name;
+  final String description;
+  final int difficulty; // 1-5星级
+  final String category;
+  final String subcategory;
+  final List<RecipeIngredient> ingredients;
+  final List<RecipeStep> steps;
+  final List<String> notes;
+  final List<String> tools;
+  final int? cookingTime;
+  final int servings;
+  final String githubUrl;
+  final String markdownContent;
+  final DateTime createdAt;
+  final DateTime updatedAt;
 }
 
 class RecipeIngredient {
-  final String name;
-  final String amount;
-  final String unit;
-  final bool isMain;
-  final int orderIndex;
 
   RecipeIngredient({
     required this.name,
@@ -89,13 +86,14 @@ class RecipeIngredient {
       orderIndex: json['order_index'] ?? 0,
     );
   }
+  final String name;
+  final String amount;
+  final String unit;
+  final bool isMain;
+  final int orderIndex;
 }
 
 class RecipeStep {
-  final int stepNumber;
-  final String description;
-  final String? imageUrl;
-  final String? notes;
 
   RecipeStep({
     required this.stepNumber,
@@ -112,6 +110,10 @@ class RecipeStep {
       notes: json['notes'],
     );
   }
+  final int stepNumber;
+  final String description;
+  final String? imageUrl;
+  final String? notes;
 }
 
 // HowToCook控制器
@@ -176,7 +178,7 @@ class HowToCookController extends ChangeNotifier {
       }
     } catch (e) {
       print('加载过滤菜谱错误: $e');
-      throw e;
+      rethrow;
     }
   }
 
@@ -210,7 +212,7 @@ class HowToCookController extends ChangeNotifier {
 
     // 从描述中提取小贴士
     List<String> notes = [];
-    String markdownContent = data['markdown_content'] ?? '';
+    final String markdownContent = data['markdown_content'] ?? '';
     if (markdownContent.isNotEmpty) {
       notes = _extractNotesFromMarkdown(markdownContent);
     }
@@ -242,7 +244,7 @@ class HowToCookController extends ChangeNotifier {
   }
 
   List<String> _extractNotesFromMarkdown(String markdown) {
-    List<String> notes = [];
+    final List<String> notes = [];
     final lines = markdown.split('\n');
     bool inNotesSection = false;
 
@@ -263,7 +265,7 @@ class HowToCookController extends ChangeNotifier {
   }
 
   List<String> _extractToolsFromMarkdown(String markdown) {
-    List<String> tools = [];
+    final List<String> tools = [];
     final commonTools = ['锅', '刀', '勺', '铲', '碗', '盘', '筷子', '砧板', '蒸锅', '炒锅', '擀面杖'];
 
     for (final tool in commonTools) {
@@ -370,7 +372,6 @@ class _HowToCookRecipeScreenState extends State<HowToCookRecipeScreen>
           // 现代化的SliverAppBar
           SliverAppBar(
             expandedHeight: 200.0,
-            floating: false,
             pinned: true,
             elevation: 0,
             backgroundColor: Colors.transparent,
@@ -844,12 +845,12 @@ class _HowToCookRecipeScreenState extends State<HowToCookRecipeScreen>
 
 // 菜谱详情页面
 class HowToCookRecipeDetailScreen extends StatefulWidget {
-  final HowToCookRecipe recipe;
 
   const HowToCookRecipeDetailScreen({
     super.key,
     required this.recipe,
   });
+  final HowToCookRecipe recipe;
 
   @override
   State<HowToCookRecipeDetailScreen> createState() => _HowToCookRecipeDetailScreenState();
@@ -879,7 +880,6 @@ class _HowToCookRecipeDetailScreenState extends State<HowToCookRecipeDetailScree
           // 详情页顶部
           SliverAppBar(
             expandedHeight: 250.0,
-            floating: false,
             pinned: true,
             elevation: 0,
             backgroundColor: _getCategoryColor(widget.recipe.category),
@@ -954,7 +954,7 @@ class _HowToCookRecipeDetailScreenState extends State<HowToCookRecipeDetailScree
                             _buildInfoItem(
                               Icons.whatshot,
                               '难度',
-                              '${List.generate(widget.recipe.difficulty, (i) => '★').join()}',
+                              List.generate(widget.recipe.difficulty, (i) => '★').join(),
                             ),
                             if (widget.recipe.cookingTime != null)
                               _buildInfoItem(
@@ -1093,12 +1093,12 @@ class _HowToCookRecipeDetailScreenState extends State<HowToCookRecipeDetailScree
               ],
             ),
           );
-        }).toList(),
+        }),
         if (widget.recipe.tools.isNotEmpty) ...[
           const SizedBox(height: 24),
-          Text(
+          const Text(
             '所需工具',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -1207,7 +1207,7 @@ class _HowToCookRecipeDetailScreenState extends State<HowToCookRecipeDetailScree
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }
@@ -1217,9 +1217,9 @@ class _HowToCookRecipeDetailScreenState extends State<HowToCookRecipeDetailScree
       padding: const EdgeInsets.all(16),
       children: [
         if (widget.recipe.notes.isNotEmpty) ...[
-          Text(
+          const Text(
             '制作小贴士',
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -1256,7 +1256,7 @@ class _HowToCookRecipeDetailScreenState extends State<HowToCookRecipeDetailScree
                 ],
               ),
             );
-          }).toList(),
+          }),
           const SizedBox(height: 24),
         ],
 
@@ -1271,9 +1271,9 @@ class _HowToCookRecipeDetailScreenState extends State<HowToCookRecipeDetailScree
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
+              const Text(
                 '菜谱信息',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
                 ),
@@ -1377,9 +1377,9 @@ class _HowToCookRecipeDetailScreenState extends State<HowToCookRecipeDetailScree
 
 // Tab栏委托
 class _SliverTabBarDelegate extends SliverPersistentHeaderDelegate {
-  final TabBar _tabBar;
 
   _SliverTabBarDelegate(this._tabBar);
+  final TabBar _tabBar;
 
   @override
   double get minExtent => _tabBar.preferredSize.height;

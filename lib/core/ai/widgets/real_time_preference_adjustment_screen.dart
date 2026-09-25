@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import '../models/user_behavior_models.dart';
 import '../engines/ai_preference_learning_engine.dart';
+import '../models/user_behavior_models.dart';
 import '../services/preference_mapping_service.dart';
 
 /// 实时偏好调整界面 - Phase 3 用户偏好个性化定制
 /// 提供直观的滑块和开关界面，让用户实时调整AI推荐偏好
 class RealTimePreferenceAdjustmentScreen extends StatefulWidget {
-  final String userId;
-  final VoidCallback? onPreferencesUpdated;
 
   const RealTimePreferenceAdjustmentScreen({
-    Key? key,
+    super.key,
     required this.userId,
     this.onPreferencesUpdated,
-  }) : super(key: key);
+  });
+  final String userId;
+  final VoidCallback? onPreferencesUpdated;
 
   @override
   State<RealTimePreferenceAdjustmentScreen> createState() =>
@@ -269,7 +269,7 @@ class _RealTimePreferenceAdjustmentScreenState extends State<RealTimePreferenceA
           tooltip: '重置为默认',
         ),
         IconButton(
-          onPressed: () => _showUserInsights(),
+          onPressed: _showUserInsights,
           icon: const Icon(Icons.analytics, color: Colors.blue),
           tooltip: '查看分析',
         ),
@@ -290,8 +290,8 @@ class _RealTimePreferenceAdjustmentScreenState extends State<RealTimePreferenceA
                 child: Container(
                   width: 80,
                   height: 80,
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
                       colors: [Color(0xFF667eea), Color(0xFF764ba2)],
                     ),
                     shape: BoxShape.circle,
@@ -609,7 +609,7 @@ class _RealTimePreferenceAdjustmentScreenState extends State<RealTimePreferenceA
           ...keys.map((key) {
             final value = preferences[key] ?? 0.5;
             return _buildPreferenceSlider(key, value, onChanged);
-          }).toList(),
+          }),
           const SizedBox(height: 8),
         ],
       ),
@@ -665,8 +665,6 @@ class _RealTimePreferenceAdjustmentScreenState extends State<RealTimePreferenceA
             ),
             child: Slider(
               value: value,
-              min: 0.0,
-              max: 1.0,
               divisions: 20,
               onChanged: (newValue) {
                 setState(() {
@@ -759,12 +757,11 @@ class _RealTimePreferenceAdjustmentScreenState extends State<RealTimePreferenceA
               inactiveTrackColor: Colors.grey[300],
               thumbColor: _getWeightColor(value),
               overlayColor: _getWeightColor(value).withOpacity(0.2),
-              thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+              thumbShape: const RoundSliderThumbShape(),
               trackHeight: 6,
             ),
             child: Slider(
               value: value,
-              min: 0.0,
               max: 2.0,
               divisions: 40,
               onChanged: (newValue) {

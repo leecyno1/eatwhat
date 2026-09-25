@@ -31,7 +31,7 @@ class EnhancedRecipeController extends ChangeNotifier {
   // 搜索和筛选
   String _currentSearchQuery = '';
   RecipeCategory? _currentCategory;
-  Set<String> _selectedTags = {};
+  final Set<String> _selectedTags = {};
 
   // 分页
   final int _pageSize = 20;
@@ -150,7 +150,7 @@ class EnhancedRecipeController extends ChangeNotifier {
       _logger.info('Searching recipes with query: $query',
           tag: 'RecipeController');
 
-      final rows = await _unifiedDbService.searchRecipes(query, limit: 40);
+      final rows = await _unifiedDbService.searchRecipes(query);
       var searchResults = rows.map(_mapUnifiedRowToRecipe).toList();
       if (searchResults.isEmpty) {
         searchResults = _performLocalSearch(query);
@@ -250,7 +250,6 @@ class EnhancedRecipeController extends ChangeNotifier {
       final result = await _realMCPService.startCrawling(
         categories: categories ?? ['家常菜', '快手菜'],
         maxRecipes: maxRecipes ?? 10,
-        fullCrawl: false,
       );
 
       // 合并新抓取的菜谱（使用真实MCP数据）
@@ -450,17 +449,20 @@ class EnhancedRecipeController extends ChangeNotifier {
       if (recipe.description.toLowerCase().contains(queryLower)) return true;
 
       // 搜索标签
-      if (recipe.tags.any((tag) => tag.toLowerCase().contains(queryLower)))
+      if (recipe.tags.any((tag) => tag.toLowerCase().contains(queryLower))) {
         return true;
+      }
 
       // 搜索食材
       if (recipe.ingredients.any(
-          (ingredient) => ingredient.name.toLowerCase().contains(queryLower)))
+          (ingredient) => ingredient.name.toLowerCase().contains(queryLower))) {
         return true;
+      }
 
       // 搜索菜系
-      if (recipe.cuisineType?.toLowerCase().contains(queryLower) == true)
+      if (recipe.cuisineType?.toLowerCase().contains(queryLower) == true) {
         return true;
+      }
 
       return false;
     }).toList();
@@ -513,7 +515,6 @@ class EnhancedRecipeController extends ChangeNotifier {
       nutrition: RecipeNutrition.fromMap(nutritionRaw),
       tasteAttributes: _buildTasteAttributes(tasteProfile),
       spiceLevel: ((tasteProfile['spicy'] ?? 0.0) as num).toDouble() * 5,
-      allergens: const [],
       coverImage: row['cover_image_url']?.toString(),
       images: [
         if (row['cover_image_url'] != null) row['cover_image_url'].toString(),
@@ -521,7 +522,6 @@ class EnhancedRecipeController extends ChangeNotifier {
       source: _mapSourceFromDb(row['source']?.toString()),
       cuisineType: row['cuisine']?.toString(),
       isVerified: true,
-      status: RecipeStatus.active,
       metadata: {
         'dish_id': row['dish_id'],
         'source_recipe_id': row['source_recipe_id'],
@@ -534,8 +534,9 @@ class EnhancedRecipeController extends ChangeNotifier {
     final lower = cuisine.toLowerCase();
     if (lower.contains('素')) return RecipeCategory.vegetarian;
     if (lower.contains('汤') || lower.contains('羹')) return RecipeCategory.soup;
-    if (lower.contains('甜') || lower.contains('糕'))
+    if (lower.contains('甜') || lower.contains('糕')) {
       return RecipeCategory.dessert;
+    }
     if (lower.contains('饮')) return RecipeCategory.beverage;
     if (lower.contains('面')) return RecipeCategory.noodles;
     if (lower.contains('饭')) return RecipeCategory.riceDish;

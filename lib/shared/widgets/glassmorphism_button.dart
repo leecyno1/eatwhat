@@ -5,17 +5,6 @@ import '../../core/theme/glassmorphism_theme.dart';
 
 /// Glassmorphism风格按钮组件
 class GlassmorphismButton extends StatefulWidget {
-  final String? text;
-  final Widget? icon;
-  final VoidCallback? onPressed;
-  final VoidCallback? onLongPress;
-  final bool isLoading;
-  final bool isEnabled;
-  final GlassmorphismButtonStyle style;
-  final double? width;
-  final double? height;
-  final EdgeInsetsGeometry? padding;
-  final bool enableHapticFeedback;
 
   const GlassmorphismButton({
     super.key,
@@ -31,6 +20,17 @@ class GlassmorphismButton extends StatefulWidget {
     this.padding,
     this.enableHapticFeedback = true,
   }) : assert(text != null || icon != null, 'Button must have either text or icon');
+  final String? text;
+  final Widget? icon;
+  final VoidCallback? onPressed;
+  final VoidCallback? onLongPress;
+  final bool isLoading;
+  final bool isEnabled;
+  final GlassmorphismButtonStyle style;
+  final double? width;
+  final double? height;
+  final EdgeInsetsGeometry? padding;
+  final bool enableHapticFeedback;
 
   @override
   State<GlassmorphismButton> createState() => _GlassmorphismButtonState();
@@ -105,7 +105,7 @@ class _GlassmorphismButtonState extends State<GlassmorphismButton> with TickerPr
   Widget _buildButtonContent() {
     final isEnabled = widget.isEnabled && !widget.isLoading && widget.onPressed != null;
 
-    return Container(
+    return SizedBox(
       width: widget.width,
       height: widget.height ?? 48.h,
       child: GlassmorphismTheme.glassContainer(
@@ -273,13 +273,6 @@ enum GlassmorphismButtonStyle {
 
 /// 图标按钮
 class GlassmorphismIconButton extends StatelessWidget {
-  final Widget icon;
-  final VoidCallback? onPressed;
-  final VoidCallback? onLongPress;
-  final bool isEnabled;
-  final double size;
-  final GlassmorphismButtonStyle style;
-  final bool enableHapticFeedback;
 
   const GlassmorphismIconButton({
     super.key,
@@ -291,6 +284,13 @@ class GlassmorphismIconButton extends StatelessWidget {
     this.style = GlassmorphismButtonStyle.primary,
     this.enableHapticFeedback = true,
   });
+  final Widget icon;
+  final VoidCallback? onPressed;
+  final VoidCallback? onLongPress;
+  final bool isEnabled;
+  final double size;
+  final GlassmorphismButtonStyle style;
+  final bool enableHapticFeedback;
 
   @override
   Widget build(BuildContext context) {
@@ -310,11 +310,6 @@ class GlassmorphismIconButton extends StatelessWidget {
 
 /// 浮动操作按钮
 class GlassmorphismFloatingActionButton extends StatelessWidget {
-  final Widget icon;
-  final VoidCallback? onPressed;
-  final GlassmorphismButtonStyle style;
-  final double size;
-  final bool enableHapticFeedback;
 
   const GlassmorphismFloatingActionButton({
     super.key,
@@ -324,10 +319,15 @@ class GlassmorphismFloatingActionButton extends StatelessWidget {
     this.size = 56.0,
     this.enableHapticFeedback = true,
   });
+  final Widget icon;
+  final VoidCallback? onPressed;
+  final GlassmorphismButtonStyle style;
+  final double size;
+  final bool enableHapticFeedback;
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: size,
       height: size,
       child: GlassmorphismTheme.glassContainer(
@@ -345,9 +345,6 @@ class GlassmorphismFloatingActionButton extends StatelessWidget {
 
 /// 按钮组
 class GlassmorphismButtonGroup extends StatelessWidget {
-  final List<GlassmorphismButton> buttons;
-  final Axis direction;
-  final double spacing;
 
   const GlassmorphismButtonGroup({
     super.key,
@@ -355,6 +352,9 @@ class GlassmorphismButtonGroup extends StatelessWidget {
     this.direction = Axis.horizontal,
     this.spacing = 16.0,
   });
+  final List<GlassmorphismButton> buttons;
+  final Axis direction;
+  final double spacing;
 
   @override
   Widget build(BuildContext context) {

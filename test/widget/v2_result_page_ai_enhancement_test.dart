@@ -42,10 +42,10 @@ void main() {
     expect(find.text('清蒸鲈鱼'), findsNothing);
 
     completer.complete(
-      Phase2RecommendationBundle(
-        recallLabels: const ['辣'],
+      const Phase2RecommendationBundle(
+        recallLabels: ['辣'],
         recalledCount: 2,
-        finalRecommendations: const [
+        finalRecommendations: [
           RecipeModel(
             id: 'r2',
             name: '红烧肉',
@@ -57,7 +57,7 @@ void main() {
             description: 'AI 新引入的组合菜。',
           ),
         ],
-        aiReasonsByRecipeId: const {'r2': 'AI 组合理由'},
+        aiReasonsByRecipeId: {'r2': 'AI 组合理由'},
         aiSummary: null,
         isEstimated: false,
         resolutionStatus: RecommendationResolutionStatus.aiResolved,

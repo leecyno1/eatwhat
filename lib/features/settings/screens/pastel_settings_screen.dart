@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../core/routes/app_router.dart';
 import '../../../shared/themes/design_tokens.dart';
 import '../../../shared/widgets/ui/rounded_card.dart';
-import '../../../core/routes/app_router.dart';
 
 /// 新样式设置界面（圆角奶油风）
 class PastelSettingsScreen extends StatefulWidget {

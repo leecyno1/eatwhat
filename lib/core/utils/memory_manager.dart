@@ -4,9 +4,9 @@ import 'package:flutter/foundation.dart';
 
 /// 内存管理器 - 负责应用的内存优化和缓存管理
 class MemoryManager {
-  static final MemoryManager _instance = MemoryManager._internal();
   factory MemoryManager() => _instance;
   MemoryManager._internal();
+  static final MemoryManager _instance = MemoryManager._internal();
 
   // 缓存系统
   final Map<String, _CacheEntry> _cache = {};
@@ -158,7 +158,7 @@ class MemoryManager {
   Map<String, dynamic> getMemoryStats() {
     final now = DateTime.now();
     int expiredCount = 0;
-    int totalSize = _cache.length;
+    final int totalSize = _cache.length;
 
     _cache.forEach((key, entry) {
       if (now.isAfter(entry.expiry)) {
@@ -217,10 +217,10 @@ class MemoryManager {
 
 /// 缓存条目
 class _CacheEntry {
-  final dynamic data;
-  final DateTime expiry;
 
   _CacheEntry(this.data, this.expiry);
+  final dynamic data;
+  final DateTime expiry;
 }
 
 /// 智能缓存策略
@@ -233,15 +233,15 @@ enum CacheStrategy {
 
 /// 高级缓存管理器
 class AdvancedCacheManager {
-  final Map<String, _AdvancedCacheEntry> _cache = {};
-  final CacheStrategy _strategy;
-  final int _maxSize;
 
   AdvancedCacheManager({
     CacheStrategy strategy = CacheStrategy.lru,
     int maxSize = 100,
   })  : _strategy = strategy,
         _maxSize = maxSize;
+  final Map<String, _AdvancedCacheEntry> _cache = {};
+  final CacheStrategy _strategy;
+  final int _maxSize;
 
   /// 智能缓存
   void smartCache<T>(
@@ -257,7 +257,6 @@ class AdvancedCacheManager {
     _cache[key] = _AdvancedCacheEntry(
       data: data,
       expiry: DateTime.now().add(duration ?? const Duration(minutes: 30)),
-      accessCount: 0,
       priority: priority,
       lastAccessed: DateTime.now(),
     );
@@ -328,17 +327,16 @@ class AdvancedCacheManager {
 
 /// 高级缓存条目
 class _AdvancedCacheEntry {
+
+  _AdvancedCacheEntry({
+    required this.data,
+    required this.expiry,
+    this.priority = 1,
+    required this.lastAccessed,
+  });
   final dynamic data;
   final DateTime expiry;
   int accessCount;
   final int priority;
   DateTime lastAccessed;
-
-  _AdvancedCacheEntry({
-    required this.data,
-    required this.expiry,
-    this.accessCount = 0,
-    this.priority = 1,
-    required this.lastAccessed,
-  });
 }

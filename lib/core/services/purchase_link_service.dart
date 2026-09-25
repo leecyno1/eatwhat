@@ -5,12 +5,6 @@ enum PurchasePlatform { eleme, meituan, dianping, snacks }
 
 /// 购买/跳转链接生成结果
 class PurchaseLinkResult {
-  final String platform;
-  final String keyword;
-  final Uri url;
-  final bool isFallback;
-  final DateTime generatedAt;
-  final Map<String, dynamic> meta;
 
   PurchaseLinkResult({
     required this.platform,
@@ -20,6 +14,12 @@ class PurchaseLinkResult {
     required this.generatedAt,
     this.meta = const {},
   });
+  final String platform;
+  final String keyword;
+  final Uri url;
+  final bool isFallback;
+  final DateTime generatedAt;
+  final Map<String, dynamic> meta;
 }
 
 /// 购买跳转服务
@@ -27,9 +27,9 @@ class PurchaseLinkResult {
 /// 说明：真实 App 中不同平台会有各自 URL Scheme / H5 路径，
 /// 此处构造统一抽象，便于后续集成或替换成实际 scheme。
 class PurchaseLinkService {
-  static final PurchaseLinkService _instance = PurchaseLinkService._internal();
   factory PurchaseLinkService() => _instance;
   PurchaseLinkService._internal();
+  static final PurchaseLinkService _instance = PurchaseLinkService._internal();
 
   /// 平台基础 URL / Scheme 占位
   /// 真实项目可替换为：eleme://food_search?keyword=xxx

@@ -1,16 +1,10 @@
-import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'dart:math';
 
+import 'package:flutter/material.dart';
+
 /// 漂浮问号组件
 class FloatingQuestionMarks extends StatefulWidget {
-  final int count;
-  final double areaWidth;
-  final double areaHeight;
-  final Color color;
-  final double minSize;
-  final double maxSize;
-  final Duration animationDuration;
 
   const FloatingQuestionMarks({
     super.key,
@@ -22,6 +16,13 @@ class FloatingQuestionMarks extends StatefulWidget {
     this.maxSize = 24,
     this.animationDuration = const Duration(seconds: 3),
   });
+  final int count;
+  final double areaWidth;
+  final double areaHeight;
+  final Color color;
+  final double minSize;
+  final double maxSize;
+  final Duration animationDuration;
 
   @override
   State<FloatingQuestionMarks> createState() => _FloatingQuestionMarksState();
@@ -89,14 +90,6 @@ class _FloatingQuestionMarksState extends State<FloatingQuestionMarks>
 
 /// 问号数据模型
 class QuestionMarkData {
-  final double initialX;
-  final double initialY;
-  final double size;
-  final double opacity;
-  final double speed;
-  final double direction;
-  final double phaseOffset;
-  final double rotationSpeed;
 
   QuestionMarkData({
     required this.initialX,
@@ -108,19 +101,27 @@ class QuestionMarkData {
     required this.phaseOffset,
     required this.rotationSpeed,
   });
+  final double initialX;
+  final double initialY;
+  final double size;
+  final double opacity;
+  final double speed;
+  final double direction;
+  final double phaseOffset;
+  final double rotationSpeed;
 }
 
 /// 问号绘制器
 class QuestionMarksPainter extends CustomPainter {
-  final List<QuestionMarkData> questionMarks;
-  final double animationValue;
-  final Color color;
 
   QuestionMarksPainter({
     required this.questionMarks,
     required this.animationValue,
     required this.color,
   });
+  final List<QuestionMarkData> questionMarks;
+  final double animationValue;
+  final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -188,14 +189,14 @@ class QuestionMarksPainter extends CustomPainter {
 
 /// 简化版漂浮问号（用于较小空间）
 class SimpleFloatingQuestionMarks extends StatefulWidget {
-  final Color color;
-  final double size;
 
   const SimpleFloatingQuestionMarks({
     super.key,
     this.color = Colors.white,
     this.size = 100,
   });
+  final Color color;
+  final double size;
 
   @override
   State<SimpleFloatingQuestionMarks> createState() => _SimpleFloatingQuestionMarksState();

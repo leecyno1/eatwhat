@@ -1,5 +1,6 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:eatwhat_app/core/models/analytics_event.dart';
+import 'package:flutter_test/flutter_test.dart';
+
 import 'mock_analytics_service.dart';
 
 void main() {
@@ -81,7 +82,7 @@ void main() {
 
     test('应该能重置会话', () async {
       final oldSessionId = analyticsService.sessionId;
-      await Future.delayed(Duration(milliseconds: 10));
+      await Future.delayed(const Duration(milliseconds: 10));
       analyticsService.resetSession();
       final newSessionId = analyticsService.sessionId;
 

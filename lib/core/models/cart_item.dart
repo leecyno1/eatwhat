@@ -1,13 +1,5 @@
 /// 购物车商品模型
-class CartItem {
-  final String id;
-  final String foodId;
-  final String name;
-  final String? imageUrl;
-  final double price;
-  int quantity;
-  final Map<String, String> specs; // 规格选项，如 {'辣度': '微辣', '份量': '大份'}
-  final String? recipeId; // 关联的菜谱ID
+class CartItem { // 关联的菜谱ID
 
   CartItem({
     required this.id,
@@ -19,6 +11,27 @@ class CartItem {
     this.specs = const {},
     this.recipeId,
   });
+
+  factory CartItem.fromJson(Map<String, dynamic> json) => CartItem(
+        id: json['id'] as String,
+        foodId: json['foodId'] as String,
+        name: json['name'] as String,
+        imageUrl: json['imageUrl'] as String?,
+        price: (json['price'] as num).toDouble(),
+        quantity: json['quantity'] as int? ?? 1,
+        specs: json['specs'] != null
+            ? Map<String, String>.from(json['specs'])
+            : {},
+        recipeId: json['recipeId'] as String?,
+      );
+  final String id;
+  final String foodId;
+  final String name;
+  final String? imageUrl;
+  final double price;
+  int quantity;
+  final Map<String, String> specs; // 规格选项，如 {'辣度': '微辣', '份量': '大份'}
+  final String? recipeId;
 
   /// 商品总价
   double get totalPrice => price * quantity;
@@ -62,19 +75,6 @@ class CartItem {
         'specs': specs,
         'recipeId': recipeId,
       };
-
-  factory CartItem.fromJson(Map<String, dynamic> json) => CartItem(
-        id: json['id'] as String,
-        foodId: json['foodId'] as String,
-        name: json['name'] as String,
-        imageUrl: json['imageUrl'] as String?,
-        price: (json['price'] as num).toDouble(),
-        quantity: json['quantity'] as int? ?? 1,
-        specs: json['specs'] != null
-            ? Map<String, String>.from(json['specs'])
-            : {},
-        recipeId: json['recipeId'] as String?,
-      );
 
   @override
   bool operator ==(Object other) {

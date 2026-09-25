@@ -3,12 +3,12 @@ import '../../../core/models/recipe.dart';
 
 /// 菜谱详情页面
 class RecipeDetailScreen extends StatefulWidget {
-  final Recipe recipe;
 
   const RecipeDetailScreen({
     super.key,
     required this.recipe,
   });
+  final Recipe recipe;
 
   @override
   State<RecipeDetailScreen> createState() => _RecipeDetailScreenState();

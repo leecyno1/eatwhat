@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import '../../../shared/themes/design_tokens.dart';
 
 class PrimaryCtaButton extends StatelessWidget {
+
+  const PrimaryCtaButton({super.key, required this.label, this.onPressed, this.icon});
   final String label;
   final VoidCallback? onPressed;
   final IconData? icon;
-
-  const PrimaryCtaButton({super.key, required this.label, this.onPressed, this.icon});
 
   @override
   Widget build(BuildContext context) {

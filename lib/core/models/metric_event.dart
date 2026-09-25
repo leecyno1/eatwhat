@@ -3,17 +3,6 @@ import 'dart:convert';
 /// 指标事件数据类
 /// 用于记录用户行为指标事件
 class MetricEvent {
-  /// 事件类型
-  final String type;
-
-  /// 用户ID
-  final String userId;
-
-  /// 时间戳
-  final DateTime timestamp;
-
-  /// 事件属性
-  final Map<String, dynamic>? properties;
 
   MetricEvent({
     required this.type,
@@ -21,16 +10,6 @@ class MetricEvent {
     required this.timestamp,
     this.properties,
   });
-
-  /// 转换为 Map
-  Map<String, dynamic> toMap() {
-    return {
-      'type': type,
-      'user_id': userId,
-      'timestamp': timestamp.toIso8601String(),
-      'properties': properties ?? {},
-    };
-  }
 
   /// 从 Map 创建
   factory MetricEvent.fromMap(Map<String, dynamic> map) {
@@ -44,12 +23,33 @@ class MetricEvent {
     );
   }
 
-  /// 转换为 JSON 字符串
-  String toJson() => json.encode(toMap());
-
   /// 从 JSON 字符串创建
   factory MetricEvent.fromJson(String source) =>
       MetricEvent.fromMap(json.decode(source) as Map<String, dynamic>);
+  /// 事件类型
+  final String type;
+
+  /// 用户ID
+  final String userId;
+
+  /// 时间戳
+  final DateTime timestamp;
+
+  /// 事件属性
+  final Map<String, dynamic>? properties;
+
+  /// 转换为 Map
+  Map<String, dynamic> toMap() {
+    return {
+      'type': type,
+      'user_id': userId,
+      'timestamp': timestamp.toIso8601String(),
+      'properties': properties ?? {},
+    };
+  }
+
+  /// 转换为 JSON 字符串
+  String toJson() => json.encode(toMap());
 
   @override
   String toString() {
@@ -59,23 +59,6 @@ class MetricEvent {
 
 /// 指标汇总数据类
 class MetricSummary {
-  /// 日活跃用户数
-  final int dau;
-
-  /// 月活跃用户数
-  final int mau;
-
-  /// 推荐转化率
-  final double recommendationConversionRate;
-
-  /// 气泡互动率
-  final double bubbleInteractionRate;
-
-  /// 订单完成率
-  final double orderCompletionRate;
-
-  /// 留存率 Map，key=天数，value=留存率
-  final Map<int, double> retentionRates;
 
   MetricSummary({
     required this.dau,
@@ -97,6 +80,23 @@ class MetricSummary {
       retentionRates: {},
     );
   }
+  /// 日活跃用户数
+  final int dau;
+
+  /// 月活跃用户数
+  final int mau;
+
+  /// 推荐转化率
+  final double recommendationConversionRate;
+
+  /// 气泡互动率
+  final double bubbleInteractionRate;
+
+  /// 订单完成率
+  final double orderCompletionRate;
+
+  /// 留存率 Map，key=天数，value=留存率
+  final Map<int, double> retentionRates;
 
   @override
   String toString() {

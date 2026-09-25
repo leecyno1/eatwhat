@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
+
+import 'package:flutter/material.dart';
 
 /// 物理实体类型
 enum PhysicalEntityType {
@@ -12,6 +13,32 @@ enum PhysicalEntityType {
 
 /// 物理实体模型 - 用于替代气泡，具有真实的物理属性
 class PhysicalEntity {
+
+  PhysicalEntity({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.type,
+    required this.emoji,
+    this.icon,
+    required this.primaryColor,
+    required this.secondaryColor,
+    this.mass = 1.0,
+    this.radius = 30.0,
+    this.width = 60.0,
+    this.height = 40.0,
+    this.bounciness = 0.8,
+    this.friction = 0.02,
+    this.position = Offset.zero,
+    this.velocity = Offset.zero,
+    this.acceleration = Offset.zero,
+    this.rotation = 0.0,
+    this.angularVelocity = 0.0,
+    this.isSelected = false,
+    this.isHighlighted = false,
+    this.opacity = 1.0,
+    DateTime? lastInteraction,
+  }) : lastInteraction = lastInteraction ?? DateTime.now();
   final String id;
   final String name;
   final String description;
@@ -41,32 +68,6 @@ class PhysicalEntity {
   bool isHighlighted;
   double opacity;
   DateTime lastInteraction;
-
-  PhysicalEntity({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.type,
-    required this.emoji,
-    this.icon,
-    required this.primaryColor,
-    required this.secondaryColor,
-    this.mass = 1.0,
-    this.radius = 30.0,
-    this.width = 60.0,
-    this.height = 40.0,
-    this.bounciness = 0.8,
-    this.friction = 0.02,
-    this.position = Offset.zero,
-    this.velocity = Offset.zero,
-    this.acceleration = Offset.zero,
-    this.rotation = 0.0,
-    this.angularVelocity = 0.0,
-    this.isSelected = false,
-    this.isHighlighted = false,
-    this.opacity = 1.0,
-    DateTime? lastInteraction,
-  }) : lastInteraction = lastInteraction ?? DateTime.now();
 
   /// 复制实体并修改指定属性
   PhysicalEntity copyWith({
@@ -142,7 +143,7 @@ class PhysicalEntity {
     );
 
     // 更新旋转
-    angularVelocity *= (1.0 - friction); // 角摩擦
+    angularVelocity *= 1.0 - friction; // 角摩擦
     rotation += angularVelocity * deltaTime;
   }
 

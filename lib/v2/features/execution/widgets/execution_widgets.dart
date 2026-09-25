@@ -102,11 +102,11 @@ class ExecutionLoadingState extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox.square(
+            const SizedBox.square(
               dimension: 18,
               child: CircularProgressIndicator(strokeWidth: 2),
             ),
-            SizedBox(width: AppSpacing.sm),
+            const SizedBox(width: AppSpacing.sm),
             Text('正在读取附近服务', style: AppType.label),
           ],
         ),

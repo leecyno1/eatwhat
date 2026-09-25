@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
@@ -278,7 +277,7 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
     // and then sweeps away must not accidentally collect it. A grabbed
     // gesture suppresses the tap so dropping an entity doesn't double-fire.
     if (game.isTapSuppressed) return;
-    collect(withFeedback: true);
+    collect();
   }
 
   /// Pins the entity to the finger as a kinematic body. The pile it was

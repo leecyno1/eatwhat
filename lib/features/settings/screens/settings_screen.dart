@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../core/routes/app_router.dart';
 import '../../../core/theme/glassmorphism_theme.dart';
 import '../../../shared/widgets/glassmorphism_button.dart';
-import '../../../core/routes/app_router.dart';
 import '../../preferences/screens/taste_profile_screen.dart';
 
 /// Glassmorphism风格设置界面
@@ -524,7 +525,6 @@ class _SettingsScreenState extends State<SettingsScreen> with TickerProviderStat
           GlassmorphismButton(
             text: '返回主页',
             icon: const Icon(Icons.home),
-            style: GlassmorphismButtonStyle.primary,
             onPressed: () {
               if (_enableHapticFeedback) {
                 HapticFeedback.lightImpact();

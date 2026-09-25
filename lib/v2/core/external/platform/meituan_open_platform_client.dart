@@ -40,7 +40,7 @@ class MeituanOpenPlatformClient {
     required String username,
     required String password,
   }) async {
-    return await _authService.loginWithCdp(
+    return _authService.loginWithCdp(
       username: username,
       password: password,
     );
@@ -367,12 +367,6 @@ class MeituanOpenPlatformClient {
 
 /// 购物车商品输入
 class CartItemInput {
-  final String dishId;
-  final String name;
-  final double price;
-  final int quantity;
-  final List<String>? specs;
-  final String? comment;
 
   CartItemInput({
     required this.dishId,
@@ -382,6 +376,12 @@ class CartItemInput {
     this.specs,
     this.comment,
   });
+  final String dishId;
+  final String name;
+  final double price;
+  final int quantity;
+  final List<String>? specs;
+  final String? comment;
 
   Map<String, dynamic> toJson() => {
         'dishId': dishId,
@@ -395,8 +395,6 @@ class CartItemInput {
 
 /// 商户搜索结果
 class MeituanMerchantSearchResult {
-  final int total;
-  final List<MeituanMerchant> merchants;
 
   MeituanMerchantSearchResult({
     required this.total,
@@ -412,20 +410,12 @@ class MeituanMerchantSearchResult {
           [],
     );
   }
+  final int total;
+  final List<MeituanMerchant> merchants;
 }
 
 /// 商户信息
 class MeituanMerchant {
-  final String id;
-  final String name;
-  final String address;
-  final double? latitude;
-  final double? longitude;
-  final double? rating;
-  final int? monthSales;
-  final String? deliveryTime;
-  final String? imageUrl;
-  final double? averagePrice;
 
   MeituanMerchant({
     required this.id,
@@ -454,15 +444,20 @@ class MeituanMerchant {
       averagePrice: (json['averagePrice'] as num?)?.toDouble(),
     );
   }
+  final String id;
+  final String name;
+  final String address;
+  final double? latitude;
+  final double? longitude;
+  final double? rating;
+  final int? monthSales;
+  final String? deliveryTime;
+  final String? imageUrl;
+  final double? averagePrice;
 }
 
 /// 商户详情
 class MeituanMerchantDetail extends MeituanMerchant {
-  final List<MeituanDish> dishes;
-  final String? description;
-  final List<String>? tags;
-  final String? phone;
-  final String? businessHours;
 
   MeituanMerchantDetail({
     required super.id,
@@ -504,17 +499,15 @@ class MeituanMerchantDetail extends MeituanMerchant {
       businessHours: json['businessHours']?.toString(),
     );
   }
+  final List<MeituanDish> dishes;
+  final String? description;
+  final List<String>? tags;
+  final String? phone;
+  final String? businessHours;
 }
 
 /// 菜品信息
 class MeituanDish {
-  final String id;
-  final String name;
-  final double price;
-  final String? imageUrl;
-  final String? description;
-  final int? sales;
-  final String? unit;
 
   MeituanDish({
     required this.id,
@@ -537,12 +530,17 @@ class MeituanDish {
       unit: json['unit']?.toString(),
     );
   }
+  final String id;
+  final String name;
+  final double price;
+  final String? imageUrl;
+  final String? description;
+  final int? sales;
+  final String? unit;
 }
 
 /// 菜品搜索结果
 class MeituanDishSearchResult {
-  final int total;
-  final List<MeituanDish> dishes;
 
   MeituanDishSearchResult({
     required this.total,
@@ -558,15 +556,12 @@ class MeituanDishSearchResult {
           [],
     );
   }
+  final int total;
+  final List<MeituanDish> dishes;
 }
 
 /// 创建订单请求
 class MeituanCreateOrderRequest {
-  final String merchantId;
-  final String addressId;
-  final List<CartItemInput> items;
-  final String? remark;
-  final int? couponId;
 
   MeituanCreateOrderRequest({
     required this.merchantId,
@@ -575,6 +570,11 @@ class MeituanCreateOrderRequest {
     this.remark,
     this.couponId,
   });
+  final String merchantId;
+  final String addressId;
+  final List<CartItemInput> items;
+  final String? remark;
+  final int? couponId;
 
   Map<String, dynamic> toJson() => {
         'merchantId': merchantId,
@@ -587,10 +587,6 @@ class MeituanCreateOrderRequest {
 
 /// 订单结果
 class MeituanOrderResult {
-  final String orderId;
-  final String status;
-  final double totalPrice;
-  final String? message;
 
   MeituanOrderResult({
     required this.orderId,
@@ -607,16 +603,14 @@ class MeituanOrderResult {
       message: json['message']?.toString(),
     );
   }
+  final String orderId;
+  final String status;
+  final double totalPrice;
+  final String? message;
 }
 
 /// 订单状态
 class MeituanOrderStatus {
-  final String orderId;
-  final String status;
-  final String? statusDescription;
-  final String? deliveryTime;
-  final String? riderName;
-  final String? riderPhone;
 
   MeituanOrderStatus({
     required this.orderId,
@@ -637,19 +631,16 @@ class MeituanOrderStatus {
       riderPhone: json['riderPhone']?.toString(),
     );
   }
+  final String orderId;
+  final String status;
+  final String? statusDescription;
+  final String? deliveryTime;
+  final String? riderName;
+  final String? riderPhone;
 }
 
 /// 订单详情
 class MeituanOrderDetail {
-  final String orderId;
-  final String status;
-  final MeituanMerchant merchant;
-  final List<MeituanOrderItem> items;
-  final double totalPrice;
-  final double deliveryFee;
-  final String? address;
-  final String? createTime;
-  final String? payTime;
 
   MeituanOrderDetail({
     required this.orderId,
@@ -679,15 +670,19 @@ class MeituanOrderDetail {
       payTime: json['payTime']?.toString(),
     );
   }
+  final String orderId;
+  final String status;
+  final MeituanMerchant merchant;
+  final List<MeituanOrderItem> items;
+  final double totalPrice;
+  final double deliveryFee;
+  final String? address;
+  final String? createTime;
+  final String? payTime;
 }
 
 /// 订单商品项
 class MeituanOrderItem {
-  final String dishId;
-  final String name;
-  final double price;
-  final int quantity;
-  final List<String>? specs;
 
   MeituanOrderItem({
     required this.dishId,
@@ -706,4 +701,9 @@ class MeituanOrderItem {
       specs: (json['specs'] as List<dynamic>?)?.cast<String>(),
     );
   }
+  final String dishId;
+  final String name;
+  final double price;
+  final int quantity;
+  final List<String>? specs;
 }

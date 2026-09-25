@@ -1,24 +1,13 @@
 import 'dart:convert';
 
 /// 冷启动问卷答案模型
-class ColdStartAnswer {
-  final int questionId;
-  final List<String> selectedOptions; // 多选
-  final String? singleOption; // 单选
+class ColdStartAnswer { // 单选
 
   const ColdStartAnswer({
     required this.questionId,
     required this.selectedOptions,
     this.singleOption,
   });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'questionId': questionId,
-      'selectedOptions': selectedOptions,
-      'singleOption': singleOption,
-    };
-  }
 
   factory ColdStartAnswer.fromJson(Map<String, dynamic> json) {
     return ColdStartAnswer(
@@ -27,27 +16,27 @@ class ColdStartAnswer {
       singleOption: json['singleOption'] as String?,
     );
   }
+  final int questionId;
+  final List<String> selectedOptions; // 多选
+  final String? singleOption;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'questionId': questionId,
+      'selectedOptions': selectedOptions,
+      'singleOption': singleOption,
+    };
+  }
 }
 
 /// 冷启动问卷数据模型
 class ColdStartQuestionnaireData {
-  final List<ColdStartAnswer> answers;
-  final DateTime completedAt;
-  final bool skipped;
 
   const ColdStartQuestionnaireData({
     required this.answers,
     required this.completedAt,
     this.skipped = false,
   });
-
-  Map<String, dynamic> toJson() {
-    return {
-      'answers': answers.map((a) => a.toJson()).toList(),
-      'completedAt': completedAt.toIso8601String(),
-      'skipped': skipped,
-    };
-  }
 
   factory ColdStartQuestionnaireData.fromJson(Map<String, dynamic> json) {
     return ColdStartQuestionnaireData(
@@ -62,8 +51,6 @@ class ColdStartQuestionnaireData {
     );
   }
 
-  String toJsonString() => jsonEncode(toJson());
-
   factory ColdStartQuestionnaireData.fromJsonString(String jsonString) {
     return ColdStartQuestionnaireData.fromJson(jsonDecode(jsonString));
   }
@@ -76,18 +63,26 @@ class ColdStartQuestionnaireData {
       skipped: true,
     );
   }
+  final List<ColdStartAnswer> answers;
+  final DateTime completedAt;
+  final bool skipped;
+
+  Map<String, dynamic> toJson() {
+    return {
+      'answers': answers.map((a) => a.toJson()).toList(),
+      'completedAt': completedAt.toIso8601String(),
+      'skipped': skipped,
+    };
+  }
+
+  String toJsonString() => jsonEncode(toJson());
 
   /// 检查是否有效完成
   bool get isValid => answers.isNotEmpty || skipped;
 }
 
 /// 问卷问题定义
-class QuestionnaireQuestion {
-  final int id;
-  final String title;
-  final String subtitle;
-  final List<String> options;
-  final bool isMultiSelect; // 是否多选
+class QuestionnaireQuestion { // 是否多选
 
   const QuestionnaireQuestion({
     required this.id,
@@ -96,6 +91,11 @@ class QuestionnaireQuestion {
     required this.options,
     this.isMultiSelect = false,
   });
+  final int id;
+  final String title;
+  final String subtitle;
+  final List<String> options;
+  final bool isMultiSelect;
 }
 
 /// 预定义的问卷题目
@@ -127,14 +127,12 @@ class QuestionnaireQuestions {
       title: '你通常在什么场景用餐？',
       subtitle: '选择一个最常用的场景',
       options: ['在家做饭', '外卖', '堂食', '都可以'],
-      isMultiSelect: false,
     ),
     QuestionnaireQuestion(
       id: 5,
       title: '你的用餐人数通常是？',
       subtitle: '这会帮助我们推荐合适的分量',
       options: ['1人', '2-3人', '4-6人', '6人以上'],
-      isMultiSelect: false,
     ),
   ];
 

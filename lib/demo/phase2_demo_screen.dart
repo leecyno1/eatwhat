@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../features/recipe/screens/recipe_search_screen.dart';
-import '../features/recipe/screens/recipe_recommendation_screen.dart';
-import '../features/recipe/screens/complete_recipe_detail_screen.dart';
 import '../core/models/recipe.dart';
 import '../core/services/smart_recipe_recommendation_service.dart';
+import '../features/recipe/screens/complete_recipe_detail_screen.dart';
+import '../features/recipe/screens/recipe_recommendation_screen.dart';
+import '../features/recipe/screens/recipe_search_screen.dart';
 import '../shared/widgets/glassmorphic_container.dart';
 
 /// Phase 2 功能演示页面
@@ -164,21 +164,21 @@ class _Phase2DemoScreenState extends State<Phase2DemoScreen> {
           '🔍 菜谱搜索功能',
           '体验智能搜索与分类导航',
           Icons.search,
-          () => _openRecipeSearch(),
+          _openRecipeSearch,
         ),
         SizedBox(height: 16.h),
         _buildDemoButton(
           '🎯 个性化推荐',
           '查看基于偏好的菜谱推荐',
           Icons.recommend,
-          () => _openRecommendations(),
+          _openRecommendations,
         ),
         SizedBox(height: 16.h),
         _buildDemoButton(
           '📖 菜谱详情页面',
           '查看完整的菜谱详情展示',
           Icons.book,
-          () => _openSampleRecipe(),
+          _openSampleRecipe,
         ),
       ],
     );
@@ -203,7 +203,7 @@ class _Phase2DemoScreenState extends State<Phase2DemoScreen> {
               Container(
                 width: 48.w,
                 height: 48.w,
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: LinearGradient(
                     colors: [Colors.orange, Colors.red],
                   ),
@@ -236,7 +236,7 @@ class _Phase2DemoScreenState extends State<Phase2DemoScreen> {
                   ],
                 ),
               ),
-              Icon(Icons.arrow_forward_ios, color: Colors.orange, size: 16),
+              const Icon(Icons.arrow_forward_ios, color: Colors.orange, size: 16),
             ],
           ),
         ),
@@ -261,7 +261,7 @@ class _Phase2DemoScreenState extends State<Phase2DemoScreen> {
       margin: EdgeInsets.only(bottom: 12.h),
       child: Row(
         children: [
-          Text(emoji, style: TextStyle(fontSize: 24)),
+          Text(emoji, style: const TextStyle(fontSize: 24)),
           SizedBox(width: 16.w),
           Expanded(
             child: Column(
@@ -352,7 +352,7 @@ class _Phase2DemoScreenState extends State<Phase2DemoScreen> {
                     const Spacer(),
                     Row(
                       children: [
-                        Icon(Icons.schedule, color: Colors.orange, size: 14),
+                        const Icon(Icons.schedule, color: Colors.orange, size: 14),
                         SizedBox(width: 4.w),
                         Text(
                           '25分钟',
@@ -362,7 +362,7 @@ class _Phase2DemoScreenState extends State<Phase2DemoScreen> {
                           ),
                         ),
                         SizedBox(width: 16.w),
-                        Icon(Icons.star, color: Colors.amber, size: 14),
+                        const Icon(Icons.star, color: Colors.amber, size: 14),
                         SizedBox(width: 4.w),
                         Text(
                           '4.8',
@@ -478,7 +478,6 @@ class _Phase2DemoScreenState extends State<Phase2DemoScreen> {
       },
       spiceLevel: '中辣',
       origin: '四川',
-      isAuthentic: true,
       cookingTechniques: ['爆炒', '腌制'],
       ingredientSubstitutes: {
         '鸡胸肉': '鸡腿肉或鸭肉',

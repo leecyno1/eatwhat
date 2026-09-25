@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:provider/provider.dart';
 
-import '../../../shared/themes/design_tokens.dart';
 import '../../../core/models/bubble.dart';
 import '../../../core/models/physical_entity.dart';
-import '../../recommendation/screens/enhanced_recommendation_screen.dart';
+import '../../../shared/themes/design_tokens.dart';
 import '../../recommendation/controllers/recommendation_controller.dart';
+import '../../recommendation/screens/enhanced_recommendation_screen.dart';
 import '../state/taste_preferences_model.dart';
 import '../widgets/taste_bubble_tile.dart';
 
@@ -63,14 +63,14 @@ class _TastePreferencesScreenState extends State<TastePreferencesScreen>
           )
         ],
       ),
-      body: SafeArea(
+      body: const SafeArea(
         child: Column(
           children: [
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             _CategoryTabs(),
-            const SizedBox(height: 8),
-            const Expanded(child: _MasonryBoard()),
-            const _BottomBar(),
+            SizedBox(height: 8),
+            Expanded(child: _MasonryBoard()),
+            _BottomBar(),
           ],
         ),
       ),
@@ -79,6 +79,8 @@ class _TastePreferencesScreenState extends State<TastePreferencesScreen>
 }
 
 class _CategoryTabs extends StatelessWidget {
+
+  const _CategoryTabs();
   static const _tabs = [
     ('all', '全部'),
     ('taste', '味型'),
@@ -87,8 +89,6 @@ class _CategoryTabs extends StatelessWidget {
     ('texture', '口感'),
     ('avoid', '禁忌'),
   ];
-
-  const _CategoryTabs();
 
   @override
   Widget build(BuildContext context) {

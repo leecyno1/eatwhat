@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 /// 用户个人资料页面
 class ProfileScreen extends StatelessWidget {
-  final List<Widget> extraActions;
 
   const ProfileScreen({
     super.key,
     this.extraActions = const [],
   });
+  final List<Widget> extraActions;
 
   @override
   Widget build(BuildContext context) {

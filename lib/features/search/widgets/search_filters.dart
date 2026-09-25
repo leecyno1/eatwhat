@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 
 /// 搜索筛选器组件
 class SearchFilters extends StatefulWidget {
-  final List<String> selectedCuisines;
-  final List<String> selectedTastes;
-  final RangeValues caloriesRange;
-  final RangeValues ratingRange;
-  final Function(List<String>, List<String>, RangeValues, RangeValues) onFiltersChanged;
 
   const SearchFilters({
     super.key,
@@ -16,6 +11,11 @@ class SearchFilters extends StatefulWidget {
     required this.ratingRange,
     required this.onFiltersChanged,
   });
+  final List<String> selectedCuisines;
+  final List<String> selectedTastes;
+  final RangeValues caloriesRange;
+  final RangeValues ratingRange;
+  final Function(List<String>, List<String>, RangeValues, RangeValues) onFiltersChanged;
 
   @override
   State<SearchFilters> createState() => _SearchFiltersState();
@@ -260,7 +260,6 @@ class _SearchFiltersState extends State<SearchFilters> {
         const SizedBox(height: 12),
         RangeSlider(
           values: _caloriesRange,
-          min: 0,
           max: 1000,
           divisions: 20,
           labels: RangeLabels(
@@ -303,7 +302,6 @@ class _SearchFiltersState extends State<SearchFilters> {
         const SizedBox(height: 12),
         RangeSlider(
           values: _ratingRange,
-          min: 0,
           max: 5,
           divisions: 10,
           labels: RangeLabels(

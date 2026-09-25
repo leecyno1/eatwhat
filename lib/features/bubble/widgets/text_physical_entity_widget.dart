@@ -1,20 +1,13 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'dart:math' as math;
 
 import '../../../core/models/physical_entity.dart';
 
 /// 文字物理实体组件 - 使用文字替代图标的高级设计
 class TextPhysicalEntityWidget extends StatefulWidget {
-  final PhysicalEntity entity;
-  final bool isSelected;
-  final bool isLiked;
-  final bool isDisliked;
-  final VoidCallback? onTap;
-  final VoidCallback? onLongPress;
-  final double scale;
-  final double glowIntensity;
 
   const TextPhysicalEntityWidget({
     super.key,
@@ -27,6 +20,14 @@ class TextPhysicalEntityWidget extends StatefulWidget {
     this.scale = 1.0,
     this.glowIntensity = 0.0,
   });
+  final PhysicalEntity entity;
+  final bool isSelected;
+  final bool isLiked;
+  final bool isDisliked;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  final double scale;
+  final double glowIntensity;
 
   @override
   State<TextPhysicalEntityWidget> createState() => _TextPhysicalEntityWidgetState();
@@ -169,13 +170,13 @@ class _TextPhysicalEntityWidgetState extends State<TextPhysicalEntityWidget>
         _specialEffectAnimation,
       ]),
       builder: (context, child) {
-        final floatOffset = 0.0; // 禁用浮动效果
-        final hoverScale = 1.0; // 禁用悬停缩放
+        const floatOffset = 0.0; // 禁用浮动效果
+        const hoverScale = 1.0; // 禁用悬停缩放
         final tapScale = _tapAnimation.value; // 保留点击反馈
-        final glowRadius = 0.0; // 禁用发光效果
+        const glowRadius = 0.0; // 禁用发光效果
 
         return Transform.translate(
-          offset: Offset(0, floatOffset),
+          offset: const Offset(0, floatOffset),
           child: Transform.scale(
             scale: hoverScale * tapScale,
             child: GestureDetector(
@@ -472,9 +473,9 @@ class _TextPhysicalEntityWidgetState extends State<TextPhysicalEntityWidget>
 
 // 热气效果绘制器
 class HeatEffectPainter extends CustomPainter {
-  final double progress;
 
   HeatEffectPainter(this.progress);
+  final double progress;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -509,9 +510,9 @@ class HeatEffectPainter extends CustomPainter {
 
 // 闪光效果绘制器
 class SparkleEffectPainter extends CustomPainter {
-  final double progress;
 
   SparkleEffectPainter(this.progress);
+  final double progress;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -542,9 +543,9 @@ class SparkleEffectPainter extends CustomPainter {
 
 // 波纹效果绘制器
 class WaveEffectPainter extends CustomPainter {
-  final double progress;
 
   WaveEffectPainter(this.progress);
+  final double progress;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -574,9 +575,9 @@ class WaveEffectPainter extends CustomPainter {
 
 // 芳香效果绘制器
 class AromaEffectPainter extends CustomPainter {
-  final double progress;
 
   AromaEffectPainter(this.progress);
+  final double progress;
 
   @override
   void paint(Canvas canvas, Size size) {

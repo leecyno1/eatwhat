@@ -16,8 +16,8 @@ class TokenService {
   /// 生成JWT令牌
   static Future<TokenPair> generateTokenPair(String userId) async {
     final now = DateTime.now();
-    final tokenExpiry = now.add(Duration(hours: _tokenExpiryHours));
-    final refreshTokenExpiry = now.add(Duration(days: _refreshTokenExpiryDays));
+    final tokenExpiry = now.add(const Duration(hours: _tokenExpiryHours));
+    final refreshTokenExpiry = now.add(const Duration(days: _refreshTokenExpiryDays));
 
     // 生成访问令牌
     final accessToken = _generateToken(userId, tokenExpiry);
@@ -96,7 +96,7 @@ class TokenService {
 
   /// 获取当前存储的令牌
   static Future<String?> getCurrentToken() async {
-    return await SecureStorageService.getSecureString(_tokenKey);
+    return SecureStorageService.getSecureString(_tokenKey);
   }
 
   /// 清除所有令牌
@@ -208,10 +208,6 @@ class TokenService {
 
 /// 令牌对
 class TokenPair {
-  final String accessToken;
-  final String refreshToken;
-  final DateTime expiresAt;
-  final DateTime refreshExpiresAt;
 
   TokenPair({
     required this.accessToken,
@@ -219,14 +215,14 @@ class TokenPair {
     required this.expiresAt,
     required this.refreshExpiresAt,
   });
+  final String accessToken;
+  final String refreshToken;
+  final DateTime expiresAt;
+  final DateTime refreshExpiresAt;
 }
 
 /// 令牌验证结果
 class TokenValidationResult {
-  final bool isValid;
-  final String? userId;
-  final DateTime? expiresAt;
-  final String? error;
 
   TokenValidationResult({
     required this.isValid,
@@ -234,14 +230,14 @@ class TokenValidationResult {
     this.expiresAt,
     this.error,
   });
+  final bool isValid;
+  final String? userId;
+  final DateTime? expiresAt;
+  final String? error;
 }
 
 /// 令牌信息
 class TokenInfo {
-  final String userId;
-  final bool isValid;
-  final DateTime expiresAt;
-  final bool isExpiringSoon;
 
   TokenInfo({
     required this.userId,
@@ -249,4 +245,8 @@ class TokenInfo {
     required this.expiresAt,
     required this.isExpiringSoon,
   });
+  final String userId;
+  final bool isValid;
+  final DateTime expiresAt;
+  final bool isExpiringSoon;
 }

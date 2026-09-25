@@ -4,14 +4,14 @@ import '../../../core/models/bubble.dart';
 /// 增强版气泡组件 (已简化)
 /// 移除了复杂的液态效果，现在是一个带有动画效果的标准气泡
 class EnhancedBubbleWidget extends StatefulWidget {
-  final Bubble bubble;
-  final VoidCallback? onTap;
 
   const EnhancedBubbleWidget({
     super.key,
     required this.bubble,
     this.onTap,
   });
+  final Bubble bubble;
+  final VoidCallback? onTap;
 
   @override
   State<EnhancedBubbleWidget> createState() => _EnhancedBubbleWidgetState();

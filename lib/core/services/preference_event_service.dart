@@ -9,13 +9,13 @@ import '../repositories/user_preference_repository.dart';
 
 /// 服务: 记录用户味觉行为事件并广播变更
 class PreferenceEventService {
+
+  PreferenceEventService(this._preferenceRepository);
   static const String _eventBoxName = 'user_taste_events';
 
   final UserPreferenceRepository _preferenceRepository;
   Box<Map<String, dynamic>>? _eventBox;
   final StreamController<UserTasteAction> _eventController = StreamController.broadcast();
-
-  PreferenceEventService(this._preferenceRepository);
 
   Stream<UserTasteAction> get eventStream => _eventController.stream;
 

@@ -1,6 +1,6 @@
+import 'package:eatwhat_app/v2/core/data/models/meal_planning_direction.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_pairing_model.dart';
-import 'package:eatwhat_app/v2/core/data/models/meal_planning_direction.dart';
 import 'package:eatwhat_app/v2/features/result/controllers/result_pairing_suggestion_controller.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_pairing_band.dart';
 import 'package:flutter/material.dart';

@@ -6,11 +6,6 @@ import 'package:flutter/foundation.dart';
 
 /// Chrome DevTools Protocol (CDP) WebSocket消息
 class CdpMessage {
-  final int id;
-  final String method;
-  final Map<String, dynamic>? params;
-  final dynamic result;
-  final String? error;
 
   CdpMessage({
     required this.id,
@@ -29,14 +24,15 @@ class CdpMessage {
       error: json['error']?.toString(),
     );
   }
+  final int id;
+  final String method;
+  final Map<String, dynamic>? params;
+  final dynamic result;
+  final String? error;
 }
 
 /// Chrome标签页信息
 class ChromeTab {
-  final String id;
-  final String title;
-  final String url;
-  final String webSocketUrl;
 
   ChromeTab({
     required this.id,
@@ -53,6 +49,10 @@ class ChromeTab {
       webSocketUrl: json['webSocketDebuggerUrl'] as String,
     );
   }
+  final String id;
+  final String title;
+  final String url;
+  final String webSocketUrl;
 }
 
 /// Chrome CDP服务 - 通过WebSocket连接Chrome浏览器

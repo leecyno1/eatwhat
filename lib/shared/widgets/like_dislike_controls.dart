@@ -3,13 +3,6 @@ import 'package:flutter/services.dart';
 
 /// 喜欢/不喜欢控制组件（顶部版本）
 class TopLikeDislikeControls extends StatefulWidget {
-  final int likedCount;
-  final int dislikedCount;
-  final VoidCallback? onShowLiked;
-  final VoidCallback? onShowDisliked;
-  final VoidCallback? onReset;
-  final Color? backgroundColor;
-  final Color? textColor;
 
   const TopLikeDislikeControls({
     super.key,
@@ -21,6 +14,13 @@ class TopLikeDislikeControls extends StatefulWidget {
     this.backgroundColor,
     this.textColor,
   });
+  final int likedCount;
+  final int dislikedCount;
+  final VoidCallback? onShowLiked;
+  final VoidCallback? onShowDisliked;
+  final VoidCallback? onReset;
+  final Color? backgroundColor;
+  final Color? textColor;
 
   @override
   State<TopLikeDislikeControls> createState() => _TopLikeDislikeControlsState();
@@ -114,7 +114,6 @@ class _TopLikeDislikeControlsState extends State<TopLikeDislikeControls>
         ],
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.5),
-          width: 1,
         ),
       ),
       child: Row(
@@ -147,7 +146,6 @@ class _TopLikeDislikeControlsState extends State<TopLikeDislikeControls>
                               BoxShadow(
                                 color: const Color(0xFFFF6B8A).withValues(alpha: 0.3),
                                 blurRadius: 8,
-                                spreadRadius: 0,
                               ),
                             ],
                           ),
@@ -237,7 +235,6 @@ class _TopLikeDislikeControlsState extends State<TopLikeDislikeControls>
                               BoxShadow(
                                 color: const Color(0xFF9B9B9B).withValues(alpha: 0.3),
                                 blurRadius: 8,
-                                spreadRadius: 0,
                               ),
                             ],
                           ),
@@ -316,10 +313,6 @@ class _TopLikeDislikeControlsState extends State<TopLikeDislikeControls>
 
 /// 状态指示器组件
 class StatusIndicator extends StatefulWidget {
-  final String text;
-  final IconData icon;
-  final Color color;
-  final bool isActive;
 
   const StatusIndicator({
     super.key,
@@ -328,6 +321,10 @@ class StatusIndicator extends StatefulWidget {
     required this.color,
     this.isActive = false,
   });
+  final String text;
+  final IconData icon;
+  final Color color;
+  final bool isActive;
 
   @override
   State<StatusIndicator> createState() => _StatusIndicatorState();
@@ -385,7 +382,6 @@ class _StatusIndicatorState extends State<StatusIndicator> with SingleTickerProv
               borderRadius: BorderRadius.circular(15),
               border: Border.all(
                 color: widget.color.withValues(alpha: widget.isActive ? 0.5 : 0.3),
-                width: 1,
               ),
             ),
             child: Row(

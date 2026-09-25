@@ -1,20 +1,21 @@
 import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 
-import '../models/recipe.dart';
-import '../models/food.dart';
 import '../models/bubble.dart';
+import '../models/food.dart';
+import '../models/recipe.dart';
 import '../models/user_preference.dart';
-import 'xiachufang_crawler_service.dart';
 import 'taste_mapping_algorithm_service.dart';
+import 'xiachufang_crawler_service.dart';
 
 /// 菜谱推荐数据库同步服务
 /// Phase 3: 实现菜谱数据库与推荐系统的完全同步机制
 class RecipeRecommendationSyncService {
-  static final RecipeRecommendationSyncService _instance =
-      RecipeRecommendationSyncService._internal();
   factory RecipeRecommendationSyncService() => _instance;
   RecipeRecommendationSyncService._internal();
+  static final RecipeRecommendationSyncService _instance =
+      RecipeRecommendationSyncService._internal();
 
   final XiachufangCrawlerService _crawlerService = XiachufangCrawlerService();
   final TasteMappingAlgorithmService _tasteMappingService = TasteMappingAlgorithmService();
@@ -84,7 +85,6 @@ class RecipeRecommendationSyncService {
 
         final crawlResult = await _crawlerService.startCrawling(
           maxRecipes: maxRecipes,
-          includeImages: true,
         );
 
         if (!crawlResult.success) {
@@ -478,12 +478,6 @@ class RecipeRecommendationSyncService {
 
 /// 同步结果数据模型
 class SyncResult {
-  final bool success;
-  final String message;
-  final SyncType syncType;
-  final int? recipesCount;
-  final int? foodsCount;
-  final Duration? duration;
 
   SyncResult({
     required this.success,
@@ -493,6 +487,12 @@ class SyncResult {
     this.foodsCount,
     this.duration,
   });
+  final bool success;
+  final String message;
+  final SyncType syncType;
+  final int? recipesCount;
+  final int? foodsCount;
+  final Duration? duration;
 
   @override
   String toString() =>
@@ -501,15 +501,15 @@ class SyncResult {
 
 /// 同步进度事件
 class SyncProgressEvent {
-  final SyncProgressType type;
-  final String message;
-  final DateTime timestamp;
 
   SyncProgressEvent({
     required this.type,
     required this.message,
     required this.timestamp,
   });
+  final SyncProgressType type;
+  final String message;
+  final DateTime timestamp;
 }
 
 /// 枚举定义

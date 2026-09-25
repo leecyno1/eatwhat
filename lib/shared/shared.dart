@@ -8,12 +8,10 @@
 /// ```
 library;
 
+// 常量导出
+export 'constants/app_constants.dart';
+// 主题导出
+export 'themes/colors.dart';
 // 组件导出
 export 'widgets/enhanced_card.dart';
 export 'widgets/performance_monitor.dart';
-
-// 常量导出
-export 'constants/app_constants.dart';
-
-// 主题导出
-export 'themes/colors.dart';

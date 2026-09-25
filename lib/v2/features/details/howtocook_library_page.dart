@@ -2,9 +2,9 @@ import 'package:eatwhat_app/v2/core/data/models/howtocook_recipe_detail.dart';
 import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
 import 'package:eatwhat_app/v2/core/services/v2_howtocook_recipe_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
+import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:eatwhat_app/v2/features/details/recipe_detail_page.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/floating_editorial_background.dart';
-import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

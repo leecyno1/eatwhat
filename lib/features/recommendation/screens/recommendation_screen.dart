@@ -1,13 +1,14 @@
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import '../../bubble/controllers/bubble_controller.dart';
+import 'package:provider/provider.dart';
+
 import '../../../core/models/food.dart';
 import '../../../core/services/incremental_learning_service.dart';
-import '../../../shared/widgets/taste_feedback_slider.dart';
-import '../widgets/food_recommendation_loading.dart';
-import '../../../shared/widgets/loading_button.dart';
 import '../../../shared/themes/design_tokens.dart';
+import '../../../shared/widgets/loading_button.dart';
+import '../../../shared/widgets/taste_feedback_slider.dart';
 import '../../../shared/widgets/ui/rounded_card.dart';
+import '../../bubble/controllers/bubble_controller.dart';
+import '../widgets/food_recommendation_loading.dart';
 
 /// 推荐结果页面
 class RecommendationScreen extends StatefulWidget {
@@ -353,7 +354,6 @@ class _RecommendationScreenState extends State<RecommendationScreen> with Ticker
           child: TasteFeedbackSlider(
             label: '喜欢这个推荐吗？',
             initialValue: 0.6,
-            useStarRating: true,
             onChanged: (intensity) {
               _recordPositiveFeedback(food, index, intensity);
             },
@@ -374,7 +374,6 @@ class _RecommendationScreenState extends State<RecommendationScreen> with Ticker
           child: TasteFeedbackSlider(
             label: '为什么不喜欢？',
             initialValue: 0.4,
-            useStarRating: true,
             onChanged: (intensity) {
               _recordNegativeFeedback(food, index, intensity);
             },
@@ -663,7 +662,7 @@ class _RecommendationScreenState extends State<RecommendationScreen> with Ticker
                   style: const TextStyle(fontSize: 12),
                 ),
                 backgroundColor: bubble.color.withValues(alpha: 0.2),
-                side: BorderSide(color: bubble.color, width: 1),
+                side: BorderSide(color: bubble.color),
               );
             }).toList(),
           ),

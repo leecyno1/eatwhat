@@ -1,5 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 
 import '../utils/memory_manager.dart';
 
@@ -31,9 +32,9 @@ enum AdType {
 
 /// 变现服务 - 处理所有商业化功能
 class MonetizationService {
-  static final MonetizationService _instance = MonetizationService._internal();
   factory MonetizationService() => _instance;
   MonetizationService._internal();
+  static final MonetizationService _instance = MonetizationService._internal();
 
   final MemoryManager _memoryManager = MemoryManager();
 
@@ -441,13 +442,6 @@ class MonetizationService {
 
 /// 订阅计划
 class SubscriptionPlan {
-  final String id;
-  final String name;
-  final double price;
-  final String currency;
-  final Duration duration;
-  final List<String> features;
-  final bool isPopular;
 
   SubscriptionPlan({
     required this.id,
@@ -458,17 +452,17 @@ class SubscriptionPlan {
     required this.features,
     required this.isPopular,
   });
+  final String id;
+  final String name;
+  final double price;
+  final String currency;
+  final Duration duration;
+  final List<String> features;
+  final bool isPopular;
 }
 
 /// 用户订阅
 class UserSubscription {
-  final String userId;
-  final String planId;
-  final String planName;
-  final DateTime startDate;
-  final DateTime endDate;
-  final bool isActive;
-  final List<String> features;
 
   UserSubscription({
     required this.userId,
@@ -479,19 +473,19 @@ class UserSubscription {
     required this.isActive,
     required this.features,
   });
+  final String userId;
+  final String planId;
+  final String planName;
+  final DateTime startDate;
+  final DateTime endDate;
+  final bool isActive;
+  final List<String> features;
 
   bool get isExpired => DateTime.now().isAfter(endDate);
 }
 
 /// 餐厅合作关系
 class RestaurantPartnership {
-  final String restaurantId;
-  final String restaurantName;
-  final PartnerTier tier;
-  final double commissionRate;
-  final DateTime startDate;
-  final DateTime? endDate;
-  final Map<String, dynamic> terms;
 
   RestaurantPartnership({
     required this.restaurantId,
@@ -502,23 +496,17 @@ class RestaurantPartnership {
     this.endDate,
     required this.terms,
   });
+  final String restaurantId;
+  final String restaurantName;
+  final PartnerTier tier;
+  final double commissionRate;
+  final DateTime startDate;
+  final DateTime? endDate;
+  final Map<String, dynamic> terms;
 }
 
 /// 广告活动
 class AdvertisingCampaign {
-  final String id;
-  final String restaurantId;
-  final AdType adType;
-  final double budget;
-  double remainingBudget;
-  final DateTime startDate;
-  final DateTime endDate;
-  final String targetAudience;
-  final Map<String, dynamic> creativeAssets;
-  bool isActive;
-  int impressions;
-  int clicks;
-  int conversions;
 
   AdvertisingCampaign({
     required this.id,
@@ -535,6 +523,19 @@ class AdvertisingCampaign {
     required this.clicks,
     required this.conversions,
   });
+  final String id;
+  final String restaurantId;
+  final AdType adType;
+  final double budget;
+  double remainingBudget;
+  final DateTime startDate;
+  final DateTime endDate;
+  final String targetAudience;
+  final Map<String, dynamic> creativeAssets;
+  bool isActive;
+  int impressions;
+  int clicks;
+  int conversions;
 
   double get ctr => clicks / (impressions == 0 ? 1 : impressions);
   double get conversionRate => conversions / (clicks == 0 ? 1 : clicks);
@@ -542,15 +543,6 @@ class AdvertisingCampaign {
 
 /// 佣金结果
 class CommissionResult {
-  final String orderId;
-  final double orderValue;
-  final double commissionRate;
-  final double commissionAmount;
-  final double platformFee;
-  final double netCommission;
-  final String restaurantId;
-  final String platform;
-  final DateTime timestamp;
 
   CommissionResult({
     required this.orderId,
@@ -563,14 +555,19 @@ class CommissionResult {
     required this.platform,
     required this.timestamp,
   });
+  final String orderId;
+  final double orderValue;
+  final double commissionRate;
+  final double commissionAmount;
+  final double platformFee;
+  final double netCommission;
+  final String restaurantId;
+  final String platform;
+  final DateTime timestamp;
 }
 
 /// 订阅结果
 class SubscriptionResult {
-  final bool success;
-  final UserSubscription? subscription;
-  final String? transactionId;
-  final String message;
 
   SubscriptionResult({
     required this.success,
@@ -578,28 +575,27 @@ class SubscriptionResult {
     this.transactionId,
     required this.message,
   });
+  final bool success;
+  final UserSubscription? subscription;
+  final String? transactionId;
+  final String message;
 }
 
 /// 支付结果
 class PaymentResult {
-  final bool success;
-  final String? transactionId;
-  final String? errorMessage;
 
   PaymentResult({
     required this.success,
     this.transactionId,
     this.errorMessage,
   });
+  final bool success;
+  final String? transactionId;
+  final String? errorMessage;
 }
 
 /// 广告推荐
 class AdRecommendation {
-  final String campaignId;
-  final String restaurantId;
-  final AdType adType;
-  final Map<String, dynamic> content;
-  final double targetScore;
 
   AdRecommendation({
     required this.campaignId,
@@ -608,23 +604,23 @@ class AdRecommendation {
     required this.content,
     required this.targetScore,
   });
+  final String campaignId;
+  final String restaurantId;
+  final AdType adType;
+  final Map<String, dynamic> content;
+  final double targetScore;
 }
 
 /// 日期期间
 class DatePeriod {
-  final DateTime start;
-  final DateTime end;
 
   DatePeriod({required this.start, required this.end});
+  final DateTime start;
+  final DateTime end;
 }
 
 /// 数据洞察报告
 class DataInsightsReport {
-  final String clientId;
-  final DatePeriod period;
-  final List<String> metrics;
-  final Map<String, dynamic> insights;
-  final DateTime generatedAt;
 
   DataInsightsReport({
     required this.clientId,
@@ -633,4 +629,9 @@ class DataInsightsReport {
     required this.insights,
     required this.generatedAt,
   });
+  final String clientId;
+  final DatePeriod period;
+  final List<String> metrics;
+  final Map<String, dynamic> insights;
+  final DateTime generatedAt;
 }

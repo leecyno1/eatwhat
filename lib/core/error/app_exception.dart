@@ -1,16 +1,17 @@
 /// 应用统一异常类型定义
+library;
 
 /// 应用异常基类
 abstract class AppException implements Exception {
-  final String message;
-  final dynamic originalError;
-  final StackTrace? stackTrace;
 
   AppException({
     required this.message,
     this.originalError,
     this.stackTrace,
   });
+  final String message;
+  final dynamic originalError;
+  final StackTrace? stackTrace;
 
   @override
   String toString() => message;
@@ -19,87 +20,63 @@ abstract class AppException implements Exception {
 /// 认证异常
 class AuthException extends AppException {
   AuthException({
-    required String message,
-    dynamic originalError,
-    StackTrace? stackTrace,
-  }) : super(
-    message: message,
-    originalError: originalError,
-    stackTrace: stackTrace,
-  );
+    required super.message,
+    super.originalError,
+    super.stackTrace,
+  });
 }
 
 /// 网络异常
 class NetworkException extends AppException {
-  final int? statusCode;
-  final String? url;
 
   NetworkException({
-    required String message,
+    required super.message,
     this.statusCode,
     this.url,
-    dynamic originalError,
-    StackTrace? stackTrace,
-  }) : super(
-    message: message,
-    originalError: originalError,
-    stackTrace: stackTrace,
-  );
+    super.originalError,
+    super.stackTrace,
+  });
+  final int? statusCode;
+  final String? url;
 }
 
 /// 数据解析异常
 class DataException extends AppException {
   DataException({
-    required String message,
-    dynamic originalError,
-    StackTrace? stackTrace,
-  }) : super(
-    message: message,
-    originalError: originalError,
-    stackTrace: stackTrace,
-  );
+    required super.message,
+    super.originalError,
+    super.stackTrace,
+  });
 }
 
 /// 本地存储异常
 class StorageException extends AppException {
   StorageException({
-    required String message,
-    dynamic originalError,
-    StackTrace? stackTrace,
-  }) : super(
-    message: message,
-    originalError: originalError,
-    stackTrace: stackTrace,
-  );
+    required super.message,
+    super.originalError,
+    super.stackTrace,
+  });
 }
 
 /// 业务逻辑异常
 class BusinessException extends AppException {
-  final String? code;
 
   BusinessException({
-    required String message,
+    required super.message,
     this.code,
-    dynamic originalError,
-    StackTrace? stackTrace,
-  }) : super(
-    message: message,
-    originalError: originalError,
-    stackTrace: stackTrace,
-  );
+    super.originalError,
+    super.stackTrace,
+  });
+  final String? code;
 }
 
 /// 未知异常
 class UnknownException extends AppException {
   UnknownException({
-    required String message,
-    dynamic originalError,
-    StackTrace? stackTrace,
-  }) : super(
-    message: message,
-    originalError: originalError,
-    stackTrace: stackTrace,
-  );
+    required super.message,
+    super.originalError,
+    super.stackTrace,
+  });
 }
 
 /// 异常工厂 - 将原始异常转换为AppException

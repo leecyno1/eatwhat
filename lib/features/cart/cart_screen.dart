@@ -1,6 +1,7 @@
+import 'package:eatwhat_app/core/services/deep_link_service.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:eatwhat_app/core/services/deep_link_service.dart';
+
 import 'controllers/cart_controller.dart';
 import 'widgets/cart_item_card.dart';
 import 'widgets/platform_selector.dart';
@@ -417,7 +418,7 @@ class _CartScreenContent extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CircularProgressIndicator(),
+                const CircularProgressIndicator(),
                 const SizedBox(height: 16),
                 Text('正在打开${platform.displayName}...'),
               ],

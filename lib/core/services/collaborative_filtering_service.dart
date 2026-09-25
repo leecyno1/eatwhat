@@ -5,10 +5,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 /// 协同过滤推荐服务
 /// 实现基于用户-物品交互矩阵的协同过滤算法
 class CollaborativeFilteringService {
-  static final CollaborativeFilteringService _instance =
-      CollaborativeFilteringService._internal();
   factory CollaborativeFilteringService() => _instance;
   CollaborativeFilteringService._internal();
+  static final CollaborativeFilteringService _instance =
+      CollaborativeFilteringService._internal();
 
   // Box 名称
   static const String _boxName = 'collaborative_filtering_box';
@@ -73,7 +73,7 @@ class CollaborativeFilteringService {
 
     try {
       final matrixData = _userItemMatrix.map(
-        (userId, items) => MapEntry(userId, items),
+        MapEntry.new,
       );
       await _box!.put(_matrixKey, matrixData);
     } catch (e) {
@@ -257,9 +257,6 @@ class CollaborativeFilteringService {
 
 /// 简单定时器（避免引入dart:async的复杂依赖）
 class Timer {
-  final Duration duration;
-  final VoidCallback callback;
-  bool _cancelled = false;
 
   Timer(this.duration, this.callback) {
     Future.delayed(duration, () {
@@ -268,6 +265,9 @@ class Timer {
       }
     });
   }
+  final Duration duration;
+  final VoidCallback callback;
+  bool _cancelled = false;
 
   void cancel() {
     _cancelled = true;

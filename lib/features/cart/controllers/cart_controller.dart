@@ -78,7 +78,6 @@ class CartController extends ChangeNotifier {
         price: price,
         quantity: quantity,
         specs: specs ?? {},
-        recipeId: null,
       );
 
       await _cartService.addItem(cartItem);

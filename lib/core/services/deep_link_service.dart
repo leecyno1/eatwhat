@@ -1,7 +1,7 @@
+import 'package:eatwhat_app/core/models/cart_item.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:eatwhat_app/core/models/cart_item.dart';
 
 /// 配送平台枚举
 enum DeliveryPlatform {
@@ -32,9 +32,9 @@ enum DeliveryPlatform {
 /// - H5降级方案
 /// - 购物车预填
 class DeepLinkService {
-  static final DeepLinkService _instance = DeepLinkService._internal();
   factory DeepLinkService() => _instance;
   DeepLinkService._internal();
+  static final DeepLinkService _instance = DeepLinkService._internal();
 
   static const _channel = MethodChannel('app.channel.platform');
 

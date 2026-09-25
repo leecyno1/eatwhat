@@ -7,8 +7,8 @@ class PreferenceGestureHint extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: const [
+    return const Row(
+      children: [
         Expanded(
           child: _HintCard(
             title: '上滑收进偏爱',

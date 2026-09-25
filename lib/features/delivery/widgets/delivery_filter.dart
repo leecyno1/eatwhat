@@ -2,9 +2,6 @@ import 'package:flutter/material.dart';
 
 /// 外卖过滤器
 class DeliveryFilter extends StatefulWidget {
-  final DeliveryFilterOptions initialOptions;
-  final Function(DeliveryFilterOptions) onFilterChanged;
-  final bool showQuickFilters;
 
   const DeliveryFilter({
     super.key,
@@ -12,6 +9,9 @@ class DeliveryFilter extends StatefulWidget {
     required this.onFilterChanged,
     this.showQuickFilters = true,
   });
+  final DeliveryFilterOptions initialOptions;
+  final Function(DeliveryFilterOptions) onFilterChanged;
+  final bool showQuickFilters;
 
   @override
   State<DeliveryFilter> createState() => _DeliveryFilterState();
@@ -109,7 +109,6 @@ class _DeliveryFilterState extends State<DeliveryFilter> {
       checkmarkColor: Colors.white,
       side: BorderSide(
         color: isSelected ? Colors.orange : Colors.grey[300]!,
-        width: 1,
       ),
     );
   }
@@ -154,7 +153,6 @@ class _DeliveryFilterState extends State<DeliveryFilter> {
               _options.minPrice ?? 0,
               _options.maxPrice ?? 100,
             ),
-            min: 0,
             max: 100,
             divisions: 20,
             labels: RangeLabels(
@@ -275,7 +273,6 @@ class _DeliveryFilterState extends State<DeliveryFilter> {
                 checkmarkColor: Colors.white,
                 side: BorderSide(
                   color: isSelected ? Colors.orange : Colors.grey[300]!,
-                  width: 1,
                 ),
               );
             }).toList(),
@@ -353,17 +350,6 @@ class _DeliveryFilterState extends State<DeliveryFilter> {
 
 /// 筛选选项数据类
 class DeliveryFilterOptions {
-  final bool freeDelivery;
-  final bool fastDelivery;
-  final bool highRating;
-  final bool newRestaurants;
-  final bool brandRestaurants;
-  final double? minPrice;
-  final double? maxPrice;
-  final double? maxDistance;
-  final int? maxDeliveryTime;
-  final List<String>? cuisineTypes;
-  final SortType sortType;
 
   const DeliveryFilterOptions({
     this.freeDelivery = false,
@@ -378,6 +364,17 @@ class DeliveryFilterOptions {
     this.cuisineTypes,
     this.sortType = SortType.recommended,
   });
+  final bool freeDelivery;
+  final bool fastDelivery;
+  final bool highRating;
+  final bool newRestaurants;
+  final bool brandRestaurants;
+  final double? minPrice;
+  final double? maxPrice;
+  final double? maxDistance;
+  final int? maxDeliveryTime;
+  final List<String>? cuisineTypes;
+  final SortType sortType;
 
   DeliveryFilterOptions copyWith({
     bool? freeDelivery,
@@ -453,14 +450,14 @@ enum SortType {
 
 /// 筛选按钮
 class FilterButton extends StatelessWidget {
-  final DeliveryFilterOptions options;
-  final VoidCallback onTap;
 
   const FilterButton({
     super.key,
     required this.options,
     required this.onTap,
   });
+  final DeliveryFilterOptions options;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -476,7 +473,6 @@ class FilterButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: hasActiveFilters ? Colors.orange : Colors.grey[300]!,
-            width: 1,
           ),
         ),
         child: Row(

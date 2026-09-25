@@ -1,19 +1,20 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:math';
 
+import 'package:flutter/material.dart';
+
+import '../../../core/models/food.dart';
 import '../../../core/models/physical_entity.dart';
 import '../../../core/models/physical_entity_factory.dart';
-import '../../../core/physics/zero_gravity_physics.dart';
-import '../../../core/models/food.dart';
 import '../../../core/models/user_preference.dart';
-import '../../../core/services/simple_food_database.dart';
-import '../../../core/services/user_preference_manager.dart';
 import '../../../core/models/user_taste_action.dart';
+import '../../../core/physics/zero_gravity_physics.dart';
 import '../../../core/repositories/user_preference_repository.dart';
 import '../../../core/services/preference_event_service.dart';
 import '../../../core/services/recommendation_engine.dart';
 import '../../../core/services/recommendation_orchestrator.dart';
+import '../../../core/services/simple_food_database.dart';
+import '../../../core/services/user_preference_manager.dart';
 
 /// 物理实体控制器 - 管理零重力环境下的物理实体系统
 class PhysicalEntityController extends ChangeNotifier {
@@ -109,7 +110,7 @@ class PhysicalEntityController extends ChangeNotifier {
       _entities.clear();
 
       // 使用新的偏好系统随机选择30个实体
-      final selectedEntities = _preferenceManager.selectRandomEntities(count: 30);
+      final selectedEntities = _preferenceManager.selectRandomEntities();
 
       // 应用用户偏好到实体（动态大小和透明度）
       final entitiesWithPreferences =
@@ -255,7 +256,7 @@ class PhysicalEntityController extends ChangeNotifier {
             (_containerSize!.height - newSize.height).abs();
         if (sizeChange > 10) {
           // 只有变化超过10像素时才重新分布
-          debugPrint('容器尺寸显著变化，重新分布气泡: ${_containerSize} -> $newSize');
+          debugPrint('容器尺寸显著变化，重新分布气泡: $_containerSize -> $newSize');
           ZeroGravityPhysics.redistributeEntities(_entities, newSize);
 
           // 延迟通知，避免在build过程中调用setState
@@ -496,7 +497,7 @@ class PhysicalEntityController extends ChangeNotifier {
       final entity = _entities[index];
       final direction = (entity.position - center).distance > 0
           ? (entity.position - center) / (entity.position - center).distance
-          : Offset(1, 0);
+          : const Offset(1, 0);
 
       final force = direction * strength;
       final newVelocity = entity.velocity + force;
@@ -568,7 +569,6 @@ class PhysicalEntityController extends ChangeNotifier {
       final recommendations = await database.getRecommendations(
         preferences: preferences,
         tastes: tastes.isNotEmpty ? tastes : null,
-        limit: 10,
       );
 
       _recommendedFoods.clear();
@@ -596,7 +596,7 @@ class PhysicalEntityController extends ChangeNotifier {
     debugPrint('使用备用推荐策略');
 
     final fallbackFoods = [
-      Food(
+      const Food(
         id: 'fallback_001',
         name: '宫保鸡丁',
         description: '川菜经典，麻辣鲜香',
@@ -605,7 +605,7 @@ class PhysicalEntityController extends ChangeNotifier {
         price: 28.0,
         tasteAttributes: ['辣', '鲜', '香'],
       ),
-      Food(
+      const Food(
         id: 'fallback_002',
         name: '糖醋里脊',
         description: '酸甜可口，老少皆宜',
@@ -614,7 +614,7 @@ class PhysicalEntityController extends ChangeNotifier {
         price: 32.0,
         tasteAttributes: ['甜', '酸', '香'],
       ),
-      Food(
+      const Food(
         id: 'fallback_003',
         name: '清蒸鲈鱼',
         description: '鲜美清淡，营养丰富',

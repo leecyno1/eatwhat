@@ -15,7 +15,7 @@ Future<void> main(List<String> args) async {
 
   print('🔐 美团开放平台自动登录');
   print('手机号: $phone');
-  print('密码: ' + ('*' * password.length));
+  print('密码: ${'*' * password.length}');
   print('');
 
   try {
@@ -38,10 +38,10 @@ Future<void> main(List<String> args) async {
 
     // 导航到美团开放平台
     print('🌐 导航到美团开放平台...');
-    final url = 'https://open.meituan.com/user/login';
+    const url = 'https://open.meituan.com/user/login';
     await _navigateTo(wsUrl, url);
     print('✅ 已打开: $url');
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 3));
     print('');
 
     // 查找并填写登录表单
@@ -52,7 +52,7 @@ Future<void> main(List<String> args) async {
 
     // 等待登录完成
     print('⏳ 等待登录完成...');
-    await Future.delayed(Duration(seconds: 5));
+    await Future.delayed(const Duration(seconds: 5));
 
     // 检查页面状态
     print('📊 检查登录状态...');
@@ -131,7 +131,7 @@ Future<void> _fillAndSubmitLoginForm(
     '''
   });
 
-  await Future.delayed(Duration(milliseconds: 500));
+  await Future.delayed(const Duration(milliseconds: 500));
 
   // 填写密码
   await _sendCdpCommand(wsUrl, 'Runtime.evaluate', {
@@ -149,7 +149,7 @@ Future<void> _fillAndSubmitLoginForm(
     '''
   });
 
-  await Future.delayed(Duration(milliseconds: 500));
+  await Future.delayed(const Duration(milliseconds: 500));
 
   // 点击登录按钮
   await _sendCdpCommand(wsUrl, 'Runtime.evaluate', {
@@ -182,7 +182,7 @@ Future<String?> _getCurrentUrl(String wsUrl) async {
 Future<dynamic> _sendCdpCommand(
     String wsUrl, String method, Map<String, dynamic> params) async {
   final ws = await WebSocket.connect(wsUrl);
-  int messageId = 1;
+  const int messageId = 1;
   final completer = Completer<dynamic>();
 
   try {
@@ -213,8 +213,8 @@ Future<dynamic> _sendCdpCommand(
     }));
 
     final result = await completer.future
-        .timeout(Duration(seconds: 10))
-        .whenComplete(() => subscription.cancel());
+        .timeout(const Duration(seconds: 10))
+        .whenComplete(subscription.cancel);
 
     return result;
   } finally {

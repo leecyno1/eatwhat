@@ -3,7 +3,7 @@ import '../models/food.dart';
 /// 食物数据库
 class FoodDatabase {
   static final List<Food> _foods = [
-    Food(
+    const Food(
       id: '1',
       name: '麻辣香锅',
       description: '四川特色美食，麻辣鲜香，配菜丰富，可自由搭配各种蔬菜和肉类',
@@ -18,7 +18,7 @@ class FoodDatabase {
       price: 38.0,
       restaurant: '川味小厨',
     ),
-    Food(
+    const Food(
       id: '2',
       name: '广东肠粉',
       description: '广东传统茶点，皮薄馅嫩，口感爽滑，配以特制酱汁',
@@ -33,7 +33,7 @@ class FoodDatabase {
       price: 15.0,
       restaurant: '粤味茶餐厅',
     ),
-    Food(
+    const Food(
       id: '3',
       name: '北京烤鸭',
       description: '北京传统名菜，皮脆肉嫩，肥而不腻，配以薄饼、甜面酱',
@@ -48,7 +48,7 @@ class FoodDatabase {
       price: 128.0,
       restaurant: '京味楼',
     ),
-    Food(
+    const Food(
       id: '4',
       name: '日式拉面',
       description: '日本经典面食，汤头浓郁，面条Q弹，配以叉烧、溏心蛋',
@@ -63,7 +63,7 @@ class FoodDatabase {
       price: 45.0,
       restaurant: '拉面道',
     ),
-    Food(
+    const Food(
       id: '5',
       name: '意大利肉酱面',
       description: '意式经典，肉酱浓郁，面条al dente，撒以帕尔马干酪',

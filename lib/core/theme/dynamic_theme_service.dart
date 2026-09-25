@@ -1,8 +1,13 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+
+import 'package:flutter/material.dart';
 
 /// 动态主题服务 - 根据时间调整背景颜色
 class DynamicThemeService extends ChangeNotifier {
+
+  DynamicThemeService() {
+    _startTimer();
+  }
   Timer? _timer;
   DateTime _currentTime = DateTime.now();
 
@@ -14,10 +19,6 @@ class DynamicThemeService extends ChangeNotifier {
 
   /// 当前时间段描述
   String get timePeriodDescription => _getTimePeriodDescription();
-
-  DynamicThemeService() {
-    _startTimer();
-  }
 
   /// 启动定时器，每分钟更新一次
   /// 暂时禁用以解决气泡乱窜问题

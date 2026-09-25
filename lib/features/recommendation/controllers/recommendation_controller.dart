@@ -1,15 +1,20 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/models/bubble.dart';
 import '../../../core/models/food.dart';
 import '../../../core/models/recipe.dart';
 import '../../../core/models/user_preference.dart';
-import '../../../core/services/storage_service.dart';
 import '../../../core/services/recipe_recommendation_sync_service.dart';
+import '../../../core/services/storage_service.dart';
 import '../../../core/utils/analytics_helper.dart';
 
 /// 增强推荐控制器 - Phase 3 下厨房同步版本
 /// 集成下厨房数据库和智能口味映射算法
 class RecommendationController extends ChangeNotifier {
+
+  RecommendationController() {
+    _initialize();
+  }
   late UserPreference _userPreference;
   List<Food> _recommendations = [];
   bool _isLoading = false;
@@ -22,10 +27,10 @@ class RecommendationController extends ChangeNotifier {
   Map<String, dynamic> _syncStats = {};
 
   // 新增：分类推荐缓存
-  Map<String, List<Food>> _categoryRecommendations = {};
+  final Map<String, List<Food>> _categoryRecommendations = {};
 
   // 新增：统计信息
-  Map<String, int> _categoryStats = {};
+  final Map<String, int> _categoryStats = {};
   double _averageRating = 0.0;
 
   List<Food> get recommendations => _recommendations;
@@ -39,10 +44,6 @@ class RecommendationController extends ChangeNotifier {
   // Phase 3 新增 getter
   bool get isSyncing => _isSyncing;
   Map<String, dynamic> get syncStatistics => _syncStats;
-
-  RecommendationController() {
-    _initialize();
-  }
 
   Future<void> _initialize() async {
     try {
@@ -88,7 +89,6 @@ class RecommendationController extends ChangeNotifier {
         selectedBubbles,
         _userPreference,
         limit: 12,
-        minMatchScore: 0.3,
       );
 
       _recommendations = recommendations;
@@ -173,7 +173,6 @@ class RecommendationController extends ChangeNotifier {
       final recommendations = await _syncService.getSmartRecommendations(
         [], // 空气泡列表
         _userPreference,
-        limit: 10,
         minMatchScore: 0.2, // 降低阈值以获取更多结果
       );
 

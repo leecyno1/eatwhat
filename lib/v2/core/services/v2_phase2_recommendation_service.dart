@@ -1,11 +1,11 @@
 import 'dart:async';
 
+import 'package:eatwhat_app/core/services/unified_recipe_database_service.dart';
 import 'package:eatwhat_app/v2/core/data/models/ai_generation_models.dart';
 import 'package:eatwhat_app/v2/core/data/models/meal_planning_direction.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recommendation_resolution.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
-import 'package:eatwhat_app/core/services/unified_recipe_database_service.dart';
 import 'package:eatwhat_app/v2/core/services/generation_service.dart';
 import 'package:eatwhat_app/v2/core/services/unified_recommendation_service_v2.dart';
 import 'package:eatwhat_app/v2/core/services/v2_howtocook_recipe_service.dart';
@@ -340,7 +340,6 @@ class V2Phase2RecommendationService {
         .generateFusionDishes(
           tags: recallLabels,
           customRequirement: _buildAiRequirement(input),
-          count: 4,
         )
         .timeout(_refineTimeout);
     if (generated.isEmpty) {

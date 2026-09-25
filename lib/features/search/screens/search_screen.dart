@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import '../../../core/data/food_database.dart';
+import '../../../core/models/food.dart';
+import '../../../core/services/storage_service.dart';
 import '../../../shared/themes/design_tokens.dart';
 import '../../../shared/widgets/ui/rounded_card.dart';
 import '../../recommendation/widgets/food_card.dart';
 import '../widgets/search_filters.dart';
 import '../widgets/search_suggestions.dart';
-import '../../../core/models/food.dart';
-import '../../../core/data/food_database.dart';
-import '../../../core/services/storage_service.dart';
 
 /// 搜索页面
 class SearchScreen extends StatefulWidget {
@@ -126,7 +127,7 @@ class _SearchScreenState extends State<SearchScreen> with TickerProviderStateMix
         final queryLower = query.toLowerCase();
 
         // 搜索食物名称
-        if ((food.name).toLowerCase().contains(queryLower)) return true;
+        if (food.name.toLowerCase().contains(queryLower)) return true;
 
         // 搜索菜系
         if ((food.cuisineType ?? '').toLowerCase().contains(queryLower)) return true;
@@ -144,7 +145,7 @@ class _SearchScreenState extends State<SearchScreen> with TickerProviderStateMix
         }
 
         // 搜索场景
-        if ((food.scenarios)?.any((scenario) => scenario.toLowerCase().contains(queryLower)) ==
+        if (food.scenarios?.any((scenario) => scenario.toLowerCase().contains(queryLower)) ==
             true) {
           return true;
         }
@@ -184,7 +185,7 @@ class _SearchScreenState extends State<SearchScreen> with TickerProviderStateMix
 
       // 口味筛选
       if (_selectedTastes.isNotEmpty &&
-          !(_selectedTastes.any((taste) => (food.tasteAttributes ?? const []).contains(taste)))) {
+          !_selectedTastes.any((taste) => (food.tasteAttributes ?? const []).contains(taste))) {
         return false;
       }
 
@@ -258,7 +259,7 @@ class _SearchScreenState extends State<SearchScreen> with TickerProviderStateMix
     final cuisines =
         _allFoods.map((f) => f.cuisineType ?? '').where((e) => e.isNotEmpty).toSet().toList();
     final tastes = _allFoods
-        .expand((f) => (f.tasteAttributes ?? const <String>[]))
+        .expand((f) => f.tasteAttributes ?? const <String>[])
         .toSet()
         .toList()
         .cast<String>();

@@ -10,13 +10,6 @@ enum RecipeCrawlPhase {
 
 // 菜谱抓取进度数据
 class RecipeCrawlProgress {
-  final RecipeCrawlPhase phase;
-  final double progressPercentage;
-  final int totalRecipes;
-  final int processedRecipes;
-  final int successfulRecipes;
-  final int failedRecipes;
-  final String? currentMessage;
 
   RecipeCrawlProgress({
     required this.phase,
@@ -28,6 +21,13 @@ class RecipeCrawlProgress {
     this.currentMessage,
   }) : progressPercentage = progressPercentage ??
             (totalRecipes > 0 ? processedRecipes / totalRecipes : 0.0);
+  final RecipeCrawlPhase phase;
+  final double progressPercentage;
+  final int totalRecipes;
+  final int processedRecipes;
+  final int successfulRecipes;
+  final int failedRecipes;
+  final String? currentMessage;
 
   @override
   String toString() {
@@ -37,14 +37,6 @@ class RecipeCrawlProgress {
 
 // 菜谱抓取结果
 class RecipeCrawlResult {
-  final bool success;
-  final int totalRecipes;
-  final int successfulRecipes;
-  final int failedRecipes;
-  final List<dynamic> recipes; // 添加recipes字段
-  final List<String> errors;
-  final String? errorMessage;
-  final Duration duration;
 
   RecipeCrawlResult({
     bool? success,
@@ -64,6 +56,14 @@ class RecipeCrawlResult {
         success = success ??
             ((failedRecipes ?? failureCount ?? 0) == 0 &&
                 (errorMessage == null || errorMessage.isEmpty));
+  final bool success;
+  final int totalRecipes;
+  final int successfulRecipes;
+  final int failedRecipes;
+  final List<dynamic> recipes; // 添加recipes字段
+  final List<String> errors;
+  final String? errorMessage;
+  final Duration duration;
 
   int get totalProcessed => totalRecipes;
   int get successCount => successfulRecipes;

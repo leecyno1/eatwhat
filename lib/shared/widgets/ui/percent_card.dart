@@ -3,11 +3,11 @@ import '../../../shared/themes/design_tokens.dart';
 import 'rounded_card.dart';
 
 class PercentCard extends StatelessWidget {
+
+  const PercentCard({super.key, required this.percent, required this.title, this.subtitle});
   final int percent;
   final String title;
   final String? subtitle;
-
-  const PercentCard({super.key, required this.percent, required this.title, this.subtitle});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class PercentCard extends StatelessWidget {
                   style: const TextStyle(
                       fontSize: 52, fontWeight: FontWeight.w800, color: DesignTokens.ink)),
               const Spacer(),
-              Icon(Icons.open_in_new_rounded, color: DesignTokens.inkMuted)
+              const Icon(Icons.open_in_new_rounded, color: DesignTokens.inkMuted)
             ],
           ),
         ],

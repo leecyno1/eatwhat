@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
-import '../../../core/models/restaurant.dart';
+
 import '../../../core/models/food_item.dart';
+import '../../../core/models/restaurant.dart';
 import '../../../core/services/delivery_api_service.dart';
 import '../widgets/food_item_card.dart';
 import '../widgets/food_item_detail_dialog.dart';
 
 /// 餐厅菜单页面
 class RestaurantMenuScreen extends StatefulWidget {
-  final Restaurant restaurant;
 
   const RestaurantMenuScreen({
     super.key,
     required this.restaurant,
   });
+  final Restaurant restaurant;
 
   @override
   State<RestaurantMenuScreen> createState() => _RestaurantMenuScreenState();

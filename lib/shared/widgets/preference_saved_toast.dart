@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 /// 偏好保存成功 Toast 组件
 /// 显示在屏幕底部，带有淡入淡出动画
 class PreferenceSavedToast extends StatefulWidget {
-  final bool isLike;
-  final VoidCallback onDismiss;
 
   const PreferenceSavedToast({
     super.key,
     required this.isLike,
     required this.onDismiss,
   });
+  final bool isLike;
+  final VoidCallback onDismiss;
 
   @override
   State<PreferenceSavedToast> createState() => _PreferenceSavedToastState();

@@ -2,12 +2,6 @@ import 'package:dio/dio.dart';
 import 'package:eatwhat_app/v2/core/external/platform/signing/request_signer.dart';
 
 class OpenPlatformClient {
-  final Dio _dio;
-  final String baseUrl;
-  final String appKey;
-  final String appSecret;
-  final String accessToken;
-  final RequestSigner signer;
 
   OpenPlatformClient({
     required Dio dio,
@@ -17,6 +11,12 @@ class OpenPlatformClient {
     required this.accessToken,
     required this.signer,
   }) : _dio = dio;
+  final Dio _dio;
+  final String baseUrl;
+  final String appKey;
+  final String appSecret;
+  final String accessToken;
+  final RequestSigner signer;
 
   bool get isConfigured =>
       baseUrl.isNotEmpty &&

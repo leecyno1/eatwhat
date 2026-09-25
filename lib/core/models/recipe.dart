@@ -25,12 +25,7 @@ enum CookingMethod {
 }
 
 /// 菜谱食材
-class RecipeIngredient {
-  final String name;
-  final String amount;
-  final String unit;
-  final bool isMain; // 是否为主料
-  final String? note; // 备注
+class RecipeIngredient { // 备注
 
   RecipeIngredient({
     required this.name,
@@ -40,14 +35,6 @@ class RecipeIngredient {
     this.note,
   });
 
-  Map<String, dynamic> toJson() => {
-        'name': name,
-        'amount': amount,
-        'unit': unit,
-        'isMain': isMain,
-        'note': note,
-      };
-
   factory RecipeIngredient.fromJson(Map<String, dynamic> json) => RecipeIngredient(
         name: json['name'] ?? '',
         amount: json['amount'] ?? '',
@@ -55,15 +42,23 @@ class RecipeIngredient {
         isMain: json['isMain'] ?? false,
         note: json['note'],
       );
+  final String name;
+  final String amount;
+  final String unit;
+  final bool isMain; // 是否为主料
+  final String? note;
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'amount': amount,
+        'unit': unit,
+        'isMain': isMain,
+        'note': note,
+      };
 }
 
 /// 烹饪步骤
-class CookingStep {
-  final int stepNumber;
-  final String description;
-  final String? imageUrl;
-  final int estimatedTime; // 预计时间（分钟）
-  final String? tip; // 小贴士
+class CookingStep { // 小贴士
 
   CookingStep({
     required this.stepNumber,
@@ -73,14 +68,6 @@ class CookingStep {
     this.tip,
   });
 
-  Map<String, dynamic> toJson() => {
-        'stepNumber': stepNumber,
-        'description': description,
-        'imageUrl': imageUrl,
-        'estimatedTime': estimatedTime,
-        'tip': tip,
-      };
-
   factory CookingStep.fromJson(Map<String, dynamic> json) => CookingStep(
         stepNumber: json['stepNumber'] ?? 0,
         description: json['description'] ?? '',
@@ -88,13 +75,23 @@ class CookingStep {
         estimatedTime: json['estimatedTime'] ?? 0,
         tip: json['tip'],
       );
+  final int stepNumber;
+  final String description;
+  final String? imageUrl;
+  final int estimatedTime; // 预计时间（分钟）
+  final String? tip;
+
+  Map<String, dynamic> toJson() => {
+        'stepNumber': stepNumber,
+        'description': description,
+        'imageUrl': imageUrl,
+        'estimatedTime': estimatedTime,
+        'tip': tip,
+      };
 }
 
 /// 季节性信息
-class SeasonalInfo {
-  final List<String> bestSeasons; // 最佳季节：['春', '夏', '秋', '冬']
-  final List<String> seasonalIngredients; // 时令食材
-  final double seasonalScore; // 季节相关度评分 (0-1)
+class SeasonalInfo { // 季节相关度评分 (0-1)
 
   SeasonalInfo({
     this.bestSeasons = const [],
@@ -102,24 +99,24 @@ class SeasonalInfo {
     this.seasonalScore = 0.5,
   });
 
-  Map<String, dynamic> toJson() => {
-        'bestSeasons': bestSeasons,
-        'seasonalIngredients': seasonalIngredients,
-        'seasonalScore': seasonalScore,
-      };
-
   factory SeasonalInfo.fromJson(Map<String, dynamic> json) => SeasonalInfo(
         bestSeasons: List<String>.from(json['bestSeasons'] ?? []),
         seasonalIngredients: List<String>.from(json['seasonalIngredients'] ?? []),
         seasonalScore: (json['seasonalScore'] ?? 0.5).toDouble(),
       );
+  final List<String> bestSeasons; // 最佳季节：['春', '夏', '秋', '冬']
+  final List<String> seasonalIngredients; // 时令食材
+  final double seasonalScore;
+
+  Map<String, dynamic> toJson() => {
+        'bestSeasons': bestSeasons,
+        'seasonalIngredients': seasonalIngredients,
+        'seasonalScore': seasonalScore,
+      };
 }
 
 /// 所需厨具
-class CookingEquipment {
-  final List<String> required; // 必需厨具
-  final List<String> optional; // 可选厨具
-  final String difficultyLevel; // 厨具要求难度
+class CookingEquipment { // 厨具要求难度
 
   CookingEquipment({
     this.required = const [],
@@ -127,30 +124,24 @@ class CookingEquipment {
     this.difficultyLevel = '基础',
   });
 
-  Map<String, dynamic> toJson() => {
-        'required': required,
-        'optional': optional,
-        'difficultyLevel': difficultyLevel,
-      };
-
   factory CookingEquipment.fromJson(Map<String, dynamic> json) => CookingEquipment(
         required: List<String>.from(json['required'] ?? []),
         optional: List<String>.from(json['optional'] ?? []),
         difficultyLevel: json['difficultyLevel'] ?? '基础',
       );
+  final List<String> required; // 必需厨具
+  final List<String> optional; // 可选厨具
+  final String difficultyLevel;
+
+  Map<String, dynamic> toJson() => {
+        'required': required,
+        'optional': optional,
+        'difficultyLevel': difficultyLevel,
+      };
 }
 
 /// 用户评论
-class Review {
-  final String id;
-  final String userId;
-  final String userName;
-  final double rating;
-  final String content;
-  final DateTime createdAt;
-  final List<String> images; // 用户上传的图片
-  final int likeCount;
-  final bool isVerified; // 是否为认证评论
+class Review { // 是否为认证评论
 
   Review({
     required this.id,
@@ -164,18 +155,6 @@ class Review {
     this.isVerified = false,
   });
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'userId': userId,
-        'userName': userName,
-        'rating': rating,
-        'content': content,
-        'createdAt': createdAt.toIso8601String(),
-        'images': images,
-        'likeCount': likeCount,
-        'isVerified': isVerified,
-      };
-
   factory Review.fromJson(Map<String, dynamic> json) => Review(
         id: json['id'] ?? '',
         userId: json['userId'] ?? '',
@@ -187,21 +166,31 @@ class Review {
         likeCount: json['likeCount'] ?? 0,
         isVerified: json['isVerified'] ?? false,
       );
+  final String id;
+  final String userId;
+  final String userName;
+  final double rating;
+  final String content;
+  final DateTime createdAt;
+  final List<String> images; // 用户上传的图片
+  final int likeCount;
+  final bool isVerified;
+
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'userId': userId,
+        'userName': userName,
+        'rating': rating,
+        'content': content,
+        'createdAt': createdAt.toIso8601String(),
+        'images': images,
+        'likeCount': likeCount,
+        'isVerified': isVerified,
+      };
 }
 
 /// 营养信息
-class NutritionInfo {
-  final double calories; // 卡路里
-  final double protein; // 蛋白质(g)
-  final double carbs; // 碳水化合物(g)
-  final double fat; // 脂肪(g)
-  final double fiber; // 纤维(g)
-  final double sodium; // 钠(mg)
-  final double sugar; // 糖分(g)
-  final double cholesterol; // 胆固醇(mg)
-  final double calcium; // 钙(mg)
-  final double iron; // 铁(mg)
-  final double vitaminC; // 维生素C(mg)
+class NutritionInfo { // 维生素C(mg)
 
   NutritionInfo({
     this.calories = 0.0,
@@ -217,20 +206,6 @@ class NutritionInfo {
     this.vitaminC = 0.0,
   });
 
-  Map<String, dynamic> toJson() => {
-        'calories': calories,
-        'protein': protein,
-        'carbs': carbs,
-        'fat': fat,
-        'fiber': fiber,
-        'sodium': sodium,
-        'sugar': sugar,
-        'cholesterol': cholesterol,
-        'calcium': calcium,
-        'iron': iron,
-        'vitaminC': vitaminC,
-      };
-
   factory NutritionInfo.fromJson(Map<String, dynamic> json) => NutritionInfo(
         calories: (json['calories'] ?? 0.0).toDouble(),
         protein: (json['protein'] ?? 0.0).toDouble(),
@@ -244,6 +219,31 @@ class NutritionInfo {
         iron: (json['iron'] ?? 0.0).toDouble(),
         vitaminC: (json['vitaminC'] ?? 0.0).toDouble(),
       );
+  final double calories; // 卡路里
+  final double protein; // 蛋白质(g)
+  final double carbs; // 碳水化合物(g)
+  final double fat; // 脂肪(g)
+  final double fiber; // 纤维(g)
+  final double sodium; // 钠(mg)
+  final double sugar; // 糖分(g)
+  final double cholesterol; // 胆固醇(mg)
+  final double calcium; // 钙(mg)
+  final double iron; // 铁(mg)
+  final double vitaminC;
+
+  Map<String, dynamic> toJson() => {
+        'calories': calories,
+        'protein': protein,
+        'carbs': carbs,
+        'fat': fat,
+        'fiber': fiber,
+        'sodium': sodium,
+        'sugar': sugar,
+        'cholesterol': cholesterol,
+        'calcium': calcium,
+        'iron': iron,
+        'vitaminC': vitaminC,
+      };
 
   /// 健康评分 (0-10)
   double get healthScore {
@@ -275,50 +275,7 @@ class NutritionInfo {
 
 /// 菜谱模型 - Phase 2 增强版
 /// 对齐下厨房颗粒度，添加口味画像、场景标签等详细字段
-class Recipe {
-  final String id;
-  final String name;
-  final String description;
-  final String cuisine; // 菜系
-  final CookingMethod cookingMethod;
-  final RecipeDifficulty difficulty;
-  final int preparationTime; // 准备时间（分钟）
-  final int cookingTime; // 烹饪时间（分钟）
-  final int servings; // 份量
-  final String imageUrl;
-  final List<String> tags;
-  final List<RecipeIngredient> ingredients;
-  final List<CookingStep> steps;
-  final NutritionInfo nutrition;
-  final double rating;
-  final int reviewCount;
-  final String authorId;
-  final String authorName;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final bool isFavorite;
-  final bool isBookmarked;
-  final int viewCount;
-  final int likeCount;
-  final String? videoUrl; // 视频教程URL
-  final List<String>? allergens; // 过敏原信息
-  final String? tips; // 制作小贴士
-
-  // Phase 2 新增字段 - 对齐下厨房标准
-  final List<String> tasteProfile; // 口味画像：['甜', '辣', '鲜', '香']
-  final List<String> scenarioTags; // 场景标签：['下饭菜', '宵夜', '聚餐', '减脂']
-  final List<String> healthBenefits; // 健康功效：['补血', '暖胃', '美容']
-  final SeasonalInfo seasonalInfo; // 季节性信息
-  final CookingEquipment equipment; // 所需厨具
-  final List<Review> reviews; // 用户评论
-  final Map<String, double> tasteIntensity; // 口味强度：{'辣度': 0.8, '甜度': 0.3}
-  final String spiceLevel; // 辣度等级：'不辣', '微辣', '中辣', '重辣'
-  final String? origin; // 菜品起源地
-  final bool isAuthentic; // 是否为正宗做法
-  final List<String> cookingTechniques; // 烹饪技巧：['腌制', '爆炒', '焖煮']
-  final Map<String, String> ingredientSubstitutes; // 食材替代：{'生抽': '老抽+糖'}
-  final double costEstimate; // 成本估算（元）
-  final List<String> mealTypes; // 餐类：['早餐', '午餐', '晚餐', '夜宵']
+class Recipe { // 餐类：['早餐', '午餐', '晚餐', '夜宵']
 
   Recipe({
     required this.id,
@@ -365,6 +322,107 @@ class Recipe {
     this.mealTypes = const [],
   });
 
+  factory Recipe.fromJson(Map<String, dynamic> json) {
+    return Recipe(
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      description: json['description'] ?? '',
+      cuisine: json['cuisine'] ?? '',
+      cookingMethod: CookingMethod.values.firstWhere(
+        (method) => method.name == json['cookingMethod'],
+        orElse: () => CookingMethod.stirFry,
+      ),
+      difficulty: RecipeDifficulty.values.firstWhere(
+        (diff) => diff.name == json['difficulty'],
+        orElse: () => RecipeDifficulty.medium,
+      ),
+      preparationTime: json['preparationTime'] ?? 0,
+      cookingTime: json['cookingTime'] ?? 0,
+      servings: json['servings'] ?? 2,
+      imageUrl: json['imageUrl'] ?? '',
+      tags: List<String>.from(json['tags'] ?? []),
+      ingredients:
+          (json['ingredients'] as List? ?? []).map((i) => RecipeIngredient.fromJson(i)).toList(),
+      steps: (json['steps'] as List? ?? []).map((s) => CookingStep.fromJson(s)).toList(),
+      nutrition: NutritionInfo.fromJson(json['nutrition'] ?? {}),
+      rating: (json['rating'] ?? 0.0).toDouble(),
+      reviewCount: json['reviewCount'] ?? 0,
+      authorId: json['authorId'] ?? '',
+      authorName: json['authorName'] ?? '',
+      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
+      updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
+      isFavorite: json['isFavorite'] ?? false,
+      isBookmarked: json['isBookmarked'] ?? false,
+      viewCount: json['viewCount'] ?? 0,
+      likeCount: json['likeCount'] ?? 0,
+      videoUrl: json['videoUrl'],
+      allergens: json['allergens'] != null ? List<String>.from(json['allergens']) : null,
+      tips: json['tips'],
+      // Phase 2 新增字段
+      tasteProfile: List<String>.from(json['tasteProfile'] ?? []),
+      scenarioTags: List<String>.from(json['scenarioTags'] ?? []),
+      healthBenefits: List<String>.from(json['healthBenefits'] ?? []),
+      seasonalInfo: json['seasonalInfo'] != null
+          ? SeasonalInfo.fromJson(json['seasonalInfo'])
+          : SeasonalInfo(),
+      equipment: json['equipment'] != null
+          ? CookingEquipment.fromJson(json['equipment'])
+          : CookingEquipment(),
+      reviews: (json['reviews'] as List? ?? []).map((r) => Review.fromJson(r)).toList(),
+      tasteIntensity: Map<String, double>.from(json['tasteIntensity'] ?? {}),
+      spiceLevel: json['spiceLevel'] ?? '不辣',
+      origin: json['origin'],
+      isAuthentic: json['isAuthentic'] ?? true,
+      cookingTechniques: List<String>.from(json['cookingTechniques'] ?? []),
+      ingredientSubstitutes: Map<String, String>.from(json['ingredientSubstitutes'] ?? {}),
+      costEstimate: (json['costEstimate'] ?? 0.0).toDouble(),
+      mealTypes: List<String>.from(json['mealTypes'] ?? []),
+    );
+  }
+  final String id;
+  final String name;
+  final String description;
+  final String cuisine; // 菜系
+  final CookingMethod cookingMethod;
+  final RecipeDifficulty difficulty;
+  final int preparationTime; // 准备时间（分钟）
+  final int cookingTime; // 烹饪时间（分钟）
+  final int servings; // 份量
+  final String imageUrl;
+  final List<String> tags;
+  final List<RecipeIngredient> ingredients;
+  final List<CookingStep> steps;
+  final NutritionInfo nutrition;
+  final double rating;
+  final int reviewCount;
+  final String authorId;
+  final String authorName;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final bool isFavorite;
+  final bool isBookmarked;
+  final int viewCount;
+  final int likeCount;
+  final String? videoUrl; // 视频教程URL
+  final List<String>? allergens; // 过敏原信息
+  final String? tips; // 制作小贴士
+
+  // Phase 2 新增字段 - 对齐下厨房标准
+  final List<String> tasteProfile; // 口味画像：['甜', '辣', '鲜', '香']
+  final List<String> scenarioTags; // 场景标签：['下饭菜', '宵夜', '聚餐', '减脂']
+  final List<String> healthBenefits; // 健康功效：['补血', '暖胃', '美容']
+  final SeasonalInfo seasonalInfo; // 季节性信息
+  final CookingEquipment equipment; // 所需厨具
+  final List<Review> reviews; // 用户评论
+  final Map<String, double> tasteIntensity; // 口味强度：{'辣度': 0.8, '甜度': 0.3}
+  final String spiceLevel; // 辣度等级：'不辣', '微辣', '中辣', '重辣'
+  final String? origin; // 菜品起源地
+  final bool isAuthentic; // 是否为正宗做法
+  final List<String> cookingTechniques; // 烹饪技巧：['腌制', '爆炒', '焖煮']
+  final Map<String, String> ingredientSubstitutes; // 食材替代：{'生抽': '老抽+糖'}
+  final double costEstimate; // 成本估算（元）
+  final List<String> mealTypes;
+
   /// 总时间
   int get totalTime => preparationTime + cookingTime;
 
@@ -409,7 +467,7 @@ class Recipe {
 
   /// 获取主要口味标签
   List<String> get primaryTasteAttributes {
-    final intensityThreshold = 0.5;
+    const intensityThreshold = 0.5;
     return tasteIntensity.entries
         .where((entry) => entry.value > intensityThreshold)
         .map((entry) => entry.key)
@@ -586,64 +644,6 @@ class Recipe {
         'costEstimate': costEstimate,
         'mealTypes': mealTypes,
       };
-
-  factory Recipe.fromJson(Map<String, dynamic> json) {
-    return Recipe(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      description: json['description'] ?? '',
-      cuisine: json['cuisine'] ?? '',
-      cookingMethod: CookingMethod.values.firstWhere(
-        (method) => method.name == json['cookingMethod'],
-        orElse: () => CookingMethod.stirFry,
-      ),
-      difficulty: RecipeDifficulty.values.firstWhere(
-        (diff) => diff.name == json['difficulty'],
-        orElse: () => RecipeDifficulty.medium,
-      ),
-      preparationTime: json['preparationTime'] ?? 0,
-      cookingTime: json['cookingTime'] ?? 0,
-      servings: json['servings'] ?? 2,
-      imageUrl: json['imageUrl'] ?? '',
-      tags: List<String>.from(json['tags'] ?? []),
-      ingredients:
-          (json['ingredients'] as List? ?? []).map((i) => RecipeIngredient.fromJson(i)).toList(),
-      steps: (json['steps'] as List? ?? []).map((s) => CookingStep.fromJson(s)).toList(),
-      nutrition: NutritionInfo.fromJson(json['nutrition'] ?? {}),
-      rating: (json['rating'] ?? 0.0).toDouble(),
-      reviewCount: json['reviewCount'] ?? 0,
-      authorId: json['authorId'] ?? '',
-      authorName: json['authorName'] ?? '',
-      createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
-      updatedAt: DateTime.tryParse(json['updatedAt'] ?? '') ?? DateTime.now(),
-      isFavorite: json['isFavorite'] ?? false,
-      isBookmarked: json['isBookmarked'] ?? false,
-      viewCount: json['viewCount'] ?? 0,
-      likeCount: json['likeCount'] ?? 0,
-      videoUrl: json['videoUrl'],
-      allergens: json['allergens'] != null ? List<String>.from(json['allergens']) : null,
-      tips: json['tips'],
-      // Phase 2 新增字段
-      tasteProfile: List<String>.from(json['tasteProfile'] ?? []),
-      scenarioTags: List<String>.from(json['scenarioTags'] ?? []),
-      healthBenefits: List<String>.from(json['healthBenefits'] ?? []),
-      seasonalInfo: json['seasonalInfo'] != null
-          ? SeasonalInfo.fromJson(json['seasonalInfo'])
-          : SeasonalInfo(),
-      equipment: json['equipment'] != null
-          ? CookingEquipment.fromJson(json['equipment'])
-          : CookingEquipment(),
-      reviews: (json['reviews'] as List? ?? []).map((r) => Review.fromJson(r)).toList(),
-      tasteIntensity: Map<String, double>.from(json['tasteIntensity'] ?? {}),
-      spiceLevel: json['spiceLevel'] ?? '不辣',
-      origin: json['origin'],
-      isAuthentic: json['isAuthentic'] ?? true,
-      cookingTechniques: List<String>.from(json['cookingTechniques'] ?? []),
-      ingredientSubstitutes: Map<String, String>.from(json['ingredientSubstitutes'] ?? {}),
-      costEstimate: (json['costEstimate'] ?? 0.0).toDouble(),
-      mealTypes: List<String>.from(json['mealTypes'] ?? []),
-    );
-  }
 
   @override
   bool operator ==(Object other) {

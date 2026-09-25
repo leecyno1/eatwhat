@@ -1,17 +1,18 @@
 import 'dart:math' as math;
-import 'dart:collection';
+
 import 'package:flutter/foundation.dart';
-import '../models/food.dart';
-import '../models/user_preference.dart';
+
 import '../data/food_database.dart';
 import '../models/bubble.dart';
+import '../models/food.dart';
+import '../models/user_preference.dart';
 
 /// 推荐引擎（增强版 - 可配置权重 + 多样性 + 详细打分）
 class RecommendationEngine {
   static final math.Random _random = math.Random();
 
   // 缓存: key -> 列表
-  final Map<String, List<ScoredFood>> _recommendationCache = LinkedHashMap();
+  final Map<String, List<ScoredFood>> _recommendationCache = {};
   static const int _maxCacheEntries = 50;
 
   // 默认权重（可被 RecommendationConfig 覆盖）
@@ -241,15 +242,15 @@ class RecommendationEngine {
     final allFoods = FoodDatabase.getAllFoods();
     final selectedTastes = selectedBubbles.map((b) => b.name).toSet();
     final matchedFoods = allFoods.where((food) {
-      return (food.tasteAttributes ?? const []).any((t) => selectedTastes.contains(t)) ||
+      return (food.tasteAttributes ?? const []).any(selectedTastes.contains) ||
           food.cuisineType == selectedBubbles.first.name ||
           food.name.contains(selectedBubbles.first.name);
     }).toList();
     matchedFoods.sort((a, b) {
       final aMatches =
-          (a.tasteAttributes ?? const []).where((t) => selectedTastes.contains(t)).length;
+          (a.tasteAttributes ?? const []).where(selectedTastes.contains).length;
       final bMatches =
-          (b.tasteAttributes ?? const []).where((t) => selectedTastes.contains(t)).length;
+          (b.tasteAttributes ?? const []).where(selectedTastes.contains).length;
       return bMatches.compareTo(aMatches);
     });
     return matchedFoods.take(10).toList();
@@ -323,26 +324,20 @@ class RecommendationEngine {
 
 /// 评分食物
 class ScoredFood {
-  final Food food;
-  final double score;
-  final String reason;
-  final Map<String, double> scoreBreakdown;
   ScoredFood({
     required this.food,
     required this.score,
     required this.reason,
     required this.scoreBreakdown,
   });
+  final Food food;
+  final double score;
+  final String reason;
+  final Map<String, double> scoreBreakdown;
 }
 
 /// 推荐配置 - 控制权重
 class RecommendationConfig {
-  final double weightHistory;
-  final double weightCuisine;
-  final double weightTaste;
-  final double weightBubble;
-  final double weightQuality;
-  final double weightNovelty;
   const RecommendationConfig({
     this.weightHistory = RecommendationEngine._wHistory,
     this.weightCuisine = RecommendationEngine._wCuisine,
@@ -351,17 +346,16 @@ class RecommendationConfig {
     this.weightQuality = RecommendationEngine._wQuality,
     this.weightNovelty = RecommendationEngine._wNovelty,
   });
+  final double weightHistory;
+  final double weightCuisine;
+  final double weightTaste;
+  final double weightBubble;
+  final double weightQuality;
+  final double weightNovelty;
 }
 
 /// 分数明细
 class _ScoreBreakdown {
-  final double history;
-  final double cuisine;
-  final double taste;
-  final double bubble;
-  final double quality;
-  final double novelty;
-  final double totalScore;
   _ScoreBreakdown({
     required this.history,
     required this.cuisine,
@@ -371,6 +365,13 @@ class _ScoreBreakdown {
     required this.novelty,
     required this.totalScore,
   });
+  final double history;
+  final double cuisine;
+  final double taste;
+  final double bubble;
+  final double quality;
+  final double novelty;
+  final double totalScore;
   Map<String, double> toMap() => {
         'history': history,
         'cuisine': cuisine,

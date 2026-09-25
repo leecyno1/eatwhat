@@ -1,17 +1,19 @@
 import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'api_signature_service.dart';
-import 'token_service.dart';
+
 import '../config/env_config.dart';
 import '../utils/log_sanitizer.dart';
+import 'api_signature_service.dart';
+import 'token_service.dart';
 
 /// 安全HTTP客户端
 /// 自动处理请求签名、认证令牌和错误处理
 class SecureHttpClient {
-  static final SecureHttpClient _instance = SecureHttpClient._internal();
   factory SecureHttpClient() => _instance;
   SecureHttpClient._internal();
+  static final SecureHttpClient _instance = SecureHttpClient._internal();
 
   late final Dio _dio;
 
@@ -37,8 +39,6 @@ class SecureHttpClient {
     // 添加安全日志拦截器（仅调试模式）
     if (kDebugMode && EnvConfig.debugMode) {
       _dio.interceptors.add(LogInterceptor(
-        requestBody: false, // 不记录请求体，可能包含敏感信息
-        responseBody: false, // 不记录响应体，可能包含敏感信息
         logPrint: (obj) {
           // 使用安全日志记录器
           final sanitizedLog = LogSanitizer.sanitizeString(obj.toString());
@@ -55,7 +55,7 @@ class SecureHttpClient {
     Options? options,
     CancelToken? cancelToken,
   }) async {
-    return await _dio.get<T>(
+    return _dio.get<T>(
       path,
       queryParameters: queryParameters,
       options: options,
@@ -71,7 +71,7 @@ class SecureHttpClient {
     Options? options,
     CancelToken? cancelToken,
   }) async {
-    return await _dio.post<T>(
+    return _dio.post<T>(
       path,
       data: data,
       queryParameters: queryParameters,
@@ -88,7 +88,7 @@ class SecureHttpClient {
     Options? options,
     CancelToken? cancelToken,
   }) async {
-    return await _dio.put<T>(
+    return _dio.put<T>(
       path,
       data: data,
       queryParameters: queryParameters,
@@ -105,7 +105,7 @@ class SecureHttpClient {
     Options? options,
     CancelToken? cancelToken,
   }) async {
-    return await _dio.delete<T>(
+    return _dio.delete<T>(
       path,
       data: data,
       queryParameters: queryParameters,
@@ -236,7 +236,7 @@ class SecureHttpClient {
       options.headers['Authorization'] = 'Bearer $token';
     }
 
-    return await _dio.fetch(options);
+    return _dio.fetch(options);
   }
 
   /// 验证响应签名

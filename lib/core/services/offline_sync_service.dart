@@ -1,6 +1,7 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/foundation.dart';
 
 /// 同步状态枚举
 enum SyncStatus {
@@ -19,6 +20,22 @@ enum SyncStatus {
 
 /// 同步项
 class SyncItem {
+
+  SyncItem({
+    required this.id,
+    required this.type,
+    required this.data,
+    DateTime? createdAt,
+    this.retryCount = 0,
+  }) : createdAt = createdAt ?? DateTime.now();
+
+  factory SyncItem.fromMap(Map<String, dynamic> map) => SyncItem(
+        id: map['id'] as String,
+        type: map['type'] as String,
+        data: Map<String, dynamic>.from(map['data'] as Map),
+        createdAt: DateTime.parse(map['created_at'] as String),
+        retryCount: map['retry_count'] as int? ?? 0,
+      );
   /// 唯一标识
   final String id;
 
@@ -37,14 +54,6 @@ class SyncItem {
   /// 最大重试次数
   static const int maxRetries = 3;
 
-  SyncItem({
-    required this.id,
-    required this.type,
-    required this.data,
-    DateTime? createdAt,
-    this.retryCount = 0,
-  }) : createdAt = createdAt ?? DateTime.now();
-
   bool get canRetry => retryCount < maxRetries;
 
   Map<String, dynamic> toMap() => {
@@ -54,23 +63,15 @@ class SyncItem {
         'created_at': createdAt.toIso8601String(),
         'retry_count': retryCount,
       };
-
-  factory SyncItem.fromMap(Map<String, dynamic> map) => SyncItem(
-        id: map['id'] as String,
-        type: map['type'] as String,
-        data: Map<String, dynamic>.from(map['data'] as Map),
-        createdAt: DateTime.parse(map['created_at'] as String),
-        retryCount: map['retry_count'] as int? ?? 0,
-      );
 }
 
 /// 离线同步服务
 class OfflineSyncService {
-  static final OfflineSyncService _instance = OfflineSyncService._internal();
 
   factory OfflineSyncService() => _instance;
 
   OfflineSyncService._internal();
+  static final OfflineSyncService _instance = OfflineSyncService._internal();
 
   final Connectivity _connectivity = Connectivity();
   final List<SyncItem> _syncQueue = [];
@@ -180,7 +181,7 @@ class OfflineSyncService {
   /// 同步单个项目（模拟实现）
   Future<void> _syncItem(SyncItem item) async {
     // 模拟网络请求延迟
-    await Future.delayed(Duration(milliseconds: 100));
+    await Future.delayed(const Duration(milliseconds: 100));
 
     // 这里应该实现实际的网络同步逻辑
     // 例如：调用 API 上传数据

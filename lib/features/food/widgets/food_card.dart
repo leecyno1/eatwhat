@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/providers/food_provider.dart';
+
 import '../../../core/models/food.dart';
+import '../../../core/providers/food_provider.dart';
 
 /// 食物卡片Widget
 class FoodCard extends ConsumerWidget {
-  final Food food;
-  final VoidCallback? onTap;
-  final bool showFavoriteButton;
 
   const FoodCard({
-    Key? key,
+    super.key,
     required this.food,
     this.onTap,
     this.showFavoriteButton = true,
-  }) : super(key: key);
+  });
+  final Food food;
+  final VoidCallback? onTap;
+  final bool showFavoriteButton;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -166,14 +167,14 @@ class FoodCard extends ConsumerWidget {
 
 /// 食物列表Widget
 class FoodList extends ConsumerWidget {
-  final ScrollController? scrollController;
-  final EdgeInsets? padding;
 
   const FoodList({
-    Key? key,
+    super.key,
     this.scrollController,
     this.padding,
-  }) : super(key: key);
+  });
+  final ScrollController? scrollController;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

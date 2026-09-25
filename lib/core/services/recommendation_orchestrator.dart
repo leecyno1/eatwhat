@@ -3,14 +3,20 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 
 import '../models/food.dart';
-import '../models/user_taste_action.dart';
 import '../models/user_preference.dart';
+import '../models/user_taste_action.dart';
 import '../repositories/user_preference_repository.dart';
 import 'preference_event_service.dart';
 import 'recommendation_engine.dart';
 
 /// 推荐编排器 - 协调推荐引擎和偏好事件服务
 class RecommendationOrchestrator {
+
+  RecommendationOrchestrator({
+    required this.preferenceEventService,
+    required this.recommendationEngine,
+    required this.userPreferenceRepository,
+  });
   final PreferenceEventService preferenceEventService;
   final RecommendationEngine recommendationEngine;
   final UserPreferenceRepository userPreferenceRepository;
@@ -20,12 +26,6 @@ class RecommendationOrchestrator {
 
   // 兜底策略阈值：有效反馈少于3次时使用热门推荐
   static const int _preferenceFallbackThreshold = 3;
-
-  RecommendationOrchestrator({
-    required this.preferenceEventService,
-    required this.recommendationEngine,
-    required this.userPreferenceRepository,
-  });
 
   Stream<List<Food>> get recommendationStream => _recommendationController.stream;
 
@@ -77,14 +77,14 @@ class RecommendationOrchestrator {
       // 检查是否需要使用兜底策略
       if (_needsFallbackStrategy(preference)) {
         debugPrint('用户偏好不足(${preference.likedBubbles.length + preference.dislikedBubbles.length + preference.bubbleInteractionCount.values.fold(0, (a, b) => a + b)}个)，使用热门推荐');
-        final fallback = _getHotRecommendations(limit: 6);
+        final fallback = _getHotRecommendations();
         _recommendationController.add(fallback);
         return fallback;
       }
 
       final recommendations = await recommendationEngine.getPersonalizedRecommendations(preference);
       if (recommendations.isEmpty && !force) {
-        final fallback = _getHotRecommendations(limit: 6);
+        final fallback = _getHotRecommendations();
         _recommendationController.add(fallback);
         return fallback;
       }
@@ -92,7 +92,7 @@ class RecommendationOrchestrator {
       return recommendations;
     } catch (e, s) {
       debugPrint('刷新推荐失败: $e\n$s');
-      final fallback = _getHotRecommendations(limit: 6);
+      final fallback = _getHotRecommendations();
       _recommendationController.add(fallback);
       return fallback;
     }

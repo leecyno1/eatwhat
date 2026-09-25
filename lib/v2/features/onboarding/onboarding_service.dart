@@ -3,12 +3,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// 引导状态服务 - 管理新手引导的显示状态
 class OnboardingService {
+  factory OnboardingService() => _instance;
+  OnboardingService._internal();
   static const String _hasSeenOnboardingKey = 'has_seen_onboarding_v2';
 
   /// 单例模式
   static final OnboardingService _instance = OnboardingService._internal();
-  factory OnboardingService() => _instance;
-  OnboardingService._internal();
 
   /// 检查是否应该显示新手引导
   Future<bool> shouldShowOnboarding() async {

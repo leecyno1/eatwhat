@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 /// 历史记录空状态组件
 class HistoryEmptyState extends StatelessWidget {
-  final String filterBy;
-  final VoidCallback? onClearFilter;
 
   const HistoryEmptyState({
     super.key,
     required this.filterBy,
     this.onClearFilter,
   });
+  final String filterBy;
+  final VoidCallback? onClearFilter;
 
   @override
   Widget build(BuildContext context) {

@@ -9,7 +9,7 @@ Future<void> main(List<String> args) async {
 
   print('🔐 美团开放平台 CDP 自动化流程');
   print('手机号: $phone');
-  print('密码: ' + ('*' * password.length));
+  print('密码: ${'*' * password.length}');
   print('');
 
   try {
@@ -27,31 +27,31 @@ Future<void> main(List<String> args) async {
     // 导航到登录页
     print('🌐 导航到美团开放平台登录页...');
     await _navigateTo(wsUrl, 'https://open.meituan.com/user/login');
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 3));
     print('✅ 已打开登录页');
     print('');
 
     // 填写登录信息
     print('🔍 查找登录表单...');
     await _fillPhoneField(wsUrl, phone);
-    await Future.delayed(Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 500));
     print('✅ 已填写手机号');
 
     await _fillPasswordField(wsUrl, password);
-    await Future.delayed(Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 500));
     print('✅ 已填写密码');
     print('');
 
     // 点击登录
     print('🔐 点击登录按钮...');
     await _clickLoginButton(wsUrl);
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 3));
     print('✅ 已提交登录');
     print('');
 
     // 检查是否需要验证
     print('⏳ 等待登录验证...');
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 3));
     final currentUrl = await _getCurrentUrl(wsUrl);
     print('   当前URL: $currentUrl');
     print('');
@@ -59,7 +59,7 @@ Future<void> main(List<String> args) async {
     // 导航到注册流程文档
     print('📖 导航到注册流程文档...');
     await _navigateTo(wsUrl, 'https://open.meituan.com/docs/introduce/guide');
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     print('✅ 已打开文档');
     print('');
 
@@ -99,8 +99,8 @@ Future<String?> _getWebSocketUrl() async {
   try {
     final client = HttpClient();
     final request = await client.getUrl(Uri.parse('http://localhost:9222/json'))
-        .timeout(Duration(seconds: 5));
-    final response = await request.close().timeout(Duration(seconds: 5));
+        .timeout(const Duration(seconds: 5));
+    final response = await request.close().timeout(const Duration(seconds: 5));
 
     if (response.statusCode == 200) {
       final body = await response.transform(utf8.decoder).join();
@@ -116,8 +116,8 @@ Future<String?> _getWebSocketUrl() async {
 }
 
 Future<void> _navigateTo(String wsUrl, String url) async {
-  final ws = await WebSocket.connect(wsUrl).timeout(Duration(seconds: 10));
-  int msgId = 1;
+  final ws = await WebSocket.connect(wsUrl).timeout(const Duration(seconds: 10));
+  const int msgId = 1;
 
   ws.add(jsonEncode({
     'id': msgId,
@@ -125,7 +125,7 @@ Future<void> _navigateTo(String wsUrl, String url) async {
     'params': {'url': url}
   }));
 
-  await Future.delayed(Duration(milliseconds: 500));
+  await Future.delayed(const Duration(milliseconds: 500));
   ws.close();
 }
 
@@ -227,8 +227,8 @@ Future<String?> _extractContent(String wsUrl) async {
 
 Future<String?> _captureScreenshot(String wsUrl) async {
   try {
-    final ws = await WebSocket.connect(wsUrl).timeout(Duration(seconds: 10));
-    int msgId = 1;
+    final ws = await WebSocket.connect(wsUrl).timeout(const Duration(seconds: 10));
+    const int msgId = 1;
     final completer = Completer<String?>();
 
     final subscription = ws.listen(
@@ -251,8 +251,8 @@ Future<String?> _captureScreenshot(String wsUrl) async {
     }));
 
     final result = await completer.future
-        .timeout(Duration(seconds: 10))
-        .whenComplete(() => subscription.cancel());
+        .timeout(const Duration(seconds: 10))
+        .whenComplete(subscription.cancel);
     ws.close();
     return result;
   } catch (e) {
@@ -262,8 +262,8 @@ Future<String?> _captureScreenshot(String wsUrl) async {
 
 Future<dynamic> _evaluateJs(String wsUrl, String expression) async {
   try {
-    final ws = await WebSocket.connect(wsUrl).timeout(Duration(seconds: 10));
-    int msgId = 1;
+    final ws = await WebSocket.connect(wsUrl).timeout(const Duration(seconds: 10));
+    const int msgId = 1;
     final completer = Completer<dynamic>();
 
     final subscription = ws.listen(
@@ -297,8 +297,8 @@ Future<dynamic> _evaluateJs(String wsUrl, String expression) async {
     }));
 
     final result = await completer.future
-        .timeout(Duration(seconds: 10))
-        .whenComplete(() => subscription.cancel());
+        .timeout(const Duration(seconds: 10))
+        .whenComplete(subscription.cancel);
     ws.close();
     return result;
   } catch (e) {

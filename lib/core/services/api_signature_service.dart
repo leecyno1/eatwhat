@@ -297,13 +297,6 @@ class ApiSignatureService {
 
 /// 签名的请求
 class SignedRequest {
-  final String method;
-  final String url;
-  final Map<String, String> headers;
-  final String? body;
-  final String signature;
-  final int timestamp;
-  final String nonce;
 
   SignedRequest({
     required this.method,
@@ -314,6 +307,13 @@ class SignedRequest {
     required this.timestamp,
     required this.nonce,
   });
+  final String method;
+  final String url;
+  final Map<String, String> headers;
+  final String? body;
+  final String signature;
+  final int timestamp;
+  final String nonce;
 
   @override
   String toString() {
@@ -323,10 +323,6 @@ class SignedRequest {
 
 /// 签名验证结果
 class SignatureValidationResult {
-  final bool isValid;
-  final String? error;
-  final int? timestamp;
-  final String? nonce;
 
   SignatureValidationResult({
     required this.isValid,
@@ -334,14 +330,18 @@ class SignatureValidationResult {
     this.timestamp,
     this.nonce,
   });
+  final bool isValid;
+  final String? error;
+  final int? timestamp;
+  final String? nonce;
 }
 
 /// API密钥对
 class ApiKeyPair {
-  final String keyId;
-  final String secret;
 
   ApiKeyPair({required this.keyId, required this.secret});
+  final String keyId;
+  final String secret;
 
   @override
   String toString() {

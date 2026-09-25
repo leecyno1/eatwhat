@@ -1,17 +1,18 @@
 import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:ml_linalg/vector.dart';
 
+import '../models/bubble.dart';
 import '../models/recipe.dart';
 import '../models/user_preference.dart';
-import '../models/bubble.dart';
 
 /// 口味映射算法服务
 /// Phase 3: 实现用户口味偏好到菜谱的智能映射算法
 class TasteMappingAlgorithmService {
-  static final TasteMappingAlgorithmService _instance = TasteMappingAlgorithmService._internal();
   factory TasteMappingAlgorithmService() => _instance;
   TasteMappingAlgorithmService._internal();
+  static final TasteMappingAlgorithmService _instance = TasteMappingAlgorithmService._internal();
 
   // 口味特征维度定义（对齐下厨房标准）
   static const List<String> tasteFeatures = [
@@ -494,38 +495,32 @@ class TasteMappingAlgorithmService {
 
 /// 口味特征模型
 class TasteProfile {
-  final String name;
-  final double intensity;
-  final List<String> keywords;
 
   TasteProfile({
     required this.name,
     required this.intensity,
     required this.keywords,
   });
+  final String name;
+  final double intensity;
+  final List<String> keywords;
 }
 
 /// 评分菜谱模型
 class ScoredRecipe {
-  final Recipe recipe;
-  final double matchScore;
-  final Vector? tasteVector;
 
   ScoredRecipe({
     required this.recipe,
     required this.matchScore,
     this.tasteVector,
   });
+  final Recipe recipe;
+  final double matchScore;
+  final Vector? tasteVector;
 }
 
 /// 口味分析结果
 class TasteAnalysisResult {
-  final Map<String, double> dominantTastes;
-  final Map<String, double> preferredCuisines;
-  final Map<String, double> preferredScenarios;
-  final Vector tasteVector;
-  final double diversity;
-  final double confidence;
 
   TasteAnalysisResult({
     required this.dominantTastes,
@@ -535,6 +530,12 @@ class TasteAnalysisResult {
     required this.diversity,
     required this.confidence,
   });
+  final Map<String, double> dominantTastes;
+  final Map<String, double> preferredCuisines;
+  final Map<String, double> preferredScenarios;
+  final Vector tasteVector;
+  final double diversity;
+  final double confidence;
 
   @override
   String toString() => 'TasteAnalysis(dominant: $dominantTastes, confidence: $confidence)';

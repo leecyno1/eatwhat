@@ -1,19 +1,20 @@
 import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:ml_linalg/linalg.dart';
 
-import '../models/food.dart';
 import '../models/bubble.dart';
+import '../models/food.dart';
 import '../models/user_preference.dart';
 import 'collaborative_filtering_service.dart';
 
 /// 向量化推荐引擎 - Phase 1 核心算法优化
 /// 实现余弦相似度、TF-IDF和协同过滤算法
 class VectorizedRecommendationEngine {
-  static final VectorizedRecommendationEngine _instance =
-      VectorizedRecommendationEngine._internal();
   factory VectorizedRecommendationEngine() => _instance;
   VectorizedRecommendationEngine._internal();
+  static final VectorizedRecommendationEngine _instance =
+      VectorizedRecommendationEngine._internal();
 
   // 协同过滤服务
   final CollaborativeFilteringService _cfService =
@@ -110,7 +111,7 @@ class VectorizedRecommendationEngine {
     final qualityBoost = (food.rating / 5.0).clamp(0.0, 1.0);
     for (int i = 0; i < features.length; i++) {
       if (features[i] > 0) {
-        features[i] *= (1.0 + qualityBoost * 0.2); // 最多20%加成
+        features[i] *= 1.0 + qualityBoost * 0.2; // 最多20%加成
       }
     }
 
@@ -375,10 +376,6 @@ class VectorizedRecommendationEngine {
 
 /// 向量化评分食物
 class VectorizedScoredFood {
-  final Food food;
-  final double score;
-  final double cosineSimilarity;
-  final double qualityScore;
 
   VectorizedScoredFood({
     required this.food,
@@ -386,6 +383,10 @@ class VectorizedScoredFood {
     required this.cosineSimilarity,
     required this.qualityScore,
   });
+  final Food food;
+  final double score;
+  final double cosineSimilarity;
+  final double qualityScore;
 
   @override
   String toString() {

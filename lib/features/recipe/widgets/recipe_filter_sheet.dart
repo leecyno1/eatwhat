@@ -3,10 +3,6 @@ import '../../../core/models/recipe.dart';
 
 /// 菜谱筛选底部面板
 class RecipeFilterSheet extends StatefulWidget {
-  final String? selectedCuisine;
-  final RecipeDifficulty? selectedDifficulty;
-  final int? maxTime;
-  final Function(String? cuisine, RecipeDifficulty? difficulty, int? maxTime) onApply;
 
   const RecipeFilterSheet({
     super.key,
@@ -15,6 +11,10 @@ class RecipeFilterSheet extends StatefulWidget {
     this.maxTime,
     required this.onApply,
   });
+  final String? selectedCuisine;
+  final RecipeDifficulty? selectedDifficulty;
+  final int? maxTime;
+  final Function(String? cuisine, RecipeDifficulty? difficulty, int? maxTime) onApply;
 
   @override
   State<RecipeFilterSheet> createState() => _RecipeFilterSheetState();
@@ -54,7 +54,6 @@ class _RecipeFilterSheetState extends State<RecipeFilterSheet> {
               border: Border(
                 bottom: BorderSide(
                   color: Colors.grey.shade200,
-                  width: 1,
                 ),
               ),
             ),
@@ -158,7 +157,6 @@ class _RecipeFilterSheetState extends State<RecipeFilterSheet> {
               border: Border(
                 top: BorderSide(
                   color: Colors.grey.shade200,
-                  width: 1,
                 ),
               ),
             ),

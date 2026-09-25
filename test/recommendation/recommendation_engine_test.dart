@@ -1,7 +1,7 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:eatwhat_app/core/services/recommendation_engine.dart';
-import 'package:eatwhat_app/core/models/user_preference.dart';
 import 'package:eatwhat_app/core/data/food_database.dart';
+import 'package:eatwhat_app/core/models/user_preference.dart';
+import 'package:eatwhat_app/core/services/recommendation_engine.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 /// 由于 FoodDatabase 是静态的，这里构造一个最小可测集：
 /// 假设 FoodDatabase.getAllFoods() 已含有多种菜品；
@@ -79,7 +79,7 @@ void main() {
     test('多样性 (MMR) 不应返回全部高度相似项', () {
       // 为了测试多样性，我们用一个较大 limit 前后对比关闭多样性
       final withDiversity =
-          engine.getPersonalizedScoredRecommendations(pref, limit: 10, ensureDiversity: true);
+          engine.getPersonalizedScoredRecommendations(pref);
 
       // 简单启发式：如果有多样性，前5个中 cuisineType 应该出现 >=2 个不同值
       final cuisinesWith = withDiversity.take(5).map((e) => e.food.cuisineType).toSet();

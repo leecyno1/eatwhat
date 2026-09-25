@@ -2,9 +2,9 @@ import '../models/user_preference.dart';
 import '../services/storage_service.dart';
 
 class UserPreferenceRepository {
-  final String userId;
 
   UserPreferenceRepository({required this.userId});
+  final String userId;
 
   Future<UserPreference> getOrCreate() async {
     return StorageService.getUserPreference(userId);

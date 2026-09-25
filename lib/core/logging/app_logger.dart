@@ -3,10 +3,10 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 /// 日志级别
 enum LogLevel {
-  debug("DEBUG"),
-  info("INFO"),
-  warning("WARNING"),
-  error("ERROR");
+  debug('DEBUG'),
+  info('INFO'),
+  warning('WARNING'),
+  error('ERROR');
 
   final String label;
   const LogLevel(this.label);
@@ -14,9 +14,9 @@ enum LogLevel {
 
 /// 应用日志系统
 class AppLogger {
-  static final AppLogger _instance = AppLogger._internal();
   factory AppLogger() => _instance;
   AppLogger._internal();
+  static final AppLogger _instance = AppLogger._internal();
 
   static const String _boxName = 'app_logs';
   late Box<String> _logBox;

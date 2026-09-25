@@ -5,12 +5,6 @@ import '../../../shared/widgets/ai_generated_loading_animation.dart';
 /// AI增强的食物卡片组件
 /// 集成现代动画和交互效果
 class AIEnhancedFoodCard extends StatefulWidget {
-  final Food food;
-  final VoidCallback? onTap;
-  final VoidCallback? onFavorite;
-  final bool isFavorite;
-  final double width;
-  final double height;
 
   const AIEnhancedFoodCard({
     super.key,
@@ -21,6 +15,12 @@ class AIEnhancedFoodCard extends StatefulWidget {
     this.width = 280,
     this.height = 320,
   });
+  final Food food;
+  final VoidCallback? onTap;
+  final VoidCallback? onFavorite;
+  final bool isFavorite;
+  final double width;
+  final double height;
 
   @override
   State<AIEnhancedFoodCard> createState() => _AIEnhancedFoodCardState();

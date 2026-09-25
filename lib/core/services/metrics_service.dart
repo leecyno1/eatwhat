@@ -6,8 +6,10 @@ import '../models/metric_event.dart';
 /// 指标统计服务
 /// 核心指标：DAU、MAU、转化率、留存率
 class MetricsService {
-  static final MetricsService _instance = MetricsService._internal();
   factory MetricsService() => _instance;
+
+  MetricsService._internal();
+  static final MetricsService _instance = MetricsService._internal();
 
   // 数据存储（使用 Hive）
   final Map<String, List<MetricEvent>> _events = {};
@@ -19,8 +21,6 @@ class MetricsService {
   static const int _maxEventsInMemory = 1000;
 
   bool _isInitialized = false;
-
-  MetricsService._internal();
 
   /// 初始化服务
   Future<void> init() async {
@@ -86,8 +86,8 @@ class MetricsService {
 
   /// 获取 MAU（月活跃用户）
   int getMAU(int year, int month) {
-    final monthStart = DateTime(year, month, 1);
-    final monthEnd = DateTime(year, month + 1, 1);
+    final monthStart = DateTime(year, month);
+    final monthEnd = DateTime(year, month + 1);
 
     final sessions = _events[MetricTypes.sessionStart] ?? [];
     final monthSessions = sessions.where((e) =>

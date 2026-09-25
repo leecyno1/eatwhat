@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+
+import '../../core/models/food.dart';
 import '../../shared/widgets/ai_generated_loading_animation.dart';
 import '../recommendation/widgets/ai_enhanced_food_card.dart';
-import '../../core/models/food.dart';
 
 /// AI组件演示页面
 /// 展示所有AI增强的界面效果
@@ -21,7 +22,7 @@ class _AIDemoScreenState extends State<AIDemoScreen>
   bool _isFavorite = false;
 
   // 示例食物数据
-  final Food demoFood = Food(
+  const Food demoFood = Food(
     id: 'demo_kung_pao_chicken',
     name: '宫保鸡丁',
     description: '经典川菜，酸甜微辣，鸡肉嫩滑配花生',
@@ -74,7 +75,7 @@ class _AIDemoScreenState extends State<AIDemoScreen>
     final theme = Theme.of(context);
 
     // 演示用的食物数据
-    final demoFood = Food(
+    const demoFood = Food(
       id: 'demo_1',
       name: 'AI推荐：红烧肉',
       description: '经典家常菜，肥瘦相间，入口即化。采用传统工艺精心制作，色泽红亮，香甜可口。',
@@ -171,8 +172,6 @@ class _AIDemoScreenState extends State<AIDemoScreen>
                                         border: Border.all(
                                           color: theme.primaryColor
                                               .withValues(alpha: 0.2),
-                                          style: BorderStyle.solid,
-                                          width: 1,
                                         ),
                                       ),
                                       child: Center(
@@ -427,7 +426,6 @@ class _AIDemoScreenState extends State<AIDemoScreen>
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: theme.dividerColor,
-          width: 1,
         ),
       ),
       child: Row(

@@ -285,7 +285,7 @@ class FoodDataGenerator {
     // 基础营养值
     double calories = 200 + _random.nextDouble() * 300; // 200-500卡路里
     double proteinValue = 15 + _random.nextDouble() * 25; // 15-40g蛋白质
-    double carbs = 5 + _random.nextDouble() * 45; // 5-50g碳水
+    final double carbs = 5 + _random.nextDouble() * 45; // 5-50g碳水
     double fat = 5 + _random.nextDouble() * 25; // 5-30g脂肪
     double fiber = 1 + _random.nextDouble() * 8; // 1-9g纤维
 

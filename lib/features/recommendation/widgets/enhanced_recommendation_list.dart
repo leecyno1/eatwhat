@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 import '../../../core/models/food.dart';
 import 'enhanced_food_card.dart';
@@ -8,13 +8,6 @@ import 'enhanced_food_card.dart';
 /// 增强推荐列表组件 - Phase 1 UI优化
 /// 支持瀑布流布局、分类显示、动画效果
 class EnhancedRecommendationList extends StatefulWidget {
-  final List<Food> foods;
-  final ScrollController? scrollController;
-  final Function(Food)? onFoodTap;
-  final Function(String)? onCategoryTap;
-  final bool showCategoryHeaders;
-  final bool isLoading;
-  final bool compactMode;
 
   const EnhancedRecommendationList({
     super.key,
@@ -26,6 +19,13 @@ class EnhancedRecommendationList extends StatefulWidget {
     this.isLoading = false,
     this.compactMode = false,
   });
+  final List<Food> foods;
+  final ScrollController? scrollController;
+  final Function(Food)? onFoodTap;
+  final Function(String)? onCategoryTap;
+  final bool showCategoryHeaders;
+  final bool isLoading;
+  final bool compactMode;
 
   @override
   State<EnhancedRecommendationList> createState() =>
@@ -35,7 +35,7 @@ class EnhancedRecommendationList extends StatefulWidget {
 class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
     with TickerProviderStateMixin {
   late AnimationController _loadingController;
-  Map<String, List<Food>> _categorizedFoods = {};
+  final Map<String, List<Food>> _categorizedFoods = {};
   String _selectedCategory = '全部';
 
   @override
@@ -127,7 +127,7 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
   Widget _buildCategoryTabs() {
     final categories = _categorizedFoods.keys.toList();
 
-    return Container(
+    return SizedBox(
       height: 40,
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
@@ -155,7 +155,6 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(
                   color: Theme.of(context).primaryColor.withOpacity(0.3),
-                  width: 1,
                 ),
               ),
               child: Text(
@@ -214,7 +213,7 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
     return Column(
       children: [
         // 加载中的分类标签动画
-        Container(
+        SizedBox(
           height: 40,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
@@ -368,9 +367,6 @@ class _EnhancedRecommendationListState extends State<EnhancedRecommendationList>
 
 /// 推荐统计信息组件
 class RecommendationStats extends StatelessWidget {
-  final int totalCount;
-  final Map<String, int> categoryStats;
-  final double averageRating;
 
   const RecommendationStats({
     super.key,
@@ -378,6 +374,9 @@ class RecommendationStats extends StatelessWidget {
     required this.categoryStats,
     required this.averageRating,
   });
+  final int totalCount;
+  final Map<String, int> categoryStats;
+  final double averageRating;
 
   @override
   Widget build(BuildContext context) {
@@ -385,7 +384,7 @@ class RecommendationStats extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceVariant.withOpacity(0.3),
+        color: Theme.of(context).colorScheme.surfaceContainerHighest.withOpacity(0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: Theme.of(context).colorScheme.outline.withOpacity(0.2),

@@ -3,10 +3,6 @@ import 'package:flutter/material.dart';
 /// AI生成风格的加载动画组件
 /// 使用现代动画技术，提供流畅的用户体验
 class AIGeneratedLoadingAnimation extends StatefulWidget {
-  final String? text;
-  final Color? primaryColor;
-  final Color? secondaryColor;
-  final double size;
 
   const AIGeneratedLoadingAnimation({
     super.key,
@@ -15,6 +11,10 @@ class AIGeneratedLoadingAnimation extends StatefulWidget {
     this.secondaryColor,
     this.size = 80.0,
   });
+  final String? text;
+  final Color? primaryColor;
+  final Color? secondaryColor;
+  final double size;
 
   @override
   State<AIGeneratedLoadingAnimation> createState() => _AIGeneratedLoadingAnimationState();
@@ -214,9 +214,6 @@ class _AIGeneratedLoadingAnimationState extends State<AIGeneratedLoadingAnimatio
 
 /// AI风格的按钮点击动画
 class AIButtonAnimation extends StatefulWidget {
-  final Widget child;
-  final VoidCallback? onTap;
-  final Duration duration;
 
   const AIButtonAnimation({
     super.key,
@@ -224,6 +221,9 @@ class AIButtonAnimation extends StatefulWidget {
     this.onTap,
     this.duration = const Duration(milliseconds: 200),
   });
+  final Widget child;
+  final VoidCallback? onTap;
+  final Duration duration;
 
   @override
   State<AIButtonAnimation> createState() => _AIButtonAnimationState();
@@ -279,9 +279,6 @@ class _AIButtonAnimationState extends State<AIButtonAnimation> with SingleTicker
 
 /// AI生成的粒子效果背景
 class AIParticleBackground extends StatefulWidget {
-  final Widget child;
-  final int particleCount;
-  final Color particleColor;
 
   const AIParticleBackground({
     super.key,
@@ -289,6 +286,9 @@ class AIParticleBackground extends StatefulWidget {
     this.particleCount = 50,
     this.particleColor = Colors.white,
   });
+  final Widget child;
+  final int particleCount;
+  final Color particleColor;
 
   @override
   State<AIParticleBackground> createState() => _AIParticleBackgroundState();
@@ -343,16 +343,16 @@ class _AIParticleBackgroundState extends State<AIParticleBackground>
 }
 
 class Particle {
+
+  Particle() {
+    reset();
+  }
   double x = 0;
   double y = 0;
   double vx = 0;
   double vy = 0;
   double size = 0;
   double opacity = 0;
-
-  Particle() {
-    reset();
-  }
 
   void reset() {
     x = (DateTime.now().millisecondsSinceEpoch % 1000) / 1000;
@@ -365,15 +365,15 @@ class Particle {
 }
 
 class ParticlePainter extends CustomPainter {
-  final List<Particle> particles;
-  final double animationValue;
-  final Color color;
 
   ParticlePainter({
     required this.particles,
     required this.animationValue,
     required this.color,
   });
+  final List<Particle> particles;
+  final double animationValue;
+  final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {

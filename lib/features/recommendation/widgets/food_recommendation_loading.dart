@@ -4,12 +4,12 @@ import '../../../shared/widgets/modern_loading_animation.dart';
 
 /// 食物推荐加载组件
 class FoodRecommendationLoading extends StatelessWidget {
-  final String? message;
 
   const FoodRecommendationLoading({
     super.key,
     this.message,
   });
+  final String? message;
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +20,6 @@ class FoodRecommendationLoading extends StatelessWidget {
         ModernLoadingAnimation(
           size: 80.w,
           color: Colors.orange,
-          showPercentage: false,
         ),
 
         SizedBox(height: 24.h),

@@ -7,9 +7,9 @@ import '../services/unified_food_data_service.dart';
 /// 菜谱数据更新管理器
 /// 负责协调各种数据源的菜谱更新
 class RecipeDataUpdateManager {
-  static final RecipeDataUpdateManager _instance = RecipeDataUpdateManager._internal();
   factory RecipeDataUpdateManager() => _instance;
   RecipeDataUpdateManager._internal();
+  static final RecipeDataUpdateManager _instance = RecipeDataUpdateManager._internal();
 
   final EnhancedRecipeGenerator _generator = EnhancedRecipeGenerator();
   final RecipeDatabaseService _databaseService = RecipeDatabaseService();
@@ -171,10 +171,6 @@ class RecipeDataUpdateManager {
 
 /// 更新结果数据模型
 class UpdateResult {
-  final bool success;
-  final String message;
-  final int recipesAdded;
-  final Map<String, dynamic>? statistics;
 
   UpdateResult({
     required this.success,
@@ -182,6 +178,10 @@ class UpdateResult {
     required this.recipesAdded,
     this.statistics,
   });
+  final bool success;
+  final String message;
+  final int recipesAdded;
+  final Map<String, dynamic>? statistics;
 
   @override
   String toString() =>

@@ -1,17 +1,18 @@
 import 'package:flutter/foundation.dart' show debugPrint;
+
+import '../ai/ai_service.dart';
+import '../data/food_database.dart';
+import '../models/bubble.dart';
 import '../models/food.dart';
 import '../models/user_preference.dart';
-import '../models/bubble.dart';
-import '../data/food_database.dart';
-import '../ai/ai_service.dart';
 import 'recommendation_engine.dart';
 
 /// AI增强推荐引擎
 /// 结合传统推荐算法和AI大模型智能分析
 class EnhancedRecommendationEngine extends RecommendationEngine {
-  static final EnhancedRecommendationEngine _instance = EnhancedRecommendationEngine._internal();
   factory EnhancedRecommendationEngine() => _instance;
   EnhancedRecommendationEngine._internal();
+  static final EnhancedRecommendationEngine _instance = EnhancedRecommendationEngine._internal();
 
   final AiService _aiService = AiService();
   final Map<String, EnhancedRecommendationResult> _resultCache = {};
@@ -154,7 +155,7 @@ class EnhancedRecommendationEngine extends RecommendationEngine {
     UserPreference? userPreference,
     String? context,
   ) async {
-    return await _aiService.getBubbleRecommendations(
+    return _aiService.getBubbleRecommendations(
       selectedBubbles: bubbleNames,
       availableFoods: foodNames,
       userPreferences: userPreference?.toString(),
@@ -403,15 +404,6 @@ class EnhancedRecommendationEngine extends RecommendationEngine {
 
 /// 增强推荐结果类
 class EnhancedRecommendationResult {
-  final List<Food> recommendations;
-  final AiRecommendationResult aiInsights;
-  final Map<String, String> explanations;
-  final double traditionalScore;
-  final double aiScore;
-  final double fusionScore;
-  final List<Bubble> selectedBubbles;
-  final DateTime timestamp;
-  final RecommendationStrategy recommendationStrategy;
 
   EnhancedRecommendationResult({
     required this.recommendations,
@@ -424,6 +416,15 @@ class EnhancedRecommendationResult {
     required this.timestamp,
     required this.recommendationStrategy,
   });
+  final List<Food> recommendations;
+  final AiRecommendationResult aiInsights;
+  final Map<String, String> explanations;
+  final double traditionalScore;
+  final double aiScore;
+  final double fusionScore;
+  final List<Bubble> selectedBubbles;
+  final DateTime timestamp;
+  final RecommendationStrategy recommendationStrategy;
 
   /// 获取推荐质量评级
   String get qualityRating {

@@ -4,11 +4,6 @@ import '../../core/theme/glassmorphism_theme.dart';
 
 /// 现代化加载动画组件
 class ModernLoadingAnimation extends StatefulWidget {
-  final double size;
-  final Color? color;
-  final String? message;
-  final double progress;
-  final bool showPercentage;
 
   const ModernLoadingAnimation({
     super.key,
@@ -18,6 +13,11 @@ class ModernLoadingAnimation extends StatefulWidget {
     this.progress = 0.0,
     this.showPercentage = false,
   });
+  final double size;
+  final Color? color;
+  final String? message;
+  final double progress;
+  final bool showPercentage;
 
   @override
   State<ModernLoadingAnimation> createState() => _ModernLoadingAnimationState();
@@ -94,7 +94,7 @@ class _ModernLoadingAnimationState extends State<ModernLoadingAnimation>
       scale: 0.8 + (_pulseAnimation.value * 0.2),
       child: Transform.rotate(
         angle: _rotationAnimation.value * 2 * 3.14159,
-        child: Container(
+        child: SizedBox(
           width: widget.size,
           height: widget.size,
           child: GlassmorphismTheme.glassContainer(
@@ -169,7 +169,7 @@ class _ModernLoadingAnimationState extends State<ModernLoadingAnimation>
       mainAxisSize: MainAxisSize.min,
       children: [
         // 进度条
-        Container(
+        SizedBox(
           width: 200.w,
           height: 8.h,
           child: GlassmorphismTheme.glassContainer(

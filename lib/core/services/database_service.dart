@@ -1,9 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../models/recipe.dart';
-import '../models/food_item.dart';
-import '../models/restaurant.dart';
+
 import '../models/food.dart';
+import '../models/food_item.dart';
+import '../models/recipe.dart';
+import '../models/restaurant.dart';
 
 /// 统一数据库服务
 class DatabaseService {
@@ -527,7 +528,6 @@ class DatabaseService {
         price: 38.0,
         originalPrice: 38.0,
         imageUrl: 'https://via.placeholder.com/200x150?text=麻辣香锅',
-        isAvailable: true,
         restaurantId: 'restaurant_001',
         rating: 4.6,
         salesCount: 520,
@@ -544,7 +544,6 @@ class DatabaseService {
         originalPrice: 25.0,
         discountPrice: 22.0,
         imageUrl: 'https://via.placeholder.com/200x150?text=小笼包',
-        isAvailable: true,
         restaurantId: 'restaurant_002',
         rating: 4.8,
         salesCount: 890,
@@ -572,7 +571,6 @@ class DatabaseService {
         deliveryFee: 6.0,
         minOrderAmount: 30.0,
         deliveryTime: 35,
-        isOpen: true,
         imageUrl: 'https://via.placeholder.com/300x200?text=川味小厨',
         description: '正宗川菜，麻辣鲜香',
         phone: '010-12345678',
@@ -591,7 +589,6 @@ class DatabaseService {
         deliveryFee: 8.0,
         minOrderAmount: 25.0,
         deliveryTime: 40,
-        isOpen: true,
         imageUrl: 'https://via.placeholder.com/300x200?text=江南小馆',
         description: '精致江浙菜，口感清淡',
         phone: '010-87654321',
@@ -610,7 +607,7 @@ class DatabaseService {
   /// 加载示例菜品
   static Future<void> _loadSampleFoods() async {
     final sampleFoods = [
-      Food(
+      const Food(
         id: 'food_001',
         name: '红烧肉',
         description: '肥而不腻，香甜可口',
@@ -618,9 +615,8 @@ class DatabaseService {
         rating: 4.6,
         price: 35.0,
         tasteAttributes: ['甜', '咸', '鲜'],
-        isFavorite: false,
       ),
-      Food(
+      const Food(
         id: 'food_002',
         name: '麻婆豆腐',
         description: '麻辣鲜香，嫩滑爽口',
@@ -628,7 +624,6 @@ class DatabaseService {
         rating: 4.4,
         price: 18.0,
         tasteAttributes: ['麻', '辣', '鲜'],
-        isFavorite: false,
       ),
     ];
 

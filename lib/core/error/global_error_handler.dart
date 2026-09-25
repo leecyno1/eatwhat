@@ -10,10 +10,10 @@ typedef ErrorCallback = void Function(dynamic error, StackTrace? stackTrace);
 
 /// 全局错误处理器 - 统一处理应用中的所有错误
 class GlobalErrorHandler {
-  static GlobalErrorHandler? _instance;
-  static GlobalErrorHandler get instance => _instance ??= GlobalErrorHandler._internal();
 
   GlobalErrorHandler._internal();
+  static GlobalErrorHandler? _instance;
+  static GlobalErrorHandler get instance => _instance ??= GlobalErrorHandler._internal();
 
   /// 错误处理策略
   final List<ErrorCallback> _errorCallbacks = [];
@@ -23,9 +23,7 @@ class GlobalErrorHandler {
     final handler = GlobalErrorHandler.instance;
 
     // 1. Flutter框架错误处理
-    FlutterError.onError = (FlutterErrorDetails details) {
-      handler._handleFlutterError(details);
-    };
+    FlutterError.onError = handler._handleFlutterError;
 
     // 2. 异步错误处理
     PlatformDispatcher.instance.onError = (error, stack) {
@@ -36,9 +34,7 @@ class GlobalErrorHandler {
     // 3. Zone错误处理
     runZonedGuarded(() {
       // 应用启动代码将在这个Zone中运行
-    }, (error, stackTrace) {
-      handler._handleZoneError(error, stackTrace);
-    });
+    }, handler._handleZoneError);
 
     SecureLogger.info('🛡️ 全局错误处理器已初始化');
   }
@@ -230,9 +226,6 @@ class GlobalErrorHandler {
 
 /// 错误边界包装器 - 用于包装可能出错的Widget
 class ErrorBoundary extends StatelessWidget {
-  final Widget child;
-  final Widget? fallback;
-  final String? errorContext;
 
   const ErrorBoundary({
     super.key,
@@ -240,6 +233,9 @@ class ErrorBoundary extends StatelessWidget {
     this.fallback,
     this.errorContext,
   });
+  final Widget child;
+  final Widget? fallback;
+  final String? errorContext;
 
   @override
   Widget build(BuildContext context) {

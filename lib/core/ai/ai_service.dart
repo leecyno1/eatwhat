@@ -6,9 +6,9 @@ import 'prompt_templates.dart';
 /// AI服务类
 /// 负责与SiliconFlow API通信，提供AI增强的推荐功能
 class AiService {
-  static final AiService _instance = AiService._internal();
   factory AiService() => _instance;
   AiService._internal();
+  static final AiService _instance = AiService._internal();
 
   late final Dio _dio;
   final Map<String, dynamic> _cache = {};
@@ -303,13 +303,6 @@ class AiService {
 
 /// AI推荐结果类
 class AiRecommendationResult {
-  final List<String> recommendations;
-  final String reasons;
-  final double score;
-  final String suggestions;
-  final List<String> matchedBubbles;
-  final String rawResponse;
-  final DateTime timestamp;
 
   AiRecommendationResult({
     required this.recommendations,
@@ -320,17 +313,17 @@ class AiRecommendationResult {
     required this.rawResponse,
     required this.timestamp,
   });
+  final List<String> recommendations;
+  final String reasons;
+  final double score;
+  final String suggestions;
+  final List<String> matchedBubbles;
+  final String rawResponse;
+  final DateTime timestamp;
 }
 
 /// 用户偏好分析结果类
 class UserPreferenceAnalysis {
-  final String tasteCharacteristics;
-  final String cuisinePreferences;
-  final String ingredientPreferences;
-  final String avoidTypes;
-  final String weightSuggestions;
-  final String rawResponse;
-  final DateTime timestamp;
 
   UserPreferenceAnalysis({
     required this.tasteCharacteristics,
@@ -341,4 +334,11 @@ class UserPreferenceAnalysis {
     required this.rawResponse,
     required this.timestamp,
   });
+  final String tasteCharacteristics;
+  final String cuisinePreferences;
+  final String ingredientPreferences;
+  final String avoidTypes;
+  final String weightSuggestions;
+  final String rawResponse;
+  final DateTime timestamp;
 }

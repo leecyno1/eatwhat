@@ -1,19 +1,14 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:glassmorphism/glassmorphism.dart';
-import 'dart:math' as math;
 
 import '../../../core/models/physical_entity.dart';
 
 /// 高级物理实体组件 - 商业级白色透明毛玻璃效果
 class PremiumPhysicalEntityWidget extends StatefulWidget {
-  final PhysicalEntity entity;
-  final bool isSelected;
-  final VoidCallback? onTap;
-  final VoidCallback? onLongPress;
-  final double scale;
-  final double glowIntensity;
 
   const PremiumPhysicalEntityWidget({
     super.key,
@@ -24,6 +19,12 @@ class PremiumPhysicalEntityWidget extends StatefulWidget {
     this.scale = 1.0,
     this.glowIntensity = 0.0,
   });
+  final PhysicalEntity entity;
+  final bool isSelected;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  final double scale;
+  final double glowIntensity;
 
   @override
   State<PremiumPhysicalEntityWidget> createState() => _PremiumPhysicalEntityWidgetState();
@@ -143,13 +144,13 @@ class _PremiumPhysicalEntityWidgetState extends State<PremiumPhysicalEntityWidge
         _floatAnimation,
       ]),
       builder: (context, child) {
-        final floatOffset = 0.0; // 禁用浮动效果
+        const floatOffset = 0.0; // 禁用浮动效果
         final hoverScale = 1.0 + (_hoverAnimation.value * 0.1);
         final tapScale = _tapAnimation.value;
         final glowRadius = _glowAnimation.value * 30.0;
 
         return Transform.translate(
-          offset: Offset(0, floatOffset),
+          offset: const Offset(0, floatOffset),
           child: Transform.scale(
             scale: hoverScale * tapScale,
             child: GestureDetector(
@@ -312,7 +313,6 @@ class _PremiumPhysicalEntityWidgetState extends State<PremiumPhysicalEntityWidge
 
           // 实体名称
           Expanded(
-            flex: 1,
             child: Center(
               child: Text(
                 widget.entity.name,

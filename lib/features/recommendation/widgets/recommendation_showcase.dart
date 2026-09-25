@@ -1,8 +1,10 @@
-import 'package:flutter/material.dart';
-import '../../../core/services/recommendation_engine.dart';
-import '../../../core/services/purchase_link_service.dart';
-import '../../../core/models/food.dart';
 import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+
+import '../../../core/models/food.dart';
+import '../../../core/services/purchase_link_service.dart';
+import '../../../core/services/recommendation_engine.dart';
 
 /// 推荐展示组件
 /// 目标：
@@ -11,9 +13,6 @@ import 'dart:math' as math;
 /// 3. 购买/跳转按钮 -> 调用 PurchaseLinkService
 /// 4. 支持多平台快速切换
 class RecommendationShowcase extends StatefulWidget {
-  final List<ScoredFood> scoredFoods;
-  final double height;
-  final bool showRankBadge;
 
   const RecommendationShowcase({
     super.key,
@@ -21,6 +20,9 @@ class RecommendationShowcase extends StatefulWidget {
     this.height = 380,
     this.showRankBadge = true,
   });
+  final List<ScoredFood> scoredFoods;
+  final double height;
+  final bool showRankBadge;
 
   @override
   State<RecommendationShowcase> createState() => _RecommendationShowcaseState();
@@ -175,10 +177,6 @@ class _RecommendationShowcaseState extends State<RecommendationShowcase> {
 }
 
 class _RecommendationCard extends StatelessWidget {
-  final ScoredFood data;
-  final int rank;
-  final bool showBadge;
-  final bool showBreakdown;
 
   const _RecommendationCard({
     required this.data,
@@ -186,6 +184,10 @@ class _RecommendationCard extends StatelessWidget {
     required this.showBadge,
     required this.showBreakdown,
   });
+  final ScoredFood data;
+  final int rank;
+  final bool showBadge;
+  final bool showBreakdown;
 
   @override
   Widget build(BuildContext context) {
@@ -309,14 +311,14 @@ class _RecommendationCard extends StatelessWidget {
       label: Text(label, style: const TextStyle(fontSize: 11)),
       avatar: Icon(icon, size: 14),
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 0),
+      padding: const EdgeInsets.symmetric(horizontal: 6),
     );
   }
 }
 
 class _ScoreBreakdownView extends StatelessWidget {
-  final Map<String, double> breakdown;
   const _ScoreBreakdownView({required this.breakdown});
+  final Map<String, double> breakdown;
 
   @override
   Widget build(BuildContext context) {
@@ -379,8 +381,8 @@ class _ScoreBreakdownView extends StatelessWidget {
 
 /// 背景装饰 Painter (简单噪声 + 圆形渐变)
 class _BackdropPainter extends CustomPainter {
-  final int seed;
   _BackdropPainter({required this.seed});
+  final int seed;
 
   @override
   void paint(Canvas canvas, Size size) {

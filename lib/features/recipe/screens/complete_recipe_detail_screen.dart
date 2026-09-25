@@ -3,21 +3,21 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
+import '../../../core/error/global_error_handler.dart';
 import '../../../core/models/enhanced_recipe.dart';
 import '../controllers/enhanced_recipe_controller.dart';
-import '../../../core/error/global_error_handler.dart';
 
 /// 完整菜谱详情界面 - 基于增强菜谱数据模型
 /// 展示从下厨房爬取的真实菜谱数据
 class CompleteRecipeDetailScreen extends StatefulWidget {
-  final String recipeId;
-  final VoidCallback? onBack;
 
   const CompleteRecipeDetailScreen({
     super.key,
     required this.recipeId,
     this.onBack,
   });
+  final String recipeId;
+  final VoidCallback? onBack;
 
   @override
   State<CompleteRecipeDetailScreen> createState() => _CompleteRecipeDetailScreenState();
@@ -307,7 +307,7 @@ class _CompleteRecipeDetailScreenState extends State<CompleteRecipeDetailScreen>
                       SizedBox(width: 12.w),
                       _buildInfoChip(Icons.people, '${_recipe!.servings}人份'),
                       SizedBox(width: 12.w),
-                      _buildInfoChip(Icons.star, '${_recipe!.rating.toStringAsFixed(1)}'),
+                      _buildInfoChip(Icons.star, _recipe!.rating.toStringAsFixed(1)),
                     ],
                   ),
                 ],
@@ -476,7 +476,7 @@ class _CompleteRecipeDetailScreenState extends State<CompleteRecipeDetailScreen>
             return Container(
               padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
               decoration: BoxDecoration(
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   colors: [Colors.orange, Colors.red],
                 ),
                 borderRadius: BorderRadius.circular(20.r),
@@ -606,7 +606,7 @@ class _CompleteRecipeDetailScreenState extends State<CompleteRecipeDetailScreen>
                 Container(
                   width: 32.w,
                   height: 32.w,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       colors: [Colors.orange, Colors.red],
                     ),
@@ -649,7 +649,7 @@ class _CompleteRecipeDetailScreenState extends State<CompleteRecipeDetailScreen>
                           SizedBox(height: 8.h),
                           Row(
                             children: [
-                              Icon(Icons.timer, color: Colors.orange, size: 16),
+                              const Icon(Icons.timer, color: Colors.orange, size: 16),
                               SizedBox(width: 4.w),
                               Text(
                                 '${step.duration!.inMinutes}分钟',
@@ -668,7 +668,7 @@ class _CompleteRecipeDetailScreenState extends State<CompleteRecipeDetailScreen>
               ],
             ),
           );
-        }).toList(),
+        }),
       ],
     );
   }
@@ -707,7 +707,7 @@ class _CompleteRecipeDetailScreenState extends State<CompleteRecipeDetailScreen>
                 color: Colors.grey[700],
               ),
               Expanded(
-                child: _buildNutritionItem('蛋白质', '${nutrition.protein.toStringAsFixed(1)}', 'g'),
+                child: _buildNutritionItem('蛋白质', nutrition.protein.toStringAsFixed(1), 'g'),
               ),
               Container(
                 width: 1,
@@ -715,7 +715,7 @@ class _CompleteRecipeDetailScreenState extends State<CompleteRecipeDetailScreen>
                 color: Colors.grey[700],
               ),
               Expanded(
-                child: _buildNutritionItem('脂肪', '${nutrition.fat.toStringAsFixed(1)}', 'g'),
+                child: _buildNutritionItem('脂肪', nutrition.fat.toStringAsFixed(1), 'g'),
               ),
               Container(
                 width: 1,
@@ -723,7 +723,7 @@ class _CompleteRecipeDetailScreenState extends State<CompleteRecipeDetailScreen>
                 color: Colors.grey[700],
               ),
               Expanded(
-                child: _buildNutritionItem('碳水', '${nutrition.carbs.toStringAsFixed(1)}', 'g'),
+                child: _buildNutritionItem('碳水', nutrition.carbs.toStringAsFixed(1), 'g'),
               ),
             ],
           ),
@@ -807,7 +807,7 @@ class _CompleteRecipeDetailScreenState extends State<CompleteRecipeDetailScreen>
   }
 
   /// 切换收藏状态
-  void _toggleFavorite() async {
+  Future<void> _toggleFavorite() async {
     setState(() {
       _isFavorite = !_isFavorite;
     });

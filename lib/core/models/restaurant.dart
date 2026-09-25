@@ -2,32 +2,7 @@ import 'dart:math' as math;
 
 /// 餐厅信息模型
 /// 统一美团外卖和饿了么的餐厅数据格式
-class Restaurant {
-  final String id;
-  final String name;
-  final String address;
-  final String? phone;
-  final String? description;
-  final String? logoUrl;
-  final String? imageUrl;
-  final double? latitude;
-  final double? longitude;
-  final double? distance; // 距离（米）
-  final double? rating; // 评分
-  final int? reviewCount; // 评价数量
-  final String? openTime; // 营业时间
-  final String? closeTime;
-  final double? deliveryFee; // 配送费
-  final double? minOrderAmount; // 起送价
-  final int? deliveryTime; // 配送时间（分钟）
-  final bool isOpen; // 是否营业
-  final RestaurantPlatform platform; // 平台来源
-  final List<String> categories; // 餐厅分类
-  final List<String> tags; // 标签
-  final String? announcement; // 公告
-  final bool isPromotional; // 是否有优惠
-  final String? promotionalInfo; // 优惠信息
-  final Map<String, dynamic>? metadata; // 额外数据
+class Restaurant { // 额外数据
 
   Restaurant({
     required this.id,
@@ -126,6 +101,65 @@ class Restaurant {
       },
     );
   }
+
+  /// 从JSON创建Restaurant对象
+  factory Restaurant.fromJson(Map<String, dynamic> json) {
+    return Restaurant(
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      address: json['address'],
+      phone: json['phone'],
+      description: json['description'],
+      logoUrl: json['logoUrl'],
+      imageUrl: json['imageUrl'],
+      latitude: json['latitude']?.toDouble(),
+      longitude: json['longitude']?.toDouble(),
+      distance: json['distance']?.toDouble(),
+      rating: json['rating']?.toDouble(),
+      reviewCount: json['reviewCount'],
+      openTime: json['openTime'],
+      closeTime: json['closeTime'],
+      deliveryFee: json['deliveryFee']?.toDouble(),
+      minOrderAmount: json['minOrderAmount']?.toDouble(),
+      deliveryTime: json['deliveryTime'],
+      isOpen: json['isOpen'] ?? true,
+      platform: RestaurantPlatform.values.firstWhere(
+        (e) => e.name == (json['platform'] ?? 'unknown'),
+        orElse: () => RestaurantPlatform.unknown,
+      ),
+      categories: json['categories'] != null ? List<String>.from(json['categories']) : const [],
+      tags: json['tags'] != null ? List<String>.from(json['tags']) : const [],
+      announcement: json['announcement'],
+      isPromotional: json['isPromotional'] ?? false,
+      promotionalInfo: json['promotionalInfo'],
+      metadata: json['metadata'] as Map<String, dynamic>?,
+    );
+  }
+  final String id;
+  final String name;
+  final String address;
+  final String? phone;
+  final String? description;
+  final String? logoUrl;
+  final String? imageUrl;
+  final double? latitude;
+  final double? longitude;
+  final double? distance; // 距离（米）
+  final double? rating; // 评分
+  final int? reviewCount; // 评价数量
+  final String? openTime; // 营业时间
+  final String? closeTime;
+  final double? deliveryFee; // 配送费
+  final double? minOrderAmount; // 起送价
+  final int? deliveryTime; // 配送时间（分钟）
+  final bool isOpen; // 是否营业
+  final RestaurantPlatform platform; // 平台来源
+  final List<String> categories; // 餐厅分类
+  final List<String> tags; // 标签
+  final String? announcement; // 公告
+  final bool isPromotional; // 是否有优惠
+  final String? promotionalInfo; // 优惠信息
+  final Map<String, dynamic>? metadata;
 
   /// 计算与指定位置的距离
   double? calculateDistance(double targetLat, double targetLng) {
@@ -312,40 +346,6 @@ class Restaurant {
       'promotionalInfo': promotionalInfo,
       'metadata': metadata,
     };
-  }
-
-  /// 从JSON创建Restaurant对象
-  factory Restaurant.fromJson(Map<String, dynamic> json) {
-    return Restaurant(
-      id: json['id'] ?? '',
-      name: json['name'] ?? '',
-      address: json['address'],
-      phone: json['phone'],
-      description: json['description'],
-      logoUrl: json['logoUrl'],
-      imageUrl: json['imageUrl'],
-      latitude: json['latitude']?.toDouble(),
-      longitude: json['longitude']?.toDouble(),
-      distance: json['distance']?.toDouble(),
-      rating: json['rating']?.toDouble(),
-      reviewCount: json['reviewCount'],
-      openTime: json['openTime'],
-      closeTime: json['closeTime'],
-      deliveryFee: json['deliveryFee']?.toDouble(),
-      minOrderAmount: json['minOrderAmount']?.toDouble(),
-      deliveryTime: json['deliveryTime'],
-      isOpen: json['isOpen'] ?? true,
-      platform: RestaurantPlatform.values.firstWhere(
-        (e) => e.name == (json['platform'] ?? 'unknown'),
-        orElse: () => RestaurantPlatform.unknown,
-      ),
-      categories: json['categories'] != null ? List<String>.from(json['categories']) : const [],
-      tags: json['tags'] != null ? List<String>.from(json['tags']) : const [],
-      announcement: json['announcement'],
-      isPromotional: json['isPromotional'] ?? false,
-      promotionalInfo: json['promotionalInfo'],
-      metadata: json['metadata'] as Map<String, dynamic>?,
-    );
   }
 
   @override

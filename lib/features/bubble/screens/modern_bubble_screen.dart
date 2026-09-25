@@ -1,16 +1,16 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:provider/provider.dart';
 
-import '../controllers/bubble_controller.dart';
-import '../widgets/modern_bubble_widget.dart';
-import '../../recommendation/screens/recommendation_screen.dart';
 import '../../../core/theme/modern_theme.dart';
 import '../../../shared/widgets/modern_loading_animation.dart';
+import '../../recommendation/screens/recommendation_screen.dart';
+import '../controllers/bubble_controller.dart';
+import '../widgets/modern_bubble_widget.dart';
 
 /// 现代化气泡界面 - iPhone风格设计
 class ModernBubbleScreen extends StatefulWidget {

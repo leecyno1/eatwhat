@@ -1,6 +1,6 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:auto_size_text/auto_size_text.dart';
 
 import '../../../core/models/physical_entity.dart';
 import '../../../core/utils/performance_optimizer.dart';
@@ -10,16 +10,6 @@ import '../../../core/utils/performance_optimizer.dart';
 /// - RepaintBoundary 减少重绘区域
 /// - 帧渲染监控接入
 class PhysicalEntityWidget extends StatefulWidget {
-  final PhysicalEntity entity;
-  final bool isSelected;
-  // 是否启用动态环境/空闲动画（性能开关）
-  final bool enableDynamicAnimations;
-  final VoidCallback? onTap;
-  final VoidCallback? onSwipeUp;
-  final VoidCallback? onSwipeDown;
-  final VoidCallback? onSwipeLeft;
-  final VoidCallback? onSwipeRight;
-  final VoidCallback? onLongPress;
 
   const PhysicalEntityWidget({
     super.key,
@@ -33,6 +23,16 @@ class PhysicalEntityWidget extends StatefulWidget {
     this.onSwipeRight,
     this.onLongPress,
   });
+  final PhysicalEntity entity;
+  final bool isSelected;
+  // 是否启用动态环境/空闲动画（性能开关）
+  final bool enableDynamicAnimations;
+  final VoidCallback? onTap;
+  final VoidCallback? onSwipeUp;
+  final VoidCallback? onSwipeDown;
+  final VoidCallback? onSwipeLeft;
+  final VoidCallback? onSwipeRight;
+  final VoidCallback? onLongPress;
 
   @override
   State<PhysicalEntityWidget> createState() => _PhysicalEntityWidgetState();
@@ -217,12 +217,12 @@ class _PhysicalEntityWidgetState extends State<PhysicalEntityWidget>
                     if (velocity.dx.abs() > velocity.dy.abs()) {
                       // 水平滑动
                       if (velocity.dx > threshold) {
-                        _animateToTarget(Offset(200, 0), () {
+                        _animateToTarget(const Offset(200, 0), () {
                           HapticFeedback.lightImpact();
                           widget.onSwipeRight?.call();
                         });
                       } else if (velocity.dx < -threshold) {
-                        _animateToTarget(Offset(-200, 0), () {
+                        _animateToTarget(const Offset(-200, 0), () {
                           HapticFeedback.lightImpact();
                           widget.onSwipeLeft?.call();
                         });
@@ -329,7 +329,6 @@ class _PhysicalEntityWidgetState extends State<PhysicalEntityWidget>
                               BoxShadow(
                                 color: Colors.black.withValues(alpha: 0.08),
                                 blurRadius: 20,
-                                spreadRadius: 0,
                                 offset: const Offset(0, 10),
                               ),
                             ],
@@ -550,7 +549,6 @@ class _PhysicalEntityWidgetState extends State<PhysicalEntityWidget>
                   BoxShadow(
                     color: Colors.white.withValues(alpha: 0.1),
                     blurRadius: 4,
-                    spreadRadius: 0,
                   ),
                 ],
               ),

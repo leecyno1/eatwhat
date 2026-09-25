@@ -1,25 +1,25 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
 import '../../../core/models/recipe.dart';
 import '../../../core/services/recipe_database_service.dart';
-import '../../../shared/widgets/modern_loading_animation.dart';
 import '../../../shared/widgets/glassmorphic_container.dart';
+import '../../../shared/widgets/modern_loading_animation.dart';
 import 'complete_recipe_detail_screen.dart';
 
 /// 菜谱推荐界面 - Phase 2 集成真实数据
 /// 展示基于下厨房爬取数据的推荐菜谱
 class RecipeRecommendationScreen extends StatefulWidget {
-  final List<String>? preferredTags;
-  final String? searchKeyword;
 
   const RecipeRecommendationScreen({
     super.key,
     this.preferredTags,
     this.searchKeyword,
   });
+  final List<String>? preferredTags;
+  final String? searchKeyword;
 
   @override
   State<RecipeRecommendationScreen> createState() => _RecipeRecommendationScreenState();
@@ -46,7 +46,7 @@ class _RecipeRecommendationScreenState extends State<RecipeRecommendationScreen>
   String _selectedDifficulty = '全部';
   String _selectedCookingTime = '全部';
   String _selectedCategory = '全部';
-  List<String> _selectedTags = [];
+  final List<String> _selectedTags = [];
 
   final List<String> _difficultyOptions = ['全部', '简单', '中等', '困难'];
   final List<String> _timeOptions = ['全部', '15分钟内', '30分钟内', '1小时内', '1小时以上'];
@@ -202,7 +202,7 @@ class _RecipeRecommendationScreenState extends State<RecipeRecommendationScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline,
               color: Colors.red,
               size: 60,
@@ -343,7 +343,7 @@ class _RecipeRecommendationScreenState extends State<RecipeRecommendationScreen>
                 });
                 _applyFilters();
               },
-              child: Icon(
+              child: const Icon(
                 Icons.close,
                 color: Colors.orange,
                 size: 16,
@@ -515,7 +515,7 @@ class _RecipeRecommendationScreenState extends State<RecipeRecommendationScreen>
                       // 底部信息
                       Row(
                         children: [
-                          Icon(Icons.schedule, color: Colors.orange, size: 14),
+                          const Icon(Icons.schedule, color: Colors.orange, size: 14),
                           SizedBox(width: 4.w),
                           Text(
                             '${recipe.cookingTime}分钟',
@@ -525,7 +525,7 @@ class _RecipeRecommendationScreenState extends State<RecipeRecommendationScreen>
                             ),
                           ),
                           SizedBox(width: 12.w),
-                          Icon(Icons.people, color: Colors.blue, size: 14),
+                          const Icon(Icons.people, color: Colors.blue, size: 14),
                           SizedBox(width: 4.w),
                           Text(
                             '${recipe.servings}人份',
@@ -537,7 +537,7 @@ class _RecipeRecommendationScreenState extends State<RecipeRecommendationScreen>
                           const Spacer(),
                           Row(
                             children: [
-                              Icon(Icons.star, color: Colors.amber, size: 14),
+                              const Icon(Icons.star, color: Colors.amber, size: 14),
                               SizedBox(width: 2.w),
                               Text(
                                 recipe.rating.toStringAsFixed(1),

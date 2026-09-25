@@ -6,14 +6,14 @@ import '../../core/services/cold_start_service.dart';
 
 /// 冷启动问卷页面
 class ColdStartQuestionnairePage extends StatefulWidget {
-  final VoidCallback onCompleted;
-  final VoidCallback onSkipped;
 
   const ColdStartQuestionnairePage({
     super.key,
     required this.onCompleted,
     required this.onSkipped,
   });
+  final VoidCallback onCompleted;
+  final VoidCallback onSkipped;
 
   @override
   State<ColdStartQuestionnairePage> createState() => _ColdStartQuestionnairePageState();
@@ -117,7 +117,6 @@ class _ColdStartQuestionnairePageState extends State<ColdStartQuestionnairePage>
       final questionnaireData = ColdStartQuestionnaireData(
         answers: answers,
         completedAt: DateTime.now(),
-        skipped: false,
       );
 
       // 保存问卷数据

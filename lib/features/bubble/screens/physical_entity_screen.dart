@@ -1,18 +1,18 @@
-import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
 
-import '../controllers/physical_entity_controller.dart';
-import '../widgets/physical_entity_widget.dart';
-import '../../recommendation/screens/recommendation_screen.dart';
+import '../../../core/models/bubble.dart'; // 添加BubbleGesture导入
+import '../../../core/services/growth_engine.dart';
+import '../../../core/utils/performance_optimizer.dart';
 import '../../../shared/widgets/modern_loading_animation.dart';
 import '../../../shared/widgets/particle_system.dart';
-import '../../../core/utils/performance_optimizer.dart';
-import '../../../core/services/growth_engine.dart';
-import '../../../core/models/bubble.dart'; // 添加BubbleGesture导入
+import '../../recommendation/screens/recommendation_screen.dart';
+import '../controllers/physical_entity_controller.dart';
+import '../widgets/physical_entity_widget.dart';
 
 /// 物理实体界面 - 零重力环境下的形象化实体交互
 class PhysicalEntityScreen extends StatefulWidget {
@@ -45,7 +45,6 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
     // ✨ 初始化粒子系统
     _particleManager = ParticleSystemManager(
       maxParticles: 150,
-      containerSize: const Size(400, 600),
     );
 
     // 背景渐变动画
@@ -278,7 +277,6 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                               color: Colors.white.withValues(alpha: 0.1),
                               border: Border.all(
                                 color: Colors.cyan.withValues(alpha: 0.3),
-                                width: 1,
                               ),
                               boxShadow: [
                                 BoxShadow(
@@ -438,11 +436,7 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                             //   strength: 400.0,
                             // );
                           },
-                          onDoubleTap: () {
-                            HapticFeedback.mediumImpact();
-                            // 暂时禁用随机扰动
-                            // controller.addRandomDisturbance(strength: 150.0);
-                          },
+                          onDoubleTap: HapticFeedback.mediumImpact,
                           child: Stack(
                             children: controller.entities
                                 .asMap()
@@ -534,7 +528,6 @@ class _PhysicalEntityScreenState extends State<PhysicalEntityScreen>
                                       border: Border.all(
                                         color:
                                             Colors.cyan.withValues(alpha: 0.5),
-                                        width: 1,
                                       ),
                                     ),
                                     child: Column(

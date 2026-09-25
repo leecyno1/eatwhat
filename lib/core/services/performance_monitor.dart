@@ -1,13 +1,14 @@
 import 'package:flutter/foundation.dart';
-import '../utils/performance_optimizer.dart';
+
 import '../services/analytics_service.dart';
+import '../utils/performance_optimizer.dart';
 
 /// 性能监控服务
 /// 提供应用级别的性能监控和报告功能
 class PerformanceMonitor {
-  static final PerformanceMonitor _instance = PerformanceMonitor._internal();
   factory PerformanceMonitor() => _instance;
   PerformanceMonitor._internal();
+  static final PerformanceMonitor _instance = PerformanceMonitor._internal();
 
   final PerformanceOptimizer _optimizer = PerformanceOptimizer();
   AnalyticsService? _mockAnalytics;
@@ -158,12 +159,12 @@ class PerformanceMonitor {
 
 /// 性能追踪器
 class PerformanceTracker {
-  final String operationName;
-  final PerformanceMonitor monitor;
-  final DateTime startTime;
 
   PerformanceTracker(this.operationName, this.monitor)
       : startTime = DateTime.now();
+  final String operationName;
+  final PerformanceMonitor monitor;
+  final DateTime startTime;
 
   /// 结束追踪
   void end() {
@@ -174,14 +175,6 @@ class PerformanceTracker {
 
 /// 性能报告
 class PerformanceReport {
-  final Duration sessionDuration;
-  final int totalInteractions;
-  final double avgFrameTime;
-  final double droppedFrameRate;
-  final Map<String, int> pageViewCounts;
-  final Map<String, double> pageLoadTimes;
-  final int animatedWidgetCount;
-  final List<String> suggestions;
 
   PerformanceReport({
     required this.sessionDuration,
@@ -193,6 +186,28 @@ class PerformanceReport {
     required this.animatedWidgetCount,
     required this.suggestions,
   });
+
+  /// 从Map创建
+  factory PerformanceReport.fromMap(Map<String, dynamic> map) {
+    return PerformanceReport(
+      sessionDuration: Duration(seconds: map['session_duration_seconds'] as int),
+      totalInteractions: map['total_interactions'] as int,
+      avgFrameTime: (map['avg_frame_time'] as num).toDouble(),
+      droppedFrameRate: (map['dropped_frame_rate'] as num).toDouble(),
+      pageViewCounts: Map<String, int>.from(map['page_view_counts'] as Map),
+      pageLoadTimes: Map<String, double>.from(map['page_load_times'] as Map),
+      animatedWidgetCount: map['animated_widget_count'] as int,
+      suggestions: List<String>.from(map['suggestions'] as List),
+    );
+  }
+  final Duration sessionDuration;
+  final int totalInteractions;
+  final double avgFrameTime;
+  final double droppedFrameRate;
+  final Map<String, int> pageViewCounts;
+  final Map<String, double> pageLoadTimes;
+  final int animatedWidgetCount;
+  final List<String> suggestions;
 
   /// 转换为Map
   Map<String, dynamic> toMap() {
@@ -209,20 +224,6 @@ class PerformanceReport {
           ? (totalInteractions / sessionDuration.inSeconds * 60)
           : 0,
     };
-  }
-
-  /// 从Map创建
-  factory PerformanceReport.fromMap(Map<String, dynamic> map) {
-    return PerformanceReport(
-      sessionDuration: Duration(seconds: map['session_duration_seconds'] as int),
-      totalInteractions: map['total_interactions'] as int,
-      avgFrameTime: (map['avg_frame_time'] as num).toDouble(),
-      droppedFrameRate: (map['dropped_frame_rate'] as num).toDouble(),
-      pageViewCounts: Map<String, int>.from(map['page_view_counts'] as Map),
-      pageLoadTimes: Map<String, double>.from(map['page_load_times'] as Map),
-      animatedWidgetCount: map['animated_widget_count'] as int,
-      suggestions: List<String>.from(map['suggestions'] as List),
-    );
   }
 
   @override

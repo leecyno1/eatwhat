@@ -40,11 +40,11 @@ class HowToCookRecipeDetail {
     String? fallbackSource,
     List<String> extraTags = const [],
   }) {
-    final tags = <String>[
+    final tags = <String>{
       if (category.trim().isNotEmpty) category.trim(),
       if (subcategory.trim().isNotEmpty) subcategory.trim(),
       ...extraTags.where((item) => item.trim().isNotEmpty),
-    ].toSet().toList();
+    }.toList();
 
     return RecipeModel(
       id: fallbackId ?? id,

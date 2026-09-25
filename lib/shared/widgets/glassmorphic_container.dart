@@ -3,17 +3,6 @@ import 'package:flutter/material.dart';
 
 /// 简化的玻璃形态容器组件
 class GlassmorphicContainer extends StatelessWidget {
-  final Widget child;
-  final double width;
-  final double height;
-  final double borderRadius;
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? margin;
-  final Color? backgroundColor;
-  final Color? borderColor;
-  final double borderWidth;
-  final double blur;
-  final double opacity;
 
   const GlassmorphicContainer({
     super.key,
@@ -29,6 +18,17 @@ class GlassmorphicContainer extends StatelessWidget {
     this.blur = 10.0,
     this.opacity = 0.1,
   });
+  final Widget child;
+  final double width;
+  final double height;
+  final double borderRadius;
+  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
+  final Color? backgroundColor;
+  final Color? borderColor;
+  final double borderWidth;
+  final double blur;
+  final double opacity;
 
   @override
   Widget build(BuildContext context) {

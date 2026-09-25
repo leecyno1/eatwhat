@@ -534,7 +534,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
                         size: 17,
                         color: AppColors.freshLime,
                       ),
-                      SizedBox(width: 6),
+                      const SizedBox(width: 6),
                       Text(
                         '已完成',
                         style: TextStyle(
@@ -1003,7 +1003,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
           height: height,
           decoration: BoxDecoration(
             color: AppPalette.rice,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: Column(
             children: [

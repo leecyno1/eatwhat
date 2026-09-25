@@ -3,12 +3,12 @@ import '../../../core/models/food_item.dart';
 
 /// 食品详情对话框
 class FoodItemDetailDialog extends StatelessWidget {
-  final FoodItem food;
 
   const FoodItemDetailDialog({
     super.key,
     required this.food,
   });
+  final FoodItem food;
 
   @override
   Widget build(BuildContext context) {

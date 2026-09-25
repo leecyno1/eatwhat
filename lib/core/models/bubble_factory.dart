@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'bubble.dart';
+
 import '../data/taste_visual_mapping.dart';
+import 'bubble.dart';
 
 /// 气泡工厂类，用于创建预定义的气泡
 class BubbleFactory {
@@ -139,7 +140,6 @@ class BubbleFactory {
         icon: '🐟',
         description: '鱼类食材',
         color: Colors.blue.shade400,
-        size: 50.0,
       ),
       Bubble(
         type: BubbleType.ingredient,
@@ -287,7 +287,6 @@ class BubbleFactory {
         icon: '🚫',
         description: '低糖食物',
         color: Colors.grey.shade500,
-        size: 50.0,
       ),
       Bubble(
         type: BubbleType.nutrition,

@@ -4,8 +4,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../core/models/recipe.dart';
 import '../../../core/services/real_xiachufang_crawler_service.dart';
-import '../../../shared/widgets/modern_loading_animation.dart';
 import '../../../shared/widgets/glassmorphic_container.dart';
+import '../../../shared/widgets/modern_loading_animation.dart';
 import 'complete_recipe_detail_screen.dart';
 
 /// 菜谱搜索界面 - Phase 2 新增
@@ -499,7 +499,7 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> with TickerProv
                       const Spacer(),
                       Row(
                         children: [
-                          Icon(Icons.schedule, color: Colors.orange, size: 14),
+                          const Icon(Icons.schedule, color: Colors.orange, size: 14),
                           SizedBox(width: 4.w),
                           Text(
                             '${recipe.cookingTime}分钟',
@@ -509,7 +509,7 @@ class _RecipeSearchScreenState extends State<RecipeSearchScreen> with TickerProv
                             ),
                           ),
                           SizedBox(width: 12.w),
-                          Icon(Icons.star, color: Colors.amber, size: 14),
+                          const Icon(Icons.star, color: Colors.amber, size: 14),
                           SizedBox(width: 2.w),
                           Text(
                             recipe.rating.toStringAsFixed(1),

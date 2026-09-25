@@ -18,6 +18,18 @@ import 'grab_controller.dart';
 import 'wall_body.dart';
 
 class BubbleGame extends Forge2DGame {
+
+  BubbleGame({
+    String? initialCategory,
+    Map<String, String> initialLikedTags = const {},
+    Map<String, String> initialBlockedTags = const {},
+  })  : _category = initialCategory,
+        super(gravity: Vector2(0, gravityY), zoom: 1.0) {
+    _replaceSelections(
+      likedTags: initialLikedTags,
+      blockedTags: initialBlockedTags,
+    );
+  }
   /// Depth layers of the pot. Entities on the same layer collide with each
   /// other; layers overlap visually (see [BubbleBody.layerIndex]).
   static const int potLayerCount = 3;
@@ -49,18 +61,6 @@ class BubbleGame extends Forge2DGame {
   /// Realistic downward gravity in world units so entities pile up and
   /// settle like real objects instead of floating like bubbles.
   static const double gravityY = 9.8;
-
-  BubbleGame({
-    String? initialCategory,
-    Map<String, String> initialLikedTags = const {},
-    Map<String, String> initialBlockedTags = const {},
-  })  : _category = initialCategory,
-        super(gravity: Vector2(0, gravityY), zoom: 1.0) {
-    _replaceSelections(
-      likedTags: initialLikedTags,
-      blockedTags: initialBlockedTags,
-    );
-  }
 
   @override
   Color backgroundColor() => const Color(0x00FFFFFF);
@@ -380,7 +380,7 @@ class BubbleGame extends Forge2DGame {
     // into a natural pile instead of hovering like bubbles. Replenished
     // entities spawn from a narrow band at the very top and drift in with
     // a little sideways velocity so they visibly fall onto the pile.
-    final spawnBandTop = 1.1;
+    const spawnBandTop = 1.1;
     final spawnBandHeight =
         replenish ? 0.4 : max(1.0, visibleHeight * 0.42 - spawnBandTop - 2.4);
 

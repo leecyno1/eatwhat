@@ -1,12 +1,13 @@
-import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../controllers/bubble_controller.dart';
-import '../../recommendation/screens/recommendation_screen.dart';
-import '../widgets/glassmorphism_bubble_widget.dart';
-import '../../../shared/widgets/modern_loading_animation.dart';
+import 'package:provider/provider.dart';
+
 import '../../../core/theme/glassmorphism_theme.dart';
+import '../../../shared/widgets/modern_loading_animation.dart';
+import '../../recommendation/screens/recommendation_screen.dart';
+import '../controllers/bubble_controller.dart';
+import '../widgets/glassmorphism_bubble_widget.dart';
 
 /// Glassmorphism风格气泡主界面
 class GlassmorphismBubbleScreen extends StatefulWidget {
@@ -226,7 +227,6 @@ class _GlassmorphismBubbleScreenState extends State<GlassmorphismBubbleScreen>
       padding: EdgeInsets.all(16.w),
       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 3,
-        childAspectRatio: 1.0,
         crossAxisSpacing: 16.w,
         mainAxisSpacing: 16.h,
       ),
@@ -339,9 +339,7 @@ class _GlassmorphismBubbleScreenState extends State<GlassmorphismBubbleScreen>
                   _buildControlButton(
                     icon: Icons.settings,
                     label: '设置',
-                    onTap: () {
-                      _showSettingsDialog();
-                    },
+                    onTap: _showSettingsDialog,
                   ),
                 ],
               ),
@@ -602,9 +600,9 @@ class _GlassmorphismBubbleScreenState extends State<GlassmorphismBubbleScreen>
 
 /// 粒子效果绘制器
 class ParticlePainter extends CustomPainter {
-  final double animationValue;
 
   ParticlePainter(this.animationValue);
+  final double animationValue;
 
   @override
   void paint(Canvas canvas, Size size) {

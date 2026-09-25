@@ -1,16 +1,17 @@
 import 'dart:async';
 import 'dart:collection';
+
 import 'package:flutter/foundation.dart';
 
-import 'user_preference_manager.dart';
 import 'unified_food_data_service.dart';
+import 'user_preference_manager.dart';
 
 /// 实时反馈服务 - Phase 2 核心优化
 /// 实现用户行为的即时反馈和同步机制
 class RealtimeFeedbackService {
-  static final RealtimeFeedbackService _instance = RealtimeFeedbackService._internal();
   factory RealtimeFeedbackService() => _instance;
   RealtimeFeedbackService._internal();
+  static final RealtimeFeedbackService _instance = RealtimeFeedbackService._internal();
 
   final UserPreferenceManager _preferenceManager = UserPreferenceManager();
   final UnifiedFoodDataService _unifiedService = UnifiedFoodDataService();
@@ -87,7 +88,7 @@ class RealtimeFeedbackService {
   /// 获取实时偏好更新
   Future<UserPreferenceUpdate> getRealtimePreferenceUpdate() async {
     // 分析最近的用户行为模式
-    final recentActions = _getRecentActions(Duration(minutes: 5));
+    final recentActions = _getRecentActions(const Duration(minutes: 5));
     final preferenceChanges = await _analyzePreferenceChanges(recentActions);
 
     return UserPreferenceUpdate(
@@ -139,7 +140,7 @@ class RealtimeFeedbackService {
       actionCounts[action.actionType] = (actionCounts[action.actionType] ?? 0) + 1;
 
       final hour = action.timestamp.hour;
-      final timeSlot = '${hour}:00-${hour + 1}:00';
+      final timeSlot = '$hour:00-${hour + 1}:00';
       timeDistribution[timeSlot] = (timeDistribution[timeSlot] ?? 0) + 1;
     }
 
@@ -312,10 +313,10 @@ class RealtimeFeedbackService {
   }
 
   /// 异步刷新推荐
-  void _refreshRecommendationsAsync() async {
+  Future<void> _refreshRecommendationsAsync() async {
     try {
       // 这里可以调用推荐系统进行刷新
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       _feedbackController.add(UserFeedbackEvent(
         type: FeedbackEventType.recommendationRefreshCompleted,
@@ -369,10 +370,6 @@ class RealtimeFeedbackService {
 
 /// 用户行为数据模型
 class UserAction {
-  final String itemId;
-  final UserActionType actionType;
-  final DateTime timestamp;
-  final Map<String, dynamic> metadata;
 
   UserAction({
     required this.itemId,
@@ -380,13 +377,6 @@ class UserAction {
     required this.timestamp,
     required this.metadata,
   });
-
-  Map<String, dynamic> toJson() => {
-        'itemId': itemId,
-        'actionType': actionType.name,
-        'timestamp': timestamp.toIso8601String(),
-        'metadata': metadata,
-      };
 
   factory UserAction.fromJson(Map<String, dynamic> json) => UserAction(
         itemId: json['itemId'] ?? '',
@@ -397,28 +387,35 @@ class UserAction {
         timestamp: DateTime.tryParse(json['timestamp'] ?? '') ?? DateTime.now(),
         metadata: Map<String, dynamic>.from(json['metadata'] ?? {}),
       );
+  final String itemId;
+  final UserActionType actionType;
+  final DateTime timestamp;
+  final Map<String, dynamic> metadata;
+
+  Map<String, dynamic> toJson() => {
+        'itemId': itemId,
+        'actionType': actionType.name,
+        'timestamp': timestamp.toIso8601String(),
+        'metadata': metadata,
+      };
 }
 
 /// 反馈事件数据模型
 class UserFeedbackEvent {
-  final FeedbackEventType type;
-  final String message;
-  final UserAction? action;
-  final DateTime timestamp;
 
   UserFeedbackEvent({
     required this.type,
     required this.message,
     this.action,
   }) : timestamp = DateTime.now();
+  final FeedbackEventType type;
+  final String message;
+  final UserAction? action;
+  final DateTime timestamp;
 }
 
 /// 用户偏好更新数据模型
 class UserPreferenceUpdate {
-  final Map<String, PreferenceChange> changes;
-  final double confidence;
-  final List<String> recommendations;
-  final DateTime timestamp;
 
   UserPreferenceUpdate({
     required this.changes,
@@ -426,14 +423,14 @@ class UserPreferenceUpdate {
     required this.recommendations,
     required this.timestamp,
   });
+  final Map<String, PreferenceChange> changes;
+  final double confidence;
+  final List<String> recommendations;
+  final DateTime timestamp;
 }
 
 /// 偏好变化数据模型
 class PreferenceChange {
-  final String itemId;
-  final ChangeType changeType;
-  final double magnitude;
-  final DateTime timestamp;
 
   PreferenceChange({
     required this.itemId,
@@ -441,6 +438,10 @@ class PreferenceChange {
     required this.magnitude,
     required this.timestamp,
   });
+  final String itemId;
+  final ChangeType changeType;
+  final double magnitude;
+  final DateTime timestamp;
 }
 
 /// 枚举定义

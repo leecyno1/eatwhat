@@ -1,10 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../services/unified_food_data_service.dart';
-import '../services/recipe_database_service.dart';
-import '../services/howtocook_database_service.dart';
-import '../services/vectorized_recommendation_engine.dart';
-import '../services/user_preference_manager.dart';
+
 import '../services/analytics_service.dart';
+import '../services/howtocook_database_service.dart';
+import '../services/recipe_database_service.dart';
+import '../services/unified_food_data_service.dart';
+import '../services/user_preference_manager.dart';
+import '../services/vectorized_recommendation_engine.dart';
 
 /// ========== 服务层 Providers ==========
 
@@ -42,15 +43,15 @@ final analyticsServiceProvider = Provider<AnalyticsService>((ref) {
 
 /// 应用初始化状态
 class AppInitState {
-  final bool isInitialized;
-  final bool isLoading;
-  final String? error;
 
   const AppInitState({
     this.isInitialized = false,
     this.isLoading = false,
     this.error,
   });
+  final bool isInitialized;
+  final bool isLoading;
+  final String? error;
 
   AppInitState copyWith({
     bool? isInitialized,
@@ -70,7 +71,7 @@ class AppInitNotifier extends StateNotifier<AppInitState> {
   AppInitNotifier() : super(const AppInitState());
 
   Future<void> initialize() async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true);
 
     try {
       // 初始化各种服务
@@ -126,15 +127,15 @@ final searchQueryProvider = StateProvider<String>((ref) {
 
 /// 收藏列表状态
 class FavoritesState {
-  final List<String> foodIds;
-  final bool isLoading;
-  final String? error;
 
   const FavoritesState({
     this.foodIds = const [],
     this.isLoading = false,
     this.error,
   });
+  final List<String> foodIds;
+  final bool isLoading;
+  final String? error;
 
   FavoritesState copyWith({
     List<String>? foodIds,
@@ -203,10 +204,6 @@ final isFavoriteProvider = Provider.family<bool, String>((ref, foodId) {
 
 /// 购物车项
 class CartItem {
-  final String foodId;
-  final String name;
-  final int quantity;
-  final double price;
 
   const CartItem({
     required this.foodId,
@@ -214,6 +211,10 @@ class CartItem {
     required this.quantity,
     required this.price,
   });
+  final String foodId;
+  final String name;
+  final int quantity;
+  final double price;
 
   CartItem copyWith({
     String? foodId,
@@ -232,15 +233,15 @@ class CartItem {
 
 /// 购物车状态
 class CartState {
-  final List<CartItem> items;
-  final bool isLoading;
-  final String? error;
 
   const CartState({
     this.items = const [],
     this.isLoading = false,
     this.error,
   });
+  final List<CartItem> items;
+  final bool isLoading;
+  final String? error;
 
   CartState copyWith({
     List<CartItem>? items,

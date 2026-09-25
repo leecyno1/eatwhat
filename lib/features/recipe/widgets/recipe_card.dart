@@ -4,9 +4,6 @@ import '../../../core/models/recipe.dart';
 import '../../../core/services/recipe_database_service.dart';
 
 class RecipeCard extends StatelessWidget {
-  final Recipe recipe;
-  final VoidCallback? onTap;
-  final Function(bool)? onFavoriteToggle;
 
   const RecipeCard({
     super.key,
@@ -14,6 +11,9 @@ class RecipeCard extends StatelessWidget {
     this.onTap,
     this.onFavoriteToggle,
   });
+  final Recipe recipe;
+  final VoidCallback? onTap;
+  final Function(bool)? onFavoriteToggle;
 
   @override
   Widget build(BuildContext context) {
@@ -158,16 +158,16 @@ class RecipeCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.eco,
                             color: Colors.white,
                             size: 12,
                           ),
-                          const SizedBox(width: 4),
-                          const Text(
+                          SizedBox(width: 4),
+                          Text(
                             '素食',
                             style: TextStyle(
                               color: Colors.white,
@@ -200,16 +200,16 @@ class RecipeCard extends StatelessWidget {
                           ),
                         ],
                       ),
-                      child: Row(
+                      child: const Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.flash_on,
                             color: Colors.white,
                             size: 12,
                           ),
-                          const SizedBox(width: 4),
-                          const Text(
+                          SizedBox(width: 4),
+                          Text(
                             '快手',
                             style: TextStyle(
                               color: Colors.white,

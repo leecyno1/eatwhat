@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:provider/provider.dart';
-import 'package:eatwhat_app/core/theme/app_theme.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:eatwhat_app/core/models/physical_entity.dart';
+import 'package:eatwhat_app/core/theme/app_theme.dart';
 import 'package:eatwhat_app/features/bubble/controllers/physical_entity_controller.dart';
 import 'package:eatwhat_app/features/style_preview/style_preview_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
 // 不继承真实控制器，避免释放假实现从未初始化的服务。
 class FakePhysicalEntityController extends Fake

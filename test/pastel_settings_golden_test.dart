@@ -1,8 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:eatwhat_app/core/theme/app_theme.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:eatwhat_app/features/settings/screens/pastel_settings_screen.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   testWidgets('PastelSettingsScreen golden', (tester) async {

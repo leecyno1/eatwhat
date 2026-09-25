@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
-import '../models/food.dart';
+
 import '../data/food_data_generator.dart';
+import '../models/food.dart';
 
 /// 简化的美食数据库服务
 /// 提供真实的美食推荐数据
 class SimpleFoodDatabase {
-  static final SimpleFoodDatabase _instance = SimpleFoodDatabase._internal();
   factory SimpleFoodDatabase() => _instance;
   SimpleFoodDatabase._internal();
+  static final SimpleFoodDatabase _instance = SimpleFoodDatabase._internal();
 
   final List<Food> _cachedFoods = [];
   bool _isInitialized = false;
@@ -41,7 +42,7 @@ class SimpleFoodDatabase {
 
     // 添加一些手工精选的特色菜品
     _cachedFoods.addAll([
-      Food(
+      const Food(
         id: 'featured_001',
         name: '宫保鸡丁',
         description: '四川传统名菜，鸡肉嫩滑，花生香脆，口感丰富',
@@ -56,7 +57,7 @@ class SimpleFoodDatabase {
         nutritionFacts: {'protein': 28.0, 'carbs': 12.0, 'fat': 18.0, 'fiber': 3.0},
       ),
 
-      Food(
+      const Food(
         id: 'sichuan_002',
         name: '麻婆豆腐',
         description: '四川传统豆腐菜，麻辣鲜香，口感嫩滑',
@@ -71,7 +72,7 @@ class SimpleFoodDatabase {
         nutritionFacts: {'protein': 15.0, 'carbs': 8.0, 'fat': 12.0, 'fiber': 2.0},
       ),
 
-      Food(
+      const Food(
         id: 'sichuan_003',
         name: '回锅肉',
         description: '四川经典家常菜，肥瘦相间，香辣开胃',
@@ -87,7 +88,7 @@ class SimpleFoodDatabase {
       ),
 
       // 粤菜
-      Food(
+      const Food(
         id: 'cantonese_001',
         name: '白切鸡',
         description: '粤菜经典，鸡肉鲜嫩，配蘸料食用',
@@ -102,7 +103,7 @@ class SimpleFoodDatabase {
         nutritionFacts: {'protein': 28.0, 'carbs': 2.0, 'fat': 12.0, 'fiber': 0.0},
       ),
 
-      Food(
+      const Food(
         id: 'cantonese_002',
         name: '蒸蛋羹',
         description: '粤式经典，口感嫩滑，营养丰富',
@@ -118,7 +119,7 @@ class SimpleFoodDatabase {
       ),
 
       // 湘菜
-      Food(
+      const Food(
         id: 'hunan_001',
         name: '剁椒鱼头',
         description: '湘菜招牌菜，鱼肉鲜嫩，剁椒香辣',
@@ -134,7 +135,7 @@ class SimpleFoodDatabase {
       ),
 
       // 苏菜
-      Food(
+      const Food(
         id: 'jiangsu_001',
         name: '红烧肉',
         description: '江南传统名菜，肥瘦相间，入口即化',
@@ -149,7 +150,7 @@ class SimpleFoodDatabase {
         nutritionFacts: {'protein': 22.0, 'carbs': 15.0, 'fat': 35.0, 'fiber': 1.0},
       ),
 
-      Food(
+      const Food(
         id: 'jiangsu_002',
         name: '糖醋里脊',
         description: '酸甜可口的经典菜品，外酥内嫩',
@@ -165,7 +166,7 @@ class SimpleFoodDatabase {
       ),
 
       // 家常菜
-      Food(
+      const Food(
         id: 'home_001',
         name: '西红柿炒鸡蛋',
         description: '简单家常菜，酸甜可口，营养丰富',
@@ -180,7 +181,7 @@ class SimpleFoodDatabase {
         nutritionFacts: {'protein': 8.0, 'carbs': 10.0, 'fat': 8.0, 'fiber': 2.0},
       ),
 
-      Food(
+      const Food(
         id: 'home_002',
         name: '青椒土豆丝',
         description: '经典素菜，清脆爽口，简单易做',
@@ -195,7 +196,7 @@ class SimpleFoodDatabase {
         nutritionFacts: {'protein': 2.0, 'carbs': 18.0, 'fat': 2.0, 'fiber': 3.0},
       ),
 
-      Food(
+      const Food(
         id: 'home_003',
         name: '蛋炒饭',
         description: '快手美食，香滑可口，营养均衡',
@@ -211,7 +212,7 @@ class SimpleFoodDatabase {
       ),
 
       // 西餐
-      Food(
+      const Food(
         id: 'western_001',
         name: '意大利面',
         description: '经典意式面条，配番茄肉酱，口感丰富',
@@ -226,7 +227,7 @@ class SimpleFoodDatabase {
         nutritionFacts: {'protein': 18.0, 'carbs': 45.0, 'fat': 12.0, 'fiber': 4.0},
       ),
 
-      Food(
+      const Food(
         id: 'western_002',
         name: '牛排',
         description: '嫩滑多汁的牛排，配土豆泥',
@@ -242,7 +243,7 @@ class SimpleFoodDatabase {
       ),
 
       // 点心小食
-      Food(
+      const Food(
         id: 'snack_001',
         name: '小笼包',
         description: '皮薄馅多，汤汁丰富的经典点心',
@@ -257,7 +258,7 @@ class SimpleFoodDatabase {
         nutritionFacts: {'protein': 12.0, 'carbs': 25.0, 'fat': 8.0, 'fiber': 2.0},
       ),
 
-      Food(
+      const Food(
         id: 'snack_002',
         name: '煎饺',
         description: '外焦内嫩，香脆可口的经典点心',

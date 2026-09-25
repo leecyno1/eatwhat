@@ -1,6 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 
 import '../../../core/models/food.dart';
@@ -11,11 +11,6 @@ import '../../../core/services/user_preference_manager.dart'
 /// 增强食物推荐卡片 - Phase 1 UI优化
 /// 支持玻璃态效果、动画、推荐原因显示等
 class EnhancedFoodCard extends StatefulWidget {
-  final Food food;
-  final VoidCallback? onTap;
-  final String? recommendationReason;
-  final bool showRecommendationReason;
-  final bool compactMode;
 
   const EnhancedFoodCard({
     super.key,
@@ -25,6 +20,11 @@ class EnhancedFoodCard extends StatefulWidget {
     this.showRecommendationReason = false,
     this.compactMode = false,
   });
+  final Food food;
+  final VoidCallback? onTap;
+  final String? recommendationReason;
+  final bool showRecommendationReason;
+  final bool compactMode;
 
   @override
   State<EnhancedFoodCard> createState() => _EnhancedFoodCardState();
@@ -271,14 +271,14 @@ class _EnhancedFoodCardState extends State<EnhancedFoodCard>
     return Row(
       children: [
         // 评分
-        Icon(
+        const Icon(
           Icons.star,
           size: 14,
           color: Colors.amber,
         ),
         const SizedBox(width: 2),
         Text(
-          '${widget.food.rating.toStringAsFixed(1)}',
+          widget.food.rating.toStringAsFixed(1),
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
                 fontWeight: FontWeight.w500,
                 color: Theme.of(context).colorScheme.onSurface,

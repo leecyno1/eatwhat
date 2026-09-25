@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:eatwhat_app/core/services/analytics_service.dart';
-import 'package:eatwhat_app/v2/core/services/v2_membership_service.dart';
 import 'package:eatwhat_app/core/services/auth_service.dart';
+import 'package:eatwhat_app/v2/core/services/v2_membership_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -125,7 +125,7 @@ class _EatWhatAuthSheetState extends State<_EatWhatAuthSheet> {
         key: const ValueKey('eatwhat-auth-sheet'),
         decoration: BoxDecoration(
           color: AppPalette.nightSurface,
-          borderRadius: BorderRadius.vertical(
+          borderRadius: const BorderRadius.vertical(
             top: Radius.circular(AppRadii.sheet),
           ),
           border: Border(top: BorderSide(color: AppPalette.nightDivider)),
@@ -545,7 +545,7 @@ class _EatWhatAccountSheetState extends State<_EatWhatAccountSheet> {
         padding: const EdgeInsets.all(AppSpacing.xl),
         decoration: BoxDecoration(
           color: AppPalette.nightSurface,
-          borderRadius: BorderRadius.vertical(
+          borderRadius: const BorderRadius.vertical(
             top: Radius.circular(AppRadii.sheet),
           ),
         ),
@@ -567,7 +567,7 @@ class _EatWhatAccountSheetState extends State<_EatWhatAccountSheet> {
       key: const ValueKey('eatwhat-account-sheet'),
       decoration: BoxDecoration(
         color: AppPalette.nightSurface,
-        borderRadius: BorderRadius.vertical(
+        borderRadius: const BorderRadius.vertical(
           top: Radius.circular(AppRadii.sheet),
         ),
         border: Border(top: BorderSide(color: AppPalette.nightDivider)),

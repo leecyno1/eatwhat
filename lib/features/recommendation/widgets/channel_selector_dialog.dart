@@ -6,14 +6,14 @@ import '../../../core/models/food.dart';
 /// 渠道选择弹窗
 /// 用户选择推荐菜品后显示获取渠道选择
 class ChannelSelectorDialog extends StatefulWidget {
-  final Food selectedFood;
-  final VoidCallback? onDismiss;
 
   const ChannelSelectorDialog({
     super.key,
     required this.selectedFood,
     this.onDismiss,
   });
+  final Food selectedFood;
+  final VoidCallback? onDismiss;
 
   @override
   State<ChannelSelectorDialog> createState() => _ChannelSelectorDialogState();
@@ -374,7 +374,7 @@ class _ChannelSelectorDialogState extends State<ChannelSelectorDialog>
   /// 获取渠道选项
   List<ChannelOption> _getChannels() {
     return [
-      ChannelOption(
+      const ChannelOption(
         id: 'delivery',
         title: '外卖订购',
         subtitle: '美团/饿了么',
@@ -382,7 +382,7 @@ class _ChannelSelectorDialogState extends State<ChannelSelectorDialog>
         color: Colors.orange,
         type: ChannelType.delivery,
       ),
-      ChannelOption(
+      const ChannelOption(
         id: 'review',
         title: '餐厅点评',
         subtitle: '大众点评',
@@ -390,7 +390,7 @@ class _ChannelSelectorDialogState extends State<ChannelSelectorDialog>
         color: Colors.amber,
         type: ChannelType.review,
       ),
-      ChannelOption(
+      const ChannelOption(
         id: 'recipe',
         title: '学做菜谱',
         subtitle: '下厨房',
@@ -398,7 +398,7 @@ class _ChannelSelectorDialogState extends State<ChannelSelectorDialog>
         color: Colors.green,
         type: ChannelType.recipe,
       ),
-      ChannelOption(
+      const ChannelOption(
         id: 'video',
         title: '视频教程',
         subtitle: '美食视频',
@@ -406,7 +406,7 @@ class _ChannelSelectorDialogState extends State<ChannelSelectorDialog>
         color: Colors.red,
         type: ChannelType.video,
       ),
-      ChannelOption(
+      const ChannelOption(
         id: 'shopping',
         title: '食材购买',
         subtitle: '生鲜电商',
@@ -414,7 +414,7 @@ class _ChannelSelectorDialogState extends State<ChannelSelectorDialog>
         color: Colors.blue,
         type: ChannelType.shopping,
       ),
-      ChannelOption(
+      const ChannelOption(
         id: 'social',
         title: '分享讨论',
         subtitle: '小红书',
@@ -426,7 +426,7 @@ class _ChannelSelectorDialogState extends State<ChannelSelectorDialog>
   }
 
   /// 选择渠道
-  void _selectChannel(ChannelOption channel) async {
+  Future<void> _selectChannel(ChannelOption channel) async {
     HapticFeedback.mediumImpact();
 
     try {
@@ -476,12 +476,12 @@ class _ChannelSelectorDialogState extends State<ChannelSelectorDialog>
 
       case ChannelType.video:
         // 视频平台搜索
-        url = 'https://www.bilibili.com/search?keyword=${encodedFoodName}制作';
+        url = 'https://www.bilibili.com/search?keyword=$encodedFoodName制作';
         break;
 
       case ChannelType.shopping:
         // 生鲜电商
-        url = 'https://www.jd.com/search?keyword=${encodedFoodName}食材';
+        url = 'https://www.jd.com/search?keyword=$encodedFoodName食材';
         break;
 
       case ChannelType.social:
@@ -494,7 +494,7 @@ class _ChannelSelectorDialogState extends State<ChannelSelectorDialog>
     }
 
     if (url.isNotEmpty) {
-      return await launchUrl(Uri.parse(url));
+      return launchUrl(Uri.parse(url));
     }
 
     return false;
@@ -513,7 +513,7 @@ class _ChannelSelectorDialogState extends State<ChannelSelectorDialog>
   }
 
   /// 关闭对话框
-  void _dismissDialog() async {
+  Future<void> _dismissDialog() async {
     await _slideController.reverse();
     await _scaleController.reverse();
     if (mounted) {
@@ -525,12 +525,6 @@ class _ChannelSelectorDialogState extends State<ChannelSelectorDialog>
 
 /// 渠道选项
 class ChannelOption {
-  final String id;
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color color;
-  final ChannelType type;
 
   const ChannelOption({
     required this.id,
@@ -540,6 +534,12 @@ class ChannelOption {
     required this.color,
     required this.type,
   });
+  final String id;
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color color;
+  final ChannelType type;
 }
 
 /// 渠道类型

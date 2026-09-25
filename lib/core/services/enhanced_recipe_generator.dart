@@ -1,8 +1,9 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
-import 'dart:io';
 
 import '../models/recipe.dart';
 import 'xiachufang_crawler_service.dart';
@@ -10,9 +11,9 @@ import 'xiachufang_crawler_service.dart';
 /// 增强菜谱数据生成服务
 /// 生成大量高质量的菜谱数据用于测试和开发
 class EnhancedRecipeGenerator {
-  static final EnhancedRecipeGenerator _instance = EnhancedRecipeGenerator._internal();
   factory EnhancedRecipeGenerator() => _instance;
   EnhancedRecipeGenerator._internal();
+  static final EnhancedRecipeGenerator _instance = EnhancedRecipeGenerator._internal();
 
   final XiachufangCrawlerService _crawlerService = XiachufangCrawlerService();
   final Random _random = Random();
@@ -389,7 +390,7 @@ class EnhancedRecipeGenerator {
   Map<String, double> _generateTasteIntensity(List<String> tasteProfile) {
     final intensity = <String, double>{};
     for (final taste in tasteProfile) {
-      intensity['${taste}度'] = 0.3 + _random.nextDouble() * 0.7;
+      intensity['$taste度'] = 0.3 + _random.nextDouble() * 0.7;
     }
     return intensity;
   }

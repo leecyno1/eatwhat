@@ -5,15 +5,15 @@ import '../services/unified_food_data_service.dart';
 
 /// Food数据状态
 class FoodState {
-  final List<Food> foods;
-  final bool isLoading;
-  final String? error;
 
   const FoodState({
     this.foods = const [],
     this.isLoading = false,
     this.error,
   });
+  final List<Food> foods;
+  final bool isLoading;
+  final String? error;
 
   FoodState copyWith({
     List<Food>? foods,
@@ -30,13 +30,13 @@ class FoodState {
 
 /// Food数据Provider
 class FoodNotifier extends StateNotifier<FoodState> {
-  final UnifiedFoodDataService _foodService;
 
   FoodNotifier(this._foodService) : super(const FoodState());
+  final UnifiedFoodDataService _foodService;
 
   /// 加载所有食物
   Future<void> loadFoods() async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true);
 
     try {
       // 使用空的气泡列表和默认用户偏好
@@ -73,7 +73,7 @@ class FoodNotifier extends StateNotifier<FoodState> {
 
   /// 搜索食物
   Future<void> searchFoods(String query) async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true);
 
     try {
       // 使用推荐系统进行搜索
@@ -101,7 +101,7 @@ class FoodNotifier extends StateNotifier<FoodState> {
 
   /// 按分类获取食物
   Future<void> getFoodsByCategory(String category) async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true);
 
     try {
       final foods = await _foodService.getRecommendations(
@@ -128,7 +128,7 @@ class FoodNotifier extends StateNotifier<FoodState> {
 
   /// 清空错误
   void clearError() {
-    state = state.copyWith(error: null);
+    state = state.copyWith();
   }
 }
 
@@ -153,9 +153,8 @@ final foodByIdProvider = FutureProvider.family<Food?, String>((ref, id) async {
 /// 推荐食物Provider
 final recommendedFoodsProvider = FutureProvider<List<Food>>((ref) async {
   final foodService = UnifiedFoodDataService();
-  return await foodService.getRecommendations(
+  return foodService.getRecommendations(
     [],
     UserPreference(userId: 'default'),
-    limit: 10,
   );
 });

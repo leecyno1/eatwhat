@@ -1,22 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// 现代化按钮组件
 class ModernButton extends StatefulWidget {
-  final String text;
-  final VoidCallback? onPressed;
-  final IconData? icon;
-  final Color? backgroundColor;
-  final Color? textColor;
-  final double? width;
-  final double? height;
-  final BorderRadius? borderRadius;
-  final bool isLoading;
-  final bool isOutlined;
-  final Gradient? gradient;
-  final bool hasRippleEffect;
-  final double elevation;
 
   const ModernButton({
     super.key,
@@ -34,6 +21,19 @@ class ModernButton extends StatefulWidget {
     this.hasRippleEffect = true,
     this.elevation = 4.0,
   });
+  final String text;
+  final VoidCallback? onPressed;
+  final IconData? icon;
+  final Color? backgroundColor;
+  final Color? textColor;
+  final double? width;
+  final double? height;
+  final BorderRadius? borderRadius;
+  final bool isLoading;
+  final bool isOutlined;
+  final Gradient? gradient;
+  final bool hasRippleEffect;
+  final double elevation;
 
   @override
   State<ModernButton> createState() => _ModernButtonState();

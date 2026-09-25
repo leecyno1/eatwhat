@@ -10,10 +10,6 @@ enum RestaurantPlatform {
 
 /// 餐厅卡片组件
 class RestaurantCard extends StatelessWidget {
-  final dynamic restaurant;
-  final List<FoodItem>? recommendedItems;
-  final VoidCallback? onTap;
-  final bool showRecommendedItems;
 
   const RestaurantCard({
     super.key,
@@ -22,6 +18,10 @@ class RestaurantCard extends StatelessWidget {
     this.onTap,
     this.showRecommendedItems = false,
   });
+  final dynamic restaurant;
+  final List<FoodItem>? recommendedItems;
+  final VoidCallback? onTap;
+  final bool showRecommendedItems;
 
   @override
   Widget build(BuildContext context) {

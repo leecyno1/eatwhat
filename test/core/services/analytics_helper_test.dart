@@ -1,5 +1,6 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:eatwhat_app/core/services/analytics_helper.dart';
+import 'package:flutter_test/flutter_test.dart';
+
 import 'mock_analytics_service.dart';
 
 void main() {
@@ -10,9 +11,7 @@ void main() {
     AnalyticsHelper.setMockAnalytics(mockAnalytics);
   });
 
-  tearDown(() {
-    AnalyticsHelper.resetAnalytics();
-  });
+  tearDown(AnalyticsHelper.resetAnalytics);
 
   group('AnalyticsHelper - 应用生命周期', () {
     test('应该能追踪应用启动', () async {

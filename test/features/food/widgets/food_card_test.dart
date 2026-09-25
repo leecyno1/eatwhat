@@ -1,17 +1,17 @@
-import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eatwhat_app/features/food/widgets/food_card.dart';
 import 'package:eatwhat_app/core/models/food.dart';
 import 'package:eatwhat_app/core/providers/food_provider.dart';
 import 'package:eatwhat_app/core/services/unified_food_data_service.dart';
+import 'package:eatwhat_app/features/food/widgets/food_card.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('FoodCard', () {
     late Food testFood;
 
     setUp(() {
-      testFood = Food(
+      testFood = const Food(
         id: '1',
         name: '番茄鸡蛋面',
         imageUrl: 'https://example.com/image.jpg',
@@ -120,14 +120,13 @@ void main() {
     });
 
     testWidgets('没有图片时应该显示占位符', (tester) async {
-      final foodWithoutImage = Food(
+      const foodWithoutImage = Food(
         id: '2',
         name: '测试食物',
-        tags: [],
       );
 
       await tester.pumpWidget(
-        ProviderScope(
+        const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: FoodCard(food: foodWithoutImage),
@@ -140,14 +139,13 @@ void main() {
     });
 
     testWidgets('没有评分时不应该显示评分', (tester) async {
-      final foodWithoutRating = Food(
+      const foodWithoutRating = Food(
         id: '3',
         name: '测试食物',
-        tags: [],
       );
 
       await tester.pumpWidget(
-        ProviderScope(
+        const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: FoodCard(food: foodWithoutRating),
@@ -160,14 +158,14 @@ void main() {
     });
 
     testWidgets('标签超过3个时只显示前3个', (tester) async {
-      final foodWithManyTags = Food(
+      const foodWithManyTags = Food(
         id: '4',
         name: '测试食物',
         tags: ['标签1', '标签2', '标签3', '标签4', '标签5'],
       );
 
       await tester.pumpWidget(
-        ProviderScope(
+        const ProviderScope(
           child: MaterialApp(
             home: Scaffold(
               body: FoodCard(food: foodWithManyTags),
@@ -245,8 +243,8 @@ void main() {
 
     testWidgets('应该显示食物列表', (tester) async {
       final foods = [
-        Food(id: '1', name: '食物1', tags: []),
-        Food(id: '2', name: '食物2', tags: []),
+        const Food(id: '1', name: '食物1'),
+        const Food(id: '2', name: '食物2'),
       ];
 
       await tester.pumpWidget(

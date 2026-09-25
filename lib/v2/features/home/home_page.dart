@@ -7,11 +7,11 @@ import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
 import 'package:eatwhat_app/v2/core/data/repositories/tag_repository_v2.dart';
 import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
-import 'package:eatwhat_app/v2/core/theme/app_theme_controller.dart';
 import 'package:eatwhat_app/v2/core/services/v2_favorites_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_meal_habit_learning_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_speech_input_service.dart';
+import 'package:eatwhat_app/v2/core/theme/app_theme_controller.dart';
 import 'package:eatwhat_app/v2/features/auth/auth_sheet.dart';
 import 'package:eatwhat_app/v2/features/favorites/favorites_page.dart';
 import 'package:eatwhat_app/v2/features/home/controllers/home_recent_success_controller.dart';
@@ -699,7 +699,7 @@ class _HomePageState extends State<HomePage> {
               switchOutCurve: AppMotion.enter,
               child: _isLoadingDeck || session == null
                   ? Center(
-                      key: ValueKey('taste-physical-loading'),
+                      key: const ValueKey('taste-physical-loading'),
                       child: CircularProgressIndicator(
                         color: AppPalette.garden,
                       ),

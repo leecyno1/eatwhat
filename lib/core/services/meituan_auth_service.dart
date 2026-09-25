@@ -1,16 +1,11 @@
 import 'dart:async';
+
+import 'package:eatwhat_app/core/services/chrome_cdp_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:eatwhat_app/core/services/chrome_cdp_service.dart';
 
 /// 美团开放平台认证信息
 class MeituanAuthTokens {
-  final String? accessToken;
-  final String? refreshToken;
-  final String? tokenType;
-  final DateTime? expiresAt;
-  final List<Map<String, dynamic>> cookies;
-  final Map<String, String> headers;
 
   MeituanAuthTokens({
     this.accessToken,
@@ -20,21 +15,6 @@ class MeituanAuthTokens {
     this.cookies = const [],
     this.headers = const {},
   });
-
-  bool get isValid {
-    if (accessToken == null || accessToken!.isEmpty) return false;
-    if (expiresAt != null && DateTime.now().isAfter(expiresAt!)) return false;
-    return true;
-  }
-
-  Map<String, dynamic> toJson() => {
-        'accessToken': accessToken,
-        'refreshToken': refreshToken,
-        'tokenType': tokenType,
-        'expiresAt': expiresAt?.toIso8601String(),
-        'cookies': cookies,
-        'headers': headers,
-      };
 
   factory MeituanAuthTokens.fromJson(Map<String, dynamic> json) {
     return MeituanAuthTokens(
@@ -52,6 +32,27 @@ class MeituanAuthTokens {
           {},
     );
   }
+  final String? accessToken;
+  final String? refreshToken;
+  final String? tokenType;
+  final DateTime? expiresAt;
+  final List<Map<String, dynamic>> cookies;
+  final Map<String, String> headers;
+
+  bool get isValid {
+    if (accessToken == null || accessToken!.isEmpty) return false;
+    if (expiresAt != null && DateTime.now().isAfter(expiresAt!)) return false;
+    return true;
+  }
+
+  Map<String, dynamic> toJson() => {
+        'accessToken': accessToken,
+        'refreshToken': refreshToken,
+        'tokenType': tokenType,
+        'expiresAt': expiresAt?.toIso8601String(),
+        'cookies': cookies,
+        'headers': headers,
+      };
 }
 
 /// 美团开放平台认证服务
@@ -83,7 +84,7 @@ class MeituanAuthService {
         final tokens = MeituanAuthTokens.fromJson(
           Map<String, dynamic>.from(
             Uri.splitQueryString(json).map(
-              (k, v) => MapEntry(k, v),
+              MapEntry.new,
             ),
           ),
         );
@@ -137,7 +138,7 @@ class MeituanAuthService {
 
     // 创建新标签页
     debugPrint('[MeituanAuth] 创建新标签页');
-    return await _cdp.newTab(_loginUrl);
+    return _cdp.newTab(_loginUrl);
   }
 
   /// 通过Chrome CDP自动化登录美团
@@ -322,7 +323,7 @@ class MeituanAuthService {
   Future<void> _waitForLoginComplete() async {
     debugPrint('[MeituanAuth] 等待登录完成...');
 
-    final maxWaitSeconds = 30;
+    const maxWaitSeconds = 30;
     final startTime = DateTime.now();
 
     while (DateTime.now().difference(startTime).inSeconds < maxWaitSeconds) {

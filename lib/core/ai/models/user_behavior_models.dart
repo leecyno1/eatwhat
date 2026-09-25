@@ -1,15 +1,6 @@
 /// 用户行为数据模型 - Phase 3 AI学习基础
 /// 记录用户与应用的各种交互行为，用于AI偏好学习
-class UserBehaviorData {
-  final String userId;
-  final String sessionId;
-  final DateTime timestamp;
-  final UserActionType actionType;
-  final String targetId; // 菜谱ID、食材ID等
-  final String targetType; // 'recipe', 'ingredient', 'cuisine', etc.
-  final Map<String, dynamic> actionDetails;
-  final double actionIntensity; // 行为强度 0.0-1.0
-  final String? contextInfo; // 上下文信息（时间、场景等）
+class UserBehaviorData { // 上下文信息（时间、场景等）
 
   UserBehaviorData({
     required this.userId,
@@ -22,18 +13,6 @@ class UserBehaviorData {
     this.actionIntensity = 0.5,
     this.contextInfo,
   });
-
-  Map<String, dynamic> toJson() => {
-        'userId': userId,
-        'sessionId': sessionId,
-        'timestamp': timestamp.toIso8601String(),
-        'actionType': actionType.name,
-        'targetId': targetId,
-        'targetType': targetType,
-        'actionDetails': actionDetails,
-        'actionIntensity': actionIntensity,
-        'contextInfo': contextInfo,
-      };
 
   factory UserBehaviorData.fromJson(Map<String, dynamic> json) => UserBehaviorData(
         userId: json['userId'] ?? '',
@@ -49,6 +28,27 @@ class UserBehaviorData {
         actionIntensity: (json['actionIntensity'] ?? 0.5).toDouble(),
         contextInfo: json['contextInfo'],
       );
+  final String userId;
+  final String sessionId;
+  final DateTime timestamp;
+  final UserActionType actionType;
+  final String targetId; // 菜谱ID、食材ID等
+  final String targetType; // 'recipe', 'ingredient', 'cuisine', etc.
+  final Map<String, dynamic> actionDetails;
+  final double actionIntensity; // 行为强度 0.0-1.0
+  final String? contextInfo;
+
+  Map<String, dynamic> toJson() => {
+        'userId': userId,
+        'sessionId': sessionId,
+        'timestamp': timestamp.toIso8601String(),
+        'actionType': actionType.name,
+        'targetId': targetId,
+        'targetType': targetType,
+        'actionDetails': actionDetails,
+        'actionIntensity': actionIntensity,
+        'contextInfo': contextInfo,
+      };
 }
 
 /// 用户行为类型枚举
@@ -92,6 +92,52 @@ enum UserActionType {
 
 /// 偏好向量系统 - 多维度用户偏好表示
 class PreferenceVector {
+
+  PreferenceVector({
+    this.tastePreferences = const {},
+    this.cuisinePreferences = const {},
+    this.ingredientPreferences = const {},
+    this.scenarioPreferences = const {},
+    this.nutritionPreferences = const {},
+    this.difficultyPreferences = const {},
+    this.timePreferences = const {},
+    this.emotionalPreferences = const {},
+    this.seasonalPreferences = const {},
+    this.dimensionWeights = const {},
+    DateTime? lastUpdated,
+    this.confidenceScore = 0.0,
+  }) : lastUpdated = lastUpdated ?? DateTime.now();
+
+  factory PreferenceVector.fromJson(Map<String, dynamic> json) => PreferenceVector(
+        tastePreferences: Map<String, double>.from(json['tastePreferences'] ?? {}),
+        cuisinePreferences: Map<String, double>.from(json['cuisinePreferences'] ?? {}),
+        ingredientPreferences: Map<String, double>.from(json['ingredientPreferences'] ?? {}),
+        scenarioPreferences: Map<String, double>.from(json['scenarioPreferences'] ?? {}),
+        nutritionPreferences: Map<String, double>.from(json['nutritionPreferences'] ?? {}),
+        difficultyPreferences: Map<String, double>.from(json['difficultyPreferences'] ?? {}),
+        timePreferences: Map<String, double>.from(json['timePreferences'] ?? {}),
+        emotionalPreferences: Map<String, double>.from(json['emotionalPreferences'] ?? {}),
+        seasonalPreferences: Map<String, double>.from(json['seasonalPreferences'] ?? {}),
+        dimensionWeights: Map<String, double>.from(json['dimensionWeights'] ?? {}),
+        lastUpdated: DateTime.parse(json['lastUpdated'] ?? DateTime.now().toIso8601String()),
+        confidenceScore: (json['confidenceScore'] ?? 0.0).toDouble(),
+      );
+
+  /// 创建默认偏好向量
+  factory PreferenceVector.defaultVector() => PreferenceVector(
+        dimensionWeights: {
+          'taste': 1.0,
+          'cuisine': 0.8,
+          'ingredient': 0.9,
+          'scenario': 0.7,
+          'nutrition': 0.6,
+          'difficulty': 0.5,
+          'time': 0.6,
+          'emotional': 0.4,
+          'seasonal': 0.3,
+        },
+        confidenceScore: 0.1,
+      );
   // 口味偏好向量 (0.0-1.0)
   final Map<String, double> tastePreferences;
 
@@ -127,21 +173,6 @@ class PreferenceVector {
 
   // 置信度分数
   final double confidenceScore;
-
-  PreferenceVector({
-    this.tastePreferences = const {},
-    this.cuisinePreferences = const {},
-    this.ingredientPreferences = const {},
-    this.scenarioPreferences = const {},
-    this.nutritionPreferences = const {},
-    this.difficultyPreferences = const {},
-    this.timePreferences = const {},
-    this.emotionalPreferences = const {},
-    this.seasonalPreferences = const {},
-    this.dimensionWeights = const {},
-    DateTime? lastUpdated,
-    this.confidenceScore = 0.0,
-  }) : lastUpdated = lastUpdated ?? DateTime.now();
 
   /// 计算与另一个偏好向量的相似度
   double calculateSimilarity(PreferenceVector other) {
@@ -188,7 +219,7 @@ class PreferenceVector {
       norm2 += val2 * val2;
     }
 
-    final magnitude = (norm1 * norm2);
+    final magnitude = norm1 * norm2;
     return magnitude > 0 ? dotProduct / magnitude : 0.0;
   }
 
@@ -232,7 +263,7 @@ class PreferenceVector {
       // 使用加权平均更新偏好值
       final currentValue = merged[entry.key] ?? 0.5;
       final newValue = entry.value;
-      final learningRate = 0.1; // 学习率
+      const learningRate = 0.1; // 学习率
 
       merged[entry.key] = currentValue * (1 - learningRate) + newValue * learningRate;
       merged[entry.key] = merged[entry.key]!.clamp(0.0, 1.0);
@@ -284,49 +315,10 @@ class PreferenceVector {
         'lastUpdated': lastUpdated.toIso8601String(),
         'confidenceScore': confidenceScore,
       };
-
-  factory PreferenceVector.fromJson(Map<String, dynamic> json) => PreferenceVector(
-        tastePreferences: Map<String, double>.from(json['tastePreferences'] ?? {}),
-        cuisinePreferences: Map<String, double>.from(json['cuisinePreferences'] ?? {}),
-        ingredientPreferences: Map<String, double>.from(json['ingredientPreferences'] ?? {}),
-        scenarioPreferences: Map<String, double>.from(json['scenarioPreferences'] ?? {}),
-        nutritionPreferences: Map<String, double>.from(json['nutritionPreferences'] ?? {}),
-        difficultyPreferences: Map<String, double>.from(json['difficultyPreferences'] ?? {}),
-        timePreferences: Map<String, double>.from(json['timePreferences'] ?? {}),
-        emotionalPreferences: Map<String, double>.from(json['emotionalPreferences'] ?? {}),
-        seasonalPreferences: Map<String, double>.from(json['seasonalPreferences'] ?? {}),
-        dimensionWeights: Map<String, double>.from(json['dimensionWeights'] ?? {}),
-        lastUpdated: DateTime.parse(json['lastUpdated'] ?? DateTime.now().toIso8601String()),
-        confidenceScore: (json['confidenceScore'] ?? 0.0).toDouble(),
-      );
-
-  /// 创建默认偏好向量
-  factory PreferenceVector.defaultVector() => PreferenceVector(
-        dimensionWeights: {
-          'taste': 1.0,
-          'cuisine': 0.8,
-          'ingredient': 0.9,
-          'scenario': 0.7,
-          'nutrition': 0.6,
-          'difficulty': 0.5,
-          'time': 0.6,
-          'emotional': 0.4,
-          'seasonal': 0.3,
-        },
-        confidenceScore: 0.1,
-      );
 }
 
 /// 用户偏好档案
 class UserPreferenceProfile {
-  final String userId;
-  final PreferenceVector preferenceVector;
-  final List<UserBehaviorData> recentBehaviors;
-  final Map<String, dynamic> demographicInfo;
-  final DateTime createdAt;
-  final DateTime lastActiveAt;
-  final int totalInteractions;
-  final Map<String, int> actionCounts;
 
   UserPreferenceProfile({
     required this.userId,
@@ -339,6 +331,27 @@ class UserPreferenceProfile {
     this.actionCounts = const {},
   })  : createdAt = createdAt ?? DateTime.now(),
         lastActiveAt = lastActiveAt ?? DateTime.now();
+
+  factory UserPreferenceProfile.fromJson(Map<String, dynamic> json) => UserPreferenceProfile(
+        userId: json['userId'] ?? '',
+        preferenceVector: PreferenceVector.fromJson(json['preferenceVector'] ?? {}),
+        recentBehaviors: (json['recentBehaviors'] as List? ?? [])
+            .map((b) => UserBehaviorData.fromJson(b))
+            .toList(),
+        demographicInfo: Map<String, dynamic>.from(json['demographicInfo'] ?? {}),
+        createdAt: DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
+        lastActiveAt: DateTime.parse(json['lastActiveAt'] ?? DateTime.now().toIso8601String()),
+        totalInteractions: json['totalInteractions'] ?? 0,
+        actionCounts: Map<String, int>.from(json['actionCounts'] ?? {}),
+      );
+  final String userId;
+  final PreferenceVector preferenceVector;
+  final List<UserBehaviorData> recentBehaviors;
+  final Map<String, dynamic> demographicInfo;
+  final DateTime createdAt;
+  final DateTime lastActiveAt;
+  final int totalInteractions;
+  final Map<String, int> actionCounts;
 
   /// 更新用户档案
   UserPreferenceProfile updateProfile({
@@ -401,17 +414,4 @@ class UserPreferenceProfile {
         'totalInteractions': totalInteractions,
         'actionCounts': actionCounts,
       };
-
-  factory UserPreferenceProfile.fromJson(Map<String, dynamic> json) => UserPreferenceProfile(
-        userId: json['userId'] ?? '',
-        preferenceVector: PreferenceVector.fromJson(json['preferenceVector'] ?? {}),
-        recentBehaviors: (json['recentBehaviors'] as List? ?? [])
-            .map((b) => UserBehaviorData.fromJson(b))
-            .toList(),
-        demographicInfo: Map<String, dynamic>.from(json['demographicInfo'] ?? {}),
-        createdAt: DateTime.parse(json['createdAt'] ?? DateTime.now().toIso8601String()),
-        lastActiveAt: DateTime.parse(json['lastActiveAt'] ?? DateTime.now().toIso8601String()),
-        totalInteractions: json['totalInteractions'] ?? 0,
-        actionCounts: Map<String, int>.from(json['actionCounts'] ?? {}),
-      );
 }

@@ -1,14 +1,15 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:glassmorphism/glassmorphism.dart';
 import 'package:provider/provider.dart';
-import 'dart:math' as math;
 
+import '../../../shared/widgets/modern_loading_animation.dart';
+import '../../recommendation/screens/recommendation_screen.dart';
 import '../controllers/physical_entity_controller.dart';
 import '../widgets/text_physical_entity_widget.dart';
-import '../../recommendation/screens/recommendation_screen.dart';
-import '../../../shared/widgets/modern_loading_animation.dart';
 
 /// 高级物理实体界面 - 商业化白色透明设计
 class PremiumPhysicalEntityScreen extends StatefulWidget {
@@ -162,7 +163,6 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.3),
-              width: 1,
             ),
           ),
           child: Icon(
@@ -182,7 +182,6 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
               borderRadius: BorderRadius.circular(12.r),
               border: Border.all(
                 color: Colors.white.withValues(alpha: 0.3),
-                width: 1,
               ),
             ),
             child: Icon(
@@ -191,7 +190,7 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
               size: 20.sp,
             ),
           ),
-          onPressed: () => _showSettings(),
+          onPressed: _showSettings,
         ),
         SizedBox(width: 16.w),
       ],
@@ -249,7 +248,6 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
             borderRadius: BorderRadius.circular(24.r),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.3),
-              width: 1,
             ),
           ),
           child: ClipRRect(
@@ -307,7 +305,6 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
             borderRadius: BorderRadius.circular(12.r),
             border: Border.all(
               color: Colors.white.withValues(alpha: 0.3),
-              width: 1,
             ),
           ),
           child: GlassmorphicContainer(
@@ -360,7 +357,6 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
                                   borderRadius: BorderRadius.circular(8.r),
                                   border: Border.all(
                                     color: Colors.green.withValues(alpha: 0.5),
-                                    width: 1,
                                   ),
                                 ),
                                 child: Text(
@@ -410,7 +406,6 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
                                   borderRadius: BorderRadius.circular(8.r),
                                   border: Border.all(
                                     color: Colors.red.withValues(alpha: 0.5),
-                                    width: 1,
                                   ),
                                 ),
                                 child: Text(
@@ -445,7 +440,6 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
         borderRadius: BorderRadius.circular(16.r),
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.3),
-          width: 1,
         ),
       ),
       child: GlassmorphicContainer(
@@ -509,7 +503,6 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
             color: isPrimary
                 ? Colors.white.withValues(alpha: 0.5)
                 : Colors.white.withValues(alpha: 0.2),
-            width: 1,
           ),
         ),
         child: Row(
@@ -576,7 +569,6 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
         isSelected: entity.isSelected,
         isLiked: controller.likedEntities.any((e) => e.id == entity.id),
         isDisliked: controller.dislikedEntities.any((e) => e.id == entity.id),
-        scale: 1.0,
         onTap: () => _handleEntityTap(entity, controller),
         onLongPress: () => _handleEntityLongPress(entity),
       ),
@@ -702,7 +694,6 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
         borderRadius: BorderRadius.circular(24.r),
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.3),
-          width: 1,
         ),
       ),
       child: GlassmorphicContainer(
@@ -723,7 +714,6 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
         child: Padding(
           padding: EdgeInsets.all(24.w),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text(
                 entity.emoji,
@@ -834,10 +824,6 @@ class _PremiumPhysicalEntityScreenState extends State<PremiumPhysicalEntityScree
 
 // 背景粒子类
 class BackgroundParticle {
-  Offset position;
-  Offset velocity;
-  double size;
-  double opacity;
 
   BackgroundParticle({
     required this.position,
@@ -845,6 +831,10 @@ class BackgroundParticle {
     required this.size,
     required this.opacity,
   });
+  Offset position;
+  Offset velocity;
+  double size;
+  double opacity;
 
   void update(double deltaTime, Size containerSize) {
     position = Offset(
@@ -869,9 +859,9 @@ class BackgroundParticle {
 
 // 粒子绘制器
 class ParticlePainter extends CustomPainter {
-  final List<BackgroundParticle> particles;
 
   ParticlePainter(this.particles);
+  final List<BackgroundParticle> particles;
 
   @override
   void paint(Canvas canvas, Size size) {

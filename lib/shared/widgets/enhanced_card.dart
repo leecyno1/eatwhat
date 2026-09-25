@@ -4,19 +4,6 @@ import '../themes/colors.dart';
 
 /// 增强的卡片组件 - 现代化设计和交互动画
 class EnhancedCard extends StatefulWidget {
-  final Widget child;
-  final VoidCallback? onTap;
-  final VoidCallback? onLongPress;
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? margin;
-  final Color? backgroundColor;
-  final Gradient? gradient;
-  final double? borderRadius;
-  final List<BoxShadow>? customShadow;
-  final bool showShimmer;
-  final bool isClickable;
-  final double? elevation;
-  final Border? border;
 
   const EnhancedCard({
     super.key,
@@ -34,6 +21,19 @@ class EnhancedCard extends StatefulWidget {
     this.elevation,
     this.border,
   });
+  final Widget child;
+  final VoidCallback? onTap;
+  final VoidCallback? onLongPress;
+  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
+  final Color? backgroundColor;
+  final Gradient? gradient;
+  final double? borderRadius;
+  final List<BoxShadow>? customShadow;
+  final bool showShimmer;
+  final bool isClickable;
+  final double? elevation;
+  final Border? border;
 
   @override
   State<EnhancedCard> createState() => _EnhancedCardState();
@@ -181,7 +181,6 @@ class _EnhancedCardState extends State<EnhancedCard> with TickerProviderStateMix
                         (_isHovered
                             ? Border.all(
                                 color: colorScheme.primary.withValues(alpha: 0.3),
-                                width: 1,
                               )
                             : null),
                     boxShadow: _buildBoxShadow(colorScheme),
@@ -212,13 +211,11 @@ class _EnhancedCardState extends State<EnhancedCard> with TickerProviderStateMix
         BoxShadow(
           color: Colors.black.withValues(alpha: 0.12),
           blurRadius: 20,
-          spreadRadius: 0,
           offset: const Offset(0, 8),
         ),
         BoxShadow(
           color: Colors.black.withValues(alpha: 0.08),
           blurRadius: 6,
-          spreadRadius: 0,
           offset: const Offset(0, 4),
         ),
       ];
@@ -254,9 +251,6 @@ class _EnhancedCardState extends State<EnhancedCard> with TickerProviderStateMix
 
 /// 加载中的卡片占位符
 class LoadingCard extends StatelessWidget {
-  final double? height;
-  final double? width;
-  final EdgeInsetsGeometry? margin;
 
   const LoadingCard({
     super.key,
@@ -264,6 +258,9 @@ class LoadingCard extends StatelessWidget {
     this.width,
     this.margin,
   });
+  final double? height;
+  final double? width;
+  final EdgeInsetsGeometry? margin;
 
   @override
   Widget build(BuildContext context) {
@@ -285,12 +282,6 @@ class LoadingCard extends StatelessWidget {
 
 /// 空状态卡片
 class EmptyStateCard extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-  final VoidCallback? onActionPressed;
-  final String? actionText;
-  final Color? iconColor;
 
   const EmptyStateCard({
     super.key,
@@ -301,6 +292,12 @@ class EmptyStateCard extends StatelessWidget {
     this.actionText,
     this.iconColor,
   });
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback? onActionPressed;
+  final String? actionText;
+  final Color? iconColor;
 
   @override
   Widget build(BuildContext context) {

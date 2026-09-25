@@ -26,7 +26,7 @@ class RouteAnimations {
     const end = Offset.zero;
     const curve = Curves.easeInOutCubic;
 
-    var tween = Tween(begin: begin, end: end).chain(
+    final tween = Tween(begin: begin, end: end).chain(
       CurveTween(curve: curve),
     );
 
@@ -47,7 +47,7 @@ class RouteAnimations {
     const end = Offset.zero;
     const curve = Curves.easeInOutCubic;
 
-    var tween = Tween(begin: begin, end: end).chain(
+    final tween = Tween(begin: begin, end: end).chain(
       CurveTween(curve: curve),
     );
 
@@ -66,7 +66,7 @@ class RouteAnimations {
   ) {
     const curve = Curves.easeInOutBack;
 
-    var tween = Tween(begin: 0.0, end: 1.0).chain(
+    final tween = Tween(begin: 0.0, end: 1.0).chain(
       CurveTween(curve: curve),
     );
 

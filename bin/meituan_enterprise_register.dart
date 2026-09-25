@@ -28,7 +28,7 @@ Future<void> main(List<String> args) async {
     // 步骤 1: 访问注册页面
     print('📄 步骤 1: 访问美团开放平台...');
     await _navigateTo(wsUrl, 'https://open.meituan.com');
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     print('✅ 已打开首页');
     print('');
 
@@ -39,7 +39,7 @@ Future<void> main(List<String> args) async {
       document.querySelector('button:contains("注册")') ||
       document.querySelector('[class*="register"]')
     ''');
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     print('✅ 已点击注册');
     print('');
 
@@ -60,7 +60,7 @@ Future<void> main(List<String> args) async {
         })()
       '''
     });
-    await Future.delayed(Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 1));
     print('✅ 已选择企业商户');
     print('');
 
@@ -71,7 +71,7 @@ Future<void> main(List<String> args) async {
       print('  需要登录，正在填写登录信息...');
       await _fillLoginForm(wsUrl, phone, password);
       await _clickLoginButton(wsUrl);
-      await Future.delayed(Duration(seconds: 3));
+      await Future.delayed(const Duration(seconds: 3));
       print('✅ 已登录');
     } else {
       print('✅ 已登录');
@@ -88,21 +88,21 @@ Future<void> main(List<String> args) async {
     print('📑 步骤 6: 上传营业执照...');
     print('  ⚠️  需要手动上传营业执照文件');
     print('  请在浏览器中选择文件');
-    await Future.delayed(Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 3));
     print('✅ 请完成文件上传');
     print('');
 
     // 步骤 7: 填写法人信息
     print('👤 步骤 7: 填写法人信息...');
     print('  ⚠️  请在浏览器中手动填写法人信息');
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     print('✅ 请完成法人信息填写');
     print('');
 
     // 步骤 8: 银行账户信息
     print('🏦 步骤 8: 银行账户信息...');
     print('  ⚠️  请在浏览器中手动填写银行账户');
-    await Future.delayed(Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 2));
     print('✅ 请完成银行账户填写');
     print('');
 
@@ -257,7 +257,7 @@ Future<void> _clickElement(String wsUrl, String elementSelector) async {
 Future<dynamic> _sendCdpCommand(
     String wsUrl, String method, Map<String, dynamic> params) async {
   final ws = await WebSocket.connect(wsUrl);
-  int messageId = 1;
+  const int messageId = 1;
   final completer = Completer<dynamic>();
 
   try {
@@ -290,8 +290,8 @@ Future<dynamic> _sendCdpCommand(
     }));
 
     final result = await completer.future
-        .timeout(Duration(seconds: 10))
-        .whenComplete(() => subscription.cancel());
+        .timeout(const Duration(seconds: 10))
+        .whenComplete(subscription.cancel);
 
     return result;
   } finally {

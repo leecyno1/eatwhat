@@ -14,7 +14,6 @@ void main() {
           visual: VisualConfig(
             shapeType: 'circle',
             colors: [],
-            particleEffect: 'none',
           ),
         ),
       );

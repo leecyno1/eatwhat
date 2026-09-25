@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../features/home/screens/home_screen.dart';
-import '../../features/bubble/screens/enhanced_physical_entity_screen.dart';
-import '../../features/recommendation/screens/enhanced_recommendation_screen.dart';
-import '../../features/favorites/screens/favorites_screen.dart';
-import '../../features/history/screens/history_screen.dart';
-import '../../features/user/screens/user_profile_screen.dart';
+
 import '../../features/auth/screens/login_screen.dart';
 import '../../features/auth/screens/register_screen.dart';
-import '../../features/recipe/screens/modern_recipe_browser_screen.dart';
-import '../../features/recipe/screens/complete_recipe_detail_screen.dart';
+import '../../features/bubble/screens/enhanced_physical_entity_screen.dart';
+import '../../features/favorites/screens/favorites_screen.dart';
+import '../../features/history/screens/history_screen.dart';
+import '../../features/home/screens/home_screen.dart';
 import '../../features/howtocook/screens/howtocook_recipe_screen.dart';
+import '../../features/recipe/screens/complete_recipe_detail_screen.dart';
+import '../../features/recipe/screens/modern_recipe_browser_screen.dart';
+import '../../features/recommendation/screens/enhanced_recommendation_screen.dart';
+import '../../features/user/screens/user_profile_screen.dart';
 import '../utils/route_animations.dart';
 
 /// 现代化路由配置

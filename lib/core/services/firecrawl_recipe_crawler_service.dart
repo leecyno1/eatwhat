@@ -8,11 +8,11 @@ import '../utils/advanced_logger.dart';
 /// 基于Firecrawl MCP工具实现的智能菜谱数据抓取服务
 /// 支持批量抓取、增量更新、数据清洗和结构化处理
 class FirecrawlRecipeCrawlerService {
+
+  FirecrawlRecipeCrawlerService._internal();
   static FirecrawlRecipeCrawlerService? _instance;
   static FirecrawlRecipeCrawlerService get instance =>
       _instance ??= FirecrawlRecipeCrawlerService._internal();
-
-  FirecrawlRecipeCrawlerService._internal();
 
   final AdvancedLogger _logger = AdvancedLogger.instance;
   final Dio _dio = Dio();
@@ -614,11 +614,6 @@ class FirecrawlRecipeCrawlerService {
 
 /// 抓取进度数据类
 class RecipeCrawlProgress {
-  final RecipeCrawlPhase phase;
-  final int totalRecipes;
-  final int processedRecipes;
-  final int successfulRecipes;
-  final int failedRecipes;
 
   const RecipeCrawlProgress({
     required this.phase,
@@ -627,6 +622,11 @@ class RecipeCrawlProgress {
     required this.successfulRecipes,
     required this.failedRecipes,
   });
+  final RecipeCrawlPhase phase;
+  final int totalRecipes;
+  final int processedRecipes;
+  final int successfulRecipes;
+  final int failedRecipes;
 
   double get progressPercentage {
     if (totalRecipes == 0) return 0.0;
@@ -652,12 +652,6 @@ enum RecipeCrawlPhase {
 
 /// 抓取结果数据类
 class RecipeCrawlResult {
-  final List<EnhancedRecipe> recipes;
-  final int totalProcessed;
-  final int successCount;
-  final int failureCount;
-  final List<String> errors;
-  final Duration duration;
 
   const RecipeCrawlResult({
     required this.recipes,
@@ -667,6 +661,12 @@ class RecipeCrawlResult {
     required this.errors,
     required this.duration,
   });
+  final List<EnhancedRecipe> recipes;
+  final int totalProcessed;
+  final int successCount;
+  final int failureCount;
+  final List<String> errors;
+  final Duration duration;
 
   double get successRate {
     if (totalProcessed == 0) return 0.0;

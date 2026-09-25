@@ -87,16 +87,16 @@ void main() {
       fakeNow = fakeNow.add(const Duration(days: 30));
       expect(await service.getTagScore('f_spicy'), 2);
 
-      await service.recordPositiveTag('f_spicy', delta: 1);
+      await service.recordPositiveTag('f_spicy');
       expect(await service.getTagScore('f_spicy'), 3);
     });
 
     test('衰减到近零的旧信号在下次写入时被遗忘', () async {
       final service = V2PreferenceFeedbackService.instance;
-      await service.recordPositiveTag('f_spicy', delta: 1);
+      await service.recordPositiveTag('f_spicy');
 
       fakeNow = fakeNow.add(const Duration(days: 200));
-      await service.recordPositiveTag('c_sichuan', delta: 1);
+      await service.recordPositiveTag('c_sichuan');
 
       final scores = await service.getTagScores();
       expect(scores.containsKey('f_spicy'), isFalse);

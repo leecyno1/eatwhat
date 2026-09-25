@@ -68,7 +68,7 @@ class PasswordHashUtil {
     final result = Uint8List(keyLength);
 
     // PBKDF2 implementation using HMAC-SHA256
-    var blockCount = (keyLength + 32 - 1) ~/ 32; // 32 is SHA256 hash length
+    final blockCount = (keyLength + 32 - 1) ~/ 32; // 32 is SHA256 hash length
     var resultIndex = 0;
 
     for (int i = 1; i <= blockCount; i++) {
@@ -88,10 +88,10 @@ class PasswordHashUtil {
     // Create U1 = HMAC(password, salt + INT(i))
     final hmac = Hmac(sha256, password);
     final blockBytes = Uint8List(4);
-    blockBytes.buffer.asByteData().setUint32(0, blockIndex, Endian.big);
+    blockBytes.buffer.asByteData().setUint32(0, blockIndex);
 
     var u = Uint8List.fromList(hmac.convert([...salt, ...blockBytes]).bytes);
-    var result = Uint8List.fromList(u);
+    final result = Uint8List.fromList(u);
 
     // Compute U2, U3, ..., Uc and XOR them all together
     for (int j = 1; j < iterations; j++) {

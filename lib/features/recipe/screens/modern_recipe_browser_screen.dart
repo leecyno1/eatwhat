@@ -1,14 +1,14 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:shimmer/shimmer.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
+import '../../../core/error/global_error_handler.dart';
 import '../../../core/models/enhanced_recipe.dart';
 import '../../../core/services/firecrawl_recipe_crawler_service.dart';
-import '../../../core/error/global_error_handler.dart';
 import '../../../shared/widgets/glassmorphic_container.dart';
 import '../../../shared/widgets/modern_card.dart';
 import '../controllers/enhanced_recipe_controller.dart';
@@ -154,7 +154,6 @@ class _ModernRecipeBrowserScreenState extends State<ModernRecipeBrowserScreen>
       height: 44.h,
       borderRadius: 12,
       blur: 20,
-      borderWidth: 1,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -184,12 +183,11 @@ class _ModernRecipeBrowserScreenState extends State<ModernRecipeBrowserScreen>
           height: 44.h,
           borderRadius: 12,
           blur: 20,
-          borderWidth: 1,
           child: Material(
             color: Colors.transparent,
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
-              onTap: controller.isSyncing ? null : () => _startSync(),
+              onTap: controller.isSyncing ? null : _startSync,
               child: controller.isSyncing
                   ? SizedBox(
                       width: 20.sp,
@@ -220,9 +218,7 @@ class _ModernRecipeBrowserScreenState extends State<ModernRecipeBrowserScreen>
       child: GlassmorphicContainer(
         width: double.infinity,
         height: 56.h,
-        borderRadius: 16,
         blur: 20,
-        borderWidth: 1,
         child: TextField(
           controller: _searchController,
           onChanged: (value) {
@@ -305,9 +301,7 @@ class _ModernRecipeBrowserScreenState extends State<ModernRecipeBrowserScreen>
           Tab(text: '汤羹'),
           Tab(text: '小吃'),
         ],
-        onTap: (index) {
-          _loadCategoryRecipes(index);
-        },
+        onTap: _loadCategoryRecipes,
       ),
     );
   }
@@ -397,7 +391,7 @@ class _ModernRecipeBrowserScreenState extends State<ModernRecipeBrowserScreen>
           ),
           SizedBox(height: 24.h),
           ElevatedButton(
-            onPressed: () => _loadInitialData(),
+            onPressed: _loadInitialData,
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF007AFF),
               shape: RoundedRectangleBorder(
@@ -612,7 +606,6 @@ class _ModernRecipeBrowserScreenState extends State<ModernRecipeBrowserScreen>
     return GestureDetector(
       onTap: () => _openRecipeDetail(recipe),
       child: ModernCard(
-        elevation: 4,
         borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: EdgeInsets.all(16.w),
@@ -820,9 +813,9 @@ class _ModernRecipeBrowserScreenState extends State<ModernRecipeBrowserScreen>
     controller.syncRecipeData();
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
+      const SnackBar(
         content: Text('开始同步菜谱数据...'),
-        backgroundColor: const Color(0xFF007AFF),
+        backgroundColor: Color(0xFF007AFF),
         behavior: SnackBarBehavior.floating,
       ),
     );
@@ -914,7 +907,7 @@ class _RecipeCrawlDialogState extends State<RecipeCrawlDialog> {
     );
   }
 
-  void _startCrawling() async {
+  Future<void> _startCrawling() async {
     setState(() {
       _isRunning = true;
     });
@@ -962,9 +955,9 @@ class _RecipeCrawlDialogState extends State<RecipeCrawlDialog> {
 
 /// 现代化菜谱详情页面 - 占位实现
 class ModernRecipeDetailScreen extends StatelessWidget {
-  final EnhancedRecipe recipe;
 
   const ModernRecipeDetailScreen({super.key, required this.recipe});
+  final EnhancedRecipe recipe;
 
   @override
   Widget build(BuildContext context) {
@@ -972,7 +965,7 @@ class ModernRecipeDetailScreen extends StatelessWidget {
       appBar: AppBar(
         title: Text(recipe.name),
       ),
-      body: Center(
+      body: const Center(
         child: Text('菜谱详情页面 - 待实现'),
       ),
     );

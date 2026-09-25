@@ -1,5 +1,5 @@
-import '../services/analytics_service.dart';
 import '../models/analytics_event.dart';
+import '../services/analytics_service.dart';
 
 /// 埋点辅助类
 /// 提供便捷方法包装常用埋点场景，自动补充公共属性

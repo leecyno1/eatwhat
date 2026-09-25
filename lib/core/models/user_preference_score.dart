@@ -2,13 +2,6 @@ import 'dart:math' as math;
 
 /// 用户偏好评分模型
 class UserPreferenceScore {
-  final String entityId;
-  final String entityName;
-  final double score;
-  final int likeCount;
-  final int dislikeCount;
-  final DateTime lastUpdated;
-  final DateTime firstEncountered;
 
   const UserPreferenceScore({
     required this.entityId,
@@ -19,11 +12,6 @@ class UserPreferenceScore {
     required this.lastUpdated,
     required this.firstEncountered,
   });
-
-  /// 默认分数（中性）
-  static const double defaultScore = 0.0;
-  static const double maxScore = 100.0;
-  static const double minScore = -100.0;
 
   /// 创建新的偏好记录
   factory UserPreferenceScore.create(String entityId, String entityName) {
@@ -38,6 +26,31 @@ class UserPreferenceScore {
       firstEncountered: now,
     );
   }
+
+  /// 从JSON创建
+  factory UserPreferenceScore.fromJson(Map<String, dynamic> json) {
+    return UserPreferenceScore(
+      entityId: json['entityId'] as String,
+      entityName: json['entityName'] as String,
+      score: (json['score'] as num).toDouble(),
+      likeCount: json['likeCount'] as int,
+      dislikeCount: json['dislikeCount'] as int,
+      lastUpdated: DateTime.parse(json['lastUpdated'] as String),
+      firstEncountered: DateTime.parse(json['firstEncountered'] as String),
+    );
+  }
+  final String entityId;
+  final String entityName;
+  final double score;
+  final int likeCount;
+  final int dislikeCount;
+  final DateTime lastUpdated;
+  final DateTime firstEncountered;
+
+  /// 默认分数（中性）
+  static const double defaultScore = 0.0;
+  static const double maxScore = 100.0;
+  static const double minScore = -100.0;
 
   /// 点赞操作
   UserPreferenceScore like() {
@@ -158,19 +171,6 @@ class UserPreferenceScore {
       'lastUpdated': lastUpdated.toIso8601String(),
       'firstEncountered': firstEncountered.toIso8601String(),
     };
-  }
-
-  /// 从JSON创建
-  factory UserPreferenceScore.fromJson(Map<String, dynamic> json) {
-    return UserPreferenceScore(
-      entityId: json['entityId'] as String,
-      entityName: json['entityName'] as String,
-      score: (json['score'] as num).toDouble(),
-      likeCount: json['likeCount'] as int,
-      dislikeCount: json['dislikeCount'] as int,
-      lastUpdated: DateTime.parse(json['lastUpdated'] as String),
-      firstEncountered: DateTime.parse(json['firstEncountered'] as String),
-    );
   }
 
   @override

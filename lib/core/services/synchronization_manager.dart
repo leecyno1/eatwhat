@@ -8,9 +8,9 @@ import 'user_preference_manager.dart';
 /// 同步管理器 - Phase 2 实时同步核心
 /// 协调各个服务之间的数据同步和状态管理
 class SynchronizationManager {
-  static final SynchronizationManager _instance = SynchronizationManager._internal();
   factory SynchronizationManager() => _instance;
   SynchronizationManager._internal();
+  static final SynchronizationManager _instance = SynchronizationManager._internal();
 
   final RealtimeFeedbackService _feedbackService = RealtimeFeedbackService();
   final UnifiedFoodDataService _unifiedService = UnifiedFoodDataService();
@@ -254,9 +254,7 @@ class SynchronizationManager {
   /// 设置服务监控
   Future<void> _setupServiceMonitoring() async {
     // 监听反馈服务事件
-    _feedbackService.feedbackStream.listen((event) {
-      _handleFeedbackEvent(event);
-    });
+    _feedbackService.feedbackStream.listen(_handleFeedbackEvent);
   }
 
   /// 启动定期同步
@@ -300,7 +298,7 @@ class SynchronizationManager {
       debugPrint('📊 同步用户偏好数据...');
 
       // 模拟同步过程
-      await Future.delayed(Duration(milliseconds: 200));
+      await Future.delayed(const Duration(milliseconds: 200));
 
       return true;
     } catch (e) {
@@ -315,7 +313,7 @@ class SynchronizationManager {
       debugPrint('🎯 同步推荐数据...');
 
       // 模拟同步过程
-      await Future.delayed(Duration(milliseconds: 300));
+      await Future.delayed(const Duration(milliseconds: 300));
 
       return true;
     } catch (e) {
@@ -334,7 +332,7 @@ class SynchronizationManager {
       debugPrint('行为统计: $stats');
 
       // 模拟同步过程
-      await Future.delayed(Duration(milliseconds: 150));
+      await Future.delayed(const Duration(milliseconds: 150));
 
       return true;
     } catch (e) {
@@ -349,7 +347,7 @@ class SynchronizationManager {
       debugPrint('🔍 验证数据一致性...');
 
       // 这里实现数据一致性检查逻辑
-      await Future.delayed(Duration(milliseconds: 100));
+      await Future.delayed(const Duration(milliseconds: 100));
 
       return true;
     } catch (e) {
@@ -384,7 +382,7 @@ class SynchronizationManager {
   /// 获取最后同步时间
   DateTime? _getLastSyncTime() {
     // 这里应该从持久化存储中获取
-    return DateTime.now().subtract(Duration(minutes: 1));
+    return DateTime.now().subtract(const Duration(minutes: 1));
   }
 
   /// 获取同步次数
@@ -410,11 +408,6 @@ class SynchronizationManager {
 
 /// 同步结果数据模型
 class SyncResult {
-  final bool success;
-  String message;
-  final DateTime timestamp;
-  Duration? duration;
-  final Map<String, dynamic> details;
 
   SyncResult({
     required this.success,
@@ -423,6 +416,11 @@ class SyncResult {
     this.duration,
     this.details = const {},
   });
+  final bool success;
+  String message;
+  final DateTime timestamp;
+  Duration? duration;
+  final Map<String, dynamic> details;
 
   @override
   String toString() =>
@@ -431,15 +429,15 @@ class SyncResult {
 
 /// 同步事件数据模型
 class SyncEvent {
-  final SyncEventType type;
-  final String message;
-  final DateTime timestamp;
 
   SyncEvent({
     required this.type,
     required this.message,
     required this.timestamp,
   });
+  final SyncEventType type;
+  final String message;
+  final DateTime timestamp;
 }
 
 /// 枚举定义

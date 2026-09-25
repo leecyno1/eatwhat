@@ -120,7 +120,7 @@ class LogSanitizer {
       });
       return sanitized;
     } else if (obj is List) {
-      return obj.map((item) => _sanitizeObject(item)).toList();
+      return obj.map(_sanitizeObject).toList();
     } else {
       return obj;
     }
@@ -303,8 +303,9 @@ class LogSanitizer {
     if (RegExp(r'"api_key"\s*:\s*"[^*]').hasMatch(data)) return false;
 
     // 检查JWT令牌
-    if (RegExp(r'\beyJ[a-zA-Z0-9_-]{20,}\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\b').hasMatch(data))
+    if (RegExp(r'\beyJ[a-zA-Z0-9_-]{20,}\.[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+\b').hasMatch(data)) {
       return false;
+    }
 
     // 检查邮箱
     if (RegExp(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b').hasMatch(data)) return false;

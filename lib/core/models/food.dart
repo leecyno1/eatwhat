@@ -1,27 +1,5 @@
 /// 食物模型
-class Food {
-  final String id;
-  final String name;
-  final String? description;
-  final String? imageUrl;
-  final List<String> tags;
-  final double rating;
-  final bool isFavorite;
-
-  // 新增属性
-  final String? cuisineType;
-  final List<String>? tasteAttributes;
-  final String? emoji;
-  final double? score;
-  final List<String>? ingredients;
-  final int? ratingCount;
-  final double? price;
-  final double? calories;
-  final String? restaurant;
-  final List<String>? scenarios;
-  final String? difficulty;
-  final Map<String, dynamic>? nutritionFacts;
-  final int? preparationTime; // 准备时间（分钟）
+class Food { // 准备时间（分钟）
 
   const Food({
     required this.id,
@@ -45,6 +23,54 @@ class Food {
     this.nutritionFacts,
     this.preparationTime,
   });
+
+  /// 从JSON创建食物
+  factory Food.fromJson(Map<String, dynamic> json) {
+    return Food(
+      id: json['id'] as String,
+      name: json['name'] as String,
+      description: json['description'] as String?,
+      imageUrl: json['imageUrl'] as String?,
+      tags: List<String>.from(json['tags'] ?? []),
+      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
+      isFavorite: json['isFavorite'] as bool? ?? false,
+      cuisineType: json['cuisineType'] as String?,
+      tasteAttributes: List<String>.from(json['tasteAttributes'] ?? []),
+      emoji: json['emoji'] as String?,
+      score: (json['score'] as num?)?.toDouble(),
+      ingredients: List<String>.from(json['ingredients'] ?? []),
+      ratingCount: json['ratingCount'] as int?,
+      price: (json['price'] as num?)?.toDouble(),
+      calories: (json['calories'] as num?)?.toDouble(),
+      restaurant: json['restaurant'] as String?,
+      scenarios: List<String>.from(json['scenarios'] ?? []),
+      difficulty: json['difficulty'] as String?,
+      nutritionFacts: json['nutritionFacts'] as Map<String, dynamic>?,
+      preparationTime: json['preparationTime'] as int?,
+    );
+  }
+  final String id;
+  final String name;
+  final String? description;
+  final String? imageUrl;
+  final List<String> tags;
+  final double rating;
+  final bool isFavorite;
+
+  // 新增属性
+  final String? cuisineType;
+  final List<String>? tasteAttributes;
+  final String? emoji;
+  final double? score;
+  final List<String>? ingredients;
+  final int? ratingCount;
+  final double? price;
+  final double? calories;
+  final String? restaurant;
+  final List<String>? scenarios;
+  final String? difficulty;
+  final Map<String, dynamic>? nutritionFacts;
+  final int? preparationTime;
 
   /// 复制食物并修改部分属性
   Food copyWith({
@@ -90,32 +116,6 @@ class Food {
       difficulty: difficulty ?? this.difficulty,
       nutritionFacts: nutritionFacts ?? this.nutritionFacts,
       preparationTime: preparationTime ?? this.preparationTime,
-    );
-  }
-
-  /// 从JSON创建食物
-  factory Food.fromJson(Map<String, dynamic> json) {
-    return Food(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      description: json['description'] as String?,
-      imageUrl: json['imageUrl'] as String?,
-      tags: List<String>.from(json['tags'] ?? []),
-      rating: (json['rating'] as num?)?.toDouble() ?? 0.0,
-      isFavorite: json['isFavorite'] as bool? ?? false,
-      cuisineType: json['cuisineType'] as String?,
-      tasteAttributes: List<String>.from(json['tasteAttributes'] ?? []),
-      emoji: json['emoji'] as String?,
-      score: (json['score'] as num?)?.toDouble(),
-      ingredients: List<String>.from(json['ingredients'] ?? []),
-      ratingCount: json['ratingCount'] as int?,
-      price: (json['price'] as num?)?.toDouble(),
-      calories: (json['calories'] as num?)?.toDouble(),
-      restaurant: json['restaurant'] as String?,
-      scenarios: List<String>.from(json['scenarios'] ?? []),
-      difficulty: json['difficulty'] as String?,
-      nutritionFacts: json['nutritionFacts'] as Map<String, dynamic>?,
-      preparationTime: json['preparationTime'] as int?,
     );
   }
 

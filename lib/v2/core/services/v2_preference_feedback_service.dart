@@ -111,8 +111,9 @@ class V2PreferenceFeedbackService {
   ) {
     try {
       final decoded = jsonDecode(raw);
-      if (decoded is! Map)
+      if (decoded is! Map) {
         return (map: <String, _TagScoreEntry>{}, migrated: false);
+      }
       final result = <String, _TagScoreEntry>{};
       var migrated = false;
       for (final entry in decoded.entries) {

@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
 import 'dart:math';
-import 'physical_entity.dart';
+
+import 'package:flutter/material.dart';
+
 import '../data/taste_preference_database.dart';
+import 'physical_entity.dart';
 
 /// 物理实体工厂 - 创建各种口味偏好的形象化实体
 class PhysicalEntityFactory {

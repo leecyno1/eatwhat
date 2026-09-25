@@ -1,17 +1,18 @@
-import 'package:flutter/material.dart';
 import 'dart:developer' as developer;
+
+import 'package:flutter/material.dart';
 
 import '../../../core/utils/performance_optimizer.dart';
 
 /// 性能监控面板组件
 /// 在 DEBUG 模式下显示 FPS、帧时间等性能指标
 class PerformanceMonitorOverlay extends StatefulWidget {
-  final Widget child;
 
   const PerformanceMonitorOverlay({
     super.key,
     required this.child,
   });
+  final Widget child;
 
   @override
   State<PerformanceMonitorOverlay> createState() => _PerformanceMonitorOverlayState();

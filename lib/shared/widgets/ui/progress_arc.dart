@@ -4,15 +4,15 @@ import '../../../shared/themes/design_tokens.dart';
 
 /// A simple arc progress with a knob, mimicking the dial in the reference.
 class ProgressArc extends StatelessWidget {
-  final double value; // 0..1
-  final double height;
-  final List<Color> colors;
 
   const ProgressArc(
       {super.key,
       required this.value,
       this.height = 160,
       this.colors = const [DesignTokens.mint, DesignTokens.orange]});
+  final double value; // 0..1
+  final double height;
+  final List<Color> colors;
 
   @override
   Widget build(BuildContext context) {
@@ -38,10 +38,10 @@ class ProgressArc extends StatelessWidget {
 }
 
 class _ArcPainter extends CustomPainter {
-  final double value;
-  final List<Color> colors;
 
   _ArcPainter({required this.value, required this.colors});
+  final double value;
+  final List<Color> colors;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -63,8 +63,8 @@ class _ArcPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     // Angles for semi-circle (200 degrees for a nicer look)
-    final start = math.pi + math.pi * 0.1; // 198°
-    final sweep = math.pi - math.pi * 0.2; // 162° total
+    const start = math.pi + math.pi * 0.1; // 198°
+    const sweep = math.pi - math.pi * 0.2; // 162° total
 
     canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius), start, sweep, false, background);

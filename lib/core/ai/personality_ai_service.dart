@@ -1,5 +1,7 @@
-import 'package:flutter/foundation.dart';
 import 'dart:async';
+
+import 'package:flutter/foundation.dart';
+
 import '../utils/memory_manager.dart';
 import 'ai_service.dart';
 
@@ -28,9 +30,9 @@ enum FoodScenario {
 
 /// 个性化AI服务 - 提供拟人化的美食推荐体验
 class PersonalityAiService {
-  static final PersonalityAiService _instance = PersonalityAiService._internal();
   factory PersonalityAiService() => _instance;
   PersonalityAiService._internal();
+  static final PersonalityAiService _instance = PersonalityAiService._internal();
 
   final AiService _aiService = AiService();
   final MemoryManager _memoryManager = MemoryManager();
@@ -382,6 +384,27 @@ ${personalityContext['encouragement']}
 
 /// 增强用户档案
 class EnhancedUserProfile {
+
+  EnhancedUserProfile({
+    required this.userId,
+    this.age,
+    this.gender,
+    required this.location,
+    this.bmi,
+    required this.allergies,
+    required this.healthGoals,
+    required this.mealTimes,
+    required this.sleepHours,
+    required this.workoutFrequency,
+    required this.prefersGroupDining,
+    required this.favoriteCuisines,
+    required this.spiceLevel,
+    this.currentWeather,
+    this.currentMood,
+    this.currentActivity,
+    required this.bubbleInteractionCount,
+    required this.timeBasedPreferences,
+  });
   final String userId;
   final int? age;
   final String? gender;
@@ -410,40 +433,10 @@ class EnhancedUserProfile {
   // 行为数据
   final Map<String, int> bubbleInteractionCount;
   final Map<String, double> timeBasedPreferences;
-
-  EnhancedUserProfile({
-    required this.userId,
-    this.age,
-    this.gender,
-    required this.location,
-    this.bmi,
-    required this.allergies,
-    required this.healthGoals,
-    required this.mealTimes,
-    required this.sleepHours,
-    required this.workoutFrequency,
-    required this.prefersGroupDining,
-    required this.favoriteCuisines,
-    required this.spiceLevel,
-    this.currentWeather,
-    this.currentMood,
-    this.currentActivity,
-    required this.bubbleInteractionCount,
-    required this.timeBasedPreferences,
-  });
 }
 
 /// 个性化推荐结果
 class PersonalizedRecommendation {
-  final String foodName;
-  final String dialogue;
-  final FoodPersonality personality;
-  final FoodScenario scenario;
-  final double matchScore;
-  final List<String> matchedBubbles;
-  final String tips;
-  final String encouragement;
-  final DateTime timestamp;
 
   PersonalizedRecommendation({
     required this.foodName,
@@ -456,4 +449,13 @@ class PersonalizedRecommendation {
     required this.encouragement,
     required this.timestamp,
   });
+  final String foodName;
+  final String dialogue;
+  final FoodPersonality personality;
+  final FoodScenario scenario;
+  final double matchScore;
+  final List<String> matchedBubbles;
+  final String tips;
+  final String encouragement;
+  final DateTime timestamp;
 }

@@ -58,7 +58,7 @@ class ImprovedBubblePhysics {
   /// 网格布局作为备选方案
   static Offset _getGridPosition(int index, int totalCount, Size screenSize) {
     // 计算网格尺寸
-    final columns = (sqrt(totalCount)).ceil();
+    final columns = sqrt(totalCount).ceil();
     final rows = (totalCount / columns).ceil();
 
     final cellWidth = (screenSize.width - 2 * _edgeMargin) / columns;

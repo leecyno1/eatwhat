@@ -39,7 +39,6 @@ class ModernTheme {
       useMaterial3: true,
       colorScheme: ColorScheme.fromSeed(
         seedColor: primaryColor,
-        brightness: Brightness.light,
         surface: surfaceColor,
       ),
 
@@ -176,7 +175,6 @@ class ModernTheme {
         borderRadius: BorderRadius.circular(20.r),
         border: Border.all(
           color: Colors.white.withValues(alpha: 0.2),
-          width: 1,
         ),
         gradient: LinearGradient(
           begin: Alignment.topLeft,
@@ -193,7 +191,6 @@ class ModernTheme {
         BoxShadow(
           color: Colors.black.withValues(alpha: 0.1),
           blurRadius: 20,
-          spreadRadius: 0,
           offset: const Offset(0, 8),
         ),
       ];

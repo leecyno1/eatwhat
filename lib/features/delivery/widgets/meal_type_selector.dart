@@ -3,10 +3,6 @@ import '../../../core/models/food_item.dart';
 
 /// 餐次选择器组件
 class MealTypeSelector extends StatelessWidget {
-  final MealType selectedMealType;
-  final Function(MealType) onMealTypeChanged;
-  final bool showIcons;
-  final bool compact;
 
   const MealTypeSelector({
     super.key,
@@ -15,6 +11,10 @@ class MealTypeSelector extends StatelessWidget {
     this.showIcons = true,
     this.compact = false,
   });
+  final MealType selectedMealType;
+  final Function(MealType) onMealTypeChanged;
+  final bool showIcons;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
@@ -104,7 +104,6 @@ class MealTypeSelector extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
                     color: isSelected ? Colors.orange : Colors.grey[300]!,
-                    width: 1,
                   ),
                 ),
                 child: Row(
@@ -154,14 +153,14 @@ class MealTypeSelector extends StatelessWidget {
 
 /// 餐次时间指示器
 class MealTimeIndicator extends StatelessWidget {
-  final MealType currentMealType;
-  final bool showTimeRange;
 
   const MealTimeIndicator({
     super.key,
     required this.currentMealType,
     this.showTimeRange = true,
   });
+  final MealType currentMealType;
+  final bool showTimeRange;
 
   @override
   Widget build(BuildContext context) {
@@ -174,7 +173,6 @@ class MealTimeIndicator extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: Colors.orange[200]!,
-          width: 1,
         ),
       ),
       child: Row(
@@ -242,14 +240,14 @@ class MealTimeIndicator extends StatelessWidget {
 
 /// 智能餐次推荐器
 class SmartMealRecommender extends StatelessWidget {
-  final Function(MealType) onMealTypeSelected;
-  final bool showDescription;
 
   const SmartMealRecommender({
     super.key,
     required this.onMealTypeSelected,
     this.showDescription = true,
   });
+  final Function(MealType) onMealTypeSelected;
+  final bool showDescription;
 
   @override
   Widget build(BuildContext context) {
@@ -270,7 +268,6 @@ class SmartMealRecommender extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
           color: Colors.orange[200]!,
-          width: 1,
         ),
       ),
       child: Column(
@@ -375,7 +372,6 @@ class SmartMealRecommender extends StatelessWidget {
                       borderRadius: BorderRadius.circular(16),
                       border: Border.all(
                         color: Colors.orange[200]!,
-                        width: 1,
                       ),
                     ),
                     child: Row(

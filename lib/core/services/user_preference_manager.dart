@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../models/user_preference_score.dart';
-import '../models/physical_entity.dart';
 import '../data/taste_preference_database.dart';
+import '../models/physical_entity.dart';
+import '../models/user_preference_score.dart';
 
 /// 用户行为类型枚举
 enum UserActionType {
@@ -19,6 +20,8 @@ enum UserActionType {
 
 /// 用户偏好管理器 - 处理评分、气泡大小和显示概率
 class UserPreferenceManager {
+  factory UserPreferenceManager() => _instance;
+  UserPreferenceManager._internal();
   static const String _preferencesKey = 'user_preference_scores';
   static const String _lastDisplayedKey = 'last_displayed_entities';
 
@@ -28,8 +31,6 @@ class UserPreferenceManager {
 
   /// 单例模式
   static final UserPreferenceManager _instance = UserPreferenceManager._internal();
-  factory UserPreferenceManager() => _instance;
-  UserPreferenceManager._internal();
 
   /// 初始化偏好管理器
   Future<void> initialize() async {
@@ -245,7 +246,7 @@ class UserPreferenceManager {
 
   /// 批量应用偏好到实体列表
   List<PhysicalEntity> applyPreferencesToEntities(List<PhysicalEntity> entities) {
-    return entities.map((entity) => applyPreferencesToEntity(entity)).toList();
+    return entities.map(applyPreferencesToEntity).toList();
   }
 
   /// 记录已显示的实体ID
@@ -376,8 +377,8 @@ class UserPreferenceManager {
 
 /// 内部辅助类：带权重的实体
 class _WeightedEntity {
-  final PhysicalEntity entity;
-  final double weight;
 
   _WeightedEntity(this.entity, this.weight);
+  final PhysicalEntity entity;
+  final double weight;
 }

@@ -1,13 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:eatwhat_app/core/models/cart_item.dart';
 import 'package:eatwhat_app/core/services/deep_link_service.dart';
+import 'package:flutter/material.dart';
 
 /// 平台选择按钮
 class _PlatformButton extends StatelessWidget {
-  final DeliveryPlatform platform;
-  final bool isSelected;
-  final bool isInstalled;
-  final VoidCallback onTap;
 
   const _PlatformButton({
     required this.platform,
@@ -15,6 +11,10 @@ class _PlatformButton extends StatelessWidget {
     required this.isInstalled,
     required this.onTap,
   });
+  final DeliveryPlatform platform;
+  final bool isSelected;
+  final bool isInstalled;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +57,6 @@ class _PlatformButton extends StatelessWidget {
                         shape: BoxShape.circle,
                         border: Border.all(
                           color: colorScheme.surface,
-                          width: 1,
                         ),
                       ),
                     ),
@@ -112,10 +111,6 @@ class _PlatformButton extends StatelessWidget {
 ///
 /// 用于在结算时选择外卖平台
 class PlatformSelector extends StatelessWidget {
-  final List<CartItem> items;
-  final DeliveryPlatform? selectedPlatform;
-  final Function(DeliveryPlatform) onPlatformSelected;
-  final Map<DeliveryPlatform, bool>? platformAvailability;
 
   const PlatformSelector({
     super.key,
@@ -124,6 +119,10 @@ class PlatformSelector extends StatelessWidget {
     this.selectedPlatform,
     this.platformAvailability,
   });
+  final List<CartItem> items;
+  final DeliveryPlatform? selectedPlatform;
+  final Function(DeliveryPlatform) onPlatformSelected;
+  final Map<DeliveryPlatform, bool>? platformAvailability;
 
   @override
   Widget build(BuildContext context) {

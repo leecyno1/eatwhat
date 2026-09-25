@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import '../models/bubble.dart';
+
 import '../../shared/themes/design_tokens.dart';
+import '../models/bubble.dart';
 
 /// 现代化应用主题配置
 class AppTheme {
@@ -154,7 +155,7 @@ class AppTheme {
       brightness: Brightness.light,
       scaffoldBackgroundColor: DesignTokens.cream,
       primaryColor: DesignTokens.mint,
-      colorScheme: ColorScheme(
+      colorScheme: const ColorScheme(
         brightness: Brightness.light,
         primary: DesignTokens.mint,
         onPrimary: Colors.white,
@@ -162,7 +163,7 @@ class AppTheme {
         onSecondary: DesignTokens.ink,
         surface: DesignTokens.surface,
         onSurface: DesignTokens.ink,
-        error: const Color(0xFFDA3C3C),
+        error: Color(0xFFDA3C3C),
         onError: Colors.white,
         primaryContainer: DesignTokens.teal,
         secondaryContainer: DesignTokens.butter,
@@ -272,13 +273,11 @@ class AppTheme {
         BoxShadow(
           color: Colors.black.withValues(alpha: 0.08),
           blurRadius: 16,
-          spreadRadius: 0,
           offset: const Offset(0, 4),
         ),
         BoxShadow(
           color: Colors.black.withValues(alpha: 0.04),
           blurRadius: 4,
-          spreadRadius: 0,
           offset: const Offset(0, 2),
         ),
       ];
@@ -288,7 +287,6 @@ class AppTheme {
         BoxShadow(
           color: primaryColor.withValues(alpha: 0.3),
           blurRadius: 20,
-          spreadRadius: 0,
           offset: const Offset(0, 8),
         ),
       ];

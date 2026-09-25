@@ -1,24 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:glassmorphism/glassmorphism.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 
 /// 现代化卡片组件
 class ModernCard extends StatefulWidget {
-  final Widget child;
-  final EdgeInsetsGeometry? padding;
-  final EdgeInsetsGeometry? margin;
-  final Color? backgroundColor;
-  final double? width;
-  final double? height;
-  final BorderRadius? borderRadius;
-  final bool hasGlassEffect;
-  final bool hasShadow;
-  final VoidCallback? onTap;
-  final double elevation;
-  final Gradient? gradient;
-  final Border? border;
-  final bool isAnimated;
 
   const ModernCard({
     super.key,
@@ -37,6 +23,20 @@ class ModernCard extends StatefulWidget {
     this.border,
     this.isAnimated = true,
   });
+  final Widget child;
+  final EdgeInsetsGeometry? padding;
+  final EdgeInsetsGeometry? margin;
+  final Color? backgroundColor;
+  final double? width;
+  final double? height;
+  final BorderRadius? borderRadius;
+  final bool hasGlassEffect;
+  final bool hasShadow;
+  final VoidCallback? onTap;
+  final double elevation;
+  final Gradient? gradient;
+  final Border? border;
+  final bool isAnimated;
 
   @override
   State<ModernCard> createState() => _ModernCardState();
@@ -88,7 +88,7 @@ class _ModernCardState extends State<ModernCard> with SingleTickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    Widget cardContent = Container(
+    final Widget cardContent = Container(
       width: widget.width,
       height: widget.height,
       padding: widget.padding ?? EdgeInsets.all(16.w),
@@ -149,7 +149,7 @@ class _ModernCardState extends State<ModernCard> with SingleTickerProviderStateM
       );
     }
 
-    Widget animatedCard = widget.isAnimated
+    final Widget animatedCard = widget.isAnimated
         ? AnimatedBuilder(
             animation: _scaleAnimation,
             builder: (context, child) {
@@ -181,12 +181,6 @@ class _ModernCardState extends State<ModernCard> with SingleTickerProviderStateM
 
 /// 现代化信息卡片
 class ModernInfoCard extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final IconData icon;
-  final Color iconColor;
-  final VoidCallback? onTap;
-  final Widget? trailing;
 
   const ModernInfoCard({
     super.key,
@@ -197,6 +191,12 @@ class ModernInfoCard extends StatelessWidget {
     this.onTap,
     this.trailing,
   });
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color iconColor;
+  final VoidCallback? onTap;
+  final Widget? trailing;
 
   @override
   Widget build(BuildContext context) {
@@ -251,12 +251,6 @@ class ModernInfoCard extends StatelessWidget {
 
 /// 现代化统计卡片
 class ModernStatsCard extends StatelessWidget {
-  final String label;
-  final String value;
-  final IconData icon;
-  final Color color;
-  final String? trend;
-  final bool isPositiveTrend;
 
   const ModernStatsCard({
     super.key,
@@ -267,6 +261,12 @@ class ModernStatsCard extends StatelessWidget {
     this.trend,
     this.isPositiveTrend = true,
   });
+  final String label;
+  final String value;
+  final IconData icon;
+  final Color color;
+  final String? trend;
+  final bool isPositiveTrend;
 
   @override
   Widget build(BuildContext context) {

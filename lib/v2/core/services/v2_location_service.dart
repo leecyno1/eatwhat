@@ -1,5 +1,5 @@
-import 'package:location/location.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
+import 'package:location/location.dart';
 
 class V2LocationService {
   V2LocationService._internal();

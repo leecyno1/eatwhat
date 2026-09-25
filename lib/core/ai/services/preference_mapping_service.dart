@@ -1,14 +1,14 @@
 import 'dart:math';
 
-import '../models/user_behavior_models.dart';
 import '../engines/ai_preference_learning_engine.dart';
+import '../models/user_behavior_models.dart';
 
 /// 偏好映射服务 - Phase 3 智能偏好关系建模
 /// 分析和映射用户偏好之间的复杂关系，提供深度个性化推荐
 class PreferenceMappingService {
-  static final PreferenceMappingService _instance = PreferenceMappingService._internal();
   factory PreferenceMappingService() => _instance;
   PreferenceMappingService._internal();
+  static final PreferenceMappingService _instance = PreferenceMappingService._internal();
 
   final AIPreferenceLearningEngine _aiEngine = AIPreferenceLearningEngine();
 
@@ -131,7 +131,7 @@ class PreferenceMappingService {
       predictedTrends: futureTrends,
       influenceFactors: influenceFactors,
       confidence: confidence,
-      timeframe: Duration(days: 30), // 30天预测窗口
+      timeframe: const Duration(days: 30), // 30天预测窗口
     );
   }
 
@@ -345,7 +345,7 @@ class PreferenceMappingService {
 
   /// 找到相似用户群体
   Future<UserCluster> _findSimilarUserCluster(PreferenceVector userVector) async {
-    return await _clusterAnalyzer.findCluster(userVector);
+    return _clusterAnalyzer.findCluster(userVector);
   }
 
   /// 生成推荐策略
@@ -564,13 +564,6 @@ class PreferenceMappingService {
 
 /// 偏好映射结果
 class PreferenceMappingResult {
-  final String userId;
-  final Map<String, double> preferenceCorrelations;
-  final List<PreferencePattern> identifiedPatterns;
-  final Map<String, double> latentPreferences;
-  final double stabilityScore;
-  final UserCluster userCluster;
-  final RecommendationStrategy recommendationStrategy;
 
   PreferenceMappingResult({
     required this.userId,
@@ -581,15 +574,17 @@ class PreferenceMappingResult {
     required this.userCluster,
     required this.recommendationStrategy,
   });
+  final String userId;
+  final Map<String, double> preferenceCorrelations;
+  final List<PreferencePattern> identifiedPatterns;
+  final Map<String, double> latentPreferences;
+  final double stabilityScore;
+  final UserCluster userCluster;
+  final RecommendationStrategy recommendationStrategy;
 }
 
 /// 偏好规则
-class PreferenceRule {
-  final List<String> antecedent; // 前提
-  final List<String> consequent; // 结论
-  final double confidence; // 置信度
-  final double support; // 支持度
-  final double lift; // 提升度
+class PreferenceRule { // 提升度
 
   PreferenceRule({
     required this.antecedent,
@@ -598,16 +593,15 @@ class PreferenceRule {
     required this.support,
     required this.lift,
   });
+  final List<String> antecedent; // 前提
+  final List<String> consequent; // 结论
+  final double confidence; // 置信度
+  final double support; // 支持度
+  final double lift;
 }
 
 /// 偏好趋势预测
 class PreferenceTrendPrediction {
-  final String userId;
-  final List<PreferenceTrend> historicalTrends;
-  final List<PreferenceTrend> predictedTrends;
-  final Map<String, double> influenceFactors;
-  final double confidence;
-  final Duration timeframe;
 
   PreferenceTrendPrediction({
     required this.userId,
@@ -617,14 +611,16 @@ class PreferenceTrendPrediction {
     required this.confidence,
     required this.timeframe,
   });
+  final String userId;
+  final List<PreferenceTrend> historicalTrends;
+  final List<PreferenceTrend> predictedTrends;
+  final Map<String, double> influenceFactors;
+  final double confidence;
+  final Duration timeframe;
 }
 
 /// 偏好模式
 class PreferencePattern {
-  final PatternType type;
-  final String description;
-  final double strength;
-  final List<String> characteristics;
 
   PreferencePattern({
     required this.type,
@@ -632,6 +628,10 @@ class PreferencePattern {
     required this.strength,
     required this.characteristics,
   });
+  final PatternType type;
+  final String description;
+  final double strength;
+  final List<String> characteristics;
 }
 
 /// 模式类型
@@ -645,11 +645,6 @@ enum PatternType {
 
 /// 偏好趋势
 class PreferenceTrend {
-  final String dimension;
-  final String direction; // increasing, decreasing, stable
-  final double magnitude;
-  final DateTime startTime;
-  final DateTime endTime;
 
   PreferenceTrend({
     required this.dimension,
@@ -658,14 +653,15 @@ class PreferenceTrend {
     required this.startTime,
     required this.endTime,
   });
+  final String dimension;
+  final String direction; // increasing, decreasing, stable
+  final double magnitude;
+  final DateTime startTime;
+  final DateTime endTime;
 }
 
 /// 互补推荐
 class ComplementaryRecommendation {
-  final String recipeId;
-  final String reason;
-  final double score;
-  final ComplementaryType type;
 
   ComplementaryRecommendation({
     required this.recipeId,
@@ -673,6 +669,10 @@ class ComplementaryRecommendation {
     required this.score,
     required this.type,
   });
+  final String recipeId;
+  final String reason;
+  final double score;
+  final ComplementaryType type;
 }
 
 /// 互补类型
@@ -684,10 +684,6 @@ enum ComplementaryType {
 
 /// 推荐策略
 class RecommendationStrategy {
-  final double explorationLevel;
-  final double diversityWeight;
-  final double noveltyBoost;
-  final double personalizedWeight;
 
   RecommendationStrategy({
     required this.explorationLevel,
@@ -695,6 +691,10 @@ class RecommendationStrategy {
     required this.noveltyBoost,
     required this.personalizedWeight,
   });
+  final double explorationLevel;
+  final double diversityWeight;
+  final double noveltyBoost;
+  final double personalizedWeight;
 }
 
 /// 偏好关系图
@@ -730,15 +730,15 @@ class UserClusterAnalyzer {
 
 /// 用户聚类
 class UserCluster {
-  final String id;
-  final List<String> characteristics;
-  final int memberCount;
 
   UserCluster({
     required this.id,
     required this.characteristics,
     required this.memberCount,
   });
+  final String id;
+  final List<String> characteristics;
+  final int memberCount;
 }
 
 /// 偏好演化追踪器
@@ -759,27 +759,27 @@ class PreferenceEvolutionTracker {
 }
 
 /// 偏好演化数据
-class PreferenceEvolutionData {
-  final DateTime timestamp;
-  final Map<String, double> preferences;
-  final String trigger; // 触发因素
+class PreferenceEvolutionData { // 触发因素
 
   PreferenceEvolutionData({
     required this.timestamp,
     required this.preferences,
     required this.trigger,
   });
+  final DateTime timestamp;
+  final Map<String, double> preferences;
+  final String trigger;
 }
 
 /// 偏好缺口
 class PreferenceGap {
-  final String dimension;
-  final String missingPreference;
-  final double importance;
 
   PreferenceGap({
     required this.dimension,
     required this.missingPreference,
     required this.importance,
   });
+  final String dimension;
+  final String missingPreference;
+  final double importance;
 }

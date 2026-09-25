@@ -7,10 +7,10 @@ import 'real_xiachufang_crawler_service.dart';
 /// 智能菜谱推荐服务 - Phase 2 集成真实数据
 /// 基于用户偏好和下厨房真实数据进行智能推荐
 class SmartRecipeRecommendationService {
-  static final SmartRecipeRecommendationService _instance =
-      SmartRecipeRecommendationService._internal();
   factory SmartRecipeRecommendationService() => _instance;
   SmartRecipeRecommendationService._internal();
+  static final SmartRecipeRecommendationService _instance =
+      SmartRecipeRecommendationService._internal();
 
   final RealXiachufangCrawlerService _crawlerService = RealXiachufangCrawlerService();
   final Random _random = Random();
@@ -57,7 +57,7 @@ class SmartRecipeRecommendationService {
     }
 
     // 获取候选菜谱
-    List<Recipe> candidates = _getCandidateRecipes(
+    final List<Recipe> candidates = _getCandidateRecipes(
       mealType: mealType,
       cuisine: cuisine,
       difficulty: difficulty,
@@ -67,7 +67,7 @@ class SmartRecipeRecommendationService {
     );
 
     // 计算推荐分数并排序
-    List<RecipeRecommendation> scored = candidates.map((recipe) {
+    final List<RecipeRecommendation> scored = candidates.map((recipe) {
       return RecipeRecommendation(
         recipe: recipe,
         score: _calculateRecommendationScore(recipe),
@@ -79,7 +79,7 @@ class SmartRecipeRecommendationService {
     scored.sort((a, b) => b.score.compareTo(a.score));
 
     // 添加一些随机性避免结果过于固化
-    List<RecipeRecommendation> finalRecommendations = _addRandomization(scored, count);
+    final List<RecipeRecommendation> finalRecommendations = _addRandomization(scored, count);
 
     return finalRecommendations.map((r) => r.recipe).toList();
   }
@@ -94,7 +94,7 @@ class SmartRecipeRecommendationService {
 
     final scenarioConfig = _getScenarioConfiguration(scenario);
 
-    return await getPersonalizedRecommendations(
+    return getPersonalizedRecommendations(
       count: count,
       mealType: scenarioConfig['mealType'],
       maxCookingTime: scenarioConfig['maxCookingTime'],
@@ -113,10 +113,10 @@ class SmartRecipeRecommendationService {
       await _refreshRecipeData();
     }
 
-    List<Recipe> candidates = _cachedRecipes.where((recipe) => recipe.id != baseRecipe.id).toList();
+    final List<Recipe> candidates = _cachedRecipes.where((recipe) => recipe.id != baseRecipe.id).toList();
 
     // 计算相似度分数
-    List<RecipeSimilarity> similarities = candidates.map((recipe) {
+    final List<RecipeSimilarity> similarities = candidates.map((recipe) {
       return RecipeSimilarity(
         recipe: recipe,
         similarity: _calculateSimilarityScore(baseRecipe, recipe),
@@ -187,7 +187,7 @@ class SmartRecipeRecommendationService {
 
     try {
       // 基于用户偏好选择爬取分类
-      List<String> categories = _getPreferredCategories();
+      final List<String> categories = _getPreferredCategories();
 
       final result = await _crawlerService.crawlRecipes(
         categories: categories,
@@ -237,7 +237,7 @@ class SmartRecipeRecommendationService {
 
       // 饮食限制筛选
       if (dietaryRestrictions != null) {
-        for (String restriction in dietaryRestrictions) {
+        for (final String restriction in dietaryRestrictions) {
           if (restriction == '素食' && !_isVegetarian(recipe)) return false;
           if (restriction == '无辣' && _isSpicy(recipe)) return false;
           if (restriction == '低脂' && !_isLowFat(recipe)) return false;
@@ -283,7 +283,7 @@ class SmartRecipeRecommendationService {
     double totalScore = 0.0;
     int matchCount = 0;
 
-    for (String taste in recipe.tasteProfile) {
+    for (final String taste in recipe.tasteProfile) {
       if (_userPreferences.containsKey(taste)) {
         totalScore += _userPreferences[taste]!;
         matchCount++;
@@ -297,7 +297,7 @@ class SmartRecipeRecommendationService {
   double _calculateIngredientScore(Recipe recipe) {
     double score = 0.5; // 基础分
 
-    for (var ingredient in recipe.ingredients) {
+    for (final ingredient in recipe.ingredients) {
       if (_userFavoriteIngredients.contains(ingredient.name)) {
         score += 0.2;
       }
@@ -327,7 +327,7 @@ class SmartRecipeRecommendationService {
 
   /// 生成推荐理由
   List<String> _generateRecommendationReasons(Recipe recipe) {
-    List<String> reasons = [];
+    final List<String> reasons = [];
 
     // 高评分
     if (recipe.rating >= 4.5) {
@@ -335,9 +335,9 @@ class SmartRecipeRecommendationService {
     }
 
     // 口味匹配
-    for (String taste in recipe.tasteProfile) {
+    for (final String taste in recipe.tasteProfile) {
       if (_userPreferences.containsKey(taste) && _userPreferences[taste]! > 0.7) {
-        reasons.add('符合您的${taste}口味偏好');
+        reasons.add('符合您的$taste口味偏好');
         break;
       }
     }
@@ -397,7 +397,7 @@ class SmartRecipeRecommendationService {
     final topCount = (count * 0.8).round();
     final randomCount = count - topCount;
 
-    List<RecipeRecommendation> result = scored.take(topCount).toList();
+    final List<RecipeRecommendation> result = scored.take(topCount).toList();
 
     // 从剩余菜谱中随机选择一些
     final remaining = scored.skip(topCount).toList();
@@ -490,13 +490,13 @@ class SmartRecipeRecommendationService {
     _cuisineHistory[recipe.cuisine] = (_cuisineHistory[recipe.cuisine] ?? 0) + (positive ? 1 : -1);
 
     // 更新口味偏好
-    for (String taste in recipe.tasteProfile) {
+    for (final String taste in recipe.tasteProfile) {
       _userPreferences[taste] = (_userPreferences[taste] ?? 0.5) + (positive ? 0.1 : -0.1);
       _userPreferences[taste] = _userPreferences[taste]!.clamp(0.0, 1.0);
     }
 
     // 更新食材偏好
-    for (var ingredient in recipe.ingredients) {
+    for (final ingredient in recipe.ingredients) {
       if (positive) {
         if (!_userFavoriteIngredients.contains(ingredient.name)) {
           _userFavoriteIngredients.add(ingredient.name);
@@ -522,7 +522,7 @@ class SmartRecipeRecommendationService {
     _cuisineHistory = {'家常菜': 5, '川菜': 3};
   }
 
-  void _saveUserPreferences() async {
+  Future<void> _saveUserPreferences() async {
     // TODO: 保存用户偏好到本地存储
     debugPrint('💾 保存用户偏好');
   }
@@ -530,24 +530,24 @@ class SmartRecipeRecommendationService {
 
 /// 菜谱推荐结果
 class RecipeRecommendation {
-  final Recipe recipe;
-  final double score;
-  final List<String> reasons;
 
   RecipeRecommendation({
     required this.recipe,
     required this.score,
     required this.reasons,
   });
+  final Recipe recipe;
+  final double score;
+  final List<String> reasons;
 }
 
 /// 菜谱相似度结果
 class RecipeSimilarity {
-  final Recipe recipe;
-  final double similarity;
 
   RecipeSimilarity({
     required this.recipe,
     required this.similarity,
   });
+  final Recipe recipe;
+  final double similarity;
 }

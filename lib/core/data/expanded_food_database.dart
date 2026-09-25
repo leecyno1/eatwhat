@@ -17,7 +17,7 @@ class ExpandedFoodDatabase {
   }) async {
     await Future.delayed(const Duration(milliseconds: 300)); // 模拟网络延迟
 
-    var filtered = _allFoods.where((food) {
+    final filtered = _allFoods.where((food) {
       // 口味匹配
       if (tastes != null && tastes.isNotEmpty) {
         final attrs = food.tasteAttributes ?? const <String>[];
@@ -140,7 +140,7 @@ class ExpandedFoodDatabase {
   static List<Food> _generateSichuanCuisine() {
     return [
       // 经典川菜
-      Food(
+      const Food(
         id: 'sc_001',
         name: '宫保鸡丁',
         description: '四川传统名菜，鸡肉嫩滑，花生香脆，麻辣鲜香',
@@ -159,7 +159,7 @@ class ExpandedFoodDatabase {
           'fiber': 3.0
         },
       ),
-      Food(
+      const Food(
         id: 'sc_002',
         name: '麻婆豆腐',
         description: '川菜经典，豆腐嫩滑，麻辣鲜香，下饭神器',
@@ -172,7 +172,7 @@ class ExpandedFoodDatabase {
         difficulty: '简单',
         nutritionFacts: {'calories': 180, 'protein': 15.0, 'carbs': 8.0, 'fat': 12.0, 'fiber': 2.0},
       ),
-      Food(
+      const Food(
         id: 'sc_003',
         name: '水煮鱼',
         description: '鱼肉鲜嫩，汤汁麻辣，豆芽清脆，川菜招牌',
@@ -185,7 +185,7 @@ class ExpandedFoodDatabase {
         difficulty: '中等',
         nutritionFacts: {'calories': 320, 'protein': 35.0, 'carbs': 6.0, 'fat': 18.0, 'fiber': 4.0},
       ),
-      Food(
+      const Food(
         id: 'sc_004',
         name: '回锅肉',
         description: '四川家常菜之王，肥而不腻，香辣下饭',
@@ -204,7 +204,7 @@ class ExpandedFoodDatabase {
           'fiber': 3.0
         },
       ),
-      Food(
+      const Food(
         id: 'sc_005',
         name: '鱼香肉丝',
         description: '无鱼胜有鱼，酸甜咸辣香，经典川菜代表',
@@ -224,7 +224,7 @@ class ExpandedFoodDatabase {
         },
       ),
       // 继续添加更多川菜...
-      Food(
+      const Food(
         id: 'sc_006',
         name: '口水鸡',
         description: '鸡肉嫩滑，调料丰富，麻辣鲜香，让人垂涎',
@@ -237,7 +237,7 @@ class ExpandedFoodDatabase {
         difficulty: '中等',
         nutritionFacts: {'calories': 290, 'protein': 32.0, 'carbs': 8.0, 'fat': 15.0, 'fiber': 2.0},
       ),
-      Food(
+      const Food(
         id: 'sc_007',
         name: '担担面',
         description: '成都街头小食，面条劲道，芝麻酱香浓',
@@ -256,7 +256,7 @@ class ExpandedFoodDatabase {
           'fiber': 4.0
         },
       ),
-      Food(
+      const Food(
         id: 'sc_008',
         name: '火锅',
         description: '四川火锅，麻辣鲜香，涮菜丰富，聚餐首选',
@@ -283,7 +283,7 @@ class ExpandedFoodDatabase {
   /// 粤菜
   static List<Food> _generateCantoneseCuisine() {
     return [
-      Food(
+      const Food(
         id: 'gd_001',
         name: '白切鸡',
         description: '粤菜经典，鸡肉鲜嫩，蘸料香浓，原汁原味',
@@ -296,7 +296,7 @@ class ExpandedFoodDatabase {
         difficulty: '中等',
         nutritionFacts: {'calories': 280, 'protein': 35.0, 'carbs': 2.0, 'fat': 14.0, 'fiber': 0.0},
       ),
-      Food(
+      const Food(
         id: 'gd_002',
         name: '蒸蛋羹',
         description: '滑嫩如布丁，营养丰富，老少皆宜',
@@ -309,7 +309,7 @@ class ExpandedFoodDatabase {
         difficulty: '简单',
         nutritionFacts: {'calories': 140, 'protein': 12.0, 'carbs': 2.0, 'fat': 9.0, 'fiber': 0.0},
       ),
-      Food(
+      const Food(
         id: 'gd_003',
         name: '广式烧鸭',
         description: '皮脆肉嫩，色泽诱人，粤菜烧味经典',
@@ -322,7 +322,7 @@ class ExpandedFoodDatabase {
         difficulty: '困难',
         nutritionFacts: {'calories': 350, 'protein': 28.0, 'carbs': 8.0, 'fat': 24.0, 'fiber': 0.0},
       ),
-      Food(
+      const Food(
         id: 'gd_004',
         name: '干炒河粉',
         description: '河粉爽滑，配料丰富，粤式炒粉代表',
@@ -341,7 +341,7 @@ class ExpandedFoodDatabase {
           'fiber': 3.0
         },
       ),
-      Food(
+      const Food(
         id: 'gd_005',
         name: '虾饺',
         description: '皮薄馅大，虾肉鲜甜，广式茶点精品',
@@ -361,7 +361,7 @@ class ExpandedFoodDatabase {
   /// 鲁菜
   static List<Food> _generateShandongCuisine() {
     return [
-      Food(
+      const Food(
         id: 'sd_001',
         name: '糖醋鲤鱼',
         description: '鲁菜经典，鱼肉鲜嫩，糖醋味浓，色泽金黄',
@@ -380,7 +380,7 @@ class ExpandedFoodDatabase {
           'fiber': 1.0
         },
       ),
-      Food(
+      const Food(
         id: 'sd_002',
         name: '葱爆羊肉',
         description: '羊肉嫩滑，大葱香浓，鲁菜家常经典',
@@ -400,7 +400,7 @@ class ExpandedFoodDatabase {
   /// 苏菜
   static List<Food> _generateJiangsuCuisine() {
     return [
-      Food(
+      const Food(
         id: 'js_001',
         name: '松鼠桂鱼',
         description: '苏菜名品，造型精美，酸甜可口，鱼肉鲜嫩',
@@ -419,7 +419,7 @@ class ExpandedFoodDatabase {
           'fiber': 2.0
         },
       ),
-      Food(
+      const Food(
         id: 'js_002',
         name: '蟹粉小笼包',
         description: '皮薄汁多，蟹香浓郁，江南小食精品',
@@ -445,7 +445,7 @@ class ExpandedFoodDatabase {
   /// 浙菜
   static List<Food> _generateZhejiangCuisine() {
     return [
-      Food(
+      const Food(
         id: 'zj_001',
         name: '西湖醋鱼',
         description: '浙菜名品，鱼肉鲜嫩，酸甜适口，杭州特色',
@@ -464,7 +464,7 @@ class ExpandedFoodDatabase {
           'fiber': 0.0
         },
       ),
-      Food(
+      const Food(
         id: 'zj_002',
         name: '东坡肉',
         description: '肥而不腻，入口即化，浙菜经典名品',
@@ -490,7 +490,7 @@ class ExpandedFoodDatabase {
   /// 闽菜
   static List<Food> _generateFujianCuisine() {
     return [
-      Food(
+      const Food(
         id: 'fj_001',
         name: '佛跳墙',
         description: '闽菜之王，食材丰富，汤汁浓郁，营养滋补',
@@ -516,7 +516,7 @@ class ExpandedFoodDatabase {
   /// 湘菜
   static List<Food> _generateHunanCuisine() {
     return [
-      Food(
+      const Food(
         id: 'hn_001',
         name: '剁椒鱼头',
         description: '湘菜代表，鱼肉鲜嫩，剁椒香辣，下饭神器',
@@ -529,7 +529,7 @@ class ExpandedFoodDatabase {
         difficulty: '中等',
         nutritionFacts: {'calories': 320, 'protein': 30.0, 'carbs': 8.0, 'fat': 18.0, 'fiber': 2.0},
       ),
-      Food(
+      const Food(
         id: 'hn_002',
         name: '毛氏红烧肉',
         description: '湘菜经典，肥而不腻，甜中带辣，色泽红亮',
@@ -555,7 +555,7 @@ class ExpandedFoodDatabase {
   /// 徽菜
   static List<Food> _generateAnhuiCuisine() {
     return [
-      Food(
+      const Food(
         id: 'ah_001',
         name: '臭鳜鱼',
         description: '徽菜名品，闻着臭吃着香，鱼肉鲜美',
@@ -575,7 +575,7 @@ class ExpandedFoodDatabase {
   /// 东北菜
   static List<Food> _generateNortheastCuisine() {
     return [
-      Food(
+      const Food(
         id: 'db_001',
         name: '锅包肉',
         description: '东北名菜，外酥内嫩，酸甜可口，色泽金黄',
@@ -594,7 +594,7 @@ class ExpandedFoodDatabase {
           'fiber': 2.0
         },
       ),
-      Food(
+      const Food(
         id: 'db_002',
         name: '白肉血肠',
         description: '东北特色，肉香血嫩，酸菜爽脆，冬日暖胃',
@@ -620,7 +620,7 @@ class ExpandedFoodDatabase {
   /// 西北菜
   static List<Food> _generateNorthwestCuisine() {
     return [
-      Food(
+      const Food(
         id: 'xb_001',
         name: '兰州拉面',
         description: '一清二白三红四绿五黄，西北面食经典',
@@ -640,7 +640,7 @@ class ExpandedFoodDatabase {
   /// 云贵菜
   static List<Food> _generateYunnanGuizhouCuisine() {
     return [
-      Food(
+      const Food(
         id: 'yg_001',
         name: '过桥米线',
         description: '云南特色，汤鲜料丰，米线爽滑，营养丰富',
@@ -660,7 +660,7 @@ class ExpandedFoodDatabase {
   /// 西餐
   static List<Food> _generateWesternCuisine() {
     return [
-      Food(
+      const Food(
         id: 'west_001',
         name: '牛排',
         description: '经典西餐，牛肉鲜嫩，配菜丰富，营养均衡',
@@ -673,7 +673,7 @@ class ExpandedFoodDatabase {
         difficulty: '中等',
         nutritionFacts: {'calories': 450, 'protein': 35.0, 'carbs': 5.0, 'fat': 32.0, 'fiber': 1.0},
       ),
-      Food(
+      const Food(
         id: 'west_002',
         name: '意大利面',
         description: '面条劲道，酱汁浓郁，配料丰富，西式经典',
@@ -699,7 +699,7 @@ class ExpandedFoodDatabase {
   /// 日料
   static List<Food> _generateJapaneseCuisine() {
     return [
-      Food(
+      const Food(
         id: 'jp_001',
         name: '寿司',
         description: '日式精品，鱼肉新鲜，米饭香甜，制作精美',
@@ -712,7 +712,7 @@ class ExpandedFoodDatabase {
         difficulty: '困难',
         nutritionFacts: {'calories': 280, 'protein': 20.0, 'carbs': 35.0, 'fat': 8.0, 'fiber': 2.0},
       ),
-      Food(
+      const Food(
         id: 'jp_002',
         name: '拉面',
         description: '日式拉面，汤底浓郁，面条劲道，配菜丰富',
@@ -738,7 +738,7 @@ class ExpandedFoodDatabase {
   /// 韩料
   static List<Food> _generateKoreanCuisine() {
     return [
-      Food(
+      const Food(
         id: 'kr_001',
         name: '韩式烤肉',
         description: '韩国特色，肉质鲜嫩，调料丰富，搭配泡菜',
@@ -757,7 +757,7 @@ class ExpandedFoodDatabase {
           'fiber': 3.0
         },
       ),
-      Food(
+      const Food(
         id: 'kr_002',
         name: '泡菜',
         description: '韩国国菜，酸辣爽脆，开胃解腻，益生菌丰富',
@@ -777,7 +777,7 @@ class ExpandedFoodDatabase {
   /// 东南亚料理
   static List<Food> _generateSoutheastAsianCuisine() {
     return [
-      Food(
+      const Food(
         id: 'sea_001',
         name: '泰式冬阴功汤',
         description: '泰国名汤，酸辣开胃，虾肉鲜甜，香茅清香',
@@ -790,7 +790,7 @@ class ExpandedFoodDatabase {
         difficulty: '中等',
         nutritionFacts: {'calories': 120, 'protein': 15.0, 'carbs': 8.0, 'fat': 3.0, 'fiber': 2.0},
       ),
-      Food(
+      const Food(
         id: 'sea_002',
         name: '新加坡炒河粉',
         description: '南洋风味，河粉爽滑，咖喱香浓，配菜丰富',

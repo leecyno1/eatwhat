@@ -1,9 +1,10 @@
+import 'dart:math' as math;
+import 'dart:ui';
+
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:auto_size_text/auto_size_text.dart';
-import 'dart:ui';
-import 'dart:math' as math;
 
 import '../../../core/models/bubble.dart';
 import '../../../core/theme/glassmorphism_theme.dart';
@@ -14,16 +15,6 @@ import '../../../core/theme/glassmorphism_theme.dart';
 /// - 滑动预览时气泡旋转和缩放
 /// - 未达阈值时触发回弹动画和触感反馈
 class GlassmorphismBubbleWidget extends StatefulWidget {
-  final Bubble bubble;
-  final bool isSelected;
-  final int gradientIndex;
-  final VoidCallback? onTap;
-  final VoidCallback? onSwipeUp;
-  final VoidCallback? onSwipeDown;
-  final VoidCallback? onSwipeLeft;
-  final VoidCallback? onSwipeRight;
-  final VoidCallback? onLongPress;
-  final bool enableHapticFeedback;
 
   const GlassmorphismBubbleWidget({
     super.key,
@@ -38,6 +29,16 @@ class GlassmorphismBubbleWidget extends StatefulWidget {
     this.onLongPress,
     this.enableHapticFeedback = true,
   });
+  final Bubble bubble;
+  final bool isSelected;
+  final int gradientIndex;
+  final VoidCallback? onTap;
+  final VoidCallback? onSwipeUp;
+  final VoidCallback? onSwipeDown;
+  final VoidCallback? onSwipeLeft;
+  final VoidCallback? onSwipeRight;
+  final VoidCallback? onLongPress;
+  final bool enableHapticFeedback;
 
   @override
   State<GlassmorphismBubbleWidget> createState() => _GlassmorphismBubbleWidgetState();
@@ -294,7 +295,7 @@ class _GlassmorphismBubbleWidgetState extends State<GlassmorphismBubbleWidget>
       onPanEnd: _onPanEnd,
       child: Transform.translate(
         offset: floatOffset,
-        child: Container(
+        child: SizedBox(
           width: size,
           height: size,
           child: Stack(
@@ -495,7 +496,7 @@ class _GlassmorphismBubbleWidgetState extends State<GlassmorphismBubbleWidget>
     if (!_isPanning || _panStart == null) return;
 
     final delta = _dragOffset;
-    final threshold = 50.0;
+    const threshold = 50.0;
 
     // 滑动未达阈值，取消操作
     if (delta.dy.abs() < threshold && delta.dx.abs() < threshold) {

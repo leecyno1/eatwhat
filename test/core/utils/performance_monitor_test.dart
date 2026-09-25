@@ -1,17 +1,13 @@
-import 'package:flutter_test/flutter_test.dart';
 import 'package:eatwhat_app/core/utils/performance_monitor.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
   group('PerformanceMonitor', () {
-    setUp(() {
-      PerformanceMonitor.initialize();
-    });
+    setUp(PerformanceMonitor.initialize);
 
-    tearDown(() {
-      PerformanceMonitor.dispose();
-    });
+    tearDown(PerformanceMonitor.dispose);
 
     test('应该能初始化性能监控', () {
       PerformanceMonitor.initialize();
@@ -115,10 +111,7 @@ void main() {
       expect(report, contains('stats'));
     });
 
-    test('应该能停止监控', () {
-      PerformanceMonitor.stop();
-      // 验证监控已停止
-    });
+    test('应该能停止监控', PerformanceMonitor.stop);
 
     test('应该能清理资源', () {
       PerformanceMonitor.recordFrame(15.0);
@@ -160,10 +153,7 @@ void main() {
       expect(PerformanceMonitor.getPerformanceGrade(), equals('C'));
     });
 
-    test('应该能应用优化', () {
-      PerformanceMonitor.applyOptimizations();
-      // 验证优化已应用
-    });
+    test('应该能应用优化', PerformanceMonitor.applyOptimizations);
   });
 
   group('PerformanceMonitorMixin', () {

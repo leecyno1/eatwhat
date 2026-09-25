@@ -1,8 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../models/user_preference.dart';
-import '../models/food.dart';
+
 import '../models/bubble.dart';
+import '../models/food.dart';
+import '../models/user_preference.dart';
 
 /// 本地存储服务
 /// 负责所有应用数据的持久化存储，使用Hive。

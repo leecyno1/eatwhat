@@ -3,9 +3,6 @@ import '../models/physical_entity.dart';
 
 /// 气泡调试覆盖层 - 实时监控气泡状态
 class BubbleDebugOverlay extends StatelessWidget {
-  final List<PhysicalEntity> entities;
-  final bool isPhysicsRunning;
-  final Size? containerSize;
 
   const BubbleDebugOverlay({
     super.key,
@@ -13,6 +10,9 @@ class BubbleDebugOverlay extends StatelessWidget {
     required this.isPhysicsRunning,
     this.containerSize,
   });
+  final List<PhysicalEntity> entities;
+  final bool isPhysicsRunning;
+  final Size? containerSize;
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +29,7 @@ class BubbleDebugOverlay extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(
+            const Text(
               '🔬 气泡调试器',
               style: TextStyle(
                 color: Colors.yellow,
@@ -54,9 +54,9 @@ class BubbleDebugOverlay extends StatelessWidget {
               style: const TextStyle(color: Colors.white, fontSize: 12),
             ),
             const SizedBox(height: 8),
-            Text(
+            const Text(
               '实体状态:',
-              style: const TextStyle(color: Colors.yellow, fontSize: 12),
+              style: TextStyle(color: Colors.yellow, fontSize: 12),
             ),
             ...entities.take(5).map((entity) => Padding(
                   padding: const EdgeInsets.only(left: 8.0),
@@ -106,14 +106,14 @@ class BubbleDebugOverlay extends StatelessWidget {
 
 /// 实体轨迹追踪器
 class EntityTracker extends StatelessWidget {
-  final PhysicalEntity entity;
-  final List<Offset> trail;
 
   const EntityTracker({
     super.key,
     required this.entity,
     required this.trail,
   });
+  final PhysicalEntity entity;
+  final List<Offset> trail;
 
   @override
   Widget build(BuildContext context) {
@@ -125,10 +125,10 @@ class EntityTracker extends StatelessWidget {
 }
 
 class TrailPainter extends CustomPainter {
-  final List<Offset> trail;
-  final Color color;
 
   TrailPainter(this.trail, this.color);
+  final List<Offset> trail;
+  final Color color;
 
   @override
   void paint(Canvas canvas, Size size) {

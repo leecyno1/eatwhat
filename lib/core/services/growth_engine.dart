@@ -1,5 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 
 /// 用户增长策略类型
 enum GrowthStrategy {
@@ -33,9 +34,9 @@ enum AchievementType {
 
 /// 用户增长引擎 - 负责用户获取、激活、留存和推荐
 class GrowthEngine {
-  static final GrowthEngine _instance = GrowthEngine._internal();
   factory GrowthEngine() => _instance;
   GrowthEngine._internal();
+  static final GrowthEngine _instance = GrowthEngine._internal();
 
   // 增长数据
   final Map<String, UserGrowthProfile> _userProfiles = {};
@@ -129,7 +130,6 @@ class GrowthEngine {
       icon: '🎯',
       rarity: AchievementRarity.common,
       pointsReward: 100,
-      unlockedAt: null,
     );
 
     _achievements['bubble_master'] = Achievement(
@@ -140,7 +140,6 @@ class GrowthEngine {
       icon: '🌟',
       rarity: AchievementRarity.rare,
       pointsReward: 1000,
-      unlockedAt: null,
     );
 
     _achievements['food_explorer'] = Achievement(
@@ -151,7 +150,6 @@ class GrowthEngine {
       icon: '🍽️',
       rarity: AchievementRarity.epic,
       pointsReward: 2000,
-      unlockedAt: null,
     );
 
     _achievements['social_influencer'] = Achievement(
@@ -162,7 +160,6 @@ class GrowthEngine {
       icon: '👑',
       rarity: AchievementRarity.legendary,
       pointsReward: 5000,
-      unlockedAt: null,
     );
   }
 
@@ -754,20 +751,6 @@ enum GrowthEventType {
 
 /// 用户增长档案
 class UserGrowthProfile {
-  final String userId;
-  final DateTime joinDate;
-  int totalPoints;
-  int level;
-  int streak;
-  int longestStreak;
-  int totalRecommendations;
-  int totalShares;
-  int referralCount;
-  int totalBubbleSelections;
-  final List<String> achievementIds;
-  final List<String> completedChallengeIds;
-  final List<String> activeChallengeIds;
-  DateTime lastActiveDate;
 
   UserGrowthProfile({
     required this.userId,
@@ -785,20 +768,24 @@ class UserGrowthProfile {
     List<String>? activeChallengeIds,
     required this.lastActiveDate,
   }) : activeChallengeIds = activeChallengeIds ?? [];
+  final String userId;
+  final DateTime joinDate;
+  int totalPoints;
+  int level;
+  int streak;
+  int longestStreak;
+  int totalRecommendations;
+  int totalShares;
+  int referralCount;
+  int totalBubbleSelections;
+  final List<String> achievementIds;
+  final List<String> completedChallengeIds;
+  final List<String> activeChallengeIds;
+  DateTime lastActiveDate;
 }
 
 /// 挑战
 class Challenge {
-  final String id;
-  final ChallengeType type;
-  final String title;
-  final String description;
-  final int targetValue;
-  int currentProgress;
-  final ChallengeReward reward;
-  final DateTime startDate;
-  final DateTime endDate;
-  bool isActive;
 
   Challenge({
     required this.id,
@@ -812,6 +799,16 @@ class Challenge {
     required this.endDate,
     required this.isActive,
   });
+  final String id;
+  final ChallengeType type;
+  final String title;
+  final String description;
+  final int targetValue;
+  int currentProgress;
+  final ChallengeReward reward;
+  final DateTime startDate;
+  final DateTime endDate;
+  bool isActive;
 
   double get progressPercentage => currentProgress / targetValue;
   bool get isCompleted => currentProgress >= targetValue;
@@ -820,27 +817,19 @@ class Challenge {
 
 /// 挑战奖励
 class ChallengeReward {
-  final RewardType type;
-  final String value;
-  final String description;
 
   ChallengeReward({
     required this.type,
     required this.value,
     required this.description,
   });
+  final RewardType type;
+  final String value;
+  final String description;
 }
 
 /// 成就
 class Achievement {
-  final String id;
-  final AchievementType type;
-  final String title;
-  final String description;
-  final String icon;
-  final AchievementRarity rarity;
-  final int pointsReward;
-  DateTime? unlockedAt;
 
   Achievement({
     required this.id,
@@ -852,19 +841,20 @@ class Achievement {
     required this.pointsReward,
     this.unlockedAt,
   });
+  final String id;
+  final AchievementType type;
+  final String title;
+  final String description;
+  final String icon;
+  final AchievementRarity rarity;
+  final int pointsReward;
+  DateTime? unlockedAt;
 
   bool get isUnlocked => unlockedAt != null;
 }
 
 /// 推荐计划
 class ReferralProgram {
-  final String id;
-  final String name;
-  final String description;
-  final ReferralReward referrerReward;
-  final ReferralReward refereeReward;
-  final bool isActive;
-  final int maxReferrals;
 
   ReferralProgram({
     required this.id,
@@ -875,29 +865,30 @@ class ReferralProgram {
     required this.isActive,
     required this.maxReferrals,
   });
+  final String id;
+  final String name;
+  final String description;
+  final ReferralReward referrerReward;
+  final ReferralReward refereeReward;
+  final bool isActive;
+  final int maxReferrals;
 }
 
 /// 推荐奖励
 class ReferralReward {
-  final RewardType type;
-  final String value;
-  final String description;
 
   ReferralReward({
     required this.type,
     required this.value,
     required this.description,
   });
+  final RewardType type;
+  final String value;
+  final String description;
 }
 
 /// 可分享内容
 class ShareableContent {
-  final String id;
-  final ShareContentType type;
-  final String template;
-  final String callToAction;
-  final String deepLink;
-  final double viralScore;
 
   ShareableContent({
     required this.id,
@@ -907,14 +898,16 @@ class ShareableContent {
     required this.deepLink,
     required this.viralScore,
   });
+  final String id;
+  final ShareContentType type;
+  final String template;
+  final String callToAction;
+  final String deepLink;
+  final double viralScore;
 }
 
 /// 增长事件
 class GrowthEvent {
-  final GrowthEventType type;
-  final String userId;
-  final String description;
-  final DateTime timestamp;
 
   GrowthEvent({
     required this.type,
@@ -922,4 +915,8 @@ class GrowthEvent {
     required this.description,
     required this.timestamp,
   });
+  final GrowthEventType type;
+  final String userId;
+  final String description;
+  final DateTime timestamp;
 }

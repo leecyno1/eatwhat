@@ -1,8 +1,9 @@
+import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fl_chart/fl_chart.dart';
-import '../../../core/services/metrics_service.dart';
+
 import '../../../core/models/metric_event.dart';
+import '../../../core/services/metrics_service.dart';
 import '../../../core/theme/glassmorphism_theme.dart';
 
 /// 运营数据看板页面
@@ -372,9 +373,9 @@ class _MetricsDashboardScreenState extends State<MetricsDashboardScreen> {
 
   Widget _buildRetentionChart(Map<int, double> retentionRates) {
     final spots = <FlSpot>[];
-    retentionRates.entries.forEach((entry) {
+    for (final entry in retentionRates.entries) {
       spots.add(FlSpot(entry.key.toDouble(), entry.value * 100));
-    });
+    }
 
     // 排序
     spots.sort((a, b) => a.x.compareTo(b.x));
@@ -393,7 +394,6 @@ class _MetricsDashboardScreenState extends State<MetricsDashboardScreen> {
       child: LineChart(
         LineChartData(
           gridData: FlGridData(
-            show: true,
             drawVerticalLine: false,
             horizontalInterval: 20,
             getDrawingHorizontalLine: (value) {
@@ -434,10 +434,10 @@ class _MetricsDashboardScreenState extends State<MetricsDashboardScreen> {
               ),
             ),
             topTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
+              
             ),
             rightTitles: const AxisTitles(
-              sideTitles: SideTitles(showTitles: false),
+              
             ),
           ),
           borderData: FlBorderData(show: false),
@@ -448,7 +448,6 @@ class _MetricsDashboardScreenState extends State<MetricsDashboardScreen> {
               color: Colors.pinkAccent,
               barWidth: 3,
               dotData: FlDotData(
-                show: true,
                 getDotPainter: (spot, percent, barData, index) {
                   return FlDotCirclePainter(
                     radius: 5,

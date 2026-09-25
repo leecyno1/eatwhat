@@ -45,8 +45,7 @@ class V2SpeechInputServiceImpl implements V2SpeechInputService {
     await _speechToText.listen(
       localeId: 'zh_CN',
       listenOptions: SpeechListenOptions(
-        listenMode: ListenMode.confirmation,
-        partialResults: true,
+        
       ),
       onResult: (result) {
         _latestTranscript = result.recognizedWords.trim();

@@ -8,9 +8,9 @@ import '../models/recipe.dart';
 /// 下厨房数据爬取服务
 /// Phase 3: 对齐下厨房数据库颗粒度，实现菜谱数据爬取和同步
 class XiachufangCrawlerService {
-  static final XiachufangCrawlerService _instance = XiachufangCrawlerService._internal();
   factory XiachufangCrawlerService() => _instance;
   XiachufangCrawlerService._internal();
+  static final XiachufangCrawlerService _instance = XiachufangCrawlerService._internal();
 
   final List<Recipe> _crawledRecipes = [];
   final Map<String, dynamic> _crawlStats = {};
@@ -146,7 +146,7 @@ class XiachufangCrawlerService {
 
       // 控制爬取速度
       if (i % 10 == 0) {
-        await Future.delayed(Duration(milliseconds: 500));
+        await Future.delayed(const Duration(milliseconds: 500));
       }
     }
 
@@ -524,7 +524,7 @@ class XiachufangCrawlerService {
   Future<void> _downloadRecipeImages(Recipe recipe) async {
     try {
       // 模拟图片下载
-      await Future.delayed(Duration(milliseconds: 200));
+      await Future.delayed(const Duration(milliseconds: 200));
       debugPrint('📸 已下载菜谱图片: ${recipe.name}');
     } catch (e) {
       debugPrint('⚠️ 图片下载失败: ${recipe.name} - $e');
@@ -599,11 +599,6 @@ class XiachufangCrawlerService {
 
 /// 爬取结果数据模型
 class CrawlResult {
-  final bool success;
-  final String message;
-  final int recipesCount;
-  final List<String>? categories;
-  final Duration? duration;
 
   CrawlResult({
     required this.success,
@@ -612,6 +607,11 @@ class CrawlResult {
     this.categories,
     this.duration,
   });
+  final bool success;
+  final String message;
+  final int recipesCount;
+  final List<String>? categories;
+  final Duration? duration;
 
   @override
   String toString() =>

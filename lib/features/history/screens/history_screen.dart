@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import '../../recommendation/widgets/food_card.dart';
-import '../widgets/history_empty_state.dart';
+
 import '../../../core/models/food.dart';
 import '../../../core/services/storage_service.dart';
+import '../../recommendation/widgets/food_card.dart';
+import '../widgets/history_empty_state.dart';
 
 /// 历史记录页面
 class HistoryScreen extends StatefulWidget {

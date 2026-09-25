@@ -3,14 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /// 加载按钮组件
 class LoadingButton extends StatelessWidget {
-  final String text;
-  final String loadingText;
-  final bool isLoading;
-  final VoidCallback? onPressed;
-  final Color? backgroundColor;
-  final Color? textColor;
-  final double? width;
-  final double? height;
 
   const LoadingButton({
     super.key,
@@ -23,6 +15,14 @@ class LoadingButton extends StatelessWidget {
     this.width,
     this.height,
   });
+  final String text;
+  final String loadingText;
+  final bool isLoading;
+  final VoidCallback? onPressed;
+  final Color? backgroundColor;
+  final Color? textColor;
+  final double? width;
+  final double? height;
 
   @override
   Widget build(BuildContext context) {

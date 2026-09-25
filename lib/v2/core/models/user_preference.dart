@@ -1,17 +1,5 @@
 /// 用户偏好数据模型 (V2版本 - 轻量级)
 class UserPreference {
-  final String id;
-  final String userId;
-  final List<String> likedBubbles;
-  final List<String> dislikedBubbles;
-  final List<String> ignoredBubbles;
-  final Map<String, int> bubbleInteractionCount;
-  final DateTime lastUpdated;
-  final Map<String, double> bubbleWeights;
-  final List<String> favoriteFoods;
-  final List<String> dislikedFoods;
-  final Map<String, double> cuisinePreferences;
-  final Map<String, double> tastePreferences;
 
   UserPreference({
     String? id,
@@ -37,6 +25,18 @@ class UserPreference {
         dislikedFoods = dislikedFoods ?? [],
         cuisinePreferences = cuisinePreferences ?? {},
         tastePreferences = tastePreferences ?? {};
+  final String id;
+  final String userId;
+  final List<String> likedBubbles;
+  final List<String> dislikedBubbles;
+  final List<String> ignoredBubbles;
+  final Map<String, int> bubbleInteractionCount;
+  final DateTime lastUpdated;
+  final Map<String, double> bubbleWeights;
+  final List<String> favoriteFoods;
+  final List<String> dislikedFoods;
+  final Map<String, double> cuisinePreferences;
+  final Map<String, double> tastePreferences;
 
   /// 复制并修改属性
   UserPreference copyWith({

@@ -8,11 +8,11 @@ import '../utils/advanced_logger.dart';
 /// 使用Firecrawl MCP工具实现真实的数据抓取
 /// 支持Map、Scrape、Batch Scrape等功能
 class MCPFirecrawlRecipeCrawlerService {
+
+  MCPFirecrawlRecipeCrawlerService._internal();
   static MCPFirecrawlRecipeCrawlerService? _instance;
   static MCPFirecrawlRecipeCrawlerService get instance =>
       _instance ??= MCPFirecrawlRecipeCrawlerService._internal();
-
-  MCPFirecrawlRecipeCrawlerService._internal();
 
   final AdvancedLogger _logger = AdvancedLogger.instance;
 
@@ -66,7 +66,7 @@ class MCPFirecrawlRecipeCrawlerService {
       }
     } catch (e) {
       _logger.error('Firecrawl MCP test failed: $e', tag: 'MCPCrawler');
-      throw e;
+      rethrow;
     }
   }
 
@@ -181,7 +181,7 @@ class MCPFirecrawlRecipeCrawlerService {
       _updateProgress(RecipeCrawlPhase.processingRecipes);
 
       // 第二步：批量抓取菜谱详情
-      final batchSize = 5; // Firecrawl建议的批量大小
+      const batchSize = 5; // Firecrawl建议的批量大小
 
       for (int i = 0; i < limitedUrls.length; i += batchSize) {
         final batch = limitedUrls.skip(i).take(batchSize).toList();
@@ -447,7 +447,7 @@ class MCPFirecrawlRecipeCrawlerService {
 - 糖 1勺
 - 盐 适量
 
-## ${name}的做法
+## $name的做法
 
 1. 准备所有食材，清洗干净
 2. 按照配方处理食材

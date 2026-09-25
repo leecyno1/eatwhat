@@ -1,7 +1,7 @@
-import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:eatwhat_app/core/providers/food_provider.dart';
 import 'package:eatwhat_app/core/models/food.dart';
+import 'package:eatwhat_app/core/providers/food_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('FoodState', () {
@@ -22,7 +22,7 @@ void main() {
 
     test('copyWith应该保留未更新的字段', () {
       final foods = [
-        Food(
+        const Food(
           id: '1',
           name: '番茄鸡蛋面',
           imageUrl: 'https://example.com/image.jpg',

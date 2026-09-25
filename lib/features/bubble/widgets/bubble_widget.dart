@@ -3,10 +3,6 @@ import '../../../core/models/bubble.dart';
 
 /// 基础气泡组件
 class BubbleWidget extends StatelessWidget {
-  final Bubble bubble;
-  final Function(PointerEvent)? onPointerDown;
-  final Function(PointerEvent)? onPointerUp;
-  final Function(PointerEvent)? onPointerMove;
 
   const BubbleWidget({
     super.key,
@@ -15,6 +11,10 @@ class BubbleWidget extends StatelessWidget {
     this.onPointerUp,
     this.onPointerMove,
   });
+  final Bubble bubble;
+  final Function(PointerEvent)? onPointerDown;
+  final Function(PointerEvent)? onPointerUp;
+  final Function(PointerEvent)? onPointerMove;
 
   @override
   Widget build(BuildContext context) {
@@ -53,14 +53,14 @@ class BubbleWidget extends StatelessWidget {
 
 /// 气泡类型指示器
 class BubbleTypeIndicator extends StatelessWidget {
-  final BubbleType type;
-  final double size;
 
   const BubbleTypeIndicator({
     super.key,
     required this.type,
     this.size = 24,
   });
+  final BubbleType type;
+  final double size;
 
   @override
   Widget build(BuildContext context) {
@@ -136,9 +136,6 @@ class BubbleTypeIndicator extends StatelessWidget {
 
 /// 气泡选择计数器
 class BubbleCounter extends StatelessWidget {
-  final int selectedCount;
-  final int totalCount;
-  final Color? color;
 
   const BubbleCounter({
     super.key,
@@ -146,6 +143,9 @@ class BubbleCounter extends StatelessWidget {
     required this.totalCount,
     this.color,
   });
+  final int selectedCount;
+  final int totalCount;
+  final Color? color;
 
   @override
   Widget build(BuildContext context) {
