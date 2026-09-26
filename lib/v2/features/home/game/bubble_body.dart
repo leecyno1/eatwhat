@@ -259,8 +259,9 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
       }
     } else if (isRejected) {
       // Shove the rejected entity off the bottom of the stage.
-      body.applyForce(Vector2(0, 90) * body.mass);
-      body.linearDamping = 0.1;
+      body
+        ..applyForce(Vector2(0, 90) * body.mass)
+        ..linearDamping = 0.1;
 
       final screenHeight = game.camera.visibleWorldRect.bottom;
       if (body.position.y > screenHeight + 5) {
@@ -333,12 +334,13 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   /// Collects this entity into the taste tray. Golden entities land with a
   /// heavier haptic and a rare-find chip so the treasure moment is felt.
   void collect({bool withFeedback = true}) {
-    game.spawnSelectionBurst(this, positive: true);
-    game.toggleSelection(this);
-    game.emitSwipeFeedback(
-      label: isGolden ? '✨ 稀有偏好 · $text' : text,
-      positive: true,
-    );
+    game
+      ..spawnSelectionBurst(this, positive: true)
+      ..toggleSelection(this)
+      ..emitSwipeFeedback(
+        label: isGolden ? '✨ 稀有偏好 · $text' : text,
+        positive: true,
+      );
     _collectToTray();
 
     if (withFeedback) {
@@ -369,8 +371,9 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   /// stage while fading out.
   void rejectNow() {
     if (isRejected || _isCollecting) return;
-    game.spawnSelectionBurst(this, positive: false);
-    game.rejectBubble(this);
+    game
+      ..spawnSelectionBurst(this, positive: false)
+      ..rejectBubble(this);
   }
 
   /// Shake-to-stir: fling the entity upward with a random spin so shaking
@@ -424,16 +427,17 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
       final haloPaint = Paint()
         ..color = const Color(0xFFFFD54F).withValues(alpha: 0.34 + pulse * 0.2)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
-      canvas.drawCircle(Offset.zero, haloRadius, haloPaint);
-      canvas.drawCircle(
-        Offset.zero,
-        _halfSpan * 0.96,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 0.06
-          ..color =
-              const Color(0xFFFFD54F).withValues(alpha: 0.55 + pulse * 0.4),
-      );
+      canvas
+        ..drawCircle(Offset.zero, haloRadius, haloPaint)
+        ..drawCircle(
+          Offset.zero,
+          _halfSpan * 0.96,
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 0.06
+            ..color =
+                const Color(0xFFFFD54F).withValues(alpha: 0.55 + pulse * 0.4),
+        );
     }
 
     if (isGrabbed) {
@@ -448,16 +452,17 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
       final glowPaint = Paint()
         ..color = hintColor.withValues(alpha: 0.5)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 14);
-      canvas.drawCircle(Offset.zero, _halfSpan * 1.15, glowPaint);
-      canvas.drawCircle(
-        Offset.zero,
-        _halfSpan * 0.98,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 0.06
-          ..color = hintColor,
-      );
-      canvas.scale(1.10, 1.10);
+      canvas
+        ..drawCircle(Offset.zero, _halfSpan * 1.15, glowPaint)
+        ..drawCircle(
+          Offset.zero,
+          _halfSpan * 0.98,
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 0.06
+            ..color = hintColor,
+        )
+        ..scale(1.10, 1.10);
     }
 
     if (_isCollecting) {

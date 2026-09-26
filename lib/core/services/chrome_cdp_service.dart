@@ -6,7 +6,6 @@ import 'package:flutter/foundation.dart';
 
 /// Chrome DevTools Protocol (CDP) WebSocket消息
 class CdpMessage {
-
   CdpMessage({
     required this.id,
     required this.method,
@@ -33,7 +32,6 @@ class CdpMessage {
 
 /// Chrome标签页信息
 class ChromeTab {
-
   ChromeTab({
     required this.id,
     required this.title,
@@ -135,7 +133,7 @@ class ChromeCdpService {
   /// 断开连接
   Future<void> disconnect() async {
     if (_socket != null) {
-      _socket!.close();
+      unawaited(_socket!.close());
       _socket = null;
     }
     _isConnected = false;
@@ -143,7 +141,8 @@ class ChromeCdpService {
   }
 
   /// 发送CDP命令并等待响应
-  Future<CdpMessage> sendCommand(String method, [Map<String, dynamic>? params]) async {
+  Future<CdpMessage> sendCommand(String method,
+      [Map<String, dynamic>? params]) async {
     if (_socket == null || !_isConnected) {
       throw StateError('未连接到Chrome CDP');
     }
@@ -239,12 +238,13 @@ class ChromeCdpService {
         onTimeout: () {},
       );
     } finally {
-      subscription.cancel();
+      unawaited(subscription.cancel());
     }
   }
 
   /// 执行JavaScript
-  Future<dynamic> evaluate(String expression, {bool returnByValue = true}) async {
+  Future<dynamic> evaluate(String expression,
+      {bool returnByValue = true}) async {
     final result = await sendCommand('Runtime.evaluate', {
       'expression': expression,
       'returnByValue': returnByValue,
@@ -260,7 +260,8 @@ class ChromeCdpService {
   }
 
   /// 获取指定域名的Cookie
-  Future<List<Map<String, dynamic>>> getCookiesForUrls(List<String> urls) async {
+  Future<List<Map<String, dynamic>>> getCookiesForUrls(
+      List<String> urls) async {
     final result = await sendCommand('Network.getCookies', {
       'urls': urls,
     });
@@ -320,7 +321,8 @@ class ChromeCdpService {
   }
 
   /// 等待元素出现
-  Future<bool> waitForSelector(String selector, {double timeoutSeconds = 10}) async {
+  Future<bool> waitForSelector(String selector,
+      {double timeoutSeconds = 10}) async {
     final start = DateTime.now();
     while ((DateTime.now().difference(start).inSeconds) < timeoutSeconds) {
       final exists = await evaluate('''

@@ -801,9 +801,8 @@ class AuthService {
 
     try {
       final List<dynamic> usersList = json.decode(usersJson);
-      final users = usersList.cast<Map<String, dynamic>>();
-
-      users.removeWhere((userMap) => userMap['id'] == userId);
+      final users = usersList.cast<Map<String, dynamic>>()
+        ..removeWhere((userMap) => userMap['id'] == userId);
 
       await prefs.setString(_keyUsers, json.encode(users));
     } catch (e) {
@@ -919,7 +918,6 @@ class AuthService {
 
 /// 用户模型
 class User {
-
   User({
     required this.id,
     required this.username,
@@ -1067,7 +1065,6 @@ class User {
 
 /// 认证结果
 class AuthResult {
-
   AuthResult({
     required this.success,
     required this.message,
@@ -1080,7 +1077,6 @@ class AuthResult {
 
 /// 会话信息
 class SessionInfo {
-
   SessionInfo({
     required this.userId,
     this.sessionExpiry,

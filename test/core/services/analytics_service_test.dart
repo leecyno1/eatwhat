@@ -8,8 +8,7 @@ void main() {
     late MockAnalyticsService analyticsService;
 
     setUp(() {
-      analyticsService = MockAnalyticsService();
-      analyticsService.setMode(AnalyticsMode.local);
+      analyticsService = MockAnalyticsService()..setMode(AnalyticsMode.local);
     });
 
     tearDown(() {
@@ -44,8 +43,9 @@ void main() {
     });
 
     test('应该能追踪页面堆栈', () async {
-      analyticsService.trackPageEnter('page1');
-      analyticsService.trackPageEnter('page2');
+      analyticsService
+        ..trackPageEnter('page1')
+        ..trackPageEnter('page2');
       expect(analyticsService.currentPage, equals('page2'));
 
       analyticsService.trackPageExit('page2');
@@ -87,7 +87,7 @@ void main() {
       final newSessionId = analyticsService.sessionId;
 
       // 会话ID应该被更新（时间戳不同）
-      expect(newSessionId, isNotEmpty);
+      expect(newSessionId, isNot(oldSessionId));
     });
 
     test('应该能追踪特定事件类型', () async {
@@ -96,7 +96,8 @@ void main() {
         properties: {'bubble_id': 'bubble_001'},
       );
       expect(analyticsService.recordedEvents.length, equals(1));
-      expect(analyticsService.recordedEvents.first.type, equals(AnalyticsEventType.bubbleTapped));
+      expect(analyticsService.recordedEvents.first.type,
+          equals(AnalyticsEventType.bubbleTapped));
     });
 
     test('应该能追踪页面视图', () async {
@@ -185,8 +186,14 @@ void main() {
       );
       final after = DateTime.now();
 
-      expect(event.timestamp.isAfter(before) || event.timestamp.isAtSameMomentAs(before), true);
-      expect(event.timestamp.isBefore(after) || event.timestamp.isAtSameMomentAs(after), true);
+      expect(
+          event.timestamp.isAfter(before) ||
+              event.timestamp.isAtSameMomentAs(before),
+          true);
+      expect(
+          event.timestamp.isBefore(after) ||
+              event.timestamp.isAtSameMomentAs(after),
+          true);
     });
   });
 
@@ -194,8 +201,10 @@ void main() {
     test('应该包含所有必要的事件类型', () {
       expect(AnalyticsEventType.values.length, greaterThan(20));
       expect(AnalyticsEventType.values, contains(AnalyticsEventType.appLaunch));
-      expect(AnalyticsEventType.values, contains(AnalyticsEventType.bubbleTapped));
-      expect(AnalyticsEventType.values, contains(AnalyticsEventType.orderSubmitted));
+      expect(
+          AnalyticsEventType.values, contains(AnalyticsEventType.bubbleTapped));
+      expect(AnalyticsEventType.values,
+          contains(AnalyticsEventType.orderSubmitted));
     });
   });
 

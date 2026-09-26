@@ -6,7 +6,8 @@ import '../../core/theme/app_tokens.dart';
 import 'onboarding_service.dart';
 
 /// 手势引导步骤配置
-class OnboardingStep { // 手势动画路径
+class OnboardingStep {
+  // 手势动画路径
 
   const OnboardingStep({
     required this.title,
@@ -77,7 +78,6 @@ class OnboardingOverlay {
 
 /// 新手引导组件
 class OnboardingWidget extends StatefulWidget {
-
   const OnboardingWidget({
     super.key,
     required this.steps,
@@ -509,7 +509,6 @@ class _OnboardingWidgetState extends State<OnboardingWidget>
 
 /// 自定义遮罩画笔 - 实现气泡高亮效果
 class _OnboardingMaskPainter extends CustomPainter {
-
   _OnboardingMaskPainter({
     required this.highlightCenter,
     required this.highlightRadius,
@@ -534,10 +533,10 @@ class _OnboardingMaskPainter extends CustomPainter {
       ));
 
     // 使用异或操作挖空圆形区域
-    path.addPath(circlePath, Offset.zero);
-
-    // 使用奇偶填充规则实现挖空效果
-    path.fillType = PathFillType.evenOdd;
+    path
+      ..addPath(circlePath, Offset.zero)
+      // 使用奇偶填充规则实现挖空效果
+      ..fillType = PathFillType.evenOdd;
 
     // 绘制遮罩
     canvas.drawPath(path, paint);

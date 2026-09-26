@@ -452,12 +452,13 @@ class _SwipeFeedbackEchoPainter extends CustomPainter {
       ..style = PaintingStyle.fill
       ..color = accent.withValues(alpha: 0.14)
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
-    canvas.drawCircle(Offset(28, centerY - 12 * direction), 8, dotPaint);
-    canvas.drawCircle(
-      Offset(size.width - 28, centerY + 12 * direction),
-      8,
-      dotPaint,
-    );
+    canvas
+      ..drawCircle(Offset(28, centerY - 12 * direction), 8, dotPaint)
+      ..drawCircle(
+        Offset(size.width - 28, centerY + 12 * direction),
+        8,
+        dotPaint,
+      );
   }
 
   @override

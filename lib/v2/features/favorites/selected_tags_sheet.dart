@@ -4,7 +4,6 @@ import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
 
 class SelectedTagsSheet extends StatefulWidget {
-
   const SelectedTagsSheet({
     super.key,
     required this.tags,
@@ -78,7 +77,7 @@ class _SelectedTagsSheetState extends State<SelectedTagsSheet> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: Colors.black.withOpacity(0.12),
+              color: Colors.black.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(4),
             ),
           ),
@@ -174,7 +173,6 @@ class _SelectedTagsSheetState extends State<SelectedTagsSheet> {
 }
 
 class SelectedTag {
-
   const SelectedTag({
     required this.id,
     required this.label,

@@ -105,12 +105,13 @@ class GrabGestureHandler extends PositionComponent
     // A grabbed release also fires a tap on the entity; suppress it so
     // dropping the entity back doesn't double-collect it.
     game.suppressTapFor(const Duration(milliseconds: 450));
-    candidate.beginGrab();
-    candidate.updateGrab(
-      game.camera.globalToLocal(_fingerScreen.clone()),
-      _fingerScreen.y,
-      size.y,
-    );
+    candidate
+      ..beginGrab()
+      ..updateGrab(
+        game.camera.globalToLocal(_fingerScreen.clone()),
+        _fingerScreen.y,
+        size.y,
+      );
   }
 
   @override

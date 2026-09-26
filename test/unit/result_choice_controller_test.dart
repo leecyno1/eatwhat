@@ -61,9 +61,8 @@ void main() {
       final controller = ResultChoiceController([
         _recipe('r1', '麻婆豆腐'),
         _recipe('r2', '红烧肉'),
-      ]);
-
-      controller.replaceAllPreserving(const []);
+      ])
+        ..replaceAllPreserving(const []);
 
       expect(controller.availableChoices.map((r) => r.id), ['r1', 'r2']);
       expect(controller.currentChoice?.id, 'r1');
@@ -74,13 +73,12 @@ void main() {
         _recipe('r1', '麻婆豆腐'),
         _recipe('r2', '红烧肉'),
         _recipe('r3', '宫保鸡丁'),
-      ]);
-      controller.select(_recipe('r2', '红烧肉'));
-
-      controller.replaceAllPreserving([
-        _recipe('r3', '宫保鸡丁'),
-        _recipe('r2', '红烧肉'),
-      ]);
+      ])
+        ..select(_recipe('r2', '红烧肉'))
+        ..replaceAllPreserving([
+          _recipe('r3', '宫保鸡丁'),
+          _recipe('r2', '红烧肉'),
+        ]);
 
       expect(controller.availableChoices.map((r) => r.id), ['r3', 'r2']);
       expect(controller.currentChoice?.id, 'r2');
@@ -91,13 +89,12 @@ void main() {
       final controller = ResultChoiceController([
         _recipe('r1', '麻婆豆腐'),
         _recipe('r2', '红烧肉'),
-      ]);
-      controller.select(_recipe('r2', '红烧肉'));
-
-      controller.replaceAllPreserving([
-        _recipe('r9', '清蒸鲈鱼'),
-        _recipe('r8', '白灼虾'),
-      ]);
+      ])
+        ..select(_recipe('r2', '红烧肉'))
+        ..replaceAllPreserving([
+          _recipe('r9', '清蒸鲈鱼'),
+          _recipe('r8', '白灼虾'),
+        ]);
 
       expect(controller.availableChoices.map((r) => r.id), ['r9', 'r8']);
       expect(controller.currentChoice?.id, 'r9');
@@ -108,11 +105,10 @@ void main() {
         _recipe('r1', '麻婆豆腐'),
         _recipe('r2', '红烧肉'),
         _recipe('r3', '宫保鸡丁'),
-      ]);
-
-      controller.replaceAllPreserving([
-        _recipe('r7', '番茄牛腩'),
-      ]);
+      ])
+        ..replaceAllPreserving([
+          _recipe('r7', '番茄牛腩'),
+        ]);
 
       expect(controller.availableChoices.map((r) => r.id), ['r7']);
       expect(controller.currentChoice?.id, 'r7');

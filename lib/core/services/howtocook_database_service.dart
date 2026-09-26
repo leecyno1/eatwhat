@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:eatwhat_app/core/services/web_recipe_database.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'package:flutter/services.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
@@ -12,7 +12,8 @@ class HowToCookDatabaseService {
   static const String _databaseName = 'howtocook_enhanced_recipes.db';
   Database? _database;
 
-  static final HowToCookDatabaseService _instance = HowToCookDatabaseService._internal();
+  static final HowToCookDatabaseService _instance =
+      HowToCookDatabaseService._internal();
 
   Future<Database> get database async {
     _database ??= await _initDatabase();
@@ -43,19 +44,21 @@ class HowToCookDatabaseService {
 
       // 从assets复制数据库文件
       final ByteData data = await rootBundle.load('assets/data/$_databaseName');
-      final List<int> bytes = data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
+      final List<int> bytes =
+          data.buffer.asUint8List(data.offsetInBytes, data.lengthInBytes);
       await File(path).writeAsBytes(bytes);
 
-      print('数据库已从assets复制到: $path');
+      debugPrint('数据库已从assets复制到: $path');
     } catch (e) {
-      print('从assets复制数据库失败: $e');
+      debugPrint('从assets复制数据库失败: $e');
       // 创建空数据库作为备用
       await _createEmptyDatabase(path);
     }
   }
 
   Future<void> _createEmptyDatabase(String path) async {
-    final Database db = await openDatabase(path, version: 1, onCreate: (db, version) async {
+    final Database db =
+        await openDatabase(path, version: 1, onCreate: (db, version) async {
       // 创建基础表结构（备用方案）
       await db.execute('''
         CREATE TABLE howtocook_recipes (
@@ -102,7 +105,7 @@ class HowToCookDatabaseService {
     });
 
     await db.close();
-    print('已创建空数据库作为备用方案');
+    debugPrint('已创建空数据库作为备用方案');
   }
 
   // 获取所有菜谱
@@ -112,7 +115,8 @@ class HowToCookDatabaseService {
   }
 
   // 根据分类获取菜谱
-  Future<List<Map<String, dynamic>>> getRecipesByCategory(String category) async {
+  Future<List<Map<String, dynamic>>> getRecipesByCategory(
+      String category) async {
     final db = await database;
     return db.query(
       'howtocook_recipes',
@@ -123,7 +127,8 @@ class HowToCookDatabaseService {
   }
 
   // 根据难度获取菜谱
-  Future<List<Map<String, dynamic>>> getRecipesByDifficulty(int difficulty) async {
+  Future<List<Map<String, dynamic>>> getRecipesByDifficulty(
+      int difficulty) async {
     final db = await database;
     return db.query(
       'howtocook_recipes',
@@ -147,13 +152,14 @@ class HowToCookDatabaseService {
   // 获取所有分类
   Future<List<String>> getAllCategories() async {
     final db = await database;
-    final result =
-        await db.rawQuery('SELECT DISTINCT category FROM howtocook_recipes ORDER BY category');
+    final result = await db.rawQuery(
+        'SELECT DISTINCT category FROM howtocook_recipes ORDER BY category');
     return result.map((row) => row['category'] as String).toList();
   }
 
   // 获取菜谱的食材
-  Future<List<Map<String, dynamic>>> getRecipeIngredients(String recipeId) async {
+  Future<List<Map<String, dynamic>>> getRecipeIngredients(
+      String recipeId) async {
     final db = await database;
     return db.query(
       'howtocook_ingredients',
@@ -203,9 +209,10 @@ class HowToCookDatabaseService {
   Future<Map<String, int>> getDatabaseStats() async {
     final db = await database;
 
-    final totalRecipesResult = await db.rawQuery('SELECT COUNT(*) as count FROM howtocook_recipes');
-    final totalCategoriesResult =
-        await db.rawQuery('SELECT COUNT(DISTINCT category) as count FROM howtocook_recipes');
+    final totalRecipesResult =
+        await db.rawQuery('SELECT COUNT(*) as count FROM howtocook_recipes');
+    final totalCategoriesResult = await db.rawQuery(
+        'SELECT COUNT(DISTINCT category) as count FROM howtocook_recipes');
 
     return {
       'totalRecipes': totalRecipesResult.first['count'] as int,
@@ -236,11 +243,13 @@ class HowToCookDatabaseService {
 
     if (searchQuery != null && searchQuery.isNotEmpty) {
       whereClauses.add('(name LIKE ? OR description LIKE ?)');
-      whereArgs.add('%$searchQuery%');
-      whereArgs.add('%$searchQuery%');
+      whereArgs
+        ..add('%$searchQuery%')
+        ..add('%$searchQuery%');
     }
 
-    final String whereClause = whereClauses.isNotEmpty ? whereClauses.join(' AND ') : '';
+    final String whereClause =
+        whereClauses.isNotEmpty ? whereClauses.join(' AND ') : '';
 
     return db.query(
       'howtocook_recipes',

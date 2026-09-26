@@ -6,7 +6,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 /// 美团开放平台认证信息
 class MeituanAuthTokens {
-
   MeituanAuthTokens({
     this.accessToken,
     this.refreshToken,
@@ -24,12 +23,12 @@ class MeituanAuthTokens {
       expiresAt: json['expiresAt'] != null
           ? DateTime.parse(json['expiresAt'] as String)
           : null,
-      cookies: (json['cookies'] as List<dynamic>?)
-              ?.cast<Map<String, dynamic>>() ??
-          [],
-      headers: (json['headers'] as Map<String, dynamic>?)
-              ?.cast<String, String>() ??
-          {},
+      cookies:
+          (json['cookies'] as List<dynamic>?)?.cast<Map<String, dynamic>>() ??
+              [],
+      headers:
+          (json['headers'] as Map<String, dynamic>?)?.cast<String, String>() ??
+              {},
     );
   }
   final String? accessToken;
@@ -101,9 +100,8 @@ class MeituanAuthService {
   /// 保存认证信息到安全存储
   Future<void> _saveTokens(MeituanAuthTokens tokens) async {
     try {
-      final json = tokens.toJson().entries
-          .map((e) => '${e.key}=${e.value}')
-          .join('&');
+      final json =
+          tokens.toJson().entries.map((e) => '${e.key}=${e.value}').join('&');
       await _secureStorage.write(key: _storageKey, value: json);
       _cachedTokens = tokens;
       debugPrint('[MeituanAuth] 认证信息已保存');
@@ -129,8 +127,7 @@ class MeituanAuthService {
 
     // 查找是否已有美团开放平台标签页
     for (final tab in tabs) {
-      if (tab.url.contains('meituan.com') ||
-          tab.title.contains('美团')) {
+      if (tab.url.contains('meituan.com') || tab.title.contains('美团')) {
         debugPrint('[MeituanAuth] 找到美团标签页: ${tab.title}');
         return tab;
       }
@@ -191,7 +188,7 @@ class MeituanAuthService {
       debugPrint('[MeituanAuth] 登录失败: $e');
       rethrow;
     } finally {
-      _cdp.disconnect();
+      unawaited(_cdp.disconnect());
     }
   }
 
@@ -462,9 +459,8 @@ class MeituanAuthService {
       // 从Cookie中提取必要信息
       final cookies = await _cdp.getCookies();
       if (cookies.isNotEmpty) {
-        headers['Cookie'] = cookies
-            .map((c) => '${c['name']}=${c['value']}')
-            .join('; ');
+        headers['Cookie'] =
+            cookies.map((c) => '${c['name']}=${c['value']}').join('; ');
       }
     } catch (_) {}
 

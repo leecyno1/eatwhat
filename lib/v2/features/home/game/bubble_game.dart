@@ -18,7 +18,6 @@ import 'grab_controller.dart';
 import 'wall_body.dart';
 
 class BubbleGame extends Forge2DGame {
-
   BubbleGame({
     String? initialCategory,
     Map<String, String> initialLikedTags = const {},
@@ -30,6 +29,7 @@ class BubbleGame extends Forge2DGame {
       blockedTags: initialBlockedTags,
     );
   }
+
   /// Depth layers of the pot. Entities on the same layer collide with each
   /// other; layers overlap visually (see [BubbleBody.layerIndex]).
   static const int potLayerCount = 3;
@@ -188,8 +188,9 @@ class BubbleGame extends Forge2DGame {
   }
 
   void rejectBubble(BubbleBody bubble) {
-    bubble.isSelected = false;
-    bubble.isRejected = true;
+    bubble
+      ..isSelected = false
+      ..isRejected = true;
     selectedItems.remove(bubble.text);
     selectedTagIds.remove(bubble.data.id);
     selectedTagIdToLabel.remove(bubble.data.id);
@@ -612,10 +613,11 @@ class DiscardZoneIndicator extends PositionComponent
       ),
       textDirection: TextDirection.ltr,
     );
-    textPainter.layout();
-    textPainter.paint(
-      canvas,
-      Offset((width - textPainter.width) / 2, height - 40),
-    );
+    textPainter
+      ..layout()
+      ..paint(
+        canvas,
+        Offset((width - textPainter.width) / 2, height - 40),
+      );
   }
 }

@@ -95,7 +95,7 @@ class _EatWhatAuthSheetState extends State<_EatWhatAuthSheet> {
 
     if (!mounted) return;
     if (result.success) {
-      HapticFeedback.mediumImpact();
+      unawaited(HapticFeedback.mediumImpact());
       // Tie the session to the account so preference and order telemetry
       // stop reporting as anonymous the moment the user signs in.
       final user = result.user;
@@ -499,7 +499,7 @@ class _EatWhatAccountSheetState extends State<_EatWhatAccountSheet> {
         ),
       );
       if (paid) {
-        HapticFeedback.mediumImpact();
+        unawaited(HapticFeedback.mediumImpact());
       }
     } catch (_) {
       if (!mounted) return;

@@ -103,7 +103,7 @@ class V2PreferenceFeedbackService {
 
   static DateTime _now() => debugClock?.call() ?? DateTime.now();
 
-  /// 存储格式 v2：{tagId: {"score": <num>, "updatedAt": <毫秒时间戳>}}。
+  /// 存储格式 v2：`{tagId: {"score": <num>, "updatedAt": <毫秒时间戳>}}`。
   /// 旧格式（tagId -> int）按升级当刻的新鲜分数解码，并标记 migrated
   /// 让读取方立刻写回新格式，钉住迁移时间点。
   ({Map<String, _TagScoreEntry> map, bool migrated}) _decodeRawTagScores(
