@@ -23,6 +23,7 @@ import 'package:eatwhat_app/v2/features/home/widgets/fresh_physical_preference_s
 import 'package:eatwhat_app/v2/features/home/widgets/home_overlays.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/pantry_ingredient_sheet.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/taste_signature_panel.dart';
+import 'package:eatwhat_app/v2/features/home/widgets/weekly_report_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -447,6 +448,27 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Future<void> _openWeeklyReport() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (sheetContext) => ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(sheetContext).size.height * 0.85,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppPalette.nightElevated,
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: const WeeklyReportSheet(),
+        ),
+      ),
+    );
+  }
+
   Future<void> _submitPantrySearch(List<String> ingredients) async {
     if (!mounted || ingredients.isEmpty) return;
     final loader = widget.pantrySearchLoader ??
@@ -623,6 +645,7 @@ class _HomePageState extends State<HomePage> {
                       );
                     },
                     onOpenRecent: _submitRecentSuccessRecommendation,
+                    onOpenWeeklyReport: _openWeeklyReport,
                   ),
                   const SizedBox(height: 7),
                   Expanded(
@@ -865,6 +888,7 @@ class _FreshCompactHeader extends StatelessWidget {
     required this.onOpenAccount,
     required this.onOpenFavorites,
     required this.onOpenRecent,
+    required this.onOpenWeeklyReport,
     required this.onToggleTheme,
   });
 
@@ -881,6 +905,7 @@ class _FreshCompactHeader extends StatelessWidget {
   final VoidCallback onOpenAccount;
   final VoidCallback onOpenFavorites;
   final VoidCallback onOpenRecent;
+  final VoidCallback onOpenWeeklyReport;
   final VoidCallback onToggleTheme;
 
   static const _categories = <({String label, String? value})>[
@@ -1058,6 +1083,13 @@ class _FreshCompactHeader extends StatelessWidget {
                   icon: Icons.history_rounded,
                   tooltip: '吃过',
                   onTap: onOpenRecent,
+                ),
+                const SizedBox(width: 5),
+                _HeaderAction(
+                  key: const ValueKey('home-weekly-report-button'),
+                  icon: Icons.insights_rounded,
+                  tooltip: '一周报告',
+                  onTap: onOpenWeeklyReport,
                 ),
               ],
             ),

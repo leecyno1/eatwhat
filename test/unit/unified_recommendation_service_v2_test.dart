@@ -1104,6 +1104,65 @@ void main() {
       );
     });
 
+    test('健康向会按真实营养数据调整排序', () async {
+      final light = {
+        ..._row(
+          dishId: 101,
+          recipeId: 201,
+          name: '京酱肉丝',
+          tags: const ['家常菜'],
+          ingredients: const ['猪肉'],
+          popularity: 10,
+        ),
+        'nutrition': const {
+          'calories': 380,
+          'protein': 26,
+          'fat': 8,
+          'carbs': 12,
+          'fiber': 4,
+          'sugar': 3,
+          'sodium': 600,
+        },
+      };
+      final heavy = {
+        ..._row(
+          dishId: 102,
+          recipeId: 202,
+          name: '铁板牛柳',
+          tags: const ['家常菜'],
+          ingredients: const ['牛肉'],
+          popularity: 90,
+        ),
+        'nutrition': const {
+          'calories': 920,
+          'protein': 9,
+          'fat': 66,
+          'carbs': 14,
+          'fiber': 1,
+          'sugar': 6,
+          'sodium': 1900,
+        },
+      };
+
+      final healthBundle = await _serviceWithRows([light, heavy])
+          .buildRecommendationBundle(
+        input: _input()
+            .copyWith(planningDirection: MealPlanningDirection.health),
+        recallLabels: const ['家常菜'],
+        limit: 2,
+      );
+      final balancedBundle = await _serviceWithRows([light, heavy])
+          .buildRecommendationBundle(
+        input: _input(),
+        recallLabels: const ['家常菜'],
+        limit: 2,
+      );
+
+      expect(healthBundle.recipes.first.name, '京酱肉丝');
+      // 均衡向不受营养数据影响，人气占优的重口菜排前
+      expect(balancedBundle.recipes.first.name, '铁板牛柳');
+    });
+
     test('早餐时段：清淡早食排到重口火锅前', () async {
       final rows = [
         _row(

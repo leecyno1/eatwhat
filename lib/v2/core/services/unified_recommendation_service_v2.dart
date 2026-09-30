@@ -314,6 +314,10 @@ class UnifiedRecommendationServiceV2 {
         ingredients: ingredients,
         name: name,
       );
+      final healthNutritionBonus = _healthNutritionAdjustment(
+        direction: input.planningDirection,
+        nutrition: _nutritionOfRow(row),
+      );
       final explicitPreferenceBonus = input.likedTagLabels
               .where(
                 (label) => _matchesSignal(name, tags, ingredients, label),
@@ -333,6 +337,7 @@ class UnifiedRecommendationServiceV2 {
           recentPenalty +
           planningDirectionBonus +
           explicitPreferenceBonus +
+          healthNutritionBonus +
           mealPeriodBonus +
           constraintAdjustment;
       return _ScoredRecipeRow(
@@ -561,6 +566,34 @@ class UnifiedRecommendationServiceV2 {
       return pos * 10.0;
     }
     return 0;
+  }
+
+  /// 行里的营养数据可能是任意泛型的 Map（含 const {}），统一转成 Map<String, dynamic>。
+  static Map<String, dynamic> _nutritionOfRow(Map<String, dynamic> row) {
+    final raw = row['nutrition'];
+    if (raw is Map<String, dynamic>) return raw;
+    if (raw is Map) return Map<String, dynamic>.from(raw);
+    return const {};
+  }
+
+  /// 健康向的营养数据调整：低卡 +8、高蛋白 +8、高钠 -10。
+  /// 只在健康向生效，且要求行里有营养水合数据（nutrition_profile 表）。
+  double _healthNutritionAdjustment({
+    required MealPlanningDirection direction,
+    required Map<String, dynamic> nutrition,
+  }) {
+    if (direction != MealPlanningDirection.health || nutrition.isEmpty) {
+      return 0;
+    }
+    final calories = (nutrition['calories'] as num?)?.toDouble() ?? 0;
+    final protein = (nutrition['protein'] as num?)?.toDouble() ?? 0;
+    final sodium = (nutrition['sodium'] as num?)?.toDouble() ?? 0;
+
+    var bonus = 0.0;
+    if (calories > 0 && calories <= 500) bonus += 8;
+    if (protein >= 20) bonus += 8;
+    if (sodium >= 1500) bonus -= 10;
+    return bonus;
   }
 
   double _planningDirectionBonus({
