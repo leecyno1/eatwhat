@@ -104,6 +104,43 @@ void main() {
     expect(find.text('就吃这个'), findsOneWidget);
   });
 
+  testWidgets('ResultPage 点页眉分享打开卡片预览', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ResultPage(
+          imageGenerator: (_) async => null,
+          recommendations: const [
+            RecipeModel(
+              id: 'r1',
+              name: '番茄肥牛锅',
+              description: '热一点，有锅气。',
+              ingredients: ['番茄', '肥牛'],
+            ),
+          ],
+          inferenceInput: const TasteInferenceInput(
+            likedTagIds: ['f_spicy'],
+            likedTagLabels: ['辣'],
+            dislikedTagIds: [],
+            dislikedTagLabels: [],
+            skippedTagIds: [],
+            skippedTagLabels: [],
+            freeformRequirement: '',
+            historyPreferenceSummary: {},
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 900));
+
+    await tester.tap(find.byIcon(Icons.ios_share_rounded));
+    await tester.pumpAndSettle();
+
+    expect(find.text('分享这道菜'), findsOneWidget);
+    expect(find.text('番茄肥牛锅'), findsWidgets);
+    expect(find.byKey(const ValueKey('result-share-submit')), findsOneWidget);
+  });
+
   testWidgets('ResultPage 推荐行为漏斗共享同一个推荐批次 ID', (tester) async {
     final telemetryEvents = <_TelemetryEvent>[];
     final telemetry = V2RecommendationTelemetryService(

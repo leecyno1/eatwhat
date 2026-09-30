@@ -69,6 +69,7 @@ class UnifiedRecommendationServiceV2 {
     V2RecommendationCanaryService? canaryService,
     V2RecommendationCanaryDecisionLoader? canaryDecisionLoader,
     V2RecommendationExperimentalRanker? experimentalRanker,
+    DateTime Function()? mealPeriodClock,
   })  : _db = db ?? UnifiedRecipeDatabaseService.instance,
         _tagCatalog = tagCatalogService ?? V2TagCatalogService.instance,
         _searchRecipeLoader = searchRecipeLoader,
@@ -87,7 +88,8 @@ class UnifiedRecommendationServiceV2 {
         _canaryDecisionLoader = canaryDecisionLoader ??
             (canaryService ?? V2RecommendationCanaryService.instance).decide,
         _experimentalRanker =
-            experimentalRanker ?? V2RecommendationExperimentalRanker.instance;
+            experimentalRanker ?? V2RecommendationExperimentalRanker.instance,
+        _mealPeriodClock = mealPeriodClock;
 
   UnifiedRecommendationServiceV2._internal() : this();
   static final UnifiedRecommendationServiceV2 instance =
@@ -105,6 +107,7 @@ class UnifiedRecommendationServiceV2 {
   final V2RecommendationShadowScoringService _shadowScoringService;
   final V2RecommendationCanaryDecisionLoader _canaryDecisionLoader;
   final V2RecommendationExperimentalRanker _experimentalRanker;
+  final DateTime Function()? _mealPeriodClock;
 
   Map<String, TasteSignal>? _signalByLabelCache;
 
@@ -214,6 +217,8 @@ class UnifiedRecommendationServiceV2 {
       return _calibratedFeedbackWeight(tagScores[signal.id] ?? 0);
     }
 
+    final mealPeriodNow = _mealPeriodClock?.call() ?? DateTime.now();
+
     // 2) 打分：匹配度 + 人气 + 评分 + 偏好学习/收藏/去重
     final scored = rows.map((row) {
       final tags = List<String>.from(row['tags'] ?? const []);
@@ -298,6 +303,11 @@ class UnifiedRecommendationServiceV2 {
         name: name,
       );
       final constraintAdjustment = constraints.scoreAdjustment(row);
+      final mealPeriodBonus = _mealPeriodAdjustment(
+        now: mealPeriodNow,
+        name: name,
+        tags: tags,
+      );
       final planningDirectionBonus = _planningDirectionBonus(
         direction: input.planningDirection,
         tags: tags,
@@ -323,6 +333,7 @@ class UnifiedRecommendationServiceV2 {
           recentPenalty +
           planningDirectionBonus +
           explicitPreferenceBonus +
+          mealPeriodBonus +
           constraintAdjustment;
       return _ScoredRecipeRow(
         row: row,
@@ -515,6 +526,41 @@ class UnifiedRecommendationServiceV2 {
       }
     }
     return penalty;
+  }
+
+  /// 时段感知：只对错配感最强的早餐（5-10 点）与夜宵（21 点-次日 5 点）做调整，
+  /// 其余时段保持中性，避免过度干预。只匹配菜名与标签，不匹配食材，
+  /// 防止「鸡蛋」这类常见食材在早餐时段大面积误触发。
+  static const List<String> _morningPositiveTerms = [
+    '早餐', '粥', '豆浆', '包子', '馒头', '鸡蛋', '牛奶', '燕麦',
+    '面点', '清淡', '吐司', '馄饨', '蒸蛋',
+  ];
+  static const List<String> _morningNegativeTerms = [
+    '火锅', '烧烤', '麻辣', '油炸', '重油', '夜宵', '啤酒',
+  ];
+  static const List<String> _lateNightPositiveTerms = [
+    '夜宵', '烧烤', '小龙虾', '串', '炸鸡', '泡面', '卤味', '啤酒', '烤鱼',
+  ];
+
+  double _mealPeriodAdjustment({
+    required DateTime now,
+    required String name,
+    required List<String> tags,
+  }) {
+    final hour = now.hour;
+    final haystack = '$name|${tags.join('|')}';
+    final isMorning = hour >= 5 && hour < 10;
+    final isLateNight = hour >= 21 || hour < 5;
+    if (isMorning) {
+      final pos = _morningPositiveTerms.where(haystack.contains).length;
+      final neg = _morningNegativeTerms.where(haystack.contains).length;
+      return pos * 10.0 - neg * 28.0;
+    }
+    if (isLateNight) {
+      final pos = _lateNightPositiveTerms.where(haystack.contains).length;
+      return pos * 10.0;
+    }
+    return 0;
   }
 
   double _planningDirectionBonus({

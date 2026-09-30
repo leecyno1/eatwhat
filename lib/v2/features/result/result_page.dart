@@ -36,6 +36,7 @@ import 'package:eatwhat_app/v2/features/result/widgets/result_execution_shortcut
 import 'package:eatwhat_app/v2/features/result/widgets/result_feedback_band.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_hero_media.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_pairing_band.dart';
+import 'package:eatwhat_app/v2/features/result/widgets/result_share_sheet.dart';
 import 'package:eatwhat_app/v2/features/result/widgets/result_status_panels.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -340,6 +341,25 @@ class _ResultPageState extends State<ResultPage>
         recipeId: recipe.id,
         position: _positionFor(recipe),
         isFavorited: isFavorited,
+      ),
+    );
+  }
+
+  Future<void> _openShareSheet(RecipeModel recipe) async {
+    unawaited(HapticFeedback.lightImpact());
+    if (!mounted) return;
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => Container(
+        decoration: const BoxDecoration(
+          color: GoldPalette.nightDeep,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: RecipeShareSheet(
+          recipe: recipe,
+          quote: _effectiveAiSummary ?? _buildRecommendationSubtitle(),
+        ),
       ),
     );
   }
@@ -912,6 +932,7 @@ class _ResultPageState extends State<ResultPage>
                           onBack: _returnToPreferenceSelection,
                           favorited: _isFavorited,
                           onToggleFavorite: _toggleFavorite,
+                          onShare: () => _openShareSheet(currentChoice),
                         ),
                         const Spacer(),
                         if (currentChoice.tags.isNotEmpty) ...[
@@ -1349,11 +1370,13 @@ class _StageHeader extends StatelessWidget {
     required this.onBack,
     required this.favorited,
     required this.onToggleFavorite,
+    this.onShare,
   });
 
   final VoidCallback onBack;
   final bool favorited;
   final VoidCallback onToggleFavorite;
+  final VoidCallback? onShare;
 
   @override
   Widget build(BuildContext context) {
@@ -1380,6 +1403,14 @@ class _StageHeader extends StatelessWidget {
               ),
             ),
           ),
+          if (onShare != null) ...[
+            _GoldCircleKey(
+              icon: Icons.ios_share_rounded,
+              onTap: onShare!,
+              semanticLabel: '分享这道菜',
+            ),
+            const SizedBox(width: AppSpacing.xs),
+          ],
           _GoldFavoriteButton(
             favorited: favorited,
             onTap: onToggleFavorite,

@@ -1103,6 +1103,110 @@ void main() {
         contains('符合体验向规划'),
       );
     });
+
+    test('早餐时段：清淡早食排到重口火锅前', () async {
+      final rows = [
+        _row(
+          dishId: 101,
+          recipeId: 201,
+          name: '小米南瓜粥',
+          tags: const ['家常菜', '早餐'],
+          ingredients: const ['小米', '南瓜'],
+        ),
+        _row(
+          dishId: 102,
+          recipeId: 202,
+          name: '麻辣火锅',
+          tags: const ['家常菜', '麻辣', '火锅'],
+          ingredients: const ['辣椒', '牛油'],
+        ),
+      ];
+      final service = _serviceWithRows(
+        rows,
+        mealPeriodClock: () => DateTime(2026, 9, 30, 8, 0),
+      );
+
+      final bundle = await service.buildRecommendationBundle(
+        input: _input(),
+        recallLabels: const ['家常菜'],
+        limit: 2,
+      );
+
+      expect(bundle.recipes.first.name, '小米南瓜粥');
+      expect(bundle.recipes.last.name, '麻辣火锅');
+    });
+
+    test('夜宵时段：烧烤串串获得加成', () async {
+      final rows = [
+        _row(
+          dishId: 101,
+          recipeId: 201,
+          name: '清蒸鲈鱼',
+          tags: const ['家常菜', '清淡'],
+          ingredients: const ['鲈鱼'],
+        ),
+        _row(
+          dishId: 102,
+          recipeId: 202,
+          name: '炭火羊肉串',
+          tags: const ['家常菜', '夜宵'],
+          ingredients: const ['羊肉'],
+        ),
+      ];
+      final service = _serviceWithRows(
+        rows,
+        mealPeriodClock: () => DateTime(2026, 9, 30, 23, 0),
+      );
+
+      final bundle = await service.buildRecommendationBundle(
+        input: _input(),
+        recallLabels: const ['家常菜'],
+        limit: 2,
+      );
+
+      expect(bundle.recipes.first.name, '炭火羊肉串');
+    });
+
+    test('非敏感时段不干预排序', () async {
+      final rows = [
+        _row(
+          dishId: 101,
+          recipeId: 201,
+          name: '小米南瓜粥',
+          tags: const ['家常菜', '早餐'],
+          ingredients: const ['小米'],
+          popularity: 50,
+        ),
+        _row(
+          dishId: 102,
+          recipeId: 202,
+          name: '麻辣火锅',
+          tags: const ['家常菜', '麻辣'],
+          ingredients: const ['辣椒'],
+          popularity: 90,
+        ),
+      ];
+      final afternoon = _serviceWithRows(
+        rows,
+        mealPeriodClock: () => DateTime(2026, 9, 30, 15, 0),
+      );
+      final noClock = _serviceWithRows(rows);
+
+      final afternoonBundle = await afternoon.buildRecommendationBundle(
+        input: _input(),
+        recallLabels: const ['家常菜'],
+        limit: 2,
+      );
+      final baselineBundle = await noClock.buildRecommendationBundle(
+        input: _input(),
+        recallLabels: const ['家常菜'],
+        limit: 2,
+      );
+
+      expect(afternoonBundle.recipes.map((r) => r.name),
+          baselineBundle.recipes.map((r) => r.name));
+      expect(afternoonBundle.recipes.first.name, '麻辣火锅');
+    });
   });
 }
 
@@ -1114,6 +1218,7 @@ UnifiedRecommendationServiceV2 _serviceWithRows(
   V2TagCatalogService? tagCatalogService,
   Map<String, int> tagScores = const {},
   Set<String> favoriteTagIds = const {},
+  DateTime Function()? mealPeriodClock,
 }) {
   return UnifiedRecommendationServiceV2(
     tagCatalogService: tagCatalogService ?? _StaticCatalogService(const []),
@@ -1126,6 +1231,7 @@ UnifiedRecommendationServiceV2 _serviceWithRows(
     shadowScoringService: shadowScoringService,
     canaryDecisionLoader: canaryDecisionLoader,
     experimentalRanker: experimentalRanker,
+    mealPeriodClock: mealPeriodClock,
   );
 }
 
