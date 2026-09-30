@@ -69,6 +69,84 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets('冰箱找菜：首页入口反查食材可做的菜并进入结果页', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: HomePage(
+          pantrySearchLoader: (ingredients) async => [
+            {
+              'dish_id': 301,
+              'dish_name': '番茄炒蛋',
+              'recipe_description': '家里就有的经典快菜。',
+              'ingredients': [
+                {'name': '番茄', 'amount': '2个'},
+                {'name': '鸡蛋', 'amount': '3个'},
+              ],
+              'steps': [
+                {'description': '热锅下油，先炒蛋液。'},
+              ],
+              'difficulty': 1,
+              'tags': ['家常菜'],
+              'scenes': <String>[],
+              'health_tags': <String>[],
+            },
+          ],
+          pantryResultPageBuilder: (recipes, pantry) => Scaffold(
+            body: Column(
+              children: [
+                Text('pantry-result-${pantry.join(',')}'),
+                for (final recipe in recipes.take(3))
+                  Text('pantry-dish-${recipe.name}'),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await _pumpUntilFound(
+      tester,
+      find.byKey(const ValueKey('taste-physical-habitat')),
+      step: const Duration(milliseconds: 120),
+      maxPumps: 20,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('home-pantry-entry')));
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(find.text('冰箱找菜'), findsOneWidget);
+
+    // 等弹层动画完成、快捷食材可命中后再点选。
+    await _pumpUntilFound(
+      tester,
+      find.byKey(const ValueKey('pantry-chip-鸡蛋')).hitTestable(),
+      step: const Duration(milliseconds: 120),
+      maxPumps: 20,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('pantry-chip-鸡蛋')));
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('pantry-chip-番茄')));
+    await tester.pump();
+    await _pumpUntilFound(
+      tester,
+      find.byKey(const ValueKey('pantry-ingredient-confirm')).hitTestable(),
+      step: const Duration(milliseconds: 120),
+      maxPumps: 20,
+    );
+    await tester.tap(find.byKey(const ValueKey('pantry-ingredient-confirm')));
+
+    await _pumpUntilFound(
+      tester,
+      find.textContaining('pantry-dish-'),
+      step: const Duration(milliseconds: 250),
+      maxPumps: 24,
+    );
+
+    expect(find.textContaining('pantry-result-'), findsOneWidget);
+    expect(find.textContaining('pantry-dish-'), findsWidgets);
+  });
 }
 
 Future<void> _pumpUntilFound(

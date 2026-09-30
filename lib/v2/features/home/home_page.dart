@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:eatwhat_app/core/config/env_config.dart';
 import 'package:eatwhat_app/core/services/auth_service.dart';
+import 'package:eatwhat_app/core/services/unified_recipe_database_service.dart';
 import 'package:eatwhat_app/v2/core/data/models/meal_planning_direction.dart';
+import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
 import 'package:eatwhat_app/v2/core/data/repositories/tag_repository_v2.dart';
@@ -19,6 +21,7 @@ import 'package:eatwhat_app/v2/features/home/controllers/home_taste_deck_builder
 import 'package:eatwhat_app/v2/features/home/widgets/bubble_ocean.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/fresh_physical_preference_stage.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/home_overlays.dart';
+import 'package:eatwhat_app/v2/features/home/widgets/pantry_ingredient_sheet.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/taste_signature_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -28,16 +31,28 @@ import '../../core/theme/app_tokens.dart';
 
 typedef HomeDecisionPageBuilder = Widget Function(TasteInferenceInput input);
 
+typedef HomePantryResultPageBuilder = Widget Function(
+  List<RecipeModel> recipes,
+  List<String> pantry,
+);
+
+typedef HomePantrySearchLoader = Future<List<Map<String, dynamic>>>
+    Function(List<String> ingredients);
+
 class HomePage extends StatefulWidget {
   const HomePage({
     super.key,
     this.speechInputService,
     this.decisionPageBuilder,
+    this.pantryResultPageBuilder,
+    this.pantrySearchLoader,
     this.initialCards,
   });
 
   final V2SpeechInputService? speechInputService;
   final HomeDecisionPageBuilder? decisionPageBuilder;
+  final HomePantryResultPageBuilder? pantryResultPageBuilder;
+  final HomePantrySearchLoader? pantrySearchLoader;
   final List<TasteDeckCard>? initialCards;
 
   @override
@@ -411,8 +426,77 @@ class _HomePageState extends State<HomePage> {
     await _openDecisionFlow(input);
   }
 
-  Future<void> _submitRecentSuccessRecommendation() async {
-    final session = _session;
+  Future<void> _openPantrySheet() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (sheetContext) => ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(sheetContext).size.height * 0.85,
+        ),
+        child: Container(
+          decoration: BoxDecoration(
+            color: AppPalette.nightElevated,
+            borderRadius:
+                const BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: PantryIngredientSheet(onConfirm: _submitPantrySearch),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _submitPantrySearch(List<String> ingredients) async {
+    if (!mounted || ingredients.isEmpty) return;
+    final loader = widget.pantrySearchLoader ??
+        UnifiedRecipeDatabaseService.instance.searchByPantryIngredients;
+    final rows = await loader(ingredients);
+    if (!mounted) return;
+
+    if (rows.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('没找到能配上的菜，再加几样食材试试')),
+      );
+      return;
+    }
+
+    final recipes = rows.map(RecipeModel.fromUnifiedDbRow).toList();
+    final builder = widget.pantryResultPageBuilder;
+    if (builder != null) {
+      unawaited(
+        Navigator.of(context).push(
+          MaterialPageRoute<void>(
+            builder: (_) => builder(recipes, ingredients),
+          ),
+        ),
+      );
+      return;
+    }
+    unawaited(
+      context.push(
+        AppV2Routes.result,
+        extra: AppV2ResultRouteData(
+          recommendations: recipes,
+          inferenceInput: TasteInferenceInput(
+            likedTagIds: const [],
+            likedTagLabels: const [],
+            dislikedTagIds: const [],
+            dislikedTagLabels: const [],
+            skippedTagIds: const [],
+            skippedTagLabels: const [],
+            freeformRequirement: '家里有 ${ingredients.join('、')}',
+            historyPreferenceSummary: const {},
+          ),
+          recallLabels: ingredients,
+          recalledCount: recipes.length,
+          primarySource: 'unified_db',
+        ),
+      ),
+    );
+  }
+
+  Future<void> _submitRecentSuccessRecommendation() async {    final session = _session;
     if (_isTransitioning || session == null || _recentRecipeIds.isEmpty) {
       return;
     }
@@ -664,6 +748,20 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           const SizedBox(width: 7),
+          GestureDetector(
+            key: const ValueKey('home-pantry-entry'),
+            behavior: HitTestBehavior.opaque,
+            onTap: _openPantrySheet,
+            child: SizedBox(
+              width: 32,
+              height: 32,
+              child: Icon(
+                Icons.kitchen_rounded,
+                size: 18,
+                color: AppPalette.moonMuted,
+              ),
+            ),
+          ),
           GestureDetector(
             key: const ValueKey('home-requirement-mode-pill'),
             behavior: HitTestBehavior.opaque,

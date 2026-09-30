@@ -351,14 +351,20 @@ class _ResultPageState extends State<ResultPage>
     await showModalBottomSheet<void>(
       context: context,
       backgroundColor: Colors.transparent,
-      builder: (sheetContext) => Container(
-        decoration: const BoxDecoration(
-          color: GoldPalette.nightDeep,
-          borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      isScrollControlled: true,
+      builder: (sheetContext) => ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(sheetContext).size.height * 0.85,
         ),
-        child: RecipeShareSheet(
-          recipe: recipe,
-          quote: _effectiveAiSummary ?? _buildRecommendationSubtitle(),
+        child: Container(
+          decoration: const BoxDecoration(
+            color: GoldPalette.nightDeep,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: RecipeShareSheet(
+            recipe: recipe,
+            quote: _effectiveAiSummary ?? _buildRecommendationSubtitle(),
+          ),
         ),
       ),
     );

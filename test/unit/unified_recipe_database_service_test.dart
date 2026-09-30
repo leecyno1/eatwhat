@@ -107,5 +107,46 @@ void main() {
         reason: '80 道菜批量富化耗时 ${stopwatch.elapsedMilliseconds}ms',
       );
     });
+
+    group('searchByPantryIngredients', () {
+      test('pantry search SQL joins ingredients and ranks by match count',
+          () {
+        const sql = UnifiedRecipeDatabaseService.pantrySearchSql;
+
+        expect(sql, contains('FROM recipe_ingredient ri'));
+        expect(sql, contains('LEFT JOIN ingredient ing ON ing.id = ri.ingredient_id'));
+        expect(sql, contains('__PANTRY_MATCHES__'));
+        expect(sql, contains('__PANTRY_WHERE__'));
+        expect(sql, contains('ORDER BY pantry_matched DESC, pantry_total ASC'));
+      });
+
+      test('按冰箱食材反查可做菜品并带完整行水合', () async {
+        final rows = await UnifiedRecipeDatabaseService.instance
+            .searchByPantryIngredients(['鸡蛋', '番茄'], limit: 10);
+
+        expect(rows, isNotEmpty);
+        expect(
+          rows.every(
+            (row) => row['ingredients'] is List<Map<String, dynamic>>,
+          ),
+          isTrue,
+        );
+        final topIngredients = (rows.first['ingredients'] as List)
+            .map((e) => (e as Map)['name']?.toString() ?? '')
+            .toSet();
+        expect(
+          topIngredients.any((name) => name.contains('蛋') || name.contains('番茄')),
+          isTrue,
+          reason: '榜首菜应命中冰箱食材，实际食材：$topIngredients',
+        );
+      });
+
+      test('空食材列表返回空结果', () async {
+        final rows = await UnifiedRecipeDatabaseService.instance
+            .searchByPantryIngredients([], limit: 10);
+
+        expect(rows, isEmpty);
+      });
+    });
   });
 }

@@ -465,6 +465,85 @@ class UnifiedRecipeDatabaseService {
       LIMIT ?
       ''';
 
+  /// 冰箱食材反查：按命中的食材数降序、食材总数升序（越贴近「现在就能做」）、
+  /// 人气兜底。__PANTRY_MATCHES__ 用于计数子查询，__PANTRY_WHERE__ 用于过滤。
+  @visibleForTesting
+  static const String pantrySearchSql = '''
+      SELECT d.id AS dish_id,
+             d.name_cn AS dish_name,
+             d.cuisine,
+             d.taste_profile,
+             d.cooking_methods,
+             d.scenes,
+             d.health_tags,
+             d.main_ingredients,
+             d.popularity_score,
+             d.average_rating,
+             rv.id AS recipe_id,
+             rv.source,
+             rv.source_recipe_id,
+             rv.title AS recipe_title,
+             rv.description AS recipe_description,
+             rv.difficulty,
+             rv.total_time_minutes,
+             rv.servings,
+             rv.cover_image_url,
+             (SELECT COUNT(*) FROM recipe_ingredient rm
+                LEFT JOIN ingredient img ON img.id = rm.ingredient_id
+              WHERE rm.recipe_id = rv.id
+                AND (__PANTRY_MATCHES__)) AS pantry_matched,
+             (SELECT COUNT(*) FROM recipe_ingredient rt
+              WHERE rt.recipe_id = rv.id) AS pantry_total
+      FROM dish d
+      JOIN recipe_variant rv
+        ON rv.id = (SELECT id FROM recipe_variant
+                    WHERE dish_id = d.id ORDER BY id ASC LIMIT 1)
+      WHERE EXISTS (
+        SELECT 1 FROM recipe_ingredient ri
+        LEFT JOIN ingredient ing ON ing.id = ri.ingredient_id
+        WHERE ri.recipe_id = rv.id AND (__PANTRY_WHERE__)
+      )
+      ORDER BY pantry_matched DESC, pantry_total ASC, d.popularity_score DESC, d.id ASC
+      LIMIT ?
+      ''';
+
+  /// 按家里现有的食材反查可做的菜：命中食材越多越靠前，
+  /// 食材总数越少越靠前（不用再买很多东西）。
+  Future<List<Map<String, dynamic>>> searchByPantryIngredients(
+    List<String> pantry, {
+    int limit = 30,
+  }) async {
+    final items = pantry
+        .map((item) => item.trim())
+        .where((item) => item.isNotEmpty)
+        .toSet()
+        .toList();
+    if (items.isEmpty) return [];
+
+    final matches = items
+        .map((_) =>
+            '(rm.name_override LIKE ? OR img.name_cn LIKE ? OR img.aliases LIKE ?)')
+        .join(' OR ');
+    final where = items
+        .map((_) =>
+            '(ri.name_override LIKE ? OR ing.name_cn LIKE ? OR ing.aliases LIKE ?)')
+        .join(' OR ');
+    final args = [
+      for (final item in items) ...['%$item%', '%$item%', '%$item%'],
+      for (final item in items) ...['%$item%', '%$item%', '%$item%'],
+      limit,
+    ];
+
+    final db = await _db;
+    final rows = await db.rawQuery(
+      pantrySearchSql
+          .replaceAll('__PANTRY_MATCHES__', matches)
+          .replaceAll('__PANTRY_WHERE__', where),
+      args,
+    );
+    return _hydrateRows(rows);
+  }
+
   Future<List<Map<String, dynamic>>> _hydrateRows(
       List<Map<String, Object?>> rows) async {
     if (rows.isEmpty) return const [];
