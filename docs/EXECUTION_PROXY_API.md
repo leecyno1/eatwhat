@@ -193,6 +193,11 @@ DIANPING_DELIVERY_MATCH_PATH=/v2/execution/dianping/delivery-match
 
 ## 生产代理启动
 
+一键部署（推荐）：`scripts/deploy/deploy.sh` 会编译三个服务为原生可执行文件、安装 systemd 单元与 nginx 路由，
+服务器上只需填好 `/etc/eatwhat/env`（模板来自 `.env.example` 服务端段）并跑 certbot。
+
+手动启动（联调或排查用）：
+
 ```bash
 export EXECUTION_PROXY_BIND_ADDRESS=0.0.0.0
 export EXECUTION_PROXY_PORT=8787

@@ -1,0 +1,22 @@
+[Unit]
+Description=EatWhat Execution Proxy (delivery/AI gateway)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=@INSTALL_DIR@
+ExecStart=@INSTALL_DIR@/bin/execution_proxy_server
+EnvironmentFile=@ENV_FILE@
+Restart=always
+RestartSec=3
+# 加固
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=@INSTALL_DIR@
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

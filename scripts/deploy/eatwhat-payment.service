@@ -1,0 +1,22 @@
+[Unit]
+Description=EatWhat Payment Server (Alipay + membership credentials)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=@INSTALL_DIR@
+ExecStart=@INSTALL_DIR@/bin/payment_server
+EnvironmentFile=@ENV_FILE@
+Restart=always
+RestartSec=3
+# 支付服务持有商户私钥，额外收紧
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=@INSTALL_DIR@
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target
