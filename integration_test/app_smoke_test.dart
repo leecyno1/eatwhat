@@ -165,4 +165,52 @@ void main() {
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pump();
   });
+
+  testWidgets('冰箱找菜：真实数据库反查可做菜品', (tester) async {
+    await tester.pumpWidget(
+      const ProviderScope(
+        child: AppV2(),
+      ),
+    );
+    await tester.pump(const Duration(seconds: 2));
+
+    await pumpUntilVisible(
+      tester,
+      find.byKey(const ValueKey('home-pantry-entry')),
+    );
+    await tester.tap(find.byKey(const ValueKey('home-pantry-entry')));
+    await pumpUntilVisible(tester, find.text('冰箱找菜'));
+
+    await pumpUntilVisible(
+      tester,
+      find.byKey(const ValueKey('pantry-chip-鸡蛋')).hitTestable(),
+    );
+    await tester.tap(find.byKey(const ValueKey('pantry-chip-鸡蛋')));
+    await tester.tap(find.byKey(const ValueKey('pantry-chip-番茄')));
+    await tester.pump();
+    await pumpUntilVisible(
+      tester,
+      find.byKey(const ValueKey('pantry-ingredient-confirm')).hitTestable(),
+    );
+    await tester.tap(find.byKey(const ValueKey('pantry-ingredient-confirm')));
+
+    // 真实反查：结果页出现主操作条，且榜首菜与 DB 反查一致。
+    await pumpUntilVisible(
+      tester,
+      find.byKey(const ValueKey('result-primary-confirm-bar')),
+    );
+
+    final rows = await UnifiedRecipeDatabaseService.instance
+        .searchByPantryIngredients(['鸡蛋', '番茄']);
+    expect(rows, isNotEmpty, reason: '真实库应能按鸡蛋+番茄反查到菜');
+    final topName = rows.first['dish_name'].toString();
+    expect(
+      find.text(topName),
+      findsWidgets,
+      reason: '结果页应展示反查榜首菜：$topName',
+    );
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
+  });
 }

@@ -47,7 +47,7 @@ def main():
             for label, route in PAGES.items():
                 page.goto(f'{BASE}{route}')
                 # 等待字体与图片加载、首页物理动画进入稳态
-                page.wait_for_timeout(6000)
+                page.wait_for_timeout(12000)
                 path = os.path.join(OUT, f'{name}_{label}.png')
                 page.screenshot(path=path)
                 print(f'{path}  ({w * dsf}x{h * dsf})')
