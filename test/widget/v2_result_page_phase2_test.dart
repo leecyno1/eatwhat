@@ -371,7 +371,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
 
     // 降级提示出现，登录弹窗与菜单页都不出现
-    expect(find.text('外卖服务接入中，请先在美团开放平台注册商家'), findsOneWidget);
+    expect(find.text('外卖服务尚未开通，先看看做菜或到店吧'), findsOneWidget);
     expect(find.byKey(const ValueKey('eatwhat-auth-sheet')), findsNothing);
     expect(find.text('生成外卖菜单'), findsNothing);
     expect(AuthService.isLoggedIn, isFalse);
@@ -622,21 +622,21 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('页面仍存在时连接检查失败打开开放平台', (tester) async {
+    testWidgets('页面仍存在时连接检查失败只提示不打开外部页面', (tester) async {
       final client = _DelayedMeituanClient();
       await openDelivery(tester, client);
       client.status.completeError(StateError('status unavailable'));
       await tester.pumpAndSettle();
 
-      expect(find.text('美团服务暂时不可用，请先去开放平台完成接入'), findsOneWidget);
-      expect(launchedUrls, ['https://open.meituan.com/']);
+      expect(find.text('外卖服务暂时不可用，请稍后再试'), findsOneWidget);
+      expect(launchedUrls, isEmpty);
       expect(find.byKey(const ValueKey('eatwhat-auth-sheet')), findsNothing);
       expect(client.authorizationCalls, 0);
       expect(tester.takeException(), isNull);
     });
 
     for (final fails in [false, true]) {
-      testWidgets('页面仍存在时授权链接返回继续打开浏览器，失败=$fails', (tester) async {
+      testWidgets('页面仍存在时授权链接返回按结果处理，失败=$fails', (tester) async {
         final client = _DelayedMeituanClient();
         await openDelivery(tester, client);
         client.status.complete(const MeituanOAuthStatus(
@@ -645,7 +645,6 @@ void main() {
         ));
         await tester.pumpAndSettle();
         expect(client.authorizationCalls, 1);
-        expect(find.text('请先完成美团商家授权'), findsOneWidget);
 
         if (fails) {
           client.authorization
@@ -657,11 +656,15 @@ void main() {
         }
         await tester.pumpAndSettle();
 
-        expect(launchedUrls, [
-          fails
-              ? 'https://open.meituan.com/'
-              : 'https://example.com/oauth/authorize',
-        ]);
+        expect(
+          find.text(fails ? '美团授权暂时不可用，请稍后再试' : '请在打开的页面用美团账号完成授权'),
+          findsOneWidget,
+        );
+        if (fails) {
+          expect(launchedUrls, isEmpty);
+        } else {
+          expect(launchedUrls, ['https://example.com/oauth/authorize']);
+        }
         expect(find.byKey(const ValueKey('eatwhat-auth-sheet')), findsNothing);
         expect(tester.takeException(), isNull);
       });
@@ -709,7 +712,8 @@ void main() {
         ));
         await tester.pumpAndSettle();
         expect(client.authorizationCalls, 1);
-        expect(find.text('请先完成美团商家授权'), findsOneWidget);
+        // 授权链接尚未返回，此时不应有任何外部跳转。
+        expect(launchedUrls, isEmpty);
 
         await tester.pumpWidget(const MaterialApp(home: Text('已离开结果页')));
         await tester.pumpAndSettle();

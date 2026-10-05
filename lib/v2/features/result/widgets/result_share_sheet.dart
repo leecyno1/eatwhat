@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cross_file/cross_file.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
@@ -80,9 +79,11 @@ class _RecipeShareSheetState extends State<RecipeShareSheet> {
       'eatwhat_share_${DateTime.now().millisecondsSinceEpoch}.png',
     );
     await file.writeAsBytes(bytes);
-    await Share.shareXFiles(
-      [XFile(file.path, mimeType: 'image/png')],
-      text: text,
+    await SharePlus.instance.share(
+      ShareParams(
+        files: [XFile(file.path, mimeType: 'image/png')],
+        text: text,
+      ),
     );
   }
 
@@ -244,10 +245,10 @@ class RecipeShareCard extends StatelessWidget {
                   ),
                 ],
                 const SizedBox(height: AppSpacing.md),
-                Center(
+                const Center(
                   child: Text(
                     '吃什么 · 今天也好好吃饭',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: GoldPalette.goldSoft,
                       fontSize: 11,
                       fontWeight: FontWeight.w700,

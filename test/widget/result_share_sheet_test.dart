@@ -75,10 +75,10 @@ void main() {
 }
 
 RecipeModel _recipe() {
-  return RecipeModel(
+  return const RecipeModel(
     id: 'dish-share-1',
     name: '麻婆豆腐',
     description: '经典川菜，麻辣鲜香。',
-    tags: const ['麻辣', '下饭'],
+    tags: ['麻辣', '下饭'],
   );
 }

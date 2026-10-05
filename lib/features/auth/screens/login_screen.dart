@@ -275,19 +275,6 @@ class _LoginScreenState extends State<LoginScreen>
                             '记住我',
                             style: theme.textTheme.bodyMedium,
                           ),
-                          const Spacer(),
-                          TextButton(
-                            onPressed: () {
-                              // TODO: 实现忘记密码功能
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('忘记密码功能尚未实现'),
-                                  behavior: SnackBarBehavior.floating,
-                                ),
-                              );
-                            },
-                            child: const Text('忘记密码？'),
-                          ),
                         ],
                       ),
 

@@ -716,6 +716,7 @@ class MeituanDeliveryAdapterConfig {
     required this.apiBaseUrl,
     required this.upstreamTimeout,
     required this.oauthRedirectUri,
+    this.oauthScope = '',
     this.oauthStorePath = '.dart_tool/eatwhat/meituan_oauth.json',
     this.reviewMode = false,
     this.allowLocalUserFallback = false,
@@ -760,6 +761,7 @@ class MeituanDeliveryAdapterConfig {
             environment['MEITUAN_OAUTH_REDIRECT_URL']?.trim() ?? '',
           ) ??
           Uri(),
+      oauthScope: environment['MEITUAN_OAUTH_SCOPE']?.trim() ?? '',
       oauthStorePath:
           environment['MEITUAN_OAUTH_STORE_PATH']?.trim().isNotEmpty == true
               ? environment['MEITUAN_OAUTH_STORE_PATH']!.trim()
@@ -787,6 +789,7 @@ class MeituanDeliveryAdapterConfig {
   final Uri apiBaseUrl;
   final Duration upstreamTimeout;
   final Uri oauthRedirectUri;
+  final String oauthScope;
   final String oauthStorePath;
   final bool reviewMode;
   final bool allowLocalUserFallback;
@@ -798,6 +801,7 @@ class MeituanDeliveryAdapterConfig {
         redirectUri: oauthRedirectUri,
         apiBaseUrl: apiBaseUrl,
         timeout: upstreamTimeout,
+        scope: oauthScope,
       );
 
   MeituanDeliveryAdapterConfig copyWith({
@@ -816,6 +820,7 @@ class MeituanDeliveryAdapterConfig {
       apiBaseUrl: apiBaseUrl,
       upstreamTimeout: upstreamTimeout,
       oauthRedirectUri: oauthRedirectUri,
+      oauthScope: oauthScope,
       oauthStorePath: oauthStorePath,
       reviewMode: reviewMode,
       allowLocalUserFallback: allowLocalUserFallback,

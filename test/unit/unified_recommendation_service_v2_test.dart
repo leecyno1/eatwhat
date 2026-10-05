@@ -1182,7 +1182,7 @@ void main() {
       ];
       final service = _serviceWithRows(
         rows,
-        mealPeriodClock: () => DateTime(2026, 9, 30, 8, 0),
+        mealPeriodClock: () => DateTime(2026, 9, 30, 8),
       );
 
       final bundle = await service.buildRecommendationBundle(
@@ -1214,7 +1214,7 @@ void main() {
       ];
       final service = _serviceWithRows(
         rows,
-        mealPeriodClock: () => DateTime(2026, 9, 30, 23, 0),
+        mealPeriodClock: () => DateTime(2026, 9, 30, 23),
       );
 
       final bundle = await service.buildRecommendationBundle(
@@ -1234,7 +1234,6 @@ void main() {
           name: '小米南瓜粥',
           tags: const ['家常菜', '早餐'],
           ingredients: const ['小米'],
-          popularity: 50,
         ),
         _row(
           dishId: 102,
@@ -1247,7 +1246,7 @@ void main() {
       ];
       final afternoon = _serviceWithRows(
         rows,
-        mealPeriodClock: () => DateTime(2026, 9, 30, 15, 0),
+        mealPeriodClock: () => DateTime(2026, 9, 30, 15),
       );
       final noClock = _serviceWithRows(rows);
 

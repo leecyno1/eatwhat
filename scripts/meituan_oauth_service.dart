@@ -30,15 +30,13 @@ class MeituanOAuthService {
       // 用户在移动端内嵌浏览器里完成登录可能耗时较久，放宽到 30 分钟。
       expiresAt: _now().add(const Duration(minutes: 30)),
     );
-    print('[meituan-oauth] state issued: user=$eatWhatUserId state=${state.substring(0, 8)}… pending=${_pendingStates.length}');
+    stdout.writeln('[meituan-oauth] state issued: user=$eatWhatUserId state=${state.substring(0, 8)}… pending=${_pendingStates.length}');
     return config.apiBaseUrl.resolve('/oauth/authorize').replace(
       queryParameters: {
         'app_id': config.appId,
         'redirect_uri': config.redirectUri.toString(),
         'response_type': 'code',
-        // 美团外卖开放平台要求 scope=all；空值会导致授权页只渲染 logo、
-        // 授权按钮不出现。
-        'scope': 'all',
+        'scope': config.scope,
         'state': state,
       },
     );
@@ -50,7 +48,7 @@ class MeituanOAuthService {
   }) async {
     final pending = _pendingStates.remove(state);
     if (pending == null || _now().isAfter(pending.expiresAt)) {
-      print('[meituan-oauth] state rejected: incoming=${state.isEmpty ? '<empty>' : state.substring(0, min(8, state.length))}… '
+      stdout.writeln('[meituan-oauth] state rejected: incoming=${state.isEmpty ? '<empty>' : state.substring(0, min(8, state.length))}… '
           'pending=[${_pendingStates.keys.map((s) => s.substring(0, 8)).join(', ')}] '
           'expired=${pending != null}');
       throw const MeituanOAuthException('oauth_state_invalid', '授权状态已失效，请重新绑定');
@@ -183,6 +181,7 @@ class MeituanOAuthConfig {
     required this.redirectUri,
     required this.apiBaseUrl,
     required this.timeout,
+    this.scope = '',
   });
 
   final String appId;
@@ -190,6 +189,10 @@ class MeituanOAuthConfig {
   final Uri redirectUri;
   final Uri apiBaseUrl;
   final Duration timeout;
+
+  /// 官方 OAuth 文档（developer.meituan.com，2024-01-30 更新）要求 scope 填空串，
+  /// 示例链接亦为 `scope=`。留作可配置项，便于注册通过后实测切换而不必改码重编。
+  final String scope;
 
   bool get isConfigured =>
       appId.isNotEmpty && appSecret.isNotEmpty && redirectUri.hasScheme;

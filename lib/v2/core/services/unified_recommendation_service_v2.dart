@@ -568,7 +568,7 @@ class UnifiedRecommendationServiceV2 {
     return 0;
   }
 
-  /// 行里的营养数据可能是任意泛型的 Map（含 const {}），统一转成 Map<String, dynamic>。
+  /// 行里的营养数据可能是任意泛型的 Map（含 const {}），统一转成 `Map<String, dynamic>`。
   static Map<String, dynamic> _nutritionOfRow(Map<String, dynamic> row) {
     final raw = row['nutrition'];
     if (raw is Map<String, dynamic>) return raw;

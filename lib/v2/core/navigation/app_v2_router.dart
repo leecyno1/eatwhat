@@ -17,6 +17,7 @@ import 'package:eatwhat_app/v2/features/execution/meituan_order_page.dart';
 import 'package:eatwhat_app/v2/features/favorites/favorites_page.dart';
 import 'package:eatwhat_app/v2/features/home/home_page.dart';
 import 'package:eatwhat_app/v2/features/result/result_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -282,36 +283,6 @@ class AppV2Router {
           },
         ),
         GoRoute(
-          path: AppV2Routes.decisionDemo,
-          name: 'v2_decision_demo',
-          builder: (context, state) =>
-              const DecisionPage(input: demoInferenceInput),
-        ),
-        GoRoute(
-          path: AppV2Routes.recipeDetailDemo,
-          name: 'v2_recipe_detail_demo',
-          builder: (context, state) => RecipeDetailPage(
-            recipe: demoRecipes.first,
-          ),
-        ),
-        GoRoute(
-          path: AppV2Routes.resultDemo,
-          name: 'v2_result_demo',
-          builder: (context, state) => const ResultPage(
-            recommendations: demoRecipes,
-            inferenceInput: demoInferenceInput,
-            aiReasonsByRecipeId: {
-              '1': '麻辣、热菜和下饭诉求最集中，适合现在直接定一道稳的主菜。',
-              '3': '想吃厚重满足感时，红烧肉是更偏暖、更有收口感的选择。',
-              '6': '如果你想要香辣但不想太重，宫保鸡丁会更灵活一些。',
-            },
-            aiSummary: '这组是基于你当前口味信号收束出的正式候选，优先展示有图且易决策的家常热菜。',
-            recalledCount: 8,
-            recallLabels: ['麻辣', '热菜', '下饭', '夜宵'],
-            primarySource: 'unified_db',
-          ),
-        ),
-        GoRoute(
           path: AppV2Routes.favorites,
           name: 'v2_favorites',
           builder: (context, state) => const FavoritesPageV2(),
@@ -331,50 +302,86 @@ class AppV2Router {
             return const HowToCookLibraryPage();
           },
         ),
-        GoRoute(
-          path: AppV2Routes.executionDemo,
-          name: 'v2_execution_demo',
-          builder: (context, state) => const ExecutionHomePage(
-            intent: demoExecutionIntent,
-          ),
-        ),
-        GoRoute(
-          path: AppV2Routes.deliveryDemo,
-          name: 'v2_delivery_demo',
-          builder: (context, state) => MeituanMenuBuilderPage(
-            intent: demoExecutionIntent.copyWith(
-              preferredPath: ExecutionPath.delivery,
-            ),
-            client: _DemoMeituanDeliveryOrderClient(),
-            locationResolver: _demoLocationResolver,
-            paymentLauncher: (_) async => true,
-          ),
-        ),
-        GoRoute(
-          path: AppV2Routes.orderDemo,
-          name: 'v2_order_demo',
-          builder: (context, state) => MeituanOrderPage(
-            intent: demoExecutionIntent.copyWith(
-              preferredPath: ExecutionPath.delivery,
-            ),
-            match: const DeliveryMatchResult(
-              platform: 'meituan',
-              providerDisplayName: '美团外卖',
-              merchantId: 'demo-guoqi-canteen',
-              merchantName: '锅气食堂（福田店）',
-              dishName: '麻婆豆腐',
-              url: '',
-              source: 'meituan_open_api_demo',
-              price: Money(amount: 20),
-              deliveryTimeMinutes: 32,
-            ),
-            client: _DemoMeituanDeliveryOrderClient(),
-            locationResolver: _demoLocationResolver,
-            paymentLauncher: (_) async => true,
-          ),
-        ),
+        if (!kReleaseMode) ..._demoRoutes(),
       ],
     );
+  }
+
+  static List<GoRoute> _demoRoutes() {
+    return [
+      GoRoute(
+        path: AppV2Routes.decisionDemo,
+        name: 'v2_decision_demo',
+        builder: (context, state) =>
+            const DecisionPage(input: demoInferenceInput),
+      ),
+      GoRoute(
+        path: AppV2Routes.recipeDetailDemo,
+        name: 'v2_recipe_detail_demo',
+        builder: (context, state) => RecipeDetailPage(
+          recipe: demoRecipes.first,
+        ),
+      ),
+      GoRoute(
+        path: AppV2Routes.resultDemo,
+        name: 'v2_result_demo',
+        builder: (context, state) => const ResultPage(
+          recommendations: demoRecipes,
+          inferenceInput: demoInferenceInput,
+          aiReasonsByRecipeId: {
+            '1': '麻辣、热菜和下饭诉求最集中，适合现在直接定一道稳的主菜。',
+            '3': '想吃厚重满足感时，红烧肉是更偏暖、更有收口感的选择。',
+            '6': '如果你想要香辣但不想太重，宫保鸡丁会更灵活一些。',
+          },
+          aiSummary: '这组是基于你当前口味信号收束出的正式候选，优先展示有图且易决策的家常热菜。',
+          recalledCount: 8,
+          recallLabels: ['麻辣', '热菜', '下饭', '夜宵'],
+          primarySource: 'unified_db',
+        ),
+      ),
+      GoRoute(
+        path: AppV2Routes.executionDemo,
+        name: 'v2_execution_demo',
+        builder: (context, state) => const ExecutionHomePage(
+          intent: demoExecutionIntent,
+        ),
+      ),
+      GoRoute(
+        path: AppV2Routes.deliveryDemo,
+        name: 'v2_delivery_demo',
+        builder: (context, state) => MeituanMenuBuilderPage(
+          intent: demoExecutionIntent.copyWith(
+            preferredPath: ExecutionPath.delivery,
+          ),
+          client: _DemoMeituanDeliveryOrderClient(),
+          locationResolver: _demoLocationResolver,
+          paymentLauncher: (_) async => true,
+        ),
+      ),
+      GoRoute(
+        path: AppV2Routes.orderDemo,
+        name: 'v2_order_demo',
+        builder: (context, state) => MeituanOrderPage(
+          intent: demoExecutionIntent.copyWith(
+            preferredPath: ExecutionPath.delivery,
+          ),
+          match: const DeliveryMatchResult(
+            platform: 'meituan',
+            providerDisplayName: '美团外卖',
+            merchantId: 'demo-guoqi-canteen',
+            merchantName: '锅气食堂（福田店）',
+            dishName: '麻婆豆腐',
+            url: '',
+            source: 'meituan_open_api_demo',
+            price: Money(amount: 20),
+            deliveryTimeMinutes: 32,
+          ),
+          client: _DemoMeituanDeliveryOrderClient(),
+          locationResolver: _demoLocationResolver,
+          paymentLauncher: (_) async => true,
+        ),
+      ),
+    ];
   }
 }
 

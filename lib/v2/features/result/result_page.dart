@@ -691,8 +691,7 @@ class _ResultPageState extends State<ResultPage>
         final deliveryClient =
             widget.meituanOrderClient ?? MeituanDeliveryOrderClient();
         if (!deliveryClient.isConfigured) {
-          // 代理未配置：商家还没接入，直接引导去美团开放平台注册。
-          await _openMeituanOpenPlatform('外卖服务接入中，请先在美团开放平台注册商家');
+          _notifyDeliveryUnavailable('外卖服务尚未开通，先看看做菜或到店吧');
           return;
         }
         // 代理在，但美团侧可能还没完成授权：探测连接状态，未连接则引导授权。
@@ -700,7 +699,7 @@ class _ResultPageState extends State<ResultPage>
         try {
           status = await deliveryClient.getOAuthStatus();
         } catch (_) {
-          await _openMeituanOpenPlatform('美团服务暂时不可用，请先去开放平台完成接入');
+          _notifyDeliveryUnavailable('外卖服务暂时不可用，请稍后再试');
           return;
         }
         if (!mounted) return;
@@ -757,42 +756,41 @@ class _ResultPageState extends State<ResultPage>
     }
   }
 
-  /// 外卖未接入时的兜底引导：直接打开美团开放平台注册页。
-  Future<void> _openMeituanOpenPlatform(String tip) async {
+  /// 外卖链路不可用时的诚实提示。不引导普通用户去开发者平台，也不打开外部链接。
+  void _notifyDeliveryUnavailable(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(tip)));
-    try {
-      await launchUrl(
-        Uri.parse('https://open.meituan.com/'),
-        mode: LaunchMode.externalApplication,
-      );
-    } catch (_) {
-      // 无浏览器/测试环境打不开链接时静默，提示文案已展示。
-    }
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
-  /// 已配置但美团侧未授权：打开授权页；拿不到授权链接则回退开放平台首页。
+  /// 已配置但美团侧未授权：打开美团账号授权页。
+  /// 这是官方 OAuth 的消费者授权步骤——由用户本人授权本应用代其下单，
+  /// 不是商家授权。拿不到授权链接时不打开任何外部页面。
   Future<void> _openMeituanAuthorization(
     MeituanDeliveryOrderClient client,
   ) async {
     if (!mounted) return;
+    final Uri uri;
+    try {
+      uri = await client.createOAuthAuthorizationUri();
+    } catch (_) {
+      _notifyDeliveryUnavailable('美团授权暂时不可用，请稍后再试');
+      return;
+    }
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('请先完成美团商家授权')),
+      const SnackBar(content: Text('请在打开的页面用美团账号完成授权')),
     );
     try {
-      final uri = await client.createOAuthAuthorizationUri();
-      if (!mounted) return;
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } catch (_) {
-      if (!mounted) return;
-      try {
-        await launchUrl(
-          Uri.parse('https://open.meituan.com/'),
-          mode: LaunchMode.externalApplication,
-        );
-      } catch (_) {
-        // 同上：打不开链接时提示文案已展示。
+      final launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+      if (!launched && mounted) {
+        _notifyDeliveryUnavailable('无法打开美团授权页，请检查浏览器后重试');
       }
+    } catch (_) {
+      // 无浏览器/测试环境打不开链接时静默，提示文案已展示。
     }
   }
 

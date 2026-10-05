@@ -7,7 +7,7 @@ void main() {
   group('WeeklyReportSheet.weeklyVerdict', () {
     test('没有曝光时引导开始使用', () {
       expect(
-        WeeklyReportSheet.weeklyVerdict(_report(exposures: 0)),
+        WeeklyReportSheet.weeklyVerdict(_report()),
         contains('还没让主厨帮你选过菜'),
       );
     });
@@ -27,7 +27,6 @@ void main() {
         exposures: 5,
         confirmations: 2,
         executionStarts: 1,
-        executionCompletions: 0,
         rerolls: 8,
       ));
       expect(verdict, contains('选择困难'));
@@ -36,9 +35,6 @@ void main() {
     test('只看不定时鼓励明天试试', () {
       final verdict = WeeklyReportSheet.weeklyVerdict(_report(
         exposures: 6,
-        confirmations: 0,
-        executionStarts: 0,
-        executionCompletions: 0,
       ));
       expect(verdict, contains('明天试试'));
     });
