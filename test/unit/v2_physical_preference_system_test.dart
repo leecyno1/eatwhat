@@ -64,10 +64,10 @@ void main() {
         .getInitialBubbles(25, category: 'ingredient_dietary')
         .firstWhere((item) => item.id == 'i_beef');
 
-    expect(entity.assetName, 'preference_entities/i_beef.png');
+    expect(entity.assetName, 'preference_entities/i_beef.webp');
     expect(
       entity.assetPath,
-      'assets/images/preference_entities/i_beef.png',
+      'assets/images/preference_entities/i_beef.webp',
     );
   });
 

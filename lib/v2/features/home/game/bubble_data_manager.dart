@@ -232,7 +232,7 @@ class BubbleData {
   String get id => tag.id;
   String get label => tag.label;
   String get iconName => tag.iconAsset;
-  String get assetName => 'preference_entities/$id.png';
+  String get assetName => 'preference_entities/$id.webp';
   String get assetPath => 'assets/images/$assetName';
   TasteVisualSpec get visualSpec => TasteVisualMapping.guess(label);
 

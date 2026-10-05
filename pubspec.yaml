@@ -64,7 +64,6 @@ dependencies:
   crypto: ^3.0.6
   cryptography: ^2.7.0
   location: ^8.0.1
-  flutter_secure_storage: ^9.2.2
 
   # AI推荐增强
   flutter_dotenv: ^5.1.0
@@ -145,7 +144,6 @@ flutter:
   # 资源文件
   assets:
     - assets/images/
-    - assets/images/card_game/
     - assets/images/prebuilt_dishes/
     - assets/images/preference_entities/
     - assets/icons/
