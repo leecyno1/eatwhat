@@ -7,11 +7,14 @@
 输出：docs/store_assets/<规格>_<页面>.png
 规格对应关系（viewport × deviceScaleFactor = 输出像素）：
   6.7inch  430×932  @3x = 1290×2796   App Store 6.7"
-  6.1inch  393×852  @3x = 1179×2556   App Store 6.1"
-  play     360×800  @3x = 1080×2400   Google Play 手机
+  6.1inch  393×852  @3x = 1179×2556   参考规格（App Store 不收 6.1"，仅备用）
+  play     360×640  @3x = 1080×1920   Google Play 手机（宽高比须 ≤9:16）
+
+可选参数：python3 scripts/store_screenshots.py [规格名] 仅重跑指定规格。
 """
 
 import os
+import sys
 from playwright.sync_api import sync_playwright
 
 BASE = 'http://localhost:8795/#'
@@ -21,7 +24,7 @@ os.makedirs(OUT, exist_ok=True)
 SIZES = {
     '6.7inch': (430, 932, 3),
     '6.1inch': (393, 852, 3),
-    'play': (360, 800, 3),
+    'play': (360, 640, 3),
 }
 
 PAGES = {
@@ -34,14 +37,21 @@ PAGES = {
 
 
 def main():
+    only = sys.argv[1] if len(sys.argv) > 1 else None
+    sizes = {only: SIZES[only]} if only else SIZES
     with sync_playwright() as p:
         browser = p.chromium.launch(channel='chrome', headless=True)
-        for name, (w, h, dsf) in SIZES.items():
+        for name, (w, h, dsf) in sizes.items():
             ctx = browser.new_context(
                 viewport={'width': w, 'height': h},
                 device_scale_factor=dsf,
                 is_mobile=True,
                 has_touch=True,
+            )
+            # 预置「已看过新手引导」与「首页引导卡已见」，避免遮罩遮挡商店截图
+            ctx.add_init_script(
+                "localStorage.setItem('flutter.has_seen_onboarding_v2','true');"
+                "localStorage.setItem('flutter.v2_home_generation_guide_seen','true');"
             )
             page = ctx.new_page()
             for label, route in PAGES.items():
