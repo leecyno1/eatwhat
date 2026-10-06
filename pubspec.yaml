@@ -146,6 +146,7 @@ flutter:
     - assets/images/
     - assets/images/prebuilt_dishes/
     - assets/images/preference_entities/
+    - assets/images/howtocook_gallery/
     - assets/icons/
     - assets/data/
     - assets/data/howtocook_complete_recipes.db
