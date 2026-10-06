@@ -66,4 +66,4 @@
 - 图标：docs/store_assets/play_icon_512.png（Play 512×512）
 - 头图：docs/store_assets/play_feature_graphic_1024x500.png（Play 1024×500）
 - 截图：docs/store_assets/play_*.png（Play）；6.7inch_*.png、6.1inch_*.png（App Store）
-- 隐私政策：docs/store_assets/privacy_policy.html（需托管后填 URL）
+- 隐私政策：docs/privacy_policy.html（GitHub Pages 托管后 URL：https://leecyno1.github.io/eatwhat/privacy_policy.html）
