@@ -1,12 +1,13 @@
 import 'dart:io';
-import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:share_plus/share_plus.dart';
 
 /// 结果页分享卡片：预览 + 捕获 PNG + 唤起系统分享。
@@ -63,6 +64,22 @@ class _RecipeShareSheetState extends State<RecipeShareSheet> {
         Navigator.of(context).pop();
       }
     } catch (_) {
+      if (!mounted) return;
+      // Web 无 dart:io 临时文件能力，浏览器也不一定支持文件分享：
+      // 退回复制文案，至少让用户能把推荐分享出去。
+      if (kIsWeb) {
+        try {
+          await Clipboard.setData(
+            ClipboardData(text: '今天决定吃这个：${widget.recipe.name}'),
+          );
+          if (mounted) {
+            setState(() => _error = '当前浏览器不支持图片分享，文案已复制');
+          }
+          return;
+        } catch (_) {
+          // 剪贴板也不可用时走通用失败提示
+        }
+      }
       if (mounted) {
         setState(() => _error = '分享失败，请稍后再试');
       }
@@ -74,6 +91,21 @@ class _RecipeShareSheetState extends State<RecipeShareSheet> {
   }
 
   Future<void> _launchSystemShare(Uint8List bytes, String text) async {
+    if (kIsWeb) {
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [
+            XFile.fromData(
+              bytes,
+              mimeType: 'image/png',
+              name: 'eatwhat_share.png',
+            ),
+          ],
+          text: text,
+        ),
+      );
+      return;
+    }
     final file = File(
       '${Directory.systemTemp.path}/'
       'eatwhat_share_${DateTime.now().millisecondsSinceEpoch}.png',
