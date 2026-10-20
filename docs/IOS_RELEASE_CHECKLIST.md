@@ -24,7 +24,12 @@
 ## 质量保障
 - `flutter analyze`、`dart format`、`flutter test` 通过；
 - 关键路径性能：启动 < 2.0s，候选生成 < 200ms；
-- Sentry 崩溃率 < 1%。
+- 崩溃监控：当前未集成第三方崩溃 SDK，使用 Xcode Organizer 与 App Store Connect 崩溃报告观察。
+
+## 网络与合规
+- 生产后端必须为 HTTPS 域名：`Info.plist` 仅 `NSAllowsLocalNetworking`，HTTP/IP 会被 ATS 拦截；
+- `ios/Runner/PrivacyInfo.xcprivacy` 随包提交，权限用途描述（麦克风/定位/语音识别）与实际上传一致；
+- 隐私政策 URL 可访问：https://leecyno1.github.io/eatwhat/privacy_policy.html
 
 ## 测试与发布
 - TestFlight 内测：功能用例、权限、弱网、定位；

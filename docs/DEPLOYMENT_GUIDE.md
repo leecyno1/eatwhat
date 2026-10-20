@@ -26,6 +26,8 @@ AI 服务独家使用 MiniMax，密钥策略分两层（详见 `SECURITY_SETUP.m
 - **本地/联调**：客户端 `.env` 可直配 MiniMax 密钥直连上游
 - **Staging/生产**：客户端只配置执行代理地址；MiniMax、平台、支付密钥全部只留在服务端
 
+> **生产连接约束（2026-10 实测）**：iOS `Info.plist` 仅开启 `NSAllowsLocalNetworking`，不接受任意明文 HTTP；因此生产 `EXECUTION_PROXY_BASE_URL` 必须是 **HTTPS 域名**（当前 `.env` 的 `http://<IP>:8787` 仅可用于本地/内网联调，真机会被 ATS 拦截且令牌明文传输不安全）。上线前需完成域名 + 证书 + 反向代理（nginx 443 → 8787）。
+
 #### `.env.development`
 ```bash
 # 本地联调（直连 MiniMax，禁止打进生产构建）
