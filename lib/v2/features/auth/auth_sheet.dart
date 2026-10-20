@@ -4,6 +4,7 @@ import 'package:eatwhat_app/core/services/analytics_service.dart';
 import 'package:eatwhat_app/core/services/auth_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_membership_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -625,7 +626,11 @@ class _EatWhatAccountSheetState extends State<_EatWhatAccountSheet> {
               _MembershipCard(
                 user: user,
                 purchasing: _purchasing,
-                onBuy: _buyMembership,
+                // 移动端商店要求数字商品走 IAP/Play Billing，支付宝收银台仅限 Web；
+                // 后端未配置时也不展示无法完成的购买入口。
+                onBuy: kIsWeb && V2MembershipService.instance.isConfigured
+                    ? _buyMembership
+                    : null,
               ),
               const SizedBox(height: AppSpacing.lg),
               SizedBox(
