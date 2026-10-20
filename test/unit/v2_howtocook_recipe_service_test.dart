@@ -158,7 +158,7 @@ void main() {
       "recipeId": "htc_2",
       "name": "蒜蓉西兰花",
       "aliases": ["蒜蓉西兰花"],
-      "assetImageUrls": ["assets/images/howtocook_gallery/xilanhua/1.jpg"],
+      "assetImageUrls": ["assets/images/howtocook_gallery/xilanhua_1.webp"],
       "markdownPath": "HowToCook/dishes/vegetable_dish/蒜蓉西兰花.md",
       "sourceProject": "HowToCook"
     }
@@ -171,7 +171,7 @@ void main() {
 
     expect(items, hasLength(2));
     expect(items.last.imageAssetUrls.first,
-        'assets/images/howtocook_gallery/xilanhua/1.jpg');
+        'assets/images/howtocook_gallery/xilanhua_1.webp');
   });
 
   test('HowToCook 服务可返回分类列表并按分类过滤菜谱库', () async {
