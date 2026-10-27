@@ -95,7 +95,8 @@ void main() {
       // count on stage is 60 * (1/15) = 4.
       expect(BubbleGame.goldenEntityChance, greaterThan(0));
       expect(BubbleGame.goldenEntityChance, lessThan(0.2));
-      expect(BubbleGame.goldenFeedbackDelta, greaterThan(BubbleGame.normalFeedbackDelta));
+      expect(BubbleGame.goldenFeedbackDelta,
+          greaterThan(BubbleGame.normalFeedbackDelta));
     });
   });
 }

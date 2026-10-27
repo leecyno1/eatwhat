@@ -17,13 +17,15 @@ class TokenService {
   static Future<TokenPair> generateTokenPair(String userId) async {
     final now = DateTime.now();
     final tokenExpiry = now.add(const Duration(hours: _tokenExpiryHours));
-    final refreshTokenExpiry = now.add(const Duration(days: _refreshTokenExpiryDays));
+    final refreshTokenExpiry =
+        now.add(const Duration(days: _refreshTokenExpiryDays));
 
     // 生成访问令牌
     final accessToken = _generateToken(userId, tokenExpiry);
 
     // 生成刷新令牌
-    final refreshToken = _generateToken(userId, refreshTokenExpiry, isRefreshToken: true);
+    final refreshToken =
+        _generateToken(userId, refreshTokenExpiry, isRefreshToken: true);
 
     // 安全存储令牌
     await SecureStorageService.setSecureString(_tokenKey, accessToken);
@@ -42,7 +44,8 @@ class TokenService {
     try {
       final parts = token.split('.');
       if (parts.length != 3) {
-        return TokenValidationResult(isValid: false, error: 'Invalid token format');
+        return TokenValidationResult(
+            isValid: false, error: 'Invalid token format');
       }
 
       // 验证签名
@@ -52,7 +55,8 @@ class TokenService {
 
       final expectedSignature = _generateSignature('$header.$payload');
       if (signature != expectedSignature) {
-        return TokenValidationResult(isValid: false, error: 'Invalid signature');
+        return TokenValidationResult(
+            isValid: false, error: 'Invalid signature');
       }
 
       // 解析载荷
@@ -73,14 +77,16 @@ class TokenService {
         expiresAt: DateTime.fromMillisecondsSinceEpoch(exp * 1000),
       );
     } catch (e) {
-      return TokenValidationResult(isValid: false, error: 'Token validation failed: $e');
+      return TokenValidationResult(
+          isValid: false, error: 'Token validation failed: $e');
     }
   }
 
   /// 刷新令牌
   static Future<TokenPair?> refreshToken() async {
     try {
-      final refreshToken = await SecureStorageService.getSecureString(_refreshTokenKey);
+      final refreshToken =
+          await SecureStorageService.getSecureString(_refreshTokenKey);
       if (refreshToken == null) return null;
 
       final validation = validateToken(refreshToken);
@@ -114,13 +120,15 @@ class TokenService {
     if (!validation.isValid || validation.expiresAt == null) return true;
 
     final now = DateTime.now();
-    final warningTime = validation.expiresAt!.subtract(Duration(minutes: warningMinutes));
+    final warningTime =
+        validation.expiresAt!.subtract(Duration(minutes: warningMinutes));
 
     return now.isAfter(warningTime);
   }
 
   /// 生成JWT令牌
-  static String _generateToken(String userId, DateTime expiry, {bool isRefreshToken = false}) {
+  static String _generateToken(String userId, DateTime expiry,
+      {bool isRefreshToken = false}) {
     // JWT Header
     final header = {
       'alg': 'HS256',
@@ -208,7 +216,6 @@ class TokenService {
 
 /// 令牌对
 class TokenPair {
-
   TokenPair({
     required this.accessToken,
     required this.refreshToken,
@@ -223,7 +230,6 @@ class TokenPair {
 
 /// 令牌验证结果
 class TokenValidationResult {
-
   TokenValidationResult({
     required this.isValid,
     this.userId,
@@ -238,7 +244,6 @@ class TokenValidationResult {
 
 /// 令牌信息
 class TokenInfo {
-
   TokenInfo({
     required this.userId,
     required this.isValid,

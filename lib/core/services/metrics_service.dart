@@ -75,8 +75,8 @@ class MetricsService {
     final dayEnd = dayStart.add(const Duration(days: 1));
 
     final sessions = _events[MetricTypes.sessionStart] ?? [];
-    final daySessions = sessions.where((e) =>
-        e.timestamp.isAfter(dayStart) && e.timestamp.isBefore(dayEnd));
+    final daySessions = sessions.where(
+        (e) => e.timestamp.isAfter(dayStart) && e.timestamp.isBefore(dayEnd));
 
     return daySessions.map((e) => e.userId).toSet().length;
   }

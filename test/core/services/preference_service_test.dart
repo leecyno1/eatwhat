@@ -45,7 +45,8 @@ void main() {
       const nonExistentUserId = 'user999';
 
       // Act
-      final preference = await fakePreferenceRepository.getTastePreference(nonExistentUserId);
+      final preference =
+          await fakePreferenceRepository.getTastePreference(nonExistentUserId);
 
       // Assert
       expect(preference, isNull);

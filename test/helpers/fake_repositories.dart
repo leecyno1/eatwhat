@@ -50,7 +50,8 @@ class FakeFoodRepository {
 class FakePreferenceRepository {
   final Map<String, dynamic> _preferences = {};
 
-  Future<void> saveTastePreference(String userId, Map<String, dynamic> preference) async {
+  Future<void> saveTastePreference(
+      String userId, Map<String, dynamic> preference) async {
     _preferences[userId] = preference;
   }
 

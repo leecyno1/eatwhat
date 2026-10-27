@@ -29,7 +29,8 @@ class AnalyticsHelper {
   // ========== 气泡交互 ==========
 
   /// 记录气泡浏览
-  static void logBubbleViewed(String bubbleId, String bubbleName, String bubbleType) {
+  static void logBubbleViewed(
+      String bubbleId, String bubbleName, String bubbleType) {
     _analytics.trackEvent(AnalyticsEventType.bubbleViewed.name, properties: {
       'bubble_id': bubbleId,
       'bubble_name': bubbleName,
@@ -47,14 +48,16 @@ class AnalyticsHelper {
 
   /// 记录气泡长按
   static void logBubbleLongPressed(String bubbleId, String bubbleName) {
-    _analytics.trackEvent(AnalyticsEventType.bubbleLongPressed.name, properties: {
+    _analytics
+        .trackEvent(AnalyticsEventType.bubbleLongPressed.name, properties: {
       'bubble_id': bubbleId,
       'bubble_name': bubbleName,
     });
   }
 
   /// 记录气泡滑动
-  static void logBubbleSwiped(String bubbleId, String bubbleName, String direction) {
+  static void logBubbleSwiped(
+      String bubbleId, String bubbleName, String direction) {
     final eventType = switch (direction) {
       'up' => AnalyticsEventType.bubbleSwipedUp,
       'down' => AnalyticsEventType.bubbleSwipedDown,
@@ -88,7 +91,8 @@ class AnalyticsHelper {
     List<String>? foodIds,
     String? source,
   }) {
-    _analytics.trackEvent(AnalyticsEventType.recommendationShown.name, properties: {
+    _analytics
+        .trackEvent(AnalyticsEventType.recommendationShown.name, properties: {
       'count': count,
       'food_ids': foodIds?.take(5).toList(), // 只记录前5个
       'source': source,
@@ -96,8 +100,10 @@ class AnalyticsHelper {
   }
 
   /// 记录推荐结果点击
-  static void logRecommendationClicked(String foodId, String foodName, int position) {
-    _analytics.trackEvent(AnalyticsEventType.recommendationClicked.name, properties: {
+  static void logRecommendationClicked(
+      String foodId, String foodName, int position) {
+    _analytics
+        .trackEvent(AnalyticsEventType.recommendationClicked.name, properties: {
       'food_id': foodId,
       'food_name': foodName,
       'position': position,
@@ -106,7 +112,8 @@ class AnalyticsHelper {
 
   /// 记录口味反馈
   static void logTasteFeedback(String foodId, bool isLiked) {
-    _analytics.trackEvent(AnalyticsEventType.tasteFeedbackGiven.name, properties: {
+    _analytics
+        .trackEvent(AnalyticsEventType.tasteFeedbackGiven.name, properties: {
       'food_id': foodId,
       'is_liked': isLiked,
     });
@@ -116,15 +123,18 @@ class AnalyticsHelper {
 
   /// 记录食物详情浏览
   static void logFoodDetailViewed(String foodId, String foodName) {
-    _analytics.trackEvent(AnalyticsEventType.foodDetailViewed.name, properties: {
+    _analytics
+        .trackEvent(AnalyticsEventType.foodDetailViewed.name, properties: {
       'food_id': foodId,
       'food_name': foodName,
     });
   }
 
   /// 记录食物收藏状态切换
-  static void logFoodFavoriteToggled(String foodId, String foodName, bool isFavorite) {
-    _analytics.trackEvent(AnalyticsEventType.foodFavoriteToggled.name, properties: {
+  static void logFoodFavoriteToggled(
+      String foodId, String foodName, bool isFavorite) {
+    _analytics
+        .trackEvent(AnalyticsEventType.foodFavoriteToggled.name, properties: {
       'food_id': foodId,
       'food_name': foodName,
       'is_favorite': isFavorite,
@@ -134,7 +144,8 @@ class AnalyticsHelper {
   // ========== 购物车 ==========
 
   /// 记录加入购物车
-  static void logAddToCart(String foodId, String foodName, double price, int quantity) {
+  static void logAddToCart(
+      String foodId, String foodName, double price, int quantity) {
     _analytics.trackEvent(AnalyticsEventType.addToCart.name, properties: {
       'food_id': foodId,
       'food_name': foodName,
@@ -205,8 +216,10 @@ class AnalyticsHelper {
   }
 
   /// 记录搜索结果点击
-  static void logSearchResultClicked(String foodId, String foodName, int position) {
-    _analytics.trackEvent(AnalyticsEventType.searchResultClicked.name, properties: {
+  static void logSearchResultClicked(
+      String foodId, String foodName, int position) {
+    _analytics
+        .trackEvent(AnalyticsEventType.searchResultClicked.name, properties: {
       'food_id': foodId,
       'food_name': foodName,
       'position': position,
@@ -240,15 +253,18 @@ class AnalyticsHelper {
 
   /// 记录实验曝光
   static void logExperimentViewed(String experimentId, String variantId) {
-    _analytics.trackEvent(AnalyticsEventType.experimentViewed.name, properties: {
+    _analytics
+        .trackEvent(AnalyticsEventType.experimentViewed.name, properties: {
       'experiment_id': experimentId,
       'variant_id': variantId,
     });
   }
 
   /// 记录实验转化
-  static void logExperimentConverted(String experimentId, String variantId, String goalId) {
-    _analytics.trackEvent(AnalyticsEventType.experimentConverted.name, properties: {
+  static void logExperimentConverted(
+      String experimentId, String variantId, String goalId) {
+    _analytics
+        .trackEvent(AnalyticsEventType.experimentConverted.name, properties: {
       'experiment_id': experimentId,
       'variant_id': variantId,
       'goal_id': goalId,

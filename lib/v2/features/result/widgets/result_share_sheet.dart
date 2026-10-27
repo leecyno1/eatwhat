@@ -38,8 +38,8 @@ class _RecipeShareSheetState extends State<RecipeShareSheet> {
   String? _error;
 
   Future<Uint8List> _capture() async {
-    final boundary = _cardKey.currentContext?.findRenderObject()
-        as RenderRepaintBoundary?;
+    final boundary =
+        _cardKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
     if (boundary == null) {
       throw StateError('share card not mounted');
     }

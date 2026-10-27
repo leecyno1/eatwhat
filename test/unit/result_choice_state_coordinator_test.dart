@@ -5,7 +5,8 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('ResultChoiceStateCoordinator', () {
-    test('uses cached pairings and clears feedback when selecting a cached dish',
+    test(
+        'uses cached pairings and clears feedback when selecting a cached dish',
         () {
       final enrichment = ResultEnrichmentController<String>()
         ..completePairings('r2', const ['酸梅汤', '凉拌黄瓜']);
@@ -22,7 +23,8 @@ void main() {
       expect(enrichment.pairingStateFor('r2'), PairingLoadState.loaded);
     });
 
-    test('clears pairings and marks loading when selecting an uncached dish', () {
+    test('clears pairings and marks loading when selecting an uncached dish',
+        () {
       final enrichment = ResultEnrichmentController<String>();
       const coordinator = ResultChoiceStateCoordinator<String>();
 

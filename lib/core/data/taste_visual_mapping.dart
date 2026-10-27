@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 /// 可视化规范：为口味/偏好键提供颜色与图标建议
 class TasteVisualSpec {
-
   const TasteVisualSpec({
     this.materialIcon,
     this.emoji,

@@ -31,7 +31,8 @@ class _PantryIngredientSheetState extends State<PantryIngredientSheet> {
   ];
 
   final TextEditingController _controller = TextEditingController();
-  late final Set<String> _selected = Set<String>.from(widget.initialIngredients);
+  late final Set<String> _selected =
+      Set<String>.from(widget.initialIngredients);
 
   @override
   void dispose() {
@@ -118,7 +119,8 @@ class _PantryIngredientSheetState extends State<PantryIngredientSheet> {
                     selected: _selected.contains(item),
                     onTap: () => _toggle(item),
                   ),
-                for (final item in selected.where((e) => !_quickAdds.contains(e)))
+                for (final item
+                    in selected.where((e) => !_quickAdds.contains(e)))
                   _PantryChip(
                     label: item,
                     selected: true,
@@ -140,7 +142,8 @@ class _PantryIngredientSheetState extends State<PantryIngredientSheet> {
                 foregroundColor: AppPalette.night,
               ),
               icon: const Icon(Icons.restaurant_menu_rounded, size: 18),
-              label: Text(selected.isEmpty ? '先加一样食材' : '用这些找菜 · ${selected.length} 样'),
+              label: Text(
+                  selected.isEmpty ? '先加一样食材' : '用这些找菜 · ${selected.length} 样'),
             ),
           ],
         ),

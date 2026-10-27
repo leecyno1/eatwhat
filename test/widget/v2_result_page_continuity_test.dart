@@ -43,10 +43,10 @@ void main() {
     expect(find.byKey(const ValueKey('result-mode-single')), findsNothing);
     expect(find.byKey(const ValueKey('result-mode-meal')), findsNothing);
     expect(find.text('暖食编辑部'), findsNothing);
-    expect(find.byKey(const ValueKey('result-gold-reason-line')),
-        findsOneWidget);
-    expect(find.byKey(const ValueKey('result-favorite-toggle')),
-        findsOneWidget);
+    expect(
+        find.byKey(const ValueKey('result-gold-reason-line')), findsOneWidget);
+    expect(
+        find.byKey(const ValueKey('result-favorite-toggle')), findsOneWidget);
     expect(find.byKey(const ValueKey('result-execution-shortcuts')),
         findsOneWidget);
     expect(find.byKey(const ValueKey('result-execution-cook')), findsOneWidget);

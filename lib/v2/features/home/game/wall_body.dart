@@ -1,7 +1,6 @@
 import 'package:flame_forge2d/flame_forge2d.dart';
 
 class WallBody extends BodyComponent {
-
   WallBody(this.start, this.end);
   final Vector2 start;
   final Vector2 end;

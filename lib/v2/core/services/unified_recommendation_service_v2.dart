@@ -537,14 +537,39 @@ class UnifiedRecommendationServiceV2 {
   /// 其余时段保持中性，避免过度干预。只匹配菜名与标签，不匹配食材，
   /// 防止「鸡蛋」这类常见食材在早餐时段大面积误触发。
   static const List<String> _morningPositiveTerms = [
-    '早餐', '粥', '豆浆', '包子', '馒头', '鸡蛋', '牛奶', '燕麦',
-    '面点', '清淡', '吐司', '馄饨', '蒸蛋',
+    '早餐',
+    '粥',
+    '豆浆',
+    '包子',
+    '馒头',
+    '鸡蛋',
+    '牛奶',
+    '燕麦',
+    '面点',
+    '清淡',
+    '吐司',
+    '馄饨',
+    '蒸蛋',
   ];
   static const List<String> _morningNegativeTerms = [
-    '火锅', '烧烤', '麻辣', '油炸', '重油', '夜宵', '啤酒',
+    '火锅',
+    '烧烤',
+    '麻辣',
+    '油炸',
+    '重油',
+    '夜宵',
+    '啤酒',
   ];
   static const List<String> _lateNightPositiveTerms = [
-    '夜宵', '烧烤', '小龙虾', '串', '炸鸡', '泡面', '卤味', '啤酒', '烤鱼',
+    '夜宵',
+    '烧烤',
+    '小龙虾',
+    '串',
+    '炸鸡',
+    '泡面',
+    '卤味',
+    '啤酒',
+    '烤鱼',
   ];
 
   double _mealPeriodAdjustment({

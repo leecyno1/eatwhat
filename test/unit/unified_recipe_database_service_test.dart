@@ -109,12 +109,12 @@ void main() {
     });
 
     group('searchByPantryIngredients', () {
-      test('pantry search SQL joins ingredients and ranks by match count',
-          () {
+      test('pantry search SQL joins ingredients and ranks by match count', () {
         const sql = UnifiedRecipeDatabaseService.pantrySearchSql;
 
         expect(sql, contains('FROM recipe_ingredient ri'));
-        expect(sql, contains('LEFT JOIN ingredient ing ON ing.id = ri.ingredient_id'));
+        expect(sql,
+            contains('LEFT JOIN ingredient ing ON ing.id = ri.ingredient_id'));
         expect(sql, contains('__PANTRY_MATCHES__'));
         expect(sql, contains('__PANTRY_WHERE__'));
         expect(sql, contains('ORDER BY pantry_matched DESC, pantry_total ASC'));
@@ -135,7 +135,8 @@ void main() {
             .map((e) => (e as Map)['name']?.toString() ?? '')
             .toSet();
         expect(
-          topIngredients.any((name) => name.contains('蛋') || name.contains('番茄')),
+          topIngredients
+              .any((name) => name.contains('蛋') || name.contains('番茄')),
           isTrue,
           reason: '榜首菜应命中冰箱食材，实际食材：$topIngredients',
         );

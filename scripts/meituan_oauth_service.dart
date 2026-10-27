@@ -30,7 +30,8 @@ class MeituanOAuthService {
       // 用户在移动端内嵌浏览器里完成登录可能耗时较久，放宽到 30 分钟。
       expiresAt: _now().add(const Duration(minutes: 30)),
     );
-    stdout.writeln('[meituan-oauth] state issued: user=$eatWhatUserId state=${state.substring(0, 8)}… pending=${_pendingStates.length}');
+    stdout.writeln(
+        '[meituan-oauth] state issued: user=$eatWhatUserId state=${state.substring(0, 8)}… pending=${_pendingStates.length}');
     return config.apiBaseUrl.resolve('/oauth/authorize').replace(
       queryParameters: {
         'app_id': config.appId,
@@ -48,7 +49,8 @@ class MeituanOAuthService {
   }) async {
     final pending = _pendingStates.remove(state);
     if (pending == null || _now().isAfter(pending.expiresAt)) {
-      stdout.writeln('[meituan-oauth] state rejected: incoming=${state.isEmpty ? '<empty>' : state.substring(0, min(8, state.length))}… '
+      stdout.writeln(
+          '[meituan-oauth] state rejected: incoming=${state.isEmpty ? '<empty>' : state.substring(0, min(8, state.length))}… '
           'pending=[${_pendingStates.keys.map((s) => s.substring(0, 8)).join(', ')}] '
           'expired=${pending != null}');
       throw const MeituanOAuthException('oauth_state_invalid', '授权状态已失效，请重新绑定');

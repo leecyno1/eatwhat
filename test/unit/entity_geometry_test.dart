@@ -114,8 +114,7 @@ void main() {
           final a = part[i];
           final b = part[(i + 1) % part.length];
           final c = part[(i + 2) % part.length];
-          final cross =
-              (b.x - a.x) * (c.y - b.y) - (b.y - a.y) * (c.x - b.x);
+          final cross = (b.x - a.x) * (c.y - b.y) - (b.y - a.y) * (c.x - b.x);
           if (cross.abs() > 1e-9) {
             final crossSign = cross > 0 ? 1 : -1;
             if (sign == 0) sign = crossSign;

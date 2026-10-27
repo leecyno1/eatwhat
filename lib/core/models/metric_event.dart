@@ -3,7 +3,6 @@ import 'dart:convert';
 /// 指标事件数据类
 /// 用于记录用户行为指标事件
 class MetricEvent {
-
   MetricEvent({
     required this.type,
     required this.userId,
@@ -26,6 +25,7 @@ class MetricEvent {
   /// 从 JSON 字符串创建
   factory MetricEvent.fromJson(String source) =>
       MetricEvent.fromMap(json.decode(source) as Map<String, dynamic>);
+
   /// 事件类型
   final String type;
 
@@ -59,7 +59,6 @@ class MetricEvent {
 
 /// 指标汇总数据类
 class MetricSummary {
-
   MetricSummary({
     required this.dau,
     required this.mau,
@@ -80,6 +79,7 @@ class MetricSummary {
       retentionRates: {},
     );
   }
+
   /// 日活跃用户数
   final int dau;
 

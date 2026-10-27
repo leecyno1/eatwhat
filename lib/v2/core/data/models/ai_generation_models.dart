@@ -1,5 +1,4 @@
 class NutritionInfo {
-
   const NutritionInfo({
     required this.calories,
     required this.protein,
@@ -68,7 +67,6 @@ class NutritionInfo {
 }
 
 class NutritionAnalysis {
-
   const NutritionAnalysis({
     required this.nutrition,
     required this.healthScore,
@@ -139,7 +137,6 @@ class NutritionAnalysis {
 }
 
 class WinePairing {
-
   const WinePairing({
     required this.name,
     required this.type,
@@ -199,7 +196,6 @@ class WinePairing {
 }
 
 class FortuneResult {
-
   const FortuneResult({
     required this.id,
     required this.type,
@@ -303,7 +299,6 @@ String _todayString() {
 }
 
 class AiRefinedRecommendations {
-
   const AiRefinedRecommendations({
     required this.recipeIds,
     required this.reasonsById,

@@ -906,8 +906,8 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
 
-    expect(find.byKey(const ValueKey('recipe-cooking-page-view')),
-        findsOneWidget);
+    expect(
+        find.byKey(const ValueKey('recipe-cooking-page-view')), findsOneWidget);
     expect(find.text('牛肉粒滑油至变色。'), findsOneWidget);
     expect(find.text('不该覆盖融合菜的库步骤'), findsNothing);
     expect(find.text('这道菜暂时没有可执行步骤。'), findsNothing);

@@ -91,8 +91,7 @@ Future<void> handleMockProxyRequest(
   // open a fake cashier page and poll the paid status.
   if (request.method == 'GET' &&
       request.uri.path == '/api/v1/payment/alipay/status') {
-    final orderId =
-        request.uri.queryParameters['orderId'] ?? 'mock-pay-order';
+    final orderId = request.uri.queryParameters['orderId'] ?? 'mock-pay-order';
     final userId = _orderUsers[orderId] ?? 'local-user';
     final now = DateTime.now();
     final credential = await MembershipCredentials.issue(

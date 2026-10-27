@@ -21,7 +21,8 @@ EXECUTION_PROXY_BASE_URL=http://154.194.253.179/eatwhat
 
   test('认证端点 URL 拼接正确（去尾斜杠）', () {
     final base = EnvConfig.eatWhatAuthBaseUrl;
-    final register = '${base.replaceAll(RegExp(r'/+\$'), '')}/api/v1/auth/register';
+    final register =
+        '${base.replaceAll(RegExp(r'/+\$'), '')}/api/v1/auth/register';
     expect(register, 'http://154.194.253.179/api/v1/auth/register');
   });
 }

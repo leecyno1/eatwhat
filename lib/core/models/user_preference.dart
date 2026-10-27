@@ -8,7 +8,6 @@ part 'user_preference.g.dart';
 /// 使用Hive进行本地存储
 @HiveType(typeId: 4)
 class UserPreference extends HiveObject {
-
   UserPreference({
     String? id,
     required this.userId,
@@ -42,13 +41,17 @@ class UserPreference extends HiveObject {
       likedBubbles: List<String>.from(json['likedBubbles'] ?? []),
       dislikedBubbles: List<String>.from(json['dislikedBubbles'] ?? []),
       ignoredBubbles: List<String>.from(json['ignoredBubbles'] ?? []),
-      bubbleInteractionCount: Map<String, int>.from(json['bubbleInteractionCount'] ?? {}),
-      lastUpdated: DateTime.parse(json['lastUpdated'] ?? DateTime.now().toIso8601String()),
+      bubbleInteractionCount:
+          Map<String, int>.from(json['bubbleInteractionCount'] ?? {}),
+      lastUpdated: DateTime.parse(
+          json['lastUpdated'] ?? DateTime.now().toIso8601String()),
       bubbleWeights: Map<String, double>.from(json['bubbleWeights'] ?? {}),
       favoriteFoods: List<String>.from(json['favoriteFoods'] ?? []),
       dislikedFoods: List<String>.from(json['dislikedFoods'] ?? []),
-      cuisinePreferences: Map<String, double>.from(json['cuisinePreferences'] ?? {}),
-      tastePreferences: Map<String, double>.from(json['tastePreferences'] ?? {}),
+      cuisinePreferences:
+          Map<String, double>.from(json['cuisinePreferences'] ?? {}),
+      tastePreferences:
+          Map<String, double>.from(json['tastePreferences'] ?? {}),
     );
   }
   @HiveField(0)
@@ -108,7 +111,8 @@ class UserPreference extends HiveObject {
       likedBubbles: likedBubbles ?? this.likedBubbles,
       dislikedBubbles: dislikedBubbles ?? this.dislikedBubbles,
       ignoredBubbles: ignoredBubbles ?? this.ignoredBubbles,
-      bubbleInteractionCount: bubbleInteractionCount ?? this.bubbleInteractionCount,
+      bubbleInteractionCount:
+          bubbleInteractionCount ?? this.bubbleInteractionCount,
       lastUpdated: lastUpdated ?? this.lastUpdated,
       bubbleWeights: bubbleWeights ?? this.bubbleWeights,
       favoriteFoods: favoriteFoods ?? this.favoriteFoods,
@@ -229,7 +233,8 @@ class UserPreference extends HiveObject {
   /// [taste] 口味名称
   /// [score] 基础分数变化量（正数增加偏好，负数减少偏好）
   /// [intensity] 强度因子（0.0-1.0），默认1.0，实际分数变化量为 score * intensity
-  UserPreference updateTastePreference(String taste, double score, {double intensity = 1.0}) {
+  UserPreference updateTastePreference(String taste, double score,
+      {double intensity = 1.0}) {
     final newPreferences = Map<String, double>.from(tastePreferences);
     final currentScore = newPreferences[taste] ?? 0.0;
     // 实际变化量 = 基础分数 * 强度

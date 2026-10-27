@@ -85,7 +85,8 @@ void main() {
       ),
     );
 
-    await tester.tap(find.byKey(const ValueKey('execution-completion-not-now')));
+    await tester
+        .tap(find.byKey(const ValueKey('execution-completion-not-now')));
     await tester.pumpAndSettle();
 
     expect(find.text('已记住：这次先不算完成'), findsOneWidget);

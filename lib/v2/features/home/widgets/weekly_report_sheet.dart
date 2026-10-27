@@ -107,7 +107,8 @@ class _WeeklyReportSheetState extends State<WeeklyReportSheet> {
                 padding: EdgeInsets.symmetric(vertical: AppSpacing.xl),
                 child: Center(child: CircularProgressIndicator()),
               )
-            else ..._buildReport(_report!),
+            else
+              ..._buildReport(_report!),
           ],
         ),
       ),

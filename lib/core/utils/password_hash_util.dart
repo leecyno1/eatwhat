@@ -63,7 +63,8 @@ class PasswordHashUtil {
   }
 
   /// PBKDF2实现（使用HMAC-SHA256）
-  static Uint8List _pbkdf2(String password, Uint8List salt, int iterations, int keyLength) {
+  static Uint8List _pbkdf2(
+      String password, Uint8List salt, int iterations, int keyLength) {
     final passwordBytes = utf8.encode(password + EnvConfig.passwordSalt);
     final result = Uint8List(keyLength);
 
@@ -117,11 +118,13 @@ class PasswordHashUtil {
 
   /// 生成安全的随机密码
   static String generateSecurePassword({int length = 16}) {
-    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#\$%^&*()';
+    const charset =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#\$%^&*()';
     final random = math.Random.secure();
 
     return String.fromCharCodes(
-      Iterable.generate(length, (_) => charset.codeUnitAt(random.nextInt(charset.length))),
+      Iterable.generate(
+          length, (_) => charset.codeUnitAt(random.nextInt(charset.length))),
     );
   }
 
@@ -141,7 +144,9 @@ class PasswordHashUtil {
     if (password.contains(RegExp(r'[a-z]'))) score += 1; // 小写字母
     if (password.contains(RegExp(r'[A-Z]'))) score += 1; // 大写字母
     if (password.contains(RegExp(r'[0-9]'))) score += 1; // 数字
-    if (password.contains(RegExp(r'[!@#\$%^&*(),.?":{}|<>]'))) score += 1; // 特殊字符
+    if (password.contains(RegExp(r'[!@#\$%^&*(),.?":{}|<>]'))) {
+      score += 1; // 特殊字符
+    }
 
     // 复杂度检查
     if (password.length >= 16) score += 1;
