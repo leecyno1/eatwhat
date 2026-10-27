@@ -6,6 +6,7 @@ import 'package:crypto/crypto.dart';
 
 import 'meituan_oauth_service.dart';
 import 'meituan_oauth_store.dart';
+import 'support/server_http.dart';
 
 Future<void> main(List<String> args) async {
   final config = MeituanDeliveryAdapterConfig.fromEnvironment(
@@ -63,7 +64,7 @@ class MeituanDeliveryAdapterServer {
 
   Future<void> _handle(HttpRequest request) async {
     if (request.method == 'GET' && request.uri.path == '/health') {
-      await _writeJson(request.response, HttpStatus.ok, {
+      await writeJsonResponse(request.response, HttpStatus.ok, {
         'status': 'ok',
         'configured': config.isConfigured,
         'orderEnabled': config.orderEnabled,
@@ -77,7 +78,7 @@ class MeituanDeliveryAdapterServer {
     }
 
     if (!_isAuthorized(request)) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.unauthorized,
         'unauthorized',
@@ -92,7 +93,7 @@ class MeituanDeliveryAdapterServer {
     }
 
     if (request.method != 'POST') {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.methodNotAllowed,
         'method_not_allowed',
@@ -107,7 +108,7 @@ class MeituanDeliveryAdapterServer {
     }
 
     if (!config.isConfigured) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.serviceUnavailable,
         'adapter_not_configured',
@@ -118,7 +119,7 @@ class MeituanDeliveryAdapterServer {
 
     final body = await _readJsonBody(request);
     if (body == null) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.badRequest,
         'invalid_json',
@@ -146,7 +147,7 @@ class MeituanDeliveryAdapterServer {
         };
 
         if (result == null) {
-          await _writeError(
+          await writeJsonError(
             request.response,
             HttpStatus.notFound,
             'route_not_found',
@@ -154,19 +155,19 @@ class MeituanDeliveryAdapterServer {
           );
           return;
         }
-        await _writeJson(request.response, HttpStatus.ok, result);
+        await writeJsonResponse(request.response, HttpStatus.ok, result);
       } finally {
         scopedAdapter.close();
       }
     } on MeituanRequestException catch (error) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.unprocessableEntity,
         'validation_error',
         error.message,
       );
     } on MeituanOpenApiException catch (error) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.badGateway,
         error.code,
@@ -177,7 +178,7 @@ class MeituanDeliveryAdapterServer {
         },
       );
     } on MeituanOAuthException catch (error) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.unauthorized,
         error.code,
@@ -193,7 +194,7 @@ class MeituanDeliveryAdapterServer {
       return;
     }
     final credential = await oauthService.credentialFor(userId);
-    await _writeJson(request.response, HttpStatus.ok, {
+    await writeJsonResponse(request.response, HttpStatus.ok, {
       'connected': credential != null,
       'requiresUserAuthorization': true,
       if (credential?.nickname?.isNotEmpty == true)
@@ -210,7 +211,7 @@ class MeituanDeliveryAdapterServer {
       return;
     }
     if (!config.oauthConfig.isConfigured) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.serviceUnavailable,
         'meituan_oauth_not_configured',
@@ -220,7 +221,7 @@ class MeituanDeliveryAdapterServer {
     }
     await _readJsonBody(request);
     final authorizationUri = oauthService.createAuthorizationUri(userId);
-    await _writeJson(request.response, HttpStatus.ok, {
+    await writeJsonResponse(request.response, HttpStatus.ok, {
       'authorizationUrl': authorizationUri.toString(),
     });
   }
@@ -274,7 +275,7 @@ class MeituanDeliveryAdapterServer {
   }
 
   Future<void> _writeMissingUserIdentity(HttpResponse response) {
-    return _writeError(
+    return writeJsonError(
       response,
       HttpStatus.unauthorized,
       'eatwhat_user_required',
@@ -1009,32 +1010,4 @@ Future<Map<String, dynamic>?> _readJsonBody(HttpRequest request) async {
   } on FormatException {
     return null;
   }
-}
-
-Future<void> _writeError(
-  HttpResponse response,
-  int statusCode,
-  String code,
-  String message, {
-  Map<String, dynamic> details = const {},
-}) {
-  return _writeJson(response, statusCode, {
-    'error': {
-      'code': code,
-      'message': message,
-      if (details.isNotEmpty) 'details': details,
-    },
-  });
-}
-
-Future<void> _writeJson(
-  HttpResponse response,
-  int statusCode,
-  Map<String, dynamic> payload,
-) async {
-  response
-    ..statusCode = statusCode
-    ..headers.contentType = ContentType.json
-    ..write(jsonEncode(payload));
-  await response.close();
 }

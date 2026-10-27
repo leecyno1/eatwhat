@@ -2,7 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:crypto/crypto.dart';
+import 'support/eatwhat_jwt.dart';
+import 'support/server_http.dart';
 
 Future<void> main(List<String> args) async {
   final config = ExecutionProxyServerConfig.fromEnvironment(
@@ -73,7 +74,7 @@ class ExecutionProxyServer {
         DateTime.now().microsecondsSinceEpoch.toString();
 
     if (request.method == 'GET' && request.uri.path == '/health') {
-      await _writeJson(
+      await writeJsonResponse(
         request.response,
         HttpStatus.ok,
         {
@@ -93,11 +94,11 @@ class ExecutionProxyServer {
 
     final adapter = config.adapters[request.uri.path];
     if (adapter == null) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.notFound,
-        code: 'route_not_found',
-        message: '执行代理路由不存在',
+        'route_not_found',
+        '执行代理路由不存在',
         requestId: requestId,
       );
       return;
@@ -112,11 +113,11 @@ class ExecutionProxyServer {
         HttpHeaders.allowHeader,
         '$expectedMethod, OPTIONS',
       );
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.methodNotAllowed,
-        code: 'method_not_allowed',
-        message: '该路由仅支持 $expectedMethod',
+        'method_not_allowed',
+        '该路由仅支持 $expectedMethod',
         requestId: requestId,
       );
       return;
@@ -124,11 +125,11 @@ class ExecutionProxyServer {
 
     final identity = _authenticate(request);
     if (identity == null) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.unauthorized,
-        code: 'unauthorized',
-        message: '执行代理鉴权失败',
+        'unauthorized',
+        '执行代理鉴权失败',
         requestId: requestId,
       );
       return;
@@ -138,11 +139,11 @@ class ExecutionProxyServer {
         ? <String, dynamic>{}
         : await _readJsonBody(request);
     if (body == null) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.badRequest,
-        code: 'invalid_json',
-        message: '请求体必须是 JSON 对象',
+        'invalid_json',
+        '请求体必须是 JSON 对象',
         requestId: requestId,
       );
       return;
@@ -150,11 +151,11 @@ class ExecutionProxyServer {
 
     final validationError = _validateRequest(adapter.requestKind, body);
     if (validationError != null) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.unprocessableEntity,
-        code: 'validation_error',
-        message: validationError,
+        'validation_error',
+        validationError,
         requestId: requestId,
       );
       return;
@@ -162,7 +163,7 @@ class ExecutionProxyServer {
 
     if (!adapter.isConfigured) {
       request.response.headers.set(HttpHeaders.retryAfterHeader, '60');
-      await _writeJson(
+      await writeJsonResponse(
         request.response,
         HttpStatus.serviceUnavailable,
         {
@@ -191,7 +192,7 @@ class ExecutionProxyServer {
   _ExecutionProxyIdentity? _authenticate(HttpRequest request) {
     final bearerToken = _bearerToken(request);
     if (config.jwtSecret.isNotEmpty) {
-      final userId = EatWhatJwtVerifier.verify(
+      final userId = EatWhatJwt.verify(
         bearerToken ?? '',
         secret: config.jwtSecret,
       );
@@ -338,7 +339,7 @@ class ExecutionProxyServer {
       }
       final payload = Map<String, dynamic>.from(decoded)
         ..putIfAbsent('requestId', () => requestId);
-      await _writeJson(clientResponse, HttpStatus.ok, payload);
+      await writeJsonResponse(clientResponse, HttpStatus.ok, payload);
     } on TimeoutException {
       await _writeAdapterFailure(
         clientResponse,
@@ -367,7 +368,7 @@ class ExecutionProxyServer {
       if (decoded is Map) {
         final payload = Map<String, dynamic>.from(decoded)
           ..putIfAbsent('requestId', () => requestId);
-        await _writeJson(response, statusCode, payload);
+        await writeJsonResponse(response, statusCode, payload);
         return;
       }
     } on FormatException {
@@ -387,7 +388,7 @@ class ExecutionProxyServer {
     String? reason,
   }) async {
     final message = reason ?? '${adapter.displayName}适配器暂时不可用';
-    await _writeJson(
+    await writeJsonResponse(
       response,
       HttpStatus.badGateway,
       {
@@ -594,64 +595,6 @@ class ExecutionProxyServerConfig {
   final Map<String, ExecutionProxyAdapterConfig> adapters;
 }
 
-class EatWhatJwtVerifier {
-  const EatWhatJwtVerifier._();
-
-  static String? verify(
-    String token, {
-    required String secret,
-    DateTime Function()? now,
-  }) {
-    try {
-      final parts = token.split('.');
-      if (parts.length != 3 || secret.isEmpty) return null;
-
-      final header = _decodeJsonPart(parts[0]);
-      final payload = _decodeJsonPart(parts[1]);
-      if (header['alg'] != 'HS256') return null;
-
-      final expected = Hmac(sha256, utf8.encode(secret))
-          .convert(utf8.encode('${parts[0]}.${parts[1]}'))
-          .bytes;
-      final actual = base64Url.decode(base64Url.normalize(parts[2]));
-      if (!_constantTimeEquals(expected, actual)) return null;
-
-      final expiresAt = _int(payload['exp']);
-      final nowSeconds = (now ?? DateTime.now)().millisecondsSinceEpoch ~/ 1000;
-      if (expiresAt == null || expiresAt <= nowSeconds) return null;
-      if (payload['type'] != null && payload['type'] != 'access') return null;
-
-      final userId = payload['sub']?.toString().trim() ?? '';
-      return userId.isEmpty ? null : userId;
-    } on Object {
-      return null;
-    }
-  }
-
-  static Map<String, dynamic> _decodeJsonPart(String value) {
-    final decoded = jsonDecode(
-      utf8.decode(base64Url.decode(base64Url.normalize(value))),
-    );
-    if (decoded is! Map) throw const FormatException('JWT payload 无效');
-    return Map<String, dynamic>.from(decoded);
-  }
-
-  static int? _int(dynamic value) {
-    if (value is int) return value;
-    if (value is num) return value.toInt();
-    return int.tryParse(value?.toString() ?? '');
-  }
-
-  static bool _constantTimeEquals(List<int> left, List<int> right) {
-    if (left.length != right.length) return false;
-    var difference = 0;
-    for (var index = 0; index < left.length; index++) {
-      difference |= left[index] ^ right[index];
-    }
-    return difference == 0;
-  }
-}
-
 class _ExecutionProxyIdentity {
   const _ExecutionProxyIdentity(this.userId);
 
@@ -698,36 +641,4 @@ enum ExecutionProxyRequestKind {
   oauthStatus,
   oauthAuthorize,
   aiChatCompletions,
-}
-
-Future<void> _writeError(
-  HttpResponse response,
-  int statusCode, {
-  required String code,
-  required String message,
-  required String requestId,
-}) {
-  return _writeJson(
-    response,
-    statusCode,
-    {
-      'error': {
-        'code': code,
-        'message': message,
-      },
-      'requestId': requestId,
-    },
-  );
-}
-
-Future<void> _writeJson(
-  HttpResponse response,
-  int statusCode,
-  Map<String, dynamic> payload,
-) async {
-  response
-    ..statusCode = statusCode
-    ..headers.contentType = ContentType.json
-    ..write(jsonEncode(payload));
-  await response.close();
 }

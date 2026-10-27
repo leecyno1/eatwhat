@@ -4,6 +4,11 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
+import 'package:eatwhat_app/core/contracts/auth_session_contract.dart';
+
+import 'support/atomic_json_file.dart';
+import 'support/eatwhat_jwt.dart';
+import 'support/server_http.dart';
 
 Future<void> main(List<String> args) async {
   final config = EatWhatAuthServerConfig.fromEnvironment(
@@ -44,7 +49,8 @@ class EatWhatAuthServer {
   Future<void> _handle(HttpRequest request) async {
     try {
       if (request.method == 'GET' && request.uri.path == '/health') {
-        await _writeJson(request.response, HttpStatus.ok, {'status': 'ok'});
+        await writeJsonResponse(
+            request.response, HttpStatus.ok, {'status': 'ok'});
         return;
       }
 
@@ -74,7 +80,7 @@ class EatWhatAuthServer {
       }
 
       if (request.method != 'POST') {
-        await _writeError(
+        await writeJsonError(
           request.response,
           HttpStatus.methodNotAllowed,
           'method_not_allowed',
@@ -85,7 +91,7 @@ class EatWhatAuthServer {
 
       final body = await _readJson(request);
       if (body == null) {
-        await _writeError(
+        await writeJsonError(
           request.response,
           HttpStatus.badRequest,
           'invalid_json',
@@ -105,7 +111,7 @@ class EatWhatAuthServer {
           await _memberActivate(request, body);
           return;
         default:
-          await _writeError(
+          await writeJsonError(
             request.response,
             HttpStatus.notFound,
             'route_not_found',
@@ -115,7 +121,7 @@ class EatWhatAuthServer {
       }
     } on Object {
       try {
-        await _writeError(
+        await writeJsonError(
           request.response,
           HttpStatus.internalServerError,
           'internal_error',
@@ -140,7 +146,7 @@ class EatWhatAuthServer {
 
     final validation = _validateRegistration(username, email, password);
     if (validation != null) {
-      await _writeError(
+      await writeJsonError(
         response,
         HttpStatus.unprocessableEntity,
         'validation_error',
@@ -160,7 +166,7 @@ class EatWhatAuthServer {
       lastLoginAt: now,
     );
     if (!await _store.createIfAvailable(user)) {
-      await _writeError(
+      await writeJsonError(
         response,
         HttpStatus.conflict,
         'account_exists',
@@ -178,7 +184,7 @@ class EatWhatAuthServer {
     final account = _string(body['account']).toLowerCase();
     final password = body['password']?.toString() ?? '';
     if (account.isEmpty || password.isEmpty) {
-      await _writeError(
+      await writeJsonError(
         response,
         HttpStatus.unprocessableEntity,
         'validation_error',
@@ -190,7 +196,7 @@ class EatWhatAuthServer {
     final current = await _store.find(account, account);
     if (current == null ||
         !EatWhatPasswordHasher.verify(password, current.passwordHash)) {
-      await _writeError(
+      await writeJsonError(
         response,
         HttpStatus.unauthorized,
         'invalid_credentials',
@@ -208,7 +214,7 @@ class EatWhatAuthServer {
     final token = _bearerToken(request);
     final userId = EatWhatJwt.verify(token, secret: config.jwtSecret);
     if (userId == null) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.unauthorized,
         'unauthorized',
@@ -218,7 +224,7 @@ class EatWhatAuthServer {
     }
     final user = await _store.findById(userId);
     if (user == null) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.unauthorized,
         'unauthorized',
@@ -226,7 +232,7 @@ class EatWhatAuthServer {
       );
       return;
     }
-    await _writeJson(
+    await writeJsonResponse(
         request.response, HttpStatus.ok, {'user': user.publicJson});
   }
 
@@ -252,7 +258,7 @@ class EatWhatAuthServer {
   Future<void> _memberStatus(HttpRequest request) async {
     final user = await _userFromRequest(request);
     if (user == null) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.unauthorized,
         'unauthorized',
@@ -260,7 +266,7 @@ class EatWhatAuthServer {
       );
       return;
     }
-    await _writeJson(request.response, HttpStatus.ok, {
+    await writeJsonResponse(request.response, HttpStatus.ok, {
       'user': user.publicJson,
       'membership': {
         'isMember': user.isMember,
@@ -280,7 +286,7 @@ class EatWhatAuthServer {
   ) async {
     final user = await _userFromRequest(request);
     if (user == null) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.unauthorized,
         'unauthorized',
@@ -299,7 +305,7 @@ class EatWhatAuthServer {
       memberExpiresAt: base.add(const Duration(days: 365)),
     );
     await _store.update(updated);
-    await _writeJson(request.response, HttpStatus.ok, {
+    await writeJsonResponse(request.response, HttpStatus.ok, {
       'user': updated.publicJson,
       'membership': {
         'isMember': updated.isMember,
@@ -330,11 +336,15 @@ class EatWhatAuthServer {
       expiresAt: expiresAt,
       secret: config.jwtSecret,
     );
-    return _writeJson(response, statusCode, {
-      'accessToken': token,
-      'expiresAt': expiresAt.toIso8601String(),
-      'user': user.publicJson,
-    });
+    return writeJsonResponse(
+      response,
+      statusCode,
+      AuthSessionResponse(
+        accessToken: token,
+        expiresAt: expiresAt,
+        user: user.publicJson,
+      ).toJson(),
+    );
   }
 }
 
@@ -383,70 +393,6 @@ class EatWhatAuthServerConfig {
   final Duration tokenTtl;
 }
 
-class EatWhatJwt {
-  const EatWhatJwt._();
-
-  static String issue({
-    required String userId,
-    required DateTime expiresAt,
-    required String secret,
-  }) {
-    final header = _encode({'alg': 'HS256', 'typ': 'JWT'});
-    final payload = _encode({
-      'sub': userId,
-      'type': 'access',
-      'iat': DateTime.now().toUtc().millisecondsSinceEpoch ~/ 1000,
-      'exp': expiresAt.millisecondsSinceEpoch ~/ 1000,
-    });
-    final signature = _base64(
-      Hmac(sha256, utf8.encode(secret))
-          .convert(utf8.encode('$header.$payload'))
-          .bytes,
-    );
-    return '$header.$payload.$signature';
-  }
-
-  static String? verify(String token, {required String secret}) {
-    try {
-      final parts = token.split('.');
-      if (parts.length != 3) return null;
-      final expected = Hmac(sha256, utf8.encode(secret))
-          .convert(utf8.encode('${parts[0]}.${parts[1]}'))
-          .bytes;
-      final actual = base64Url.decode(base64Url.normalize(parts[2]));
-      if (!_equals(expected, actual)) return null;
-      final payload = jsonDecode(
-        utf8.decode(base64Url.decode(base64Url.normalize(parts[1]))),
-      );
-      if (payload is! Map || payload['type'] != 'access') return null;
-      final expiresAt = _int(payload['exp']);
-      if (expiresAt == null ||
-          expiresAt <= DateTime.now().millisecondsSinceEpoch ~/ 1000) {
-        return null;
-      }
-      final userId = payload['sub']?.toString().trim() ?? '';
-      return userId.isEmpty ? null : userId;
-    } on Object {
-      return null;
-    }
-  }
-
-  static String _encode(Map<String, dynamic> json) =>
-      _base64(utf8.encode(jsonEncode(json)));
-
-  static String _base64(List<int> bytes) =>
-      base64Url.encode(bytes).replaceAll('=', '');
-
-  static bool _equals(List<int> left, List<int> right) {
-    if (left.length != right.length) return false;
-    var difference = 0;
-    for (var index = 0; index < left.length; index++) {
-      difference |= left[index] ^ right[index];
-    }
-    return difference == 0;
-  }
-}
-
 class EatWhatPasswordHasher {
   const EatWhatPasswordHasher._();
 
@@ -471,7 +417,7 @@ class EatWhatPasswordHasher {
         salt,
         iterations: int.parse(parts[1]),
       );
-      return EatWhatJwt._equals(expected, actual);
+      return EatWhatJwt.constantTimeEquals(expected, actual);
     } on Object {
       return false;
     }
@@ -554,13 +500,10 @@ class FileEatWhatUserStore {
   ) async {
     final operation = _writeQueue.then((_) async {
       final users = change(await _all());
-      await _file.parent.create(recursive: true);
-      final temporary = File('${_file.path}.tmp');
-      await temporary.writeAsString(
-        jsonEncode(users.map((user) => user.toJson()).toList()),
-        flush: true,
+      await writeJsonAtomically(
+        _file,
+        users.map((user) => user.toJson()).toList(),
       );
-      await temporary.rename(_file.path);
     });
     _writeQueue = operation.catchError((_) {});
     await operation;
@@ -714,12 +657,6 @@ String _bearerToken(HttpRequest request) {
   return value.startsWith('Bearer ') ? value.substring(7).trim() : '';
 }
 
-int? _int(dynamic value) {
-  if (value is int) return value;
-  if (value is num) return value.toInt();
-  return int.tryParse(value?.toString() ?? '');
-}
-
 Future<Map<String, dynamic>?> _readJson(HttpRequest request) async {
   try {
     final decoded = jsonDecode(await utf8.decoder.bind(request).join());
@@ -727,29 +664,6 @@ Future<Map<String, dynamic>?> _readJson(HttpRequest request) async {
   } on FormatException {
     return null;
   }
-}
-
-Future<void> _writeError(
-  HttpResponse response,
-  int statusCode,
-  String code,
-  String message,
-) {
-  return _writeJson(response, statusCode, {
-    'error': {'code': code, 'message': message},
-  });
-}
-
-Future<void> _writeJson(
-  HttpResponse response,
-  int statusCode,
-  Map<String, dynamic> body,
-) async {
-  response
-    ..statusCode = statusCode
-    ..headers.contentType = ContentType.json
-    ..write(jsonEncode(body));
-  await response.close();
 }
 
 /// 会员中心官网单页（黑金），由 /portal 直接 serve。

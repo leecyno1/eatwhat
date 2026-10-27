@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 import 'package:cryptography/cryptography.dart' hide Hmac;
+import 'package:eatwhat_app/core/contracts/alipay_payment_contract.dart';
 import 'package:eatwhat_app/v2/core/services/membership_credential.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -376,11 +377,13 @@ void main() {
         headers: headers,
       );
       expect(response['statusCode'], 200, reason: '${response['payload']}');
-      final payload = response['payload'] as Map<String, dynamic>;
-      expect(payload['status'], 'payment_required');
-      expect(payload['plan'], 'yearly');
-      expect(payload['payUrl'].toString(), isNotEmpty);
-      return payload['orderId'].toString();
+      final payload = AlipayPaymentOrderResponse.fromJson(
+        response['payload'] as Map<String, dynamic>,
+      );
+      expect(payload.status, 'payment_required');
+      expect(payload.plan, 'yearly');
+      expect(payload.payUrl, isNotEmpty);
+      return payload.orderId;
     }
 
     test('未鉴权创建订单被拒绝', () async {
@@ -416,7 +419,11 @@ void main() {
         headers: authHeader(),
       );
       expect(status['statusCode'], 200);
-      expect((status['payload'] as Map)['status'], 'pending');
+      final statusPayload = AlipayPaymentStatusResponse.fromJson(
+        status['payload'] as Map<String, dynamic>,
+      );
+      expect(statusPayload.status, 'pending');
+      expect(statusPayload.membershipCredential, isNull);
       expect(
         (status['payload'] as Map).containsKey('membershipCredential'),
         isFalse,
@@ -463,9 +470,11 @@ void main() {
         headers: authHeader(),
       );
       expect(status['statusCode'], 200);
-      final payload = status['payload'] as Map<String, dynamic>;
-      expect(payload['status'], 'paid');
-      final credentialJson = payload['membershipCredential'] as Map;
+      final payload = AlipayPaymentStatusResponse.fromJson(
+        status['payload'] as Map<String, dynamic>,
+      );
+      expect(payload.status, 'paid');
+      final credentialJson = payload.membershipCredential!;
       expect(credentialJson['userId'], _testUserId);
       expect(credentialJson['orderId'], orderId);
 
@@ -676,6 +685,48 @@ void main() {
         localClient.close(force: true);
         await localServer.close();
       }
+    });
+  });
+
+  group('订单 JSON 持久化', () {
+    MembershipOrder order(String orderId) => MembershipOrder(
+          orderId: orderId,
+          userId: _testUserId,
+          planId: 'yearly',
+          totalAmount: '12.00',
+          status: 'pending',
+        );
+
+    test(
+      '原子替换已有订单文件并保留新旧订单',
+      () async {
+        final file = File('${directory.path}/atomic_orders.json');
+        final store = MembershipOrderStore(file.path)..upsert(order('order-1'));
+        expect(file.existsSync(), isTrue);
+
+        // 原子 rename 只依赖目录可写；旧的直接写文件方式会在这里失败。
+        Process.runSync('chmod', ['444', file.path]);
+        addTearDown(() {
+          if (file.existsSync()) {
+            Process.runSync('chmod', ['644', file.path]);
+          }
+        });
+
+        expect(() => store.upsert(order('order-2')), returnsNormally);
+
+        final restored = MembershipOrderStore(file.path);
+        expect(restored.find('order-1'), isNotNull);
+        expect(restored.find('order-2'), isNotNull);
+        expect(File('${file.path}.tmp').existsSync(), isFalse);
+      },
+      skip: Platform.isWindows,
+    );
+
+    test('订单文件损坏时拒绝启动而不是静默丢单', () {
+      final file = File('${directory.path}/corrupted_orders.json')
+        ..writeAsStringSync('{broken');
+
+      expect(() => MembershipOrderStore(file.path), throwsStateError);
     });
   });
 

@@ -3,9 +3,12 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
+import 'package:eatwhat_app/core/contracts/alipay_payment_contract.dart';
 import 'package:eatwhat_app/v2/core/services/membership_credential.dart';
 
-import 'execution_proxy_server.dart' show EatWhatJwtVerifier;
+import 'support/atomic_json_file.dart';
+import 'support/eatwhat_jwt.dart';
+import 'support/server_http.dart';
 
 /// 支付服务端（P1-1 真实支付）：
 /// - 创建会员订单并对 alipay.trade.wap.pay 请求做 RSA2 签名（商户私钥仅存服务端）；
@@ -678,7 +681,7 @@ class MembershipOrder {
       };
 }
 
-/// 订单 JSON 文件存储：单进程内存态 + 每次变更全量落盘。
+/// 订单 JSON 文件存储：单进程内存态 + 临时文件原子替换；损坏时拒绝启动。
 class MembershipOrderStore {
   MembershipOrderStore(String path) : _file = File(path) {
     _load();
@@ -691,12 +694,9 @@ class MembershipOrderStore {
 
   void upsert(MembershipOrder order) {
     _orders[order.orderId] = order;
-    final parent = _file.parent;
-    if (!parent.existsSync()) {
-      parent.createSync(recursive: true);
-    }
-    _file.writeAsStringSync(
-      jsonEncode([for (final order in _orders.values) order.toJson()]),
+    writeJsonAtomicallySync(
+      _file,
+      [for (final order in _orders.values) order.toJson()],
     );
   }
 
@@ -713,7 +713,7 @@ class MembershipOrderStore {
         }
       }
     } on FormatException {
-      // 损坏的持久化文件按空订单表处理。
+      throw StateError('支付订单文件损坏，拒绝按空订单表启动：${_file.path}');
     }
   }
 }
@@ -895,7 +895,7 @@ class PaymentServer {
       }
       final path = request.uri.path;
       if (request.method == 'GET' && path == '/health') {
-        await _writeJson(
+        await writeJsonResponse(
           request.response,
           HttpStatus.ok,
           {'status': 'ok', 'service': 'payment'},
@@ -914,20 +914,20 @@ class PaymentServer {
         await _handleNotify(request);
         return;
       }
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.notFound,
-        code: 'route_not_found',
-        message: '路由不存在',
+        'route_not_found',
+        '路由不存在',
       );
     } on Object catch (error, stackTrace) {
       stderr.writeln('[Payment] 处理请求失败：$error\n$stackTrace');
       try {
-        await _writeError(
+        await writeJsonError(
           request.response,
           HttpStatus.internalServerError,
-          code: 'internal_error',
-          message: '服务内部错误',
+          'internal_error',
+          '服务内部错误',
         );
       } on Object {
         // 响应可能已关闭。
@@ -937,24 +937,25 @@ class PaymentServer {
 
   Future<void> _handleCreateOrder(HttpRequest request) async {
     final body = await _readJsonBody(request);
-    final userId = _resolveUserId(request, body);
+    final orderRequest = AlipayPaymentOrderRequest.fromJson(body);
+    final userId = _resolveUserId(request, orderRequest.userId);
     if (userId == null) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.unauthorized,
-        code: 'unauthorized',
-        message: '缺少有效的登录凭证',
+        'unauthorized',
+        '缺少有效的登录凭证',
       );
       return;
     }
-    final planId = body['plan']?.toString() ?? '';
+    final planId = orderRequest.plan;
     final plan = config.plans[planId];
     if (plan == null) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.unprocessableEntity,
-        code: 'unknown_plan',
-        message: '未知套餐：$planId',
+        'unknown_plan',
+        '未知套餐：$planId',
       );
       return;
     }
@@ -973,43 +974,47 @@ class PaymentServer {
       plan: plan,
       notifyUrl: config.notifyUrl,
     );
-    await _writeJson(request.response, HttpStatus.ok, {
-      'status': 'payment_required',
-      'orderId': orderId,
-      'plan': planId,
-      'payUrl': payUrl.toString(),
-    });
+    await writeJsonResponse(
+      request.response,
+      HttpStatus.ok,
+      AlipayPaymentOrderResponse(
+        status: 'payment_required',
+        orderId: orderId,
+        plan: planId,
+        payUrl: payUrl.toString(),
+      ).toJson(),
+    );
   }
 
   Future<void> _handleStatus(HttpRequest request) async {
-    final userId = _resolveUserId(request, const <String, dynamic>{});
+    final userId = _resolveUserId(request, null);
     if (userId == null) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.unauthorized,
-        code: 'unauthorized',
-        message: '缺少有效的登录凭证',
+        'unauthorized',
+        '缺少有效的登录凭证',
       );
       return;
     }
     final orderId = request.uri.queryParameters['orderId']?.trim() ?? '';
     if (orderId.isEmpty) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.unprocessableEntity,
-        code: 'validation_error',
-        message: 'orderId 不能为空',
+        'validation_error',
+        'orderId 不能为空',
       );
       return;
     }
     var order = _store.find(orderId);
     if (order == null ||
         (config.jwtSecret.isNotEmpty && order.userId != userId)) {
-      await _writeError(
+      await writeJsonError(
         request.response,
         HttpStatus.notFound,
-        code: 'order_not_found',
-        message: '订单不存在',
+        'order_not_found',
+        '订单不存在',
       );
       return;
     }
@@ -1020,14 +1025,15 @@ class PaymentServer {
         order = await _settleOrder(order);
       }
     }
-    final payload = <String, dynamic>{
-      'status': order.status,
-      'orderId': orderId,
-    };
-    if (order.membershipCredential != null) {
-      payload['membershipCredential'] = order.membershipCredential;
-    }
-    await _writeJson(request.response, HttpStatus.ok, payload);
+    await writeJsonResponse(
+      request.response,
+      HttpStatus.ok,
+      AlipayPaymentStatusResponse(
+        status: order.status,
+        orderId: orderId,
+        membershipCredential: order.membershipCredential,
+      ).toJson(),
+    );
   }
 
   Future<void> _handleNotify(HttpRequest request) async {
@@ -1114,7 +1120,7 @@ class PaymentServer {
   /// 返回 null 表示应拒绝（401）。
   String? _resolveUserId(
     HttpRequest request,
-    Map<String, dynamic> body,
+    String? bodyUserId,
   ) {
     final authHeader = request.headers.value(HttpHeaders.authorizationHeader);
     final token = authHeader != null && authHeader.startsWith('Bearer ')
@@ -1122,11 +1128,11 @@ class PaymentServer {
         : null;
     if (config.jwtSecret.isNotEmpty) {
       if (token == null || token.isEmpty) return null;
-      return EatWhatJwtVerifier.verify(token, secret: config.jwtSecret);
+      return EatWhatJwt.verify(token, secret: config.jwtSecret);
     }
     final headerUser = request.headers.value('x-eatwhat-user-id')?.trim();
     if (headerUser != null && headerUser.isNotEmpty) return headerUser;
-    final bodyUser = body['userId']?.toString().trim();
+    final bodyUser = bodyUserId?.trim();
     if (bodyUser != null && bodyUser.isNotEmpty) return bodyUser;
     return config.localUserId;
   }
@@ -1172,31 +1178,4 @@ class PaymentServer {
         'Content-Type, Authorization, X-Request-Id',
       );
   }
-}
-
-Future<void> _writeError(
-  HttpResponse response,
-  int statusCode, {
-  required String code,
-  required String message,
-}) {
-  return _writeJson(
-    response,
-    statusCode,
-    {
-      'error': {'code': code, 'message': message},
-    },
-  );
-}
-
-Future<void> _writeJson(
-  HttpResponse response,
-  int statusCode,
-  Map<String, dynamic> payload,
-) async {
-  response
-    ..statusCode = statusCode
-    ..headers.contentType = ContentType.json
-    ..write(jsonEncode(payload));
-  await response.close();
 }

@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'support/atomic_json_file.dart';
+
 class MeituanOAuthCredential {
   const MeituanOAuthCredential({
     required this.accessToken,
@@ -76,10 +78,7 @@ class FileMeituanOAuthStore implements MeituanOAuthStore {
     final operation = _writeQueue.then((_) async {
       final all = await _readAll();
       all[eatWhatUserId] = credential.toJson();
-      await _file.parent.create(recursive: true);
-      final temporary = File('${_file.path}.tmp');
-      await temporary.writeAsString(jsonEncode(all), flush: true);
-      await temporary.rename(_file.path);
+      await writeJsonAtomically(_file, all);
     });
     _writeQueue = operation.catchError((_) {});
     await operation;

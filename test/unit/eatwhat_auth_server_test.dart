@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:eatwhat_app/core/contracts/auth_session_contract.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../scripts/eatwhat_auth_server.dart';
 import '../../scripts/execution_proxy_server.dart';
+import '../../scripts/support/eatwhat_jwt.dart';
 
 void main() {
   test('吃什么后端注册登录并签发可被执行网关验证的 JWT', () async {
@@ -37,10 +39,12 @@ void main() {
     );
     expect(registered.statusCode, HttpStatus.created);
     final registeredBody = await _body(registered);
-    final token = registeredBody['accessToken'] as String;
-    final user = registeredBody['user'] as Map<String, dynamic>;
+    final registeredSession = AuthSessionResponse.tryParse(registeredBody);
+    expect(registeredSession, isNotNull);
+    final token = registeredSession!.accessToken;
+    final user = registeredSession.user;
     expect(
-      EatWhatJwtVerifier.verify(token, secret: secret),
+      EatWhatJwt.verify(token, secret: secret),
       user['id'],
     );
 
@@ -64,7 +68,9 @@ void main() {
       },
     );
     expect(login.statusCode, HttpStatus.ok);
-    expect((await _body(login))['accessToken'], isNotEmpty);
+    final loginSession = AuthSessionResponse.tryParse(await _body(login));
+    expect(loginSession, isNotNull);
+    expect(loginSession!.accessToken, isNotEmpty);
 
     final adapter = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     addTearDown(() => adapter.close(force: true));
