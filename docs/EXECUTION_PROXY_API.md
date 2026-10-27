@@ -55,7 +55,7 @@ Flutter 只登录“吃什么”。美团 OAuth 是首次交易时的一次授�
 ```http
 Content-Type: application/json
 Accept: application/json
-Authorization: Bearer <EXECUTION_PROXY_AUTH_TOKEN>  # 可选
+Authorization: Bearer <吃什么远程用户 JWT>          # 远程会话存在时
 X-Execution-Proxy-Token: <网关服务令牌>               # 配置固定服务令牌时使用
 X-Request-Id: <request-id>                           # 可选，网关会自动补齐
 ```
@@ -201,7 +201,7 @@ DIANPING_DELIVERY_MATCH_PATH=/v2/execution/dianping/delivery-match
 ```bash
 export EXECUTION_PROXY_BIND_ADDRESS=0.0.0.0
 export EXECUTION_PROXY_PORT=8787
-export EXECUTION_PROXY_REQUIRED_TOKEN=<由登录系统签发或网关校验的令牌>
+export EXECUTION_PROXY_REQUIRED_TOKEN=<独立随机网关服务令牌，不是用户 JWT>
 export EXECUTION_PROXY_JWT_SECRET=<与吃什么登录系统签发 JWT 相同的服务端密钥>
 export MINIMAX_API_KEY=<MiniMax 密钥，只留在服务端>
 export MINIMAX_CHAT_API_URL=https://api.minimaxi.com/v1
@@ -219,6 +219,8 @@ dart run scripts/execution_proxy_server.dart
 ```
 
 生产环境由“吃什么”登录系统签发短期用户 JWT。网关验证后从 `sub` 取得用户 ID，转发为可信的 `X-EatWhat-User-Id`，适配器再按这个 ID 读取该用户的美团 OAuth 凭证。客户端不能自行传用户 ID。
+
+客户端本地离线 `TokenService` JWT 不会作为 `Authorization` 发送。未配置远程登录服务时，只能连接不校验用户 JWT 的本地联调网关；生产网关应同时配置 `EATWHAT_AUTH_BASE_URL` 和服务端共享 JWT 密钥。
 
 ### 美团消费者点餐适配器
 
@@ -358,6 +360,8 @@ POST /api/v1/ai/chat/completions
 - `POST /api/v1/payment/alipay/orders`：创建支付宝 WAP 支付单，返回 `status: "payment_required"` 与 `payUrl`
 - `GET /api/v1/payment/alipay/status?orderId=`：轮询订单状态；`paid` 时返回服务端 Ed25519 签发的 `membershipCredential`，客户端验签（fail closed）
 - `POST /api/v1/payment/alipay/notify`：支付宝异步回调（需公网可达），RSA2 验签通过后标记已支付并签发凭证
+
+客户端轮询 30 秒仍未确认时会记录待对账订单（仅本机、绑定当前账号、24 小时有效）；下次打开账号页补查一次状态，验签通过后升级会员并清理记录。
 
 支付宝商户私钥、支付宝公钥、会员签发种子全部只通过环境变量配置在服务端，不进仓库、不进客户端。
 

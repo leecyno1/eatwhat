@@ -27,6 +27,8 @@ AI 服务独家使用 MiniMax，密钥策略分两层（详见 `SECURITY_SETUP.m
 - **Staging/生产**：客户端只配置执行代理地址；MiniMax、平台、支付密钥全部只留在服务端
 
 > **生产连接约束（2026-10 实测）**：iOS `Info.plist` 仅开启 `NSAllowsLocalNetworking`，不接受任意明文 HTTP；因此生产 `EXECUTION_PROXY_BASE_URL` 必须是 **HTTPS 域名**（当前 `.env` 的 `http://<IP>:8787` 仅可用于本地/内网联调，真机会被 ATS 拦截且令牌明文传输不安全）。上线前需完成域名 + 证书 + 反向代理（nginx 443 → 8787）。
+>
+> **客户端已强制执行**：release 构建下，非 HTTPS 的 `EXECUTION_PROXY_BASE_URL` / `EATWHAT_AUTH_BASE_URL` 会被判定为不可用（AI 走本地兜底、外卖/支付入口隐藏），启动日志会打印 `[EnvConfig] 发布配置问题`。同时 release 不再接受 `MEMBERSHIP_SIGNING_SEED` 验签回退，也不会使用误注入的 `MINIMAX_API_KEY`（直接按代理模式运行或走本地兜底）。
 
 #### `.env.development`
 ```bash
@@ -86,12 +88,12 @@ dependencies:
 #### `android/app/build.gradle.kts`
 ```kotlin
 android {
-    compileSdk 34
+    compileSdk 36
     
     defaultConfig {
         applicationId "com.eatwhat.app"
-        minSdk 21
-        targetSdk 34
+        minSdk 23
+        targetSdk 35
         versionCode flutter.versionCode
         versionName flutter.versionName
         

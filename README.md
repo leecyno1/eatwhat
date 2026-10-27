@@ -4,7 +4,7 @@
 
 ## 当前状态（2026-10）
 
-- 主线功能完成，release 构建三端通过：Android AAB 已用上传密钥签名（184MB）、iOS `--no-codesign` 存档（125MB）、Web 构建可用（170MB）
+- 主线功能完成，release 构建三端通过：Android AAB 已用上传密钥签名（184.6MB）、iOS `--no-codesign` 存档（168.0MB）、Web 构建可用（167.5MB）
 - 外卖下单：客户端与代理链路就绪，但美团开放平台资质认证挂起；生产环境外卖入口显示「尚未开通」（预期降级）
 - AI 增强与会员支付：依赖自营后端三服务；未部署时自动降级，本地推荐/做菜链路不受影响
 - 账号：本地共用账号，无云端同步（既定策略）
@@ -28,6 +28,12 @@ main.dart -> AppV2 -> HomePage -> DecisionPage -> ResultPage
 
 - `lib/v2/`：产品主线（首页/决策/结果/详情/执行/收藏/周报/主题）
 - `lib/core/`、`lib/features/`：仍被复用的认证与基础服务（新增功能优先 `lib/v2/`）
+- 组合根与路由：`lib/app/` 统一装配 `AppDependencies` 与 GoRouter；`app_v2_routes.dart` 只保存路由契约，主链服务按构造注入并允许 route data 覆盖
+- AI 服务：`GenerationService` 仅保留 facade；传输、提示词、菜品增强分别由 `GenerationTransport`、`GenerationPrompts`、`DishEnhancementService` 负责，缓存统一复用 `V2AiCacheService`
+- AI 配置与端口：生产组合根以不可变 `ClientConfig` 固定 AI 配置，`DishEnhancementService` 通过 `AiGateway` 调用传输；默认单例保留开发/测试环境动态读取
+- 会话安全：iOS/macOS Keychain、Android Keystore（Android 6.0/API 23+）；旧 XOR 数据首次读取自动迁移，执行代理仅发送远程会话 token
+- 推荐会话：每轮仅本地召回一次，本地结果与 AI 增强共享候选；结果页接管增强任务并在销毁时取消，网络请求仅对连接失败、超时、429 与 5xx 自动重试
+- PR6 共享边界：`lib/core/contracts/` 为纯 Dart 的客户端/服务端共享 DTO；`scripts/support/` 为共享 JWT、JSON 响应与原子 JSON 写入运行时；架构测试禁止服务端入口交叉导入及契约层引入禁用依赖
 - 资产：菜品图与步骤图以 WebP 形式打包，经 Git LFS 管理；`assets/data/*.db` 为本地菜谱库
 
 ## 快速开始
@@ -48,7 +54,7 @@ flutter run -d ios|android|chrome
 
 ```bash
 flutter analyze
-flutter test                  # 465 个单元/Widget 用例
+flutter test                  # 565 个单元/Widget 用例
 ```
 
 集成测试（需模拟器 + mock 代理）：
@@ -80,6 +86,8 @@ flutter build web --release
 
 - 外卖未开通：等待美团开放平台资质审批（协议与安全证明按用户决定挂起）
 - 部分 HowToCook 菜谱未收录步骤图，列表与详情显示占位图
+- 移动端会员购买入口按双店数字商品政策隐藏（需 IAP/Play Billing）；Web 端购买要求 HTTPS 代理与内嵌验签公钥，缺任一项不展示入口
+- 生产后端必须使用 HTTPS 域名：release 构建会拒绝明文代理/认证地址，AI 走本地兜底、外卖与支付入口隐藏，启动日志打印 `[EnvConfig] 发布配置问题`
 - Web 端分享依赖浏览器文件分享能力；不支持时自动回退为复制分享文案（移动端为系统分享面板）
 
 ## 许可证

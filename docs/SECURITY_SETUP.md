@@ -26,20 +26,22 @@ MINIMAX_API_KEY=your_real_api_key_here
 # EXECUTION_PROXY_AUTH_TOKEN=your_proxy_token
 ```
 
-### 3. 生成安全密钥
+> release 构建即使误注入 `MINIMAX_API_KEY` 也不会使用（AI 按代理模式运行，未配代理则走本地兜底），避免长期密钥随包分发。代理地址必须是 HTTPS。
 
-**重要：请生成随机字符串替换以下默认值**
+### 3. 配置本地安全变量
 
-```bash
-# 生成密码哈希盐值（建议32位随机字符串）
+```env
+# 本地密码哈希盐值
 PASSWORD_SALT=your_random_salt_here
 
-# 生成JWT密钥（建议64位随机字符串）  
+# 仅用于本地离线会话签名，不是远程用户身份
 JWT_SECRET=your_jwt_secret_here
 
-# 生成加密密钥（建议32位随机字符串）
+# 仅用于迁移旧版 XOR 数据；升级期间保留原值
 ENCRYPTION_KEY=your_encryption_key_here
 ```
+
+新会话数据由系统 Keychain/Keystore 保护，不再使用 `ENCRYPTION_KEY` 加密。已有安装必须保留旧值，直到旧数据完成首次读取迁移；否则旧会话无法解密并会要求重新登录。
 
 ### 4. 生成随机字符串的方法
 
@@ -89,10 +91,17 @@ export EXECUTION_PROXY_AUTH_TOKEN="your_proxy_token"
 MiniMax、美团/饿了么/点评、支付宝商户密钥只配置在对应服务端
 （`execution_proxy_server.dart` / 适配器 / `payment_server.dart`），绝不导出给客户端构建。
 
+## 会话存储与令牌边界
+
+- iOS/macOS 使用 Keychain；Android 使用 Keystore 保护的 RSA OAEP + AES-GCM，最低支持 Android 6.0（API 23）。Android 自动备份已关闭，避免密文恢复到没有对应密钥的设备。
+- 旧版 `secure_*` / `iv_*` XOR 数据只在读取时迁移；系统安全存储写入成功后才删除旧副本。
+- 本地离线 JWT 只用于本机会话校验，不作为执行代理的用户身份。执行代理和 AI 代理只默认发送 `eatwhat_auth_server` 签发的远程会话 JWT。
+- Web 安全存储依赖 WebCrypto，只能在 HTTPS 或 localhost 使用；它不能替代 CSP、HSTS 和 XSS 防护。
+
 ## 📝 安全检查清单
 
 - [ ] `.env` 文件已添加到 `.gitignore`
-- [ ] 所有默认密钥已替换为随机生成的值
+- [ ] 本地默认盐与 JWT 密钥已替换；旧安装迁移期间保留原 `ENCRYPTION_KEY`
 - [ ] 客户端构建不包含任何 AI/平台/支付密钥（只配置 `EXECUTION_PROXY_BASE_URL`）
 - [ ] 生产环境禁用了调试模式
 - [ ] 定期轮换敏感密钥
@@ -102,7 +111,7 @@ MiniMax、美团/饿了么/点评、支付宝商户密钥只配置在对应服�
 
 1. **永远不要**提交包含真实API密钥的 `.env` 文件
 2. **永远不要**在代码中硬编码敏感信息
-3. **定期轮换**API密钥和加密密钥
+3. **定期轮换**API 与服务端密钥；旧数据迁移期间不要轮换 `ENCRYPTION_KEY`
 4. **监控**API密钥的使用情况
 5. **限制**API密钥的访问权限
 
