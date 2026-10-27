@@ -22,8 +22,9 @@ val keystoreProperties = Properties().apply {
 
 android {
     namespace = "com.eatwhat.eatwhat_app"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+    compileSdk = 36
+    // Align with the highest NDK required by plugins (vibration needs 27.x).
+    ndkVersion = "27.0.12077973"
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -36,7 +37,7 @@ android {
 
     defaultConfig {
         applicationId = "com.eatwhat.eatwhat_app"
-        minSdk = flutter.minSdkVersion
+        minSdk = 23
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

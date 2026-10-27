@@ -25,7 +25,15 @@ class ExecutionProxyClient {
   final String? authToken;
   final String serviceToken;
 
-  bool get isConfigured => baseUrl.isNotEmpty;
+  bool get isConfigured =>
+      baseUrl.trim().isNotEmpty && EnvConfig.backendUrlIssue(baseUrl) == null;
+
+  /// 已配置但不满足当前构建要求时的原因；未配置/可用时为 null。
+  String? get configIssue {
+    final raw = baseUrl.trim();
+    if (raw.isEmpty) return null;
+    return EnvConfig.backendUrlIssue(raw);
+  }
 
   Future<Map<String, bool>> getProviderHealth({String? path}) async {
     final payload = await getJson(path ?? EnvConfig.executionProxyHealthPath);
@@ -90,14 +98,17 @@ class ExecutionProxyClient {
 
   void _ensureConfigured() {
     if (isConfigured) return;
+    final issue = configIssue;
     throw PlatformApiNotConfiguredException(
       'proxy',
-      message: '执行层代理服务未配置（缺少 EXECUTION_PROXY_BASE_URL）',
+      message: issue == null
+          ? '执行层代理服务未配置（缺少 EXECUTION_PROXY_BASE_URL）'
+          : '执行层代理不可用：$issue',
     );
   }
 
   Map<String, String> _headers() {
-    final userToken = authToken ?? AuthService.authToken ?? '';
+    final userToken = authToken ?? AuthService.remoteAuthToken ?? '';
     return {
       'Content-Type': 'application/json',
       'Accept': 'application/json',

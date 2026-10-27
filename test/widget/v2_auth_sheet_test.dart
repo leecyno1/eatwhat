@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:eatwhat_app/core/services/auth_service.dart';
 import 'package:eatwhat_app/v2/features/auth/auth_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +21,7 @@ void main() {
 
   setUp(() {
     SharedPreferences.setMockInitialValues({});
+    FlutterSecureStorage.setMockInitialValues({});
   });
 
   Widget host() {

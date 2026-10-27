@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:eatwhat_app/v2/core/services/membership_credential.dart';
 import 'package:eatwhat_app/v2/core/services/membership_verification.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -100,6 +102,59 @@ void main() {
     final credential = await issueDemo();
 
     expect(await MembershipVerification.verify(credential), isFalse);
+  });
+
+  test('内嵌公钥优先于开发种子且可验签', () async {
+    final key = await MembershipCredentials.publicKeyFromSeed(seed);
+    dotenv.testLoad(
+      fileInput: 'MEMBERSHIP_SIGNING_PUBLIC_KEY=${base64Encode(key.bytes)}',
+    );
+
+    expect(MembershipVerification.hasVerificationKey(), isTrue);
+    expect(
+      await MembershipVerification.verify(
+        await issueDemo(),
+        expectedUserId: 'user-1',
+      ),
+      isTrue,
+    );
+  });
+
+  test('畸形内嵌公钥 fail closed 且不抛异常', () async {
+    dotenv.testLoad(
+      fileInput: 'MEMBERSHIP_SIGNING_PUBLIC_KEY=not-base64!!',
+    );
+
+    expect(MembershipVerification.hasVerificationKey(), isFalse);
+    expect(await MembershipVerification.verificationKey(), isNull);
+    expect(
+      await MembershipVerification.verify(
+        await issueDemo(),
+        expectedUserId: 'user-1',
+      ),
+      isFalse,
+    );
+  });
+
+  test('发布语义下开发种子不再作为验签回退', () async {
+    final credential = await issueDemo();
+
+    expect(
+      MembershipVerification.hasVerificationKey(allowDevSeed: false),
+      isFalse,
+    );
+    expect(
+      await MembershipVerification.verificationKey(allowDevSeed: false),
+      isNull,
+    );
+    expect(
+      await MembershipVerification.verify(
+        credential,
+        expectedUserId: 'user-1',
+        allowDevSeed: false,
+      ),
+      isFalse,
+    );
   });
 
   test('fromJson 拒绝残缺数据', () {

@@ -476,6 +476,21 @@ class _EatWhatAccountSheet extends StatefulWidget {
 class _EatWhatAccountSheetState extends State<_EatWhatAccountSheet> {
   bool _purchasing = false;
 
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_resumePendingPurchase());
+  }
+
+  Future<void> _resumePendingPurchase() async {
+    final upgraded = await V2MembershipService.instance.resumePendingPurchase();
+    if (!mounted || !upgraded) return;
+    setState(() {});
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('会员已生效，感谢支持')),
+    );
+  }
+
   Future<void> _buyMembership() async {
     if (_purchasing) return;
     setState(() => _purchasing = true);
@@ -496,7 +511,7 @@ class _EatWhatAccountSheetState extends State<_EatWhatAccountSheet> {
       setState(() => _purchasing = false);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(paid ? '会员已生效，感谢支持' : '暂未确认支付完成，稍后自动同步'),
+          content: Text(paid ? '会员已生效，感谢支持' : '暂未确认支付完成，重新打开账号页可自动同步'),
         ),
       );
       if (paid) {
@@ -627,10 +642,11 @@ class _EatWhatAccountSheetState extends State<_EatWhatAccountSheet> {
                 user: user,
                 purchasing: _purchasing,
                 // 移动端商店要求数字商品走 IAP/Play Billing，支付宝收银台仅限 Web；
-                // 后端未配置时也不展示无法完成的购买入口。
-                onBuy: kIsWeb && V2MembershipService.instance.isConfigured
-                    ? _buyMembership
-                    : null,
+                // 代理或验签公钥缺失时也不展示无法完成的购买入口。
+                onBuy:
+                    kIsWeb && V2MembershipService.instance.canCompletePurchase
+                        ? _buyMembership
+                        : null,
               ),
               const SizedBox(height: AppSpacing.lg),
               SizedBox(

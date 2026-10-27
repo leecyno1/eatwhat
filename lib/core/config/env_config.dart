@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb, kReleaseMode;
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 /// 环境变量配置管理类
@@ -108,13 +108,17 @@ class EnvConfig {
 
   /// 初始化环境配置
   static Future<void> init() async {
-    if (kIsWeb) return;
-    try {
-      await dotenv.load(isOptional: true);
-      debugPrint('Environment configuration loaded successfully');
-    } catch (e) {
-      debugPrint('Warning: Failed to load .env file: $e');
-      debugPrint('Continuing with dart-define/default configuration...');
+    if (!kIsWeb) {
+      try {
+        await dotenv.load(isOptional: true);
+        debugPrint('Environment configuration loaded successfully');
+      } catch (e) {
+        debugPrint('Warning: Failed to load .env file: $e');
+        debugPrint('Continuing with dart-define/default configuration...');
+      }
+    }
+    for (final issue in releaseConfigIssues()) {
+      debugPrint('[EnvConfig] 发布配置问题：$issue');
     }
   }
 
@@ -149,6 +153,67 @@ class EnvConfig {
       _readEnv('EXECUTION_PROXY_AUTH_TOKEN');
 
   static String get eatWhatAuthBaseUrl => _readEnv('EATWHAT_AUTH_BASE_URL');
+
+  /// 后端地址校验：返回 null 表示可用，否则返回可读原因。
+  ///
+  /// release 构建要求 HTTPS：iOS ATS 与 Android 默认策略都会拦截明文，
+  /// 且代理令牌、登录 JWT 不允许走明文传输。开发/测试构建允许本地 HTTP。
+  static String? backendUrlIssue(
+    String rawUrl, {
+    bool requireHttps = kReleaseMode,
+  }) {
+    final value = rawUrl.trim();
+    if (value.isEmpty) return '未配置';
+    final uri = Uri.tryParse(value);
+    if (uri == null || !uri.hasScheme || uri.host.isEmpty) {
+      return '不是合法的绝对 URL';
+    }
+    if (uri.scheme != 'http' && uri.scheme != 'https') {
+      return '只支持 http/https';
+    }
+    if (requireHttps && uri.scheme != 'https') {
+      return 'release 构建必须使用 HTTPS';
+    }
+    return null;
+  }
+
+  /// 已配置但不满足当前构建要求时返回原因；未配置返回 null。
+  static String? get executionProxyConfigIssue {
+    final raw = executionProxyBaseUrl;
+    if (raw.trim().isEmpty) return null;
+    return backendUrlIssue(raw);
+  }
+
+  static bool get hasUsableExecutionProxy =>
+      executionProxyBaseUrl.trim().isNotEmpty &&
+      executionProxyConfigIssue == null;
+
+  /// 发布构建的配置自检。只返回问题描述，不输出任何密钥值。
+  static List<String> releaseConfigIssues({bool isRelease = kReleaseMode}) {
+    if (!isRelease) return const [];
+    final issues = <String>[];
+    final proxyRaw = executionProxyBaseUrl.trim();
+    if (proxyRaw.isNotEmpty) {
+      final proxyIssue = backendUrlIssue(proxyRaw, requireHttps: true);
+      if (proxyIssue != null) {
+        issues.add('EXECUTION_PROXY_BASE_URL: $proxyIssue');
+      }
+    }
+    final authRaw = eatWhatAuthBaseUrl.trim();
+    if (authRaw.isNotEmpty) {
+      final authIssue = backendUrlIssue(authRaw, requireHttps: true);
+      if (authIssue != null) {
+        issues.add('EATWHAT_AUTH_BASE_URL: $authIssue');
+      }
+    }
+    if (membershipSigningSeed.trim().isNotEmpty) {
+      issues.add('MEMBERSHIP_SIGNING_SEED 不得进入发布构建（可伪造会员凭证）');
+    }
+    if (minimaxApiKey.trim().isNotEmpty) {
+      issues.add('MINIMAX_API_KEY 不得进入发布构建（应走执行代理）');
+    }
+    return issues;
+  }
 
   /// 会员凭证签发种子（仅本地联调：mock 服务端与客户端共用派生同一密钥对）。
   /// 生产环境种子只留在服务端，客户端只配 [membershipSigningPublicKey]。

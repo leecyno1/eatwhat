@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
+import 'package:eatwhat_app/core/contracts/auth_session_contract.dart';
 import 'package:eatwhat_app/v2/core/services/membership_credential.dart';
 import 'package:eatwhat_app/v2/core/services/membership_verification.dart';
 import 'package:flutter/foundation.dart';
@@ -12,6 +13,8 @@ import '../utils/password_hash_util.dart';
 import 'secure_storage_service.dart';
 import 'token_service.dart';
 
+enum _AuthSessionOrigin { local, remote }
+
 /// 用户认证服务
 /// 处理用户注册、登录、注销等认证相关功能
 class AuthService {
@@ -22,6 +25,7 @@ class AuthService {
 
   static User? _currentUser;
   static String? _authToken;
+  static _AuthSessionOrigin? _sessionOrigin;
   static DateTime? _sessionExpiry;
   static DateTime? _lastActivity;
   static final Dio _dio = Dio(
@@ -37,6 +41,11 @@ class AuthService {
 
   /// 获取认证令牌
   static String? get authToken => _authToken;
+
+  static String? get remoteAuthToken =>
+      _sessionOrigin == _AuthSessionOrigin.remote && isLoggedIn
+          ? _authToken
+          : null;
 
   /// 检查是否已登录
   static bool get isLoggedIn =>
@@ -261,7 +270,11 @@ class AuthService {
     if (_currentUser == null || _currentUser!.id != user.id) return false;
     try {
       await _updateUser(user);
-      await _setCurrentUser(user, rememberMe: true);
+      await _setCurrentUser(
+        user,
+        rememberMe: true,
+        preserveSession: true,
+      );
       return true;
     } catch (e) {
       debugPrint('更新当前用户失败: $e');
@@ -464,15 +477,27 @@ class AuthService {
   }
 
   /// 设置当前用户
-  static Future<void> _setCurrentUser(User user,
-      {bool rememberMe = false}) async {
+  static Future<void> _setCurrentUser(
+    User user, {
+    bool rememberMe = false,
+    bool preserveSession = false,
+  }) async {
     _currentUser = user;
     await _enforceMembershipCredentialIntegrity();
     user = _currentUser!;
 
+    if (preserveSession &&
+        _sessionOrigin == _AuthSessionOrigin.remote &&
+        _authToken != null) {
+      _lastActivity = DateTime.now();
+      if (rememberMe) await _storeRemoteSession(user, _authToken!);
+      return;
+    }
+
     // 生成JWT令牌对
     final tokenPair = await TokenService.generateTokenPair(user.id);
     _authToken = tokenPair.accessToken;
+    _sessionOrigin = _AuthSessionOrigin.local;
     _sessionExpiry = tokenPair.expiresAt;
     _lastActivity = DateTime.now();
 
@@ -551,20 +576,19 @@ class AuthService {
     required bool rememberMe,
     required String successMessage,
   }) async {
-    final json = payload ?? const <String, dynamic>{};
-    final token = json['accessToken']?.toString() ?? '';
-    final expiresAt = DateTime.tryParse(json['expiresAt']?.toString() ?? '');
-    final user = _remoteUser(json['user']);
-    if (token.isEmpty || user == null || expiresAt == null) {
+    final session = AuthSessionResponse.tryParse(payload);
+    final user = _remoteUser(session?.user);
+    if (session == null || user == null) {
       return AuthResult(success: false, message: '吃什么登录服务返回格式错误');
     }
     final now = DateTime.now();
     _currentUser = user;
-    _authToken = token;
-    _sessionExpiry = expiresAt;
+    _authToken = session.accessToken;
+    _sessionOrigin = _AuthSessionOrigin.remote;
+    _sessionExpiry = session.expiresAt;
     _lastActivity = now;
     if (rememberMe) {
-      await _storeRemoteSession(user, token);
+      await _storeRemoteSession(user, session.accessToken);
     } else {
       await _clearStoredAuth(resetSession: false);
     }
@@ -588,6 +612,7 @@ class AuthService {
       }
       _currentUser = user;
       _authToken = token;
+      _sessionOrigin = _AuthSessionOrigin.remote;
       _sessionExpiry = expiresAt;
       _lastActivity = DateTime.now();
       await _storeRemoteSession(user, token);
@@ -911,6 +936,7 @@ class AuthService {
   static void _resetSession() {
     _currentUser = null;
     _authToken = null;
+    _sessionOrigin = null;
     _sessionExpiry = null;
     _lastActivity = null;
   }
