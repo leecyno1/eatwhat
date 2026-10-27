@@ -1,9 +1,13 @@
+import 'dart:async';
+
+import 'package:dio/dio.dart';
 import 'package:eatwhat_app/v2/core/data/models/ai_generation_models.dart';
 import 'package:eatwhat_app/v2/core/data/models/meal_planning_direction.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recommendation_resolution.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
+import 'package:eatwhat_app/v2/core/services/generation_service.dart';
 import 'package:eatwhat_app/v2/core/services/unified_recommendation_service_v2.dart';
 import 'package:eatwhat_app/v2/core/services/v2_howtocook_recipe_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_phase2_recommendation_service.dart';
@@ -476,6 +480,118 @@ void main() {
     expect(result.fallbackReason, 'ai_timeout');
   });
 
+  test('取消推荐会话后不采用迟到的 AI 结果并返回本地包', () async {
+    final refiner = Completer<AiRefinedRecommendations>();
+    final service = V2Phase2RecommendationService(
+      localRecommendationLoader: (_, __, ___) async => const [
+        RecipeModel(
+          id: 'local_1',
+          name: '番茄炒蛋',
+          description: '稳定的本地候选。',
+          source: 'unified_db',
+        ),
+      ],
+      recommendationRefiner: ({
+        required selectedTags,
+        required candidates,
+        required limit,
+        required customRequirement,
+      }) =>
+          refiner.future,
+      howToCookRecipeService: _emptyHowToCookService(),
+    );
+    final session = await service.startRecommendationSession(input: _input());
+
+    session.cancel();
+    refiner.complete(
+      const AiRefinedRecommendations(
+        recipeIds: ['local_1'],
+        reasonsById: {'local_1': '迟到的 AI 理由'},
+        summary: '迟到的 AI 结果',
+      ),
+    );
+    final enhanced = await session.enhanced;
+
+    expect(session.isCancelled, isTrue);
+    expect(enhanced.aiSummary, session.local.aiSummary);
+    expect(enhanced.resolutionStatus, session.local.resolutionStatus);
+    expect(
+      enhanced.aiReasonsByRecipeId.values,
+      isNot(contains('迟到的 AI 理由')),
+    );
+  });
+
+  test('取消推荐会话后不等待未完成的增强 Future', () async {
+    final refiner = Completer<AiRefinedRecommendations>();
+    addTearDown(() {
+      if (!refiner.isCompleted) {
+        refiner.complete(
+          const AiRefinedRecommendations(
+            recipeIds: ['local_1'],
+            reasonsById: {},
+          ),
+        );
+      }
+    });
+    final service = V2Phase2RecommendationService(
+      localRecommendationLoader: (_, __, ___) async => const [
+        RecipeModel(
+          id: 'local_1',
+          name: '番茄炒蛋',
+          description: '稳定的本地候选。',
+          source: 'unified_db',
+        ),
+      ],
+      recommendationRefiner: ({
+        required selectedTags,
+        required candidates,
+        required limit,
+        required customRequirement,
+      }) =>
+          refiner.future,
+      howToCookRecipeService: _emptyHowToCookService(),
+    );
+    final session = await service.startRecommendationSession(input: _input());
+
+    session.cancel();
+
+    final enhanced = await session.enhanced.timeout(
+      const Duration(milliseconds: 100),
+    );
+    expect(enhanced.aiSummary, session.local.aiSummary);
+    expect(enhanced.resolutionStatus, session.local.resolutionStatus);
+  });
+
+  test('取消推荐会话后不等待文本返回后的生图 Future', () async {
+    final generation = _PendingImageGenerationService();
+    addTearDown(() {
+      if (!generation.image.isCompleted) generation.image.complete(null);
+    });
+    final service = V2Phase2RecommendationService(
+      generationService: generation,
+      localRecommendationLoader: (_, __, ___) async => const [
+        RecipeModel(
+          id: 'local_1',
+          name: '番茄炒蛋',
+          description: '稳定的本地候选。',
+          source: 'unified_db',
+        ),
+      ],
+      howToCookRecipeService: _emptyHowToCookService(),
+    );
+    final session = await service.startRecommendationSession(input: _input());
+    await generation.imageStarted.future.timeout(const Duration(seconds: 1));
+
+    session.cancel();
+
+    final enhanced = await session.enhanced.timeout(
+      const Duration(milliseconds: 100),
+    );
+    expect(enhanced.aiSummary, session.local.aiSummary);
+    expect(enhanced.resolutionStatus, session.local.resolutionStatus);
+    expect(generation.imageCancelToken?.isCancelled, isTrue);
+  });
+
   test('HowToCook 富化失败或超时时仍保留本地 canonical 候选', () async {
     final service = V2Phase2RecommendationService(
       enrichmentTimeout: const Duration(milliseconds: 1),
@@ -636,6 +752,42 @@ V2HowToCookRecipeService _emptyHowToCookService() {
     allRecipesLoader: (_) async => const [],
     assetIndexLoader: () async => '{"items":[]}',
   );
+}
+
+class _PendingImageGenerationService extends Fake implements GenerationService {
+  final imageStarted = Completer<void>();
+  final image = Completer<String?>();
+  CancelToken? imageCancelToken;
+
+  @override
+  bool get isConfigured => true;
+
+  @override
+  Future<List<RecipeModel>> generateFusionDishes({
+    required List<String> tags,
+    String? customRequirement,
+    int count = 4,
+    CancelToken? cancelToken,
+  }) async {
+    return const [
+      RecipeModel(
+        id: 'ai_fusion_review',
+        name: '云端量子料理',
+        description: '融合创意。',
+        source: 'ai_fusion',
+      ),
+    ];
+  }
+
+  @override
+  Future<String?> generateRecipeImageUrl(
+    RecipeModel recipe, {
+    CancelToken? cancelToken,
+  }) {
+    imageCancelToken = cancelToken;
+    if (!imageStarted.isCompleted) imageStarted.complete();
+    return image.future;
+  }
 }
 
 Map<String, dynamic> _unifiedRow() {

@@ -33,6 +33,7 @@ class V2AiCacheService {
 
     try {
       final decoded = jsonDecode(raw);
+      if (decoded is Map && decoded['isEstimated'] == true) return null;
       if (decoded is Map<String, dynamic>) return decoded;
       if (decoded is Map) {
         return decoded.map((k, v) => MapEntry(k.toString(), v));

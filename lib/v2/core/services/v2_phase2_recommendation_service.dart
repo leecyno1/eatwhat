@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:dio/dio.dart';
 import 'package:eatwhat_app/core/services/unified_recipe_database_service.dart';
 import 'package:eatwhat_app/v2/core/data/models/ai_generation_models.dart';
 import 'package:eatwhat_app/v2/core/data/models/meal_planning_direction.dart';
@@ -67,6 +68,27 @@ class Phase2RecommendationBundle {
   final double diversityScore;
 }
 
+class RecommendationSession {
+  RecommendationSession({
+    required this.local,
+    required this.enhanced,
+    void Function()? onCancel,
+  }) : _onCancel = onCancel;
+
+  final Phase2RecommendationBundle local;
+  final Future<Phase2RecommendationBundle> enhanced;
+  final void Function()? _onCancel;
+  bool _isCancelled = false;
+
+  bool get isCancelled => _isCancelled;
+
+  void cancel() {
+    if (_isCancelled) return;
+    _isCancelled = true;
+    _onCancel?.call();
+  }
+}
+
 /// Reliable V2 recommendation orchestrator.
 ///
 /// The unified local database is the source of truth and always runs first.
@@ -115,11 +137,98 @@ class V2Phase2RecommendationService {
     required TasteInferenceInput input,
     int recallLimit = 12,
     int finalLimit = 5,
-
-    /// Per-call override: the decision page calls this with true to get the
-    /// sub-second local bundle for instant navigation while the full bundle
-    /// (with AI refinement) continues in the background.
     bool skipAiEnhancement = false,
+  }) async {
+    if (skipAiEnhancement) {
+      final stage = await _prepareLocalStage(
+        input: input,
+        recallLimit: recallLimit,
+        finalLimit: finalLimit,
+      );
+      return _buildLocalBundle(stage);
+    }
+    final session = await startRecommendationSession(
+      input: input,
+      recallLimit: recallLimit,
+      finalLimit: finalLimit,
+    );
+    return session.enhanced;
+  }
+
+  Future<RecommendationSession> startRecommendationSession({
+    required TasteInferenceInput input,
+    int recallLimit = 12,
+    int finalLimit = 5,
+    Duration? localTimeout,
+  }) async {
+    var localFuture = () async {
+      final stage = await _prepareLocalStage(
+        input: input,
+        recallLimit: recallLimit,
+        finalLimit: finalLimit,
+      );
+      final local = await _buildLocalBundle(stage);
+      return (stage: stage, local: local);
+    }();
+    if (localTimeout != null) {
+      localFuture = localFuture.timeout(
+        localTimeout,
+        onTimeout: () {
+          final stage = _timeoutLocalStage(input, finalLimit, localTimeout);
+          return (stage: stage, local: stage.emptyBundle!);
+        },
+      );
+    }
+    final result = await localFuture;
+    final cancelToken = CancelToken();
+    final cancelled = Completer<void>();
+    void cancel() {
+      if (!cancelled.isCompleted) cancelled.complete();
+      cancelToken.cancel();
+    }
+
+    final enhanced = _buildEnhancedBundle(
+      result.stage,
+      result.local,
+      cancelToken,
+      cancelled.future,
+    );
+    return RecommendationSession(
+      local: result.local,
+      enhanced: enhanced,
+      onCancel: cancel,
+    );
+  }
+
+  _RecommendationLocalStage _timeoutLocalStage(
+    TasteInferenceInput input,
+    int finalLimit,
+    Duration timeout,
+  ) {
+    final bundle = Phase2RecommendationBundle(
+      recallLabels: input.primarySignals,
+      recalledCount: 0,
+      finalRecommendations: const [],
+      aiReasonsByRecipeId: const {},
+      aiSummary: '这轮没有命中合适的菜品。',
+      isEstimated: true,
+      resolutionStatus: RecommendationResolutionStatus.empty,
+      primarySource: 'empty',
+      latency: timeout,
+    );
+    return _RecommendationLocalStage.empty(
+      input: input,
+      stopwatch: Stopwatch()..start(),
+      recallLabels: input.primarySignals,
+      resultLimit: finalLimit <= 0 ? 1 : finalLimit,
+      bundle: bundle,
+    );
+  }
+
+  Future<_RecommendationLocalStage> _prepareLocalStage({
+    required TasteInferenceInput input,
+    required int recallLimit,
+    required int finalLimit,
   }) async {
     final stopwatch = Stopwatch()..start();
     final recallLabels = _recallLabels(input);
@@ -134,13 +243,18 @@ class V2Phase2RecommendationService {
         limit: candidateLimit,
       );
     } catch (_) {
-      stopwatch.stop();
-      return _emptyBundle(
-        recallLabels: recallLabels,
-        summary: '本地菜谱库暂时不可用，请稍后重试。',
-        fallbackReason: 'local_error',
-        latency: stopwatch.elapsed,
+      return _RecommendationLocalStage.empty(
         input: input,
+        stopwatch: stopwatch,
+        recallLabels: recallLabels,
+        resultLimit: resultLimit,
+        bundle: _emptyBundle(
+          recallLabels: recallLabels,
+          summary: '本地菜谱库暂时不可用，请稍后重试。',
+          fallbackReason: 'local_error',
+          latency: stopwatch.elapsed,
+          input: input,
+        ),
       );
     }
 
@@ -148,15 +262,20 @@ class V2Phase2RecommendationService {
       _sanitizeCandidates(localResult.recipes, input),
     ).take(candidateLimit).toList();
     if (localCandidates.isEmpty) {
-      stopwatch.stop();
-      return _emptyBundle(
-        recallLabels: recallLabels,
-        summary: localResult.summary.trim().isNotEmpty
-            ? localResult.summary
-            : '本地菜谱库没有命中满足本轮约束的正式候选。',
-        fallbackReason: 'local_empty',
-        latency: stopwatch.elapsed,
+      return _RecommendationLocalStage.empty(
         input: input,
+        stopwatch: stopwatch,
+        recallLabels: recallLabels,
+        resultLimit: resultLimit,
+        bundle: _emptyBundle(
+          recallLabels: recallLabels,
+          summary: localResult.summary.trim().isNotEmpty
+              ? localResult.summary
+              : '本地菜谱库没有命中满足本轮约束的正式候选。',
+          fallbackReason: 'local_empty',
+          latency: stopwatch.elapsed,
+          input: input,
+        ),
       );
     }
 
@@ -165,14 +284,66 @@ class V2Phase2RecommendationService {
         recipe.id: localResult.reasonsByRecipeId[recipe.id] ??
             _buildLocalReason(recipe, recallLabels),
     };
+    return _RecommendationLocalStage(
+      input: input,
+      stopwatch: stopwatch,
+      recallLabels: recallLabels,
+      resultLimit: resultLimit,
+      localResult: localResult,
+      localCandidates: localCandidates,
+      localReasons: localReasons,
+    );
+  }
+
+  Future<Phase2RecommendationBundle> _buildLocalBundle(
+    _RecommendationLocalStage stage,
+  ) {
+    final empty = stage.emptyBundle;
+    if (empty != null) return Future.value(empty);
+    return _buildBundleWithEnhancement(
+      stage,
+      const _AiEnhancementResult.notAttempted(),
+    );
+  }
+
+  Future<Phase2RecommendationBundle> _buildEnhancedBundle(
+    _RecommendationLocalStage stage,
+    Phase2RecommendationBundle local,
+    CancelToken cancelToken,
+    Future<void> cancelled,
+  ) async {
+    if (stage.emptyBundle != null || !_enableAiEnhancement) return local;
+    if (_recommendationRefiner == null &&
+        _aiRecommendationLoader == null &&
+        !_generationService.isConfigured) {
+      return local;
+    }
+    if (cancelToken.isCancelled) return local;
 
     final enhancement = await _enhanceCandidates(
-      input: input,
-      recallLabels: recallLabels,
-      localCandidates: localCandidates,
-      limit: resultLimit,
-      skipAiEnhancement: skipAiEnhancement,
+      input: stage.input,
+      recallLabels: stage.recallLabels,
+      localCandidates: stage.localCandidates,
+      limit: stage.resultLimit,
+      cancelToken: cancelToken,
+      cancelled: cancelled,
     );
+    if (cancelToken.isCancelled) return local;
+    final bundle = await _buildBundleWithEnhancement(
+      stage,
+      enhancement,
+      cancelled: cancelled,
+    );
+    return cancelToken.isCancelled ? local : bundle;
+  }
+
+  Future<Phase2RecommendationBundle> _buildBundleWithEnhancement(
+    _RecommendationLocalStage stage,
+    _AiEnhancementResult enhancement, {
+    Future<void>? cancelled,
+  }) async {
+    final localResult = stage.localResult!;
+    final localCandidates = stage.localCandidates;
     final ordered = _orderCanonicalCandidates(
       localCandidates: localCandidates,
       preferredIds: enhancement.orderedIds,
@@ -184,25 +355,27 @@ class V2Phase2RecommendationService {
       final fusedIds = fused.map((recipe) => recipe.id).toSet();
       baseList = [
         ...fused,
-        ..._diversify(ordered, resultLimit)
+        ..._diversify(ordered, stage.resultLimit)
             .where((recipe) => !fusedIds.contains(recipe.id)),
-      ].take(resultLimit).toList();
+      ].take(stage.resultLimit).toList();
     } else {
-      baseList = _diversify(ordered, resultLimit);
+      baseList = _diversify(ordered, stage.resultLimit);
     }
-    final finalRecommendations = await _enrichWithHowToCook(baseList);
+    final finalRecommendations = await _enrichWithHowToCook(
+      baseList,
+      cancelled: cancelled,
+    );
     final finalIds = finalRecommendations.map((recipe) => recipe.id).toSet();
     final reasons = <String, String>{
-      for (final entry in localReasons.entries)
+      for (final entry in stage.localReasons.entries)
         if (finalIds.contains(entry.key)) entry.key: entry.value,
       for (final entry in enhancement.reasonsById.entries)
         if (finalIds.contains(entry.key)) entry.key: entry.value,
     };
 
-    stopwatch.stop();
     if (!enhancement.attempted) {
       return Phase2RecommendationBundle(
-        recallLabels: recallLabels,
+        recallLabels: stage.recallLabels,
         recalledCount: localCandidates.length,
         finalRecommendations: finalRecommendations,
         aiReasonsByRecipeId: reasons,
@@ -213,8 +386,8 @@ class V2Phase2RecommendationService {
         isEstimated: false,
         resolutionStatus: RecommendationResolutionStatus.dbResolved,
         primarySource: 'unified_db',
-        latency: stopwatch.elapsed,
-        appliedConstraints: _appliedConstraints(input),
+        latency: stage.stopwatch.elapsed,
+        appliedConstraints: _appliedConstraints(stage.input),
         diversityScore: _calculateDiversityScore(finalRecommendations),
         algorithmVersion: localResult.algorithmVersion,
       );
@@ -222,7 +395,7 @@ class V2Phase2RecommendationService {
 
     if (!enhancement.succeeded) {
       return Phase2RecommendationBundle(
-        recallLabels: recallLabels,
+        recallLabels: stage.recallLabels,
         recalledCount: localCandidates.length,
         finalRecommendations: finalRecommendations,
         aiReasonsByRecipeId: reasons,
@@ -231,15 +404,15 @@ class V2Phase2RecommendationService {
         resolutionStatus: RecommendationResolutionStatus.localFallback,
         primarySource: 'local_fallback',
         fallbackReason: enhancement.fallbackReason,
-        latency: stopwatch.elapsed,
-        appliedConstraints: _appliedConstraints(input),
+        latency: stage.stopwatch.elapsed,
+        appliedConstraints: _appliedConstraints(stage.input),
         diversityScore: _calculateDiversityScore(finalRecommendations),
         algorithmVersion: localResult.algorithmVersion,
       );
     }
 
     return Phase2RecommendationBundle(
-      recallLabels: recallLabels,
+      recallLabels: stage.recallLabels,
       recalledCount: localCandidates.length,
       finalRecommendations: finalRecommendations,
       aiReasonsByRecipeId: reasons,
@@ -248,8 +421,8 @@ class V2Phase2RecommendationService {
       isEstimated: enhancement.isEstimated,
       resolutionStatus: RecommendationResolutionStatus.hybridResolved,
       primarySource: 'hybrid',
-      latency: stopwatch.elapsed,
-      appliedConstraints: _appliedConstraints(input),
+      latency: stage.stopwatch.elapsed,
+      appliedConstraints: _appliedConstraints(stage.input),
       diversityScore: _calculateDiversityScore(finalRecommendations),
       algorithmVersion: localResult.algorithmVersion,
     );
@@ -292,6 +465,8 @@ class V2Phase2RecommendationService {
     required List<RecipeModel> localCandidates,
     required int limit,
     bool skipAiEnhancement = false,
+    CancelToken? cancelToken,
+    Future<void>? cancelled,
   }) async {
     if (!_enableAiEnhancement || skipAiEnhancement) {
       return const _AiEnhancementResult.notAttempted();
@@ -300,21 +475,37 @@ class V2Phase2RecommendationService {
     try {
       final refiner = _recommendationRefiner;
       if (refiner != null) {
-        final refined = await refiner(
+        final refinerFuture = refiner(
           selectedTags: recallLabels,
           candidates: localCandidates,
           limit: limit,
           customRequirement: _buildAiRequirement(input),
-        ).timeout(_refineTimeout);
+        );
+        final refined = await _awaitWithCancellation(
+          refinerFuture,
+          _refineTimeout,
+          cancelled,
+        );
+        if (cancelToken?.isCancelled == true) {
+          return const _AiEnhancementResult.failed('cancelled');
+        }
         return _validateRefinement(refined, localCandidates);
       }
 
       final legacyLoader = _aiRecommendationLoader;
       if (legacyLoader != null) {
-        final generated = await legacyLoader(
+        final generatedFuture = legacyLoader(
           tags: recallLabels,
           userProfile: _buildAiRequirement(input),
-        ).timeout(_stageTimeout);
+        );
+        final generated = await _awaitWithCancellation(
+          generatedFuture,
+          _stageTimeout,
+          cancelled,
+        );
+        if (cancelToken?.isCancelled == true) {
+          return const _AiEnhancementResult.failed('cancelled');
+        }
         return _resolveLegacyAiCandidates(generated, localCandidates);
       }
 
@@ -324,7 +515,18 @@ class V2Phase2RecommendationService {
 
       // 融合生成主路径：把用户选出的标签交给模型组合成新菜，
       // 再回库匹配现成菜谱与配图；库里没有就让模型生图。
-      return _generateFusion(input: input, recallLabels: recallLabels);
+      return await _awaitWithCancellation(
+        _generateFusion(
+          input: input,
+          recallLabels: recallLabels,
+          cancelToken: cancelToken,
+          cancelled: cancelled,
+        ),
+        _refineTimeout,
+        cancelled,
+      );
+    } on _RecommendationCancelled {
+      return const _AiEnhancementResult.failed('cancelled');
     } on TimeoutException {
       return const _AiEnhancementResult.failed('ai_timeout');
     } catch (_) {
@@ -335,13 +537,22 @@ class V2Phase2RecommendationService {
   Future<_AiEnhancementResult> _generateFusion({
     required TasteInferenceInput input,
     required List<String> recallLabels,
+    CancelToken? cancelToken,
+    Future<void>? cancelled,
   }) async {
-    final generated = await _generationService
-        .generateFusionDishes(
-          tags: recallLabels,
-          customRequirement: _buildAiRequirement(input),
-        )
-        .timeout(_refineTimeout);
+    final generatedFuture = _generationService.generateFusionDishes(
+      tags: recallLabels,
+      customRequirement: _buildAiRequirement(input),
+      cancelToken: cancelToken,
+    );
+    final generated = await _awaitWithCancellation(
+      generatedFuture,
+      _refineTimeout,
+      cancelled,
+    );
+    if (cancelToken?.isCancelled == true) {
+      return const _AiEnhancementResult.failed('cancelled');
+    }
     if (generated.isEmpty) {
       return const _AiEnhancementResult.failed('fusion_empty');
     }
@@ -349,8 +560,12 @@ class V2Phase2RecommendationService {
     final resolved = <RecipeModel>[];
     final reasonsById = <String, String>{};
     for (final dish in generated) {
+      if (cancelToken?.isCancelled == true) {
+        return const _AiEnhancementResult.failed('cancelled');
+      }
       final matched = await _matchLibraryDish(dish);
-      final recipe = matched ?? await _withLibraryCousinImage(dish);
+      final recipe = matched ??
+          await _withLibraryCousinImage(dish, cancelToken: cancelToken);
       resolved.add(recipe);
       if (dish.description.trim().isNotEmpty) {
         reasonsById[recipe.id] = dish.description.trim();
@@ -399,7 +614,10 @@ class V2Phase2RecommendationService {
   /// 图，但它的食材/口味与库中某道菜高度接近时（如麻辣豆腐牛肉粒盖饭
   /// 之于麻婆豆腐），借用近亲的预构建图比花字盘更有食欲，也符合
   /// 「图片必须预构建、禁在线生成」的项目规则。借不到再退到在线生图。
-  Future<RecipeModel> _withLibraryCousinImage(RecipeModel dish) async {
+  Future<RecipeModel> _withLibraryCousinImage(
+    RecipeModel dish, {
+    CancelToken? cancelToken,
+  }) async {
     if (dish.imageUrl?.trim().isNotEmpty ?? false) return dish;
     final terms = {
       ...dish.ingredients.take(3),
@@ -424,7 +642,7 @@ class V2Phase2RecommendationService {
       final cousin = pickImageCousin(dish, candidates.values);
       if (cousin != null) return dish.copyWith(imageUrl: cousin.imageUrl);
     }
-    return _withGeneratedImage(dish);
+    return _withGeneratedImage(dish, cancelToken: cancelToken);
   }
 
   /// 在库候选中为融合菜挑选「近亲」：食材/口味信号重叠 ≥2 才借图，
@@ -462,10 +680,16 @@ class V2Phase2RecommendationService {
   }
 
   /// 库里没有这道菜：让模型直接为它生成配图。
-  Future<RecipeModel> _withGeneratedImage(RecipeModel dish) async {
+  Future<RecipeModel> _withGeneratedImage(
+    RecipeModel dish, {
+    CancelToken? cancelToken,
+  }) async {
     if (dish.imageUrl?.trim().isNotEmpty ?? false) return dish;
     try {
-      final url = await _generationService.generateRecipeImageUrl(dish);
+      final url = await _generationService.generateRecipeImageUrl(
+        dish,
+        cancelToken: cancelToken,
+      );
       if (url != null && url.trim().isNotEmpty) {
         return dish.copyWith(imageUrl: url.trim());
       }
@@ -751,16 +975,49 @@ class V2Phase2RecommendationService {
         .replaceAll(RegExp(r'[\s\p{P}]', unicode: true), '');
   }
 
+  Future<T> _awaitWithCancellation<T>(
+    Future<T> future,
+    Duration timeout,
+    Future<void>? cancelled,
+  ) {
+    if (cancelled == null) return future.timeout(timeout);
+    final completer = Completer<T>();
+    final timer = Timer(timeout, () {
+      if (!completer.isCompleted) {
+        completer.completeError(TimeoutException('推荐阶段超时', timeout));
+      }
+    });
+    future.then((value) {
+      timer.cancel();
+      if (!completer.isCompleted) completer.complete(value);
+    }, onError: (Object error, StackTrace stackTrace) {
+      timer.cancel();
+      if (!completer.isCompleted) {
+        completer.completeError(error, stackTrace);
+      }
+    });
+    cancelled.then((_) {
+      timer.cancel();
+      if (!completer.isCompleted) {
+        completer.completeError(const _RecommendationCancelled());
+      }
+    });
+    return completer.future;
+  }
+
   Future<List<RecipeModel>> _enrichWithHowToCook(
-    List<RecipeModel> candidates,
-  ) async {
+    List<RecipeModel> candidates, {
+    Future<void>? cancelled,
+  }) async {
     if (candidates.isEmpty) return candidates;
     return Future.wait(
       candidates.map((recipe) async {
         try {
-          final enriched = await _howToCookRecipeService
-              .enrichRecipe(recipe)
-              .timeout(_enrichmentTimeout);
+          final enriched = await _awaitWithCancellation(
+            _howToCookRecipeService.enrichRecipe(recipe),
+            _enrichmentTimeout,
+            cancelled,
+          );
           return enriched.copyWith(
             id: recipe.id,
             description: recipe.description.trim().isNotEmpty
@@ -792,6 +1049,42 @@ class V2Phase2RecommendationService {
     '想要',
     '来点',
   };
+}
+
+class _RecommendationCancelled implements Exception {
+  const _RecommendationCancelled();
+}
+
+class _RecommendationLocalStage {
+  const _RecommendationLocalStage({
+    required this.input,
+    required this.stopwatch,
+    required this.recallLabels,
+    required this.resultLimit,
+    required this.localResult,
+    required this.localCandidates,
+    required this.localReasons,
+  }) : emptyBundle = null;
+
+  const _RecommendationLocalStage.empty({
+    required this.input,
+    required this.stopwatch,
+    required this.recallLabels,
+    required this.resultLimit,
+    required Phase2RecommendationBundle bundle,
+  })  : localResult = null,
+        localCandidates = const [],
+        localReasons = const {},
+        emptyBundle = bundle;
+
+  final TasteInferenceInput input;
+  final Stopwatch stopwatch;
+  final List<String> recallLabels;
+  final int resultLimit;
+  final _LocalRecommendationResult? localResult;
+  final List<RecipeModel> localCandidates;
+  final Map<String, String> localReasons;
+  final Phase2RecommendationBundle? emptyBundle;
 }
 
 class _LocalRecommendationResult {
