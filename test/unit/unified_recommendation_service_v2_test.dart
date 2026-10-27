@@ -1075,7 +1075,10 @@ void main() {
           ingredients: const ['辣椒', '芝士'],
         ),
       ];
-      final service = _serviceWithRows(rows);
+      final service = _serviceWithRows(
+        rows,
+        mealPeriodClock: () => DateTime(2026, 9, 30, 15),
+      );
 
       final healthBundle = await service.buildRecommendationBundle(
         input: _input().copyWith(
@@ -1144,15 +1147,15 @@ void main() {
         },
       };
 
-      final healthBundle = await _serviceWithRows([light, heavy])
-          .buildRecommendationBundle(
-        input: _input()
-            .copyWith(planningDirection: MealPlanningDirection.health),
+      final healthBundle =
+          await _serviceWithRows([light, heavy]).buildRecommendationBundle(
+        input:
+            _input().copyWith(planningDirection: MealPlanningDirection.health),
         recallLabels: const ['家常菜'],
         limit: 2,
       );
-      final balancedBundle = await _serviceWithRows([light, heavy])
-          .buildRecommendationBundle(
+      final balancedBundle =
+          await _serviceWithRows([light, heavy]).buildRecommendationBundle(
         input: _input(),
         recallLabels: const ['家常菜'],
         limit: 2,
@@ -1248,14 +1251,17 @@ void main() {
         rows,
         mealPeriodClock: () => DateTime(2026, 9, 30, 15),
       );
-      final noClock = _serviceWithRows(rows);
+      final baselineService = _serviceWithRows(
+        rows,
+        mealPeriodClock: () => DateTime(2026, 9, 30, 15),
+      );
 
       final afternoonBundle = await afternoon.buildRecommendationBundle(
         input: _input(),
         recallLabels: const ['家常菜'],
         limit: 2,
       );
-      final baselineBundle = await noClock.buildRecommendationBundle(
+      final baselineBundle = await baselineService.buildRecommendationBundle(
         input: _input(),
         recallLabels: const ['家常菜'],
         limit: 2,

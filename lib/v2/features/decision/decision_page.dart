@@ -4,7 +4,7 @@ import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recommendation_resolution.dart';
 import 'package:eatwhat_app/v2/core/data/models/recommendation_telemetry_context.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
-import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
+import 'package:eatwhat_app/v2/core/navigation/app_v2_routes.dart';
 import 'package:eatwhat_app/v2/core/services/v2_phase2_recommendation_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_recommendation_telemetry_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
@@ -76,6 +76,8 @@ class _DecisionPageState extends State<DecisionPage> {
   RecommendationTelemetryContext? _recommendationContext;
   _DecisionStage _stage = _DecisionStage.recall;
   Timer? _resultNavigationTimer;
+  RecommendationSession? _recommendationSession;
+  bool _sessionHandedOff = false;
 
   TasteInferenceInput get _input => widget.resolvedInput;
 
@@ -105,48 +107,33 @@ class _DecisionPageState extends State<DecisionPage> {
   @override
   void dispose() {
     _resultNavigationTimer?.cancel();
+    if (!_sessionHandedOff) _recommendationSession?.cancel();
     super.dispose();
   }
 
   Future<void> _fetchRecommendations() async {
-    // Stage 1: the local bundle (hybrid scoring, no LLM call) is sub-second —
-    // navigate immediately so the user never stares at a spinner. Stage 2
-    // runs the MiniMax refine in the background and hands the finished
-    // bundle to the already-open result page.
-    final fullBundleFuture =
-        _recommendationFlowService.buildRecommendations(input: _input);
-    // Surface the AI's finished summary in the finalize window: when the
-    // background refine lands before navigation, the stage copy swaps in.
-    unawaited(
-      fullBundleFuture.then((bundle) {
-        if (!mounted) return;
-        final summary = bundle.aiSummary?.trim();
-        if (summary == null || summary.isEmpty) return;
-        setState(() => _refinedSummary = summary);
-      }).catchError((_) {}),
-    );
-
     try {
-      final bundle = await _recommendationFlowService
-          .buildRecommendations(
-            input: _input,
-            skipAiEnhancement: true,
-          )
-          .timeout(
-            const Duration(seconds: 3),
-            onTimeout: () => Phase2RecommendationBundle(
-              recallLabels: _input.primarySignals,
-              recalledCount: 0,
-              finalRecommendations: const [],
-              aiReasonsByRecipeId: const {},
-              aiSummary: '这轮没有命中合适的菜品。',
-              isEstimated: true,
-              resolutionStatus: RecommendationResolutionStatus.empty,
-              primarySource: 'empty',
-            ),
-          );
+      final session =
+          await _recommendationFlowService.startRecommendationSession(
+        input: _input,
+        localTimeout: const Duration(seconds: 10),
+      );
+      if (!mounted) {
+        session.cancel();
+        return;
+      }
+      _recommendationSession = session;
+      final fullBundleFuture = session.enhanced;
+      unawaited(
+        fullBundleFuture.then((bundle) {
+          if (!mounted) return;
+          final summary = bundle.aiSummary?.trim();
+          if (summary == null || summary.isEmpty) return;
+          setState(() => _refinedSummary = summary);
+        }).catchError((_) {}),
+      );
+      final bundle = session.local;
 
-      if (!mounted) return;
       final recommendationContext = RecommendationTelemetryContext(
         recommendationId: _recommendationTelemetryService
             .createRecommendationId(algorithmVersion: bundle.algorithmVersion),
@@ -244,6 +231,7 @@ class _DecisionPageState extends State<DecisionPage> {
 
   void _openResult() {
     if (!mounted) return;
+    _sessionHandedOff = _recommendationSession != null;
     final resultData = AppV2ResultRouteData(
       recommendations: _recommendations,
       inferenceInput: _input,
@@ -256,6 +244,7 @@ class _DecisionPageState extends State<DecisionPage> {
       recalledCount: _recallCount,
       recommendationContext: _recommendationContext,
       aiEnhancement: _aiEnhancement,
+      cancelAiEnhancement: _recommendationSession?.cancel,
     );
     final router = GoRouter.maybeOf(context);
     if (router != null) {
@@ -277,6 +266,7 @@ class _DecisionPageState extends State<DecisionPage> {
           recalledCount: resultData.recalledCount,
           recommendationContext: resultData.recommendationContext,
           aiEnhancement: resultData.aiEnhancement,
+          cancelAiEnhancement: resultData.cancelAiEnhancement,
         ),
       ),
     );

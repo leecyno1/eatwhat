@@ -1,5 +1,6 @@
+import 'package:eatwhat_app/app/app_dependencies.dart';
+import 'package:eatwhat_app/app/app_router.dart';
 import 'package:eatwhat_app/core/config/env_config.dart';
-import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
@@ -10,7 +11,9 @@ import 'features/onboarding/onboarding_overlay.dart';
 import 'features/onboarding/onboarding_service.dart';
 
 class AppV2 extends StatefulWidget {
-  const AppV2({super.key});
+  const AppV2({super.key, this.dependencies});
+
+  final AppDependencies? dependencies;
 
   @override
   State<AppV2> createState() => _AppV2State();
@@ -27,6 +30,7 @@ class _AppV2State extends State<AppV2> {
       navigatorKey: _navigatorKey,
       debugMode: EnvConfig.debugMode,
       debugBootstrap: EnvConfig.v2DebugBootstrap,
+      dependencies: widget.dependencies,
     );
     _checkInitialStatus();
   }

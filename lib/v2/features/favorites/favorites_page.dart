@@ -3,7 +3,7 @@ import 'package:eatwhat_app/core/services/unified_recipe_database_service.dart';
 import 'package:eatwhat_app/v2/core/data/models/dish_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/repositories/tag_repository_v2.dart';
-import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
+import 'package:eatwhat_app/v2/core/navigation/app_v2_routes.dart';
 import 'package:eatwhat_app/v2/core/services/v2_favorites_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';

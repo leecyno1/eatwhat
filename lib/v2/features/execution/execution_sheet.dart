@@ -2,7 +2,7 @@ import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recommendation_telemetry_context.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
-import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
+import 'package:eatwhat_app/v2/core/navigation/app_v2_routes.dart';
 import 'package:eatwhat_app/v2/features/execution/execution_home_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

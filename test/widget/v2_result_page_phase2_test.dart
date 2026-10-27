@@ -11,10 +11,12 @@ import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
 import 'package:eatwhat_app/v2/core/external/platform/meituan_delivery_order_client.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
+import 'package:eatwhat_app/v2/core/services/prebuilt_dish_image_catalog_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_recommendation_telemetry_service.dart';
 import 'package:eatwhat_app/v2/features/result/result_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -32,6 +34,7 @@ void main() {
 
   setUp(() {
     SharedPreferences.setMockInitialValues({});
+    FlutterSecureStorage.setMockInitialValues({});
   });
 
   testWidgets('ResultPage 展示候选切换与营养摘要', (tester) async {
@@ -102,6 +105,61 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('麻辣冒菜'), findsWidgets);
     expect(find.text('就吃这个'), findsOneWidget);
+  });
+
+  testWidgets('ResultPage 旧菜品生图返回不会覆盖用户新选择', (tester) async {
+    final started = <String>[];
+    final firstImage = Completer<String?>();
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ResultPage(
+          imageCatalogService: PrebuiltDishImageCatalogService(
+            assetManifestLoader: () async => '{"items":[]}',
+          ),
+          imageGenerator: (recipe) {
+            started.add(recipe.id);
+            if (recipe.id == 'a') return firstImage.future;
+            return Future<String?>.value();
+          },
+          recommendations: const [
+            RecipeModel(
+              id: 'a',
+              name: '菜品 A',
+              description: '先开始生成图片的菜',
+            ),
+            RecipeModel(
+              id: 'b',
+              name: '菜品 B',
+              description: '用户随后切换到的菜',
+            ),
+          ],
+        ),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 900));
+    expect(started, ['a']);
+
+    await tester.tap(find.byKey(const ValueKey('result-candidate-b')));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(
+      find.byKey(const ValueKey('result-nameplate-b')),
+      findsOneWidget,
+    );
+
+    firstImage.complete('https://invalid.example.com/a.png');
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(
+      find.byKey(const ValueKey('result-nameplate-b')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('result-nameplate-a')),
+      findsNothing,
+    );
   });
 
   testWidgets('ResultPage 点页眉分享打开卡片预览', (tester) async {

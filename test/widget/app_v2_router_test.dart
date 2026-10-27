@@ -1,9 +1,18 @@
+import 'dart:async';
+
+import 'package:eatwhat_app/app/app_dependencies.dart';
+import 'package:eatwhat_app/app/app_router.dart';
+import 'package:eatwhat_app/v2/core/data/models/ai_generation_models.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
 import 'package:eatwhat_app/v2/core/external/platform/meituan_delivery_order_client.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
-import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
+import 'package:eatwhat_app/v2/core/navigation/app_v2_routes.dart';
+import 'package:eatwhat_app/v2/core/services/generation_service.dart';
+import 'package:eatwhat_app/v2/core/services/v2_howtocook_recipe_service.dart';
+import 'package:eatwhat_app/v2/core/services/v2_phase2_recommendation_service.dart';
 import 'package:eatwhat_app/v2/features/decision/decision_page.dart';
+import 'package:eatwhat_app/v2/features/details/howtocook_library_page.dart';
 import 'package:eatwhat_app/v2/features/details/recipe_detail_page.dart';
 import 'package:eatwhat_app/v2/features/execution/execution_home_page.dart';
 import 'package:eatwhat_app/v2/features/execution/meituan_menu_builder_page.dart';
@@ -220,6 +229,207 @@ void main() {
       expect(find.text('香辣干锅鸡'), findsWidgets);
     });
 
+    testWidgets('injects AppDependencies into main route pages',
+        (tester) async {
+      final howToCook = _emptyRouterHowToCookService();
+      final generation = _RouterGenerationService();
+      final recommendationFlow = V2Phase2RecommendationService(
+        enableAiEnhancement: false,
+        howToCookRecipeService: howToCook,
+      );
+      final dependencies = AppDependencies(
+        generationService: generation,
+        howToCookRecipeService: howToCook,
+        recommendationFlowService: recommendationFlow,
+      );
+      final router = AppV2Router.createRouter(
+        navigatorKey: GlobalKey<NavigatorState>(),
+        dependencies: dependencies,
+      );
+      const input = TasteInferenceInput(
+        likedTagIds: ['flavor_spicy'],
+        likedTagLabels: ['辣'],
+        dislikedTagIds: [],
+        dislikedTagLabels: [],
+        skippedTagIds: [],
+        skippedTagLabels: [],
+        freeformRequirement: '想吃热菜',
+        historyPreferenceSummary: {},
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      router.go(
+        AppV2Routes.decision,
+        extra: const AppV2DecisionRouteData(
+          input: input,
+          autoNavigateToResult: false,
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(
+        tester
+            .widget<DecisionPage>(find.byType(DecisionPage))
+            .recommendationFlowService,
+        same(recommendationFlow),
+      );
+
+      router.go(
+        AppV2Routes.result,
+        extra: const AppV2ResultRouteData(
+          recommendations: [
+            RecipeModel(
+              id: 'route_result_1',
+              name: '番茄肥牛锅',
+              description: '热一点。',
+            ),
+          ],
+          inferenceInput: input,
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+      final result = tester.widget<ResultPage>(find.byType(ResultPage));
+      expect(result.generationService, same(generation));
+      expect(result.howToCookRecipeService, same(howToCook));
+
+      router.go(
+        AppV2Routes.recipeDetail,
+        extra: const AppV2RecipeDetailRouteData(
+          recipe: RecipeModel(
+            id: 'route_recipe_1',
+            name: '香辣干锅鸡',
+            description: '锅气足。',
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+      final detail = tester.widget<RecipeDetailPage>(
+        find.byType(RecipeDetailPage),
+      );
+      expect(detail.generationService, same(generation));
+      expect(detail.howToCookRecipeService, same(howToCook));
+
+      router.go(AppV2Routes.howtocookLibrary);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(
+        tester
+            .widget<HowToCookLibraryPage>(
+              find.byType(HowToCookLibraryPage),
+            )
+            .service,
+        same(howToCook),
+      );
+    });
+
+    testWidgets('route data service overrides AppDependencies', (tester) async {
+      final dependencies = AppDependencies(
+        generationService: GenerationService.instance,
+        howToCookRecipeService: V2HowToCookRecipeService.instance,
+        recommendationFlowService: V2Phase2RecommendationService(
+          enableAiEnhancement: false,
+        ),
+      );
+      final override = V2Phase2RecommendationService(
+        enableAiEnhancement: false,
+      );
+      final router = AppV2Router.createRouter(
+        navigatorKey: GlobalKey<NavigatorState>(),
+        dependencies: dependencies,
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      router.go(
+        AppV2Routes.decision,
+        extra: AppV2DecisionRouteData(
+          input: const TasteInferenceInput(
+            likedTagIds: ['flavor_spicy'],
+            likedTagLabels: ['辣'],
+            dislikedTagIds: [],
+            dislikedTagLabels: [],
+            skippedTagIds: [],
+            skippedTagLabels: [],
+            freeformRequirement: '',
+            historyPreferenceSummary: {},
+          ),
+          recommendationFlowService: override,
+          autoNavigateToResult: false,
+        ),
+      );
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+
+      expect(
+        tester
+            .widget<DecisionPage>(find.byType(DecisionPage))
+            .recommendationFlowService,
+        same(override),
+      );
+    });
+
+    testWidgets('forwards recommendation session cancellation to ResultPage',
+        (tester) async {
+      final refiner = Completer<AiRefinedRecommendations>();
+      addTearDown(() {
+        if (!refiner.isCompleted) {
+          refiner.complete(
+            const AiRefinedRecommendations(
+              recipeIds: ['router_handoff_dish'],
+              reasonsById: {},
+            ),
+          );
+        }
+      });
+      final recommendationFlow = _TrackingRouterRecommendationService(
+        refiner: refiner,
+      );
+      final router = AppV2Router.createRouter(
+        navigatorKey: GlobalKey<NavigatorState>(),
+        dependencies: AppDependencies(
+          generationService: _RouterGenerationService(),
+          howToCookRecipeService: _emptyRouterHowToCookService(),
+          recommendationFlowService: recommendationFlow,
+        ),
+      );
+      await tester.pumpWidget(MaterialApp.router(routerConfig: router));
+
+      router.go(
+        AppV2Routes.decision,
+        extra: const AppV2DecisionRouteData(
+          input: TasteInferenceInput(
+            likedTagIds: ['flavor_spicy'],
+            likedTagLabels: ['辣'],
+            dislikedTagIds: [],
+            dislikedTagLabels: [],
+            skippedTagIds: [],
+            skippedTagLabels: [],
+            freeformRequirement: '',
+            historyPreferenceSummary: {},
+          ),
+        ),
+      );
+      for (var attempt = 0;
+          attempt < 50 && find.byType(ResultPage).evaluate().isEmpty;
+          attempt += 1) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+
+      expect(find.byType(ResultPage), findsOneWidget);
+      final session = recommendationFlow.lastSession!;
+      expect(session.isCancelled, isFalse);
+      expect(
+        tester.widget<ResultPage>(find.byType(ResultPage)).cancelAiEnhancement,
+        isNotNull,
+      );
+
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump();
+
+      expect(session.isCancelled, isTrue);
+    });
+
     testWidgets('renders execution route from route data', (tester) async {
       final router = AppV2Router.createRouter(
         navigatorKey: GlobalKey<NavigatorState>(),
@@ -337,8 +547,62 @@ void main() {
   });
 }
 
+class _RouterGenerationService extends Fake implements GenerationService {}
+
+V2HowToCookRecipeService _emptyRouterHowToCookService() {
+  return V2HowToCookRecipeService(
+    searchLoader: (_, __) async => const [],
+    completeLoader: (_) async => null,
+    allRecipesLoader: (_) async => const [],
+    assetIndexLoader: () async => '{"items":[]}',
+  );
+}
+
 Future<GeoPoint> _fixedLocation() async {
   return const GeoPoint(latitude: 39.9042, longitude: 116.4074);
+}
+
+class _TrackingRouterRecommendationService
+    extends V2Phase2RecommendationService {
+  _TrackingRouterRecommendationService({
+    required Completer<AiRefinedRecommendations> refiner,
+  }) : super(
+          localRecommendationLoader: (_, __, ___) async => const [
+            RecipeModel(
+              id: 'router_handoff_dish',
+              name: '路由交接番茄煲',
+              description: '验证路由会话交接。',
+              source: 'unified_db',
+            ),
+          ],
+          recommendationRefiner: ({
+            required selectedTags,
+            required candidates,
+            required limit,
+            required customRequirement,
+          }) =>
+              refiner.future,
+          howToCookRecipeService: _emptyRouterHowToCookService(),
+        );
+
+  RecommendationSession? lastSession;
+
+  @override
+  Future<RecommendationSession> startRecommendationSession({
+    required TasteInferenceInput input,
+    int recallLimit = 12,
+    int finalLimit = 5,
+    Duration? localTimeout,
+  }) async {
+    final session = await super.startRecommendationSession(
+      input: input,
+      recallLimit: recallLimit,
+      finalLimit: finalLimit,
+      localTimeout: localTimeout,
+    );
+    lastSession = session;
+    return session;
+  }
 }
 
 class _RouterMeituanMerchantClient extends MeituanDeliveryOrderClient {

@@ -1,5 +1,5 @@
 import 'package:eatwhat_app/v2/core/data/models/howtocook_recipe_detail.dart';
-import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
+import 'package:eatwhat_app/v2/core/navigation/app_v2_routes.dart';
 import 'package:eatwhat_app/v2/core/services/v2_howtocook_recipe_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';

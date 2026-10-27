@@ -2,7 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:eatwhat_app/v2/core/data/models/howtocook_recipe_detail.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
-import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
+import 'package:eatwhat_app/v2/core/navigation/app_v2_routes.dart';
 import 'package:eatwhat_app/v2/core/services/generation_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_howtocook_recipe_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
@@ -24,11 +24,13 @@ class RecipeDetailPage extends StatefulWidget {
   const RecipeDetailPage({
     super.key,
     required this.recipe,
+    this.generationService,
     this.howToCookRecipeService,
     this.startInCookingMode = false,
   });
 
   final RecipeModel recipe;
+  final GenerationService? generationService;
   final V2HowToCookRecipeService? howToCookRecipeService;
   final bool startInCookingMode;
 
@@ -37,7 +39,7 @@ class RecipeDetailPage extends StatefulWidget {
 }
 
 class _RecipeDetailPageState extends State<RecipeDetailPage> {
-  final GenerationService _generation = GenerationService.instance;
+  late final GenerationService _generation;
   final V2RecipeExecutionProgressService _progressService =
       V2RecipeExecutionProgressService.instance;
   final V2PreferenceFeedbackService _feedbackService =
@@ -58,6 +60,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage> {
   @override
   void initState() {
     super.initState();
+    _generation = widget.generationService ?? GenerationService.instance;
     _howToCookRecipeService =
         widget.howToCookRecipeService ?? V2HowToCookRecipeService.instance;
     _recipe = widget.recipe;

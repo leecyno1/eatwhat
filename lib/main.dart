@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'app/app_dependencies.dart';
 import 'core/config/env_config.dart';
 import 'core/services/auth_service.dart';
 import 'core/utils/analytics_helper.dart';
@@ -40,8 +41,10 @@ void main() async {
   );
 
   runApp(
-    const ProviderScope(
-      child: AppV2(),
+    ProviderScope(
+      child: AppV2(
+        dependencies: AppDependencies.standard(),
+      ),
     ),
   );
 }

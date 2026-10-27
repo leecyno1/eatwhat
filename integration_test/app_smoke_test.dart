@@ -1,11 +1,12 @@
 import 'dart:io';
 
+import 'package:eatwhat_app/app/app_demo_routes.dart';
 import 'package:eatwhat_app/core/config/env_config.dart';
 import 'package:eatwhat_app/core/services/howtocook_database_service.dart';
 import 'package:eatwhat_app/core/services/unified_recipe_database_service.dart';
 import 'package:eatwhat_app/v2/app_v2.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
-import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
+import 'package:eatwhat_app/v2/core/navigation/app_v2_routes.dart';
 import 'package:eatwhat_app/v2/core/services/v2_recipe_execution_progress_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_theme_controller.dart';
 import 'package:eatwhat_app/v2/features/home/home_page.dart';

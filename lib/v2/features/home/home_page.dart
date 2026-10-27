@@ -8,7 +8,7 @@ import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
 import 'package:eatwhat_app/v2/core/data/repositories/tag_repository_v2.dart';
-import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
+import 'package:eatwhat_app/v2/core/navigation/app_v2_routes.dart';
 import 'package:eatwhat_app/v2/core/services/v2_favorites_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_meal_habit_learning_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
@@ -37,8 +37,8 @@ typedef HomePantryResultPageBuilder = Widget Function(
   List<String> pantry,
 );
 
-typedef HomePantrySearchLoader = Future<List<Map<String, dynamic>>>
-    Function(List<String> ingredients);
+typedef HomePantrySearchLoader = Future<List<Map<String, dynamic>>> Function(
+    List<String> ingredients);
 
 class HomePage extends StatefulWidget {
   const HomePage({
@@ -439,8 +439,7 @@ class _HomePageState extends State<HomePage> {
         child: Container(
           decoration: BoxDecoration(
             color: AppPalette.nightElevated,
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(20)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: PantryIngredientSheet(onConfirm: _submitPantrySearch),
         ),
@@ -460,8 +459,7 @@ class _HomePageState extends State<HomePage> {
         child: Container(
           decoration: BoxDecoration(
             color: AppPalette.nightElevated,
-            borderRadius:
-                const BorderRadius.vertical(top: Radius.circular(20)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
           ),
           child: const WeeklyReportSheet(),
         ),
@@ -518,7 +516,8 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Future<void> _submitRecentSuccessRecommendation() async {    final session = _session;
+  Future<void> _submitRecentSuccessRecommendation() async {
+    final session = _session;
     if (_isTransitioning || session == null || _recentRecipeIds.isEmpty) {
       return;
     }

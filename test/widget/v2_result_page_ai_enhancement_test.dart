@@ -107,6 +107,59 @@ void main() {
     expect(find.text('本地理由'), findsOneWidget);
   });
 
+  for (final status in [
+    RecommendationResolutionStatus.localFallback,
+    RecommendationResolutionStatus.dbResolved,
+  ]) {
+    testWidgets('ResultPage $status 正常完成不显示 AI 已重排', (tester) async {
+      final completer = Completer<Phase2RecommendationBundle>();
+      await tester.pumpWidget(
+        MaterialApp(
+          home: ResultPage(
+            recommendations: const [
+              RecipeModel(
+                id: 'r1',
+                name: '麻婆豆腐',
+                description: '本地候选。',
+              ),
+            ],
+            aiReasonsByRecipeId: const {'r1': '本地理由'},
+            aiEnhancement: completer.future,
+          ),
+        ),
+      );
+      await tester.pump(const Duration(milliseconds: 700));
+      expect(find.byKey(const ValueKey('ai-chef-enhancing')), findsOneWidget);
+
+      completer.complete(
+        Phase2RecommendationBundle(
+          recallLabels: const ['辣'],
+          recalledCount: 1,
+          finalRecommendations: const [
+            RecipeModel(
+              id: 'r1',
+              name: '麻婆豆腐',
+              description: '本地候选。',
+            ),
+          ],
+          aiReasonsByRecipeId: const {'r1': '不应覆盖的兜底理由'},
+          aiSummary: '不应覆盖的兜底摘要',
+          isEstimated: true,
+          resolutionStatus: status,
+          primarySource: 'local_fallback',
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('ai-chef-enhancing')), findsNothing);
+      expect(find.byKey(const ValueKey('ai-chef-enhanced')), findsNothing);
+      expect(find.text('AI 点菜师已重排'), findsNothing);
+      expect(find.text('本地理由'), findsOneWidget);
+      expect(find.text('不应覆盖的兜底理由'), findsNothing);
+      expect(find.text('不应覆盖的兜底摘要'), findsNothing);
+    });
+  }
+
   group('遥测归因：程序性翻页不污染 hero_swipe', () {
     late List<String> capturedActions;
 

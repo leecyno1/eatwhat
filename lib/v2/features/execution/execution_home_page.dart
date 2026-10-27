@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:eatwhat_app/core/services/auth_service.dart';
 import 'package:eatwhat_app/v2/core/external/platform/meituan_delivery_order_client.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
-import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
+import 'package:eatwhat_app/v2/core/navigation/app_v2_routes.dart';
 import 'package:eatwhat_app/v2/core/services/v2_execution_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_recommendation_telemetry_service.dart';

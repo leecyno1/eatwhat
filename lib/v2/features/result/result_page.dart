@@ -12,7 +12,7 @@ import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
 import 'package:eatwhat_app/v2/core/external/platform/meituan_delivery_order_client.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
-import 'package:eatwhat_app/v2/core/navigation/app_v2_router.dart';
+import 'package:eatwhat_app/v2/core/navigation/app_v2_routes.dart';
 import 'package:eatwhat_app/v2/core/services/generation_service.dart';
 import 'package:eatwhat_app/v2/core/services/prebuilt_dish_image_catalog_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_favorites_service.dart';
@@ -67,6 +67,7 @@ class ResultPage extends StatefulWidget {
     this.aiReasonsByRecipeId = const {},
     this.aiSummary,
     this.aiEnhancement,
+    this.cancelAiEnhancement,
     this.resolutionStatus,
     this.primarySource,
     this.recommendationContext,
@@ -77,6 +78,7 @@ class ResultPage extends StatefulWidget {
     this.corpusPairingLoader,
     this.imageCatalogService,
     this.dishIntroLoader,
+    this.generationService,
     this.howToCookRecipeService,
     this.platformJumpService,
     this.meituanOrderClient,
@@ -96,6 +98,7 @@ class ResultPage extends StatefulWidget {
   /// line for the chef's words without disturbing whatever the user is
   /// already looking at.
   final Future<Phase2RecommendationBundle>? aiEnhancement;
+  final void Function()? cancelAiEnhancement;
   final RecommendationResolutionStatus? resolutionStatus;
   final String? primarySource;
   final RecommendationTelemetryContext? recommendationContext;
@@ -106,6 +109,7 @@ class ResultPage extends StatefulWidget {
   final CorpusPairingLoader? corpusPairingLoader;
   final PrebuiltDishImageCatalogService? imageCatalogService;
   final DishIntroLoader? dishIntroLoader;
+  final GenerationService? generationService;
   final V2HowToCookRecipeService? howToCookRecipeService;
   final V2PlatformJumpService? platformJumpService;
   final MeituanDeliveryOrderClient? meituanOrderClient;
@@ -141,7 +145,7 @@ class _ResultPageState extends State<ResultPage>
   final V2FavoritesService _favorites = V2FavoritesService.instance;
   final V2PreferenceFeedbackService _feedback =
       V2PreferenceFeedbackService.instance;
-  final GenerationService _generation = GenerationService.instance;
+  late final GenerationService _generation;
   List<PairingSuggestion> _pairings = const [];
   bool _isFavorited = false;
   bool _isGeneratingImage = false;
@@ -182,6 +186,7 @@ class _ResultPageState extends State<ResultPage>
   @override
   void initState() {
     super.initState();
+    _generation = widget.generationService ?? GenerationService.instance;
     _entrance = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
@@ -249,6 +254,14 @@ class _ResultPageState extends State<ResultPage>
     setState(() => _aiEnhancing = true);
     future.then((bundle) {
       if (!mounted) return;
+      final hasAiResults = bundle.resolutionStatus ==
+              RecommendationResolutionStatus.aiResolved ||
+          bundle.resolutionStatus ==
+              RecommendationResolutionStatus.hybridResolved;
+      if (!hasAiResults) {
+        setState(() => _aiEnhancing = false);
+        return;
+      }
       setState(() {
         _aiEnhancing = false;
         _aiEnhanced = true;
@@ -379,7 +392,7 @@ class _ResultPageState extends State<ResultPage>
         prebuiltEntry == null || prebuiltEntry.heroUrl.trim().isEmpty
             ? null
             : await _imageCatalog.resolveHeroUrl(recipe);
-    if (!mounted) return;
+    if (!mounted || _choiceController.currentChoice?.id != recipe.id) return;
     if (prebuiltUrl != null && prebuiltUrl.trim().isNotEmpty) {
       setState(() {
         _imageStateController.markResolved(
@@ -410,7 +423,7 @@ class _ResultPageState extends State<ResultPage>
     try {
       final url = await (widget.imageGenerator?.call(recipe) ??
           _generation.generateRecipeImageUrl(recipe));
-      if (!mounted) return;
+      if (!mounted || _choiceController.currentChoice?.id != recipe.id) return;
       if (url == null || url.trim().isEmpty) {
         setState(() {
           _imageStateController.markFailed(recipe.id);
@@ -589,6 +602,7 @@ class _ResultPageState extends State<ResultPage>
 
   @override
   void dispose() {
+    widget.cancelAiEnhancement?.call();
     _heroPageController.dispose();
     _entrance.dispose();
     super.dispose();

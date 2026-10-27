@@ -61,6 +61,22 @@ class _ImmediateRecommendationService extends V2Phase2RecommendationService {
   _ImmediateRecommendationService();
 
   @override
+  Future<RecommendationSession> startRecommendationSession({
+    required TasteInferenceInput input,
+    int recallLimit = 12,
+    int finalLimit = 5,
+    Duration? localTimeout,
+  }) async {
+    final local = await buildRecommendations(
+      input: input,
+      recallLimit: recallLimit,
+      finalLimit: finalLimit,
+      skipAiEnhancement: true,
+    );
+    return RecommendationSession(local: local, enhanced: Future.value(local));
+  }
+
+  @override
   Future<Phase2RecommendationBundle> buildRecommendations({
     required TasteInferenceInput input,
     int recallLimit = 12,

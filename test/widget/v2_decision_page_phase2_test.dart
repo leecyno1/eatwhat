@@ -1,10 +1,15 @@
+import 'dart:async';
+
+import 'package:eatwhat_app/v2/core/data/models/ai_generation_models.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
 import 'package:eatwhat_app/v2/core/services/v2_howtocook_recipe_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_phase2_recommendation_service.dart';
 import 'package:eatwhat_app/v2/features/decision/decision_page.dart';
+import 'package:eatwhat_app/v2/features/result/result_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../test_bootstrap.dart';
 
@@ -100,6 +105,113 @@ void main() {
     expect(find.text('本地召回 1 道候选'), findsOneWidget);
     expect(find.text('智能收束 1 道正式结果'), findsOneWidget);
     expect(find.textContaining('AI 已在本地正式候选中完成辅助收束'), findsOneWidget);
+  });
+
+  testWidgets('DecisionPage 每轮推荐只执行一次本地召回', (tester) async {
+    var localCalls = 0;
+    final service = V2Phase2RecommendationService(
+      localRecommendationLoader: (_, __, ___) async {
+        localCalls += 1;
+        return const [
+          RecipeModel(
+            id: 'single_recall_dish',
+            name: '番茄豆腐煲',
+            description: '单次召回测试。',
+            source: 'unified_db',
+          ),
+        ];
+      },
+      enableAiEnhancement: false,
+      howToCookRecipeService: _fakeHowToCookService(),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: DecisionPage(
+          autoNavigateToResult: false,
+          recommendationFlowService: service,
+        ),
+      ),
+    );
+    await _pumpUntilFound(tester, find.text('本地召回 1 道候选'));
+
+    expect(localCalls, 1);
+  });
+
+  testWidgets('DecisionPage 等待冷启动本地召回而不是提前置空', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final service = V2Phase2RecommendationService(
+      localRecommendationLoader: (_, __, ___) async {
+        await Future<void>.delayed(const Duration(seconds: 4));
+        return const [
+          RecipeModel(
+            id: 'cold_start_dish',
+            name: '冷启动番茄煲',
+            description: '冷启动加载完成后返回的正式候选。',
+            source: 'unified_db',
+          ),
+        ];
+      },
+      enableAiEnhancement: false,
+      howToCookRecipeService: _fakeHowToCookService(),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: DecisionPage(
+          recommendationFlowService: service,
+        ),
+      ),
+    );
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pump(const Duration(milliseconds: 500));
+
+    expect(find.byType(ResultPage), findsOneWidget);
+    expect(find.text('冷启动番茄煲'), findsWidgets);
+    expect(find.text('这轮没有收束出合适的菜'), findsNothing);
+  });
+
+  testWidgets('ResultPage 接管会话后仅在自身销毁时取消增强', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    final refiner = Completer<AiRefinedRecommendations>();
+    addTearDown(() {
+      if (!refiner.isCompleted) {
+        refiner.complete(
+          const AiRefinedRecommendations(
+            recipeIds: ['dish_1'],
+            reasonsById: {},
+          ),
+        );
+      }
+    });
+    final service = _TrackingRecommendationService(refiner: refiner);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: DecisionPage(
+          recommendationFlowService: service,
+        ),
+      ),
+    );
+    await _pumpUntilFound(
+      tester,
+      find.byType(ResultPage),
+      maxPumps: 50,
+    );
+
+    expect(find.byType(ResultPage), findsOneWidget);
+    final session = service.lastSession!;
+    expect(session.isCancelled, isFalse);
+    expect(
+      tester.widget<ResultPage>(find.byType(ResultPage)).cancelAiEnhancement,
+      isNotNull,
+    );
+
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump();
+
+    expect(find.byType(ResultPage), findsNothing);
+    expect(session.isCancelled, isTrue);
   });
 }
 
@@ -232,4 +344,39 @@ Future<List<RecipeModel>> _fakeLocalRecommendations(
       source: 'unified_db',
     ),
   ];
+}
+
+class _TrackingRecommendationService extends V2Phase2RecommendationService {
+  _TrackingRecommendationService({
+    required Completer<AiRefinedRecommendations> refiner,
+  }) : super(
+          localRecommendationLoader: _fakeLocalRecommendations,
+          recommendationRefiner: ({
+            required selectedTags,
+            required candidates,
+            required limit,
+            required customRequirement,
+          }) =>
+              refiner.future,
+          howToCookRecipeService: _fakeHowToCookService(),
+        );
+
+  RecommendationSession? lastSession;
+
+  @override
+  Future<RecommendationSession> startRecommendationSession({
+    required TasteInferenceInput input,
+    int recallLimit = 12,
+    int finalLimit = 5,
+    Duration? localTimeout,
+  }) async {
+    final session = await super.startRecommendationSession(
+      input: input,
+      recallLimit: recallLimit,
+      finalLimit: finalLimit,
+      localTimeout: localTimeout,
+    );
+    lastSession = session;
+    return session;
+  }
 }
