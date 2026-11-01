@@ -103,6 +103,7 @@ void main() {
     expect(find.text('鸡腿 1只'), findsOneWidget);
     expect(find.text('鸡腿洗净切块。'), findsOneWidget);
     expect(find.text('HowToCook 原菜谱'), findsOneWidget);
+    expect(find.text('中等'), findsOneWidget);
     expect(find.text('食材 2'), findsOneWidget);
     expect(find.text('步骤 2'), findsOneWidget);
     expect(find.byKey(const ValueKey('recipe-cook-brief-section')),

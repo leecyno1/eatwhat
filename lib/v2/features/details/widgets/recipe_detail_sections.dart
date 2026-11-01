@@ -4,6 +4,7 @@ import 'package:eatwhat_app/v2/core/data/models/howtocook_recipe_detail.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
+import 'package:eatwhat_app/v2/features/details/recipe_difficulty_label.dart';
 import 'package:eatwhat_app/v2/features/details/widgets/recipe_detail_controls.dart';
 
 import 'package:flutter/material.dart';
@@ -41,7 +42,10 @@ class RecipeHeaderSection extends StatelessWidget {
           spacing: AppSpacing.xs,
           runSpacing: AppSpacing.xs,
           children: [
-            RecipeInfoChip(Icons.restaurant_menu, recipe.difficulty),
+            RecipeInfoChip(
+              Icons.restaurant_menu,
+              recipeDifficultyLabel(recipe.difficulty),
+            ),
             if (recipe.source.trim().isNotEmpty)
               RecipeInfoChip(Icons.menu_book_rounded, _sourceLabel(recipe)),
             RecipeInfoChip(
