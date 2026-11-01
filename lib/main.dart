@@ -10,6 +10,7 @@ import 'core/services/auth_service.dart';
 import 'core/utils/analytics_helper.dart';
 import 'v2/app_v2.dart';
 import 'v2/core/theme/app_theme_controller.dart';
+import 'v2/core/theme/system_ui_style.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,14 +32,15 @@ void main() async {
     DeviceOrientation.portraitDown,
   ]);
 
-  // Set system UI overlay style
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.dark,
-      statusBarBrightness: Brightness.light,
-    ),
-  );
+  // System UI overlay follows the theme so dark pages keep readable icons.
+  void applySystemUiOverlay() {
+    SystemChrome.setSystemUIOverlayStyle(
+      appSystemUiOverlayStyle(isCream: AppThemeController.isCream),
+    );
+  }
+
+  applySystemUiOverlay();
+  AppThemeController.mode.addListener(applySystemUiOverlay);
 
   runApp(
     ProviderScope(
