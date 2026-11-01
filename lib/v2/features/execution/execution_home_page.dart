@@ -213,7 +213,11 @@ class _ExecutionHomePageState extends State<ExecutionHomePage> {
                   Expanded(
                     child: Container(
                       key: const ValueKey('execution-home-page'),
-                      decoration: AppDecorations.card(radius: AppRadii.lg),
+                      decoration: AppDecorations.card(
+                        color: AppPalette.cream,
+                        borderColor: AppPalette.divider,
+                        radius: AppRadii.lg,
+                      ),
                       child: ClipRRect(
                         borderRadius: AppRadii.panel,
                         child: Padding(

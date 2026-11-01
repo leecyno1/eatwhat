@@ -1,6 +1,8 @@
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
 import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
+import 'package:eatwhat_app/v2/core/theme/app_theme_controller.dart';
+import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:eatwhat_app/v2/features/details/recipe_detail_page.dart';
 import 'package:eatwhat_app/v2/features/execution/execution_home_page.dart';
 import 'package:eatwhat_app/v2/features/execution/widgets/execution_widgets.dart';
@@ -453,6 +455,44 @@ void main() {
     );
     expect(await V2PreferenceFeedbackService.instance.getTagScore('外卖'), 0);
     expect(await V2PreferenceFeedbackService.instance.getTagScore('凉面'), 2);
+  });
+
+  testWidgets('执行主页卡片底色跟随深浅主题，不再固定白玻璃', (tester) async {
+    const intent = ExecutionIntent(
+      recipe: RecipeModel(
+        id: 'r1',
+        name: '番茄肥牛锅',
+        description: '热一点，有锅气，适合夜里吃。',
+      ),
+      pairings: [],
+      sourceTags: [],
+    );
+
+    Future<Color?> cardColor(WidgetTester tester) async {
+      // AppPalette 的颜色在 build 时求值，先卸载再挂载才能拿到新主题的取值。
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pump();
+      await tester.pumpWidget(
+        const MaterialApp(home: ExecutionHomePage(intent: intent)),
+      );
+      await tester.pump();
+      final card = tester.widget<Container>(
+        find.byKey(const ValueKey('execution-home-page')),
+      );
+      return (card.decoration! as BoxDecoration).color;
+    }
+
+    addTearDown(() => AppThemeController.setMode(AppThemeMode.dark));
+
+    await AppThemeController.setMode(AppThemeMode.dark);
+    final darkColor = await cardColor(tester);
+    expect(darkColor, AppPalette.cream);
+    expect(darkColor!.computeLuminance(), lessThan(0.2));
+
+    await AppThemeController.setMode(AppThemeMode.cream);
+    final creamColor = await cardColor(tester);
+    expect(creamColor, AppPalette.cream);
+    expect(creamColor!.computeLuminance(), greaterThan(0.5));
   });
 
   test('执行平台名称会统一映射为开吃路径', () {
