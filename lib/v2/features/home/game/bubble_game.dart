@@ -14,6 +14,7 @@ import 'package:sensors_plus/sensors_plus.dart';
 
 import 'bubble_body.dart';
 import 'bubble_data_manager.dart';
+import 'bubble_spawn_ledger.dart';
 import 'grab_controller.dart';
 import 'wall_body.dart';
 
@@ -22,7 +23,11 @@ class BubbleGame extends Forge2DGame {
     String? initialCategory,
     Map<String, String> initialLikedTags = const {},
     Map<String, String> initialBlockedTags = const {},
+    @visibleForTesting BubbleDataManager? dataManagerOverride,
+    @visibleForTesting BubbleGeometryLoader? geometryLoader,
   })  : _category = initialCategory,
+        _dataManagerOverride = dataManagerOverride,
+        _geometryLoader = geometryLoader,
         super(gravity: Vector2(0, gravityY), zoom: 1.0) {
     _replaceSelections(
       likedTags: initialLikedTags,
@@ -66,6 +71,10 @@ class BubbleGame extends Forge2DGame {
   Color backgroundColor() => const Color(0x00FFFFFF);
 
   late final BubbleDataManager _dataManager;
+  final BubbleDataManager? _dataManagerOverride;
+  final BubbleGeometryLoader? _geometryLoader;
+  final BubbleSpawnLedger _spawnLedger = BubbleSpawnLedger();
+  final Set<BubbleBody> _pendingBubbles = <BubbleBody>{};
   final V2PreferenceFeedbackService _feedback =
       V2PreferenceFeedbackService.instance;
   async.StreamSubscription<AccelerometerEvent>? _accelerometerSubscription;
@@ -98,6 +107,9 @@ class BubbleGame extends Forge2DGame {
   /// Every live preference entity on the stage (used by the grab gesture
   /// to hit-test the finger position).
   Iterable<BubbleBody> get entities => world.children.whereType<BubbleBody>();
+
+  @visibleForTesting
+  Set<String> get issuedTagIds => _spawnLedger.issuedIds;
 
   int _suppressTapUntilMicros = 0;
 
@@ -249,7 +261,7 @@ class BubbleGame extends Forge2DGame {
     await super.onLoad();
 
     // Initialize data manager
-    _dataManager = BubbleDataManager();
+    _dataManager = _dataManagerOverride ?? BubbleDataManager();
     await _dataManager.initialize();
     _isLoaded = true;
 
@@ -300,7 +312,7 @@ class BubbleGame extends Forge2DGame {
     _replenishClock += dt;
     if (_replenishClock >= _replenishIntervalSec) {
       _replenishClock = 0;
-      if (entities.length < visibleBubbleCount) {
+      if (entities.length + _pendingBubbles.length < visibleBubbleCount) {
         _addBubbles(count: 1, replenish: true);
       }
     }
@@ -359,19 +371,21 @@ class BubbleGame extends Forge2DGame {
 
   void _addBubbles({int count = visibleBubbleCount, bool replenish = false}) {
     final rand = Random();
-    final existingIds = world.children
-        .whereType<BubbleBody>()
-        .map((bubble) => bubble.data.id)
-        .toSet();
     final bubbles = _dataManager.getInitialBubbles(
       count,
       category: _category,
-      excludedTagIds: {
-        ...existingIds,
+      excludedTagIds: _spawnLedger.exclusions({
         ...selectedTagIds,
         ...blockedTagIds,
-      },
+      }),
     );
+
+    final accepted = <BubbleData>[];
+    for (final data in bubbles) {
+      if (_spawnLedger.reserve(data.id)) {
+        accepted.add(data);
+      }
+    }
 
     final visibleWidth = max(size.x / worldScale, 8.0);
     final visibleHeight = max(size.y / worldScale, 12.0);
@@ -385,8 +399,8 @@ class BubbleGame extends Forge2DGame {
     final spawnBandHeight =
         replenish ? 0.4 : max(1.0, visibleHeight * 0.42 - spawnBandTop - 2.4);
 
-    for (var i = 0; i < bubbles.length; i++) {
-      final data = bubbles[i];
+    for (var i = 0; i < accepted.length; i++) {
+      final data = accepted[i];
       // Size tiers keep the pile varied, and history-driven sizeMultiplier
       // makes frequently chosen preferences visibly larger over time. The
       // whole scale was bumped ~30% so entities read clearly and are easy
@@ -429,7 +443,7 @@ class BubbleGame extends Forge2DGame {
           bestCandidate ?? Vector2(visibleWidth / 2, spawnBandTop + reach);
       placements.add((center: chosen, span: reach));
 
-      world.add(BubbleBody(
+      final bubble = BubbleBody(
         data: data,
         targetLongSide: span,
         initialPosition: chosen,
@@ -437,7 +451,22 @@ class BubbleGame extends Forge2DGame {
         isGolden: rand.nextDouble() < goldenEntityChance,
         initialHorizontalImpulse:
             replenish ? (rand.nextDouble() - 0.5) * 2.4 : 0,
-      ));
+        spawnGeneration: _spawnLedger.generation,
+        geometryLoader: _geometryLoader,
+      );
+      _pendingBubbles.add(bubble);
+      async.unawaited(
+        bubble.mounted.then((_) => _handleMountedBubble(bubble)),
+      );
+      world.add(bubble);
+    }
+  }
+
+  void _handleMountedBubble(BubbleBody bubble) {
+    _pendingBubbles.remove(bubble);
+    if (bubble.isRemoved) return;
+    if (bubble.spawnGeneration != _spawnLedger.generation) {
+      bubble.removeFromParent();
     }
   }
 
@@ -459,6 +488,15 @@ class BubbleGame extends Forge2DGame {
   }
 
   void _reloadBubbles() {
+    _spawnLedger.beginGeneration(
+      preserve: {...selectedTagIds, ...blockedTagIds},
+    );
+
+    for (final bubble in _pendingBubbles.toList()) {
+      bubble.removeFromParent();
+    }
+    _pendingBubbles.clear();
+
     for (final bubble in world.children.whereType<BubbleBody>().toList()) {
       bubble.removeFromParent();
     }

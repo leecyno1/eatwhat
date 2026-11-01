@@ -15,6 +15,11 @@ import 'entity_geometry.dart';
 import 'grab_controller.dart';
 import 'taste_entity_visual_catalog.dart';
 
+typedef BubbleGeometryLoader = Future<EntityGeometry?> Function(
+  String assetName,
+  String assetPath,
+);
+
 /// A physical preference entity on the home stage.
 ///
 /// The artwork itself is the body: the sprite is rendered as-is (no bubble
@@ -34,6 +39,8 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
     required this.layerIndex,
     this.isGolden = false,
     this.initialHorizontalImpulse = 0,
+    this.spawnGeneration = 0,
+    this.geometryLoader,
   });
 
   final BubbleData data;
@@ -56,6 +63,12 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   /// Small random sideways velocity for replenished entities so they drift
   /// naturally as they fall from the top.
   final double initialHorizontalImpulse;
+
+  /// 发放代次：分类重载后旧代次实体在挂载时会被立即移除。
+  final int spawnGeneration;
+
+  /// 可注入的轮廓加载器，测试用它在实体挂载前制造可控延迟。
+  final BubbleGeometryLoader? geometryLoader;
 
   bool isSelected = false;
   bool isRejected = false;
@@ -118,8 +131,11 @@ class BubbleBody extends BodyComponent<BubbleGame> with TapCallbacks {
   Future<void> onLoad() async {
     // Load the silhouette geometry before the body is created so the
     // fixtures can follow the artwork's true outline.
-    final geometry = await EntityGeometry.load(data.assetName, data.assetPath);
-    if (isRemoved) return;
+    final loader = geometryLoader ?? EntityGeometry.load;
+    final geometry = await loader(data.assetName, data.assetPath);
+    // 分类重载会在加载中途 dequeue 尚未挂载的实体：此时 parent 已置空，
+    // 必须直接返回，避免异步加载结束后仍创建出看不见的物理刚体。
+    if (isRemoved || parent == null) return;
     _geometry = geometry;
     if (geometry != null) {
       final scale = targetLongSide / geometry.longSidePixels;
