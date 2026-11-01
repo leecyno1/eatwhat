@@ -40,6 +40,8 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>用于搜索当前位置附近可配送的美团门店和菜品。</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>仅在你使用应用时获取位置，用于搜索附近可配送的美团门店和菜品，不会在后台持续定位。</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
 	<string>用于将你的语音转换成文字，并与卡牌偏好一起生成菜品推荐。</string>
 	<key>UILaunchStoryboardName</key>
