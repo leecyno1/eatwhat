@@ -62,8 +62,24 @@
 ### 关键词（100 字内，逗号分隔）
 吃什么,美食,菜谱,推荐,选择困难,今天吃什么,摇一摇,冰箱,家常菜,做饭,饮食报告,点餐
 
-## 共用素材索引
-- 图标：docs/store_assets/play_icon_512.png（Play 512×512）
+## 共用素材索引（2026-11-01 更新）
+
+App Store（6.7 英寸，1290×2796）：
+- `6.7inch_home.png`：首页口味气泡舞台
+- `6.7inch_result.png`：推荐结果页
+- `6.7inch_paths.png`：开吃方式（自己做／叫外卖／去堂食）
+
+App Store（6.1 英寸，1179×2556，旧构建，可不上传）：
+- `6.1inch_home.png`、`6.1inch_result.png`
+
+Google Play（1080×1920，9:16）：
+- `play_home.png`：首页
+- `play_result.png`：推荐结果
+- `play_detail.png`：菜谱详情（真实链路，含步骤与备料）
+- `play_cooking.png`：做菜模式（分步引导）
+
+其他：
+- 图标：docs/store_assets/play_icon_512.png（Play 512×512）——目前仍是 Flutter 默认图标，提审前需换品牌图标
 - 头图：docs/store_assets/play_feature_graphic_1024x500.png（Play 1024×500）
-- 截图：docs/store_assets/play_*.png（Play）；6.7inch_*.png、6.1inch_*.png（App Store）
+- 不可用旧图归档：docs/store_assets/_unusable/（破图/占位/空状态）
 - 隐私政策：docs/privacy_policy.html（GitHub Pages 托管后 URL：https://leecyno1.github.io/eatwhat/privacy_policy.html）
