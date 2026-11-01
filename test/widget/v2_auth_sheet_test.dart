@@ -190,6 +190,112 @@ void main() {
     await AuthService.logout();
   });
 
+  testWidgets('账号面板提供注销账号入口并要求密码确认', (tester) async {
+    await AuthService.register(
+      username: '注销测试',
+      email: 'delete@example.com',
+      password: 'Eat123456',
+      confirmPassword: 'Eat123456',
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData.dark(),
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => Center(
+              child: FilledButton(
+                key: const ValueKey('open-account'),
+                onPressed: () => showEatWhatAccountSheet(context),
+                child: const Text('打开账号'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.byKey(const ValueKey('open-account')));
+    await settle(tester);
+
+    expect(
+      find.byKey(const ValueKey('auth-delete-account-button')),
+      findsOneWidget,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('auth-delete-account-button')));
+    await settle(tester);
+
+    expect(find.byKey(const ValueKey('auth-delete-password')), findsOneWidget);
+    expect(find.byKey(const ValueKey('auth-delete-confirm')), findsOneWidget);
+
+    // 取消不删除账号
+    await tester.tap(find.text('取消'));
+    await settle(tester);
+    expect(AuthService.isLoggedIn, isTrue);
+    expect(
+      find.byKey(const ValueKey('eatwhat-account-sheet')),
+      findsOneWidget,
+    );
+
+    await AuthService.logout();
+  });
+
+  testWidgets('注销账号：错误密码保留账号，正确密码删除并关闭面板', (tester) async {
+    await AuthService.register(
+      username: '注销测试',
+      email: 'delete@example.com',
+      password: 'Eat123456',
+      confirmPassword: 'Eat123456',
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: ThemeData.dark(),
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => Center(
+              child: FilledButton(
+                key: const ValueKey('open-account'),
+                onPressed: () => showEatWhatAccountSheet(context),
+                child: const Text('打开账号'),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.byKey(const ValueKey('open-account')));
+    await settle(tester);
+    await tester.tap(find.byKey(const ValueKey('auth-delete-account-button')));
+    await settle(tester);
+
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-delete-password')),
+      'wrong-pass',
+    );
+    await tester.tap(find.byKey(const ValueKey('auth-delete-confirm')));
+    await settle(tester);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(AuthService.isLoggedIn, isTrue);
+    expect(find.text('密码错误，请重试'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('eatwhat-account-sheet')),
+      findsOneWidget,
+    );
+
+    await tester.enterText(
+      find.byKey(const ValueKey('auth-delete-password')),
+      'Eat123456',
+    );
+    await tester.tap(find.byKey(const ValueKey('auth-delete-confirm')));
+    await settle(tester);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(AuthService.isLoggedIn, isFalse);
+    expect(find.byKey(const ValueKey('eatwhat-account-sheet')), findsNothing);
+  });
+
   test('User 模型会员字段默认与序列化兼容', () {
     final json = {
       'id': '1',

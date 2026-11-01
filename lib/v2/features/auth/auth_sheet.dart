@@ -553,6 +553,20 @@ class _EatWhatAccountSheetState extends State<_EatWhatAccountSheet> {
     }
   }
 
+  Future<void> _deleteAccount(BuildContext context) async {
+    final deleted = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) => const _DeleteAccountDialog(
+        onDelete: AuthService.deleteAccount,
+      ),
+    );
+    if (deleted != true || !context.mounted) return;
+
+    Navigator.of(context).pop();
+    // Telemetry must not delay closing the account sheet after deletion.
+    unawaited(AnalyticsService().logout());
+  }
+
   @override
   Widget build(BuildContext context) {
     final user = AuthService.currentUser;
@@ -590,7 +604,7 @@ class _EatWhatAccountSheetState extends State<_EatWhatAccountSheet> {
       ),
       child: SafeArea(
         top: false,
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.fromLTRB(
             AppSpacing.lg,
             AppSpacing.md,
@@ -667,10 +681,105 @@ class _EatWhatAccountSheetState extends State<_EatWhatAccountSheet> {
                   child: const Text('退出登录'),
                 ),
               ),
+              const SizedBox(height: AppSpacing.xs),
+              TextButton(
+                key: const ValueKey('auth-delete-account-button'),
+                onPressed: () => _deleteAccount(context),
+                style: TextButton.styleFrom(
+                  foregroundColor: const Color(0xFFE4513F),
+                ),
+                child: const Text('注销账号'),
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Password-confirmed account deletion dialog. The deletion runs inside the
+/// dialog so a wrong password can be corrected without reopening it.
+class _DeleteAccountDialog extends StatefulWidget {
+  const _DeleteAccountDialog({required this.onDelete});
+
+  final Future<AuthResult> Function(String password) onDelete;
+
+  @override
+  State<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
+  final _passwordController = TextEditingController();
+  String? _error;
+  bool _submitting = false;
+
+  @override
+  void dispose() {
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _confirm() async {
+    if (_submitting) return;
+    final password = _passwordController.text;
+    if (password.isEmpty) {
+      setState(() => _error = '请输入密码');
+      return;
+    }
+    setState(() {
+      _submitting = true;
+      _error = null;
+    });
+    final result = await widget.onDelete(password);
+    if (!mounted) return;
+    if (result.success) {
+      Navigator.of(context).pop(true);
+      return;
+    }
+    setState(() {
+      _submitting = false;
+      _error = result.message == '密码错误' ? '密码错误，请重试' : result.message;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('注销账号'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text('注销后，本机账号与登录状态将被删除，且无法恢复。'),
+          const SizedBox(height: AppSpacing.sm),
+          TextField(
+            key: const ValueKey('auth-delete-password'),
+            controller: _passwordController,
+            obscureText: true,
+            autofocus: true,
+            decoration: InputDecoration(
+              labelText: '密码',
+              errorText: _error,
+            ),
+            onSubmitted: (_) => _confirm(),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: const Text('取消'),
+        ),
+        TextButton(
+          key: const ValueKey('auth-delete-confirm'),
+          onPressed: _confirm,
+          style: TextButton.styleFrom(
+            foregroundColor: const Color(0xFFE4513F),
+          ),
+          child: const Text('注销'),
+        ),
+      ],
     );
   }
 }
