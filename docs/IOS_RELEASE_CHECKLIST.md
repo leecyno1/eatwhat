@@ -1,5 +1,7 @@
 # iOS 上线清单（App Store）
 
+> 2026-11-01 更新：当前提审状态、账号阻塞项与字段速填见 `docs/STORE_SUBMISSION_CHECKLIST.md`。本文件保留为通用检查项。
+
 ## 合规与权限
 - 隐私：App Privacy（数据收集/用途），符合中国区要求；
 - 权限文案：`NSLocationWhenInUseUsageDescription`、相册/相机（如需）、网络；

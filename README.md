@@ -4,7 +4,7 @@
 
 ## 当前状态（2026-10）
 
-- 主线功能完成，release 构建三端通过：Android AAB 已用上传密钥签名（184.6MB）、iOS `--no-codesign` 存档（168.0MB）、Web 构建可用（167.5MB）
+- 主线功能完成，release 构建三端通过：Android AAB 已用上传密钥签名（184.7MB，targetSdk 36）、iOS `--no-codesign` 存档（168.3MB，iPhone-only）、Web 构建可用（167.5MB）
 - 外卖下单：客户端与代理链路就绪，但美团开放平台资质认证挂起；生产环境外卖入口显示「尚未开通」（预期降级）
 - AI 增强与会员支付：依赖自营后端三服务；未部署时自动降级，本地推荐/做菜链路不受影响
 - 账号：本地共用账号，无云端同步（既定策略）
@@ -54,7 +54,7 @@ flutter run -d ios|android|chrome
 
 ```bash
 flutter analyze
-flutter test                  # 565 个单元/Widget 用例
+flutter test                  # 589 个单元/Widget 用例
 ```
 
 集成测试（需模拟器 + mock 代理）：
@@ -74,7 +74,7 @@ flutter build ios --release --no-codesign   # 需自有证书签名后上传 App
 flutter build web --release
 ```
 
-商店材料（图标/头图/截图/双店文案/审核备注）见 `docs/store_assets/`；隐私政策：https://leecyno1.github.io/eatwhat/privacy_policy.html
+商店材料（图标/头图/截图/双店文案/审核备注）见 `docs/store_assets/`；提审清单见 `docs/STORE_SUBMISSION_CHECKLIST.md`。隐私政策：https://leecyno1.github.io/eatwhat/privacy_policy.html；账号删除：https://leecyno1.github.io/eatwhat/account_deletion.html；支持页：https://leecyno1.github.io/eatwhat/support.html
 
 ## 数据规模
 

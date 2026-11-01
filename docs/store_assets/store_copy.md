@@ -83,4 +83,7 @@ Google Play（1080×1920，9:16）：
 - 图标母版：docs/store_assets/app_icon_master_1024.png（金色碗＋问号蒸汽＋筷子，黑金底；各平台尺寸已从母版生成）
 - 头图：docs/store_assets/play_feature_graphic_1024x500.png（Play 1024×500）
 - 不可用旧图归档：docs/store_assets/_unusable/（破图/占位/空状态）
-- 隐私政策：docs/privacy_policy.html（GitHub Pages 托管后 URL：https://leecyno1.github.io/eatwhat/privacy_policy.html）
+- 隐私政策：docs/privacy_policy.html（https://leecyno1.github.io/eatwhat/privacy_policy.html）
+- 账号删除：docs/account_deletion.html（https://leecyno1.github.io/eatwhat/account_deletion.html）
+- 支持页：docs/support.html（https://leecyno1.github.io/eatwhat/support.html）
+- 提审执行清单：docs/STORE_SUBMISSION_CHECKLIST.md
