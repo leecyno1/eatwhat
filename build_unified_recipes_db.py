@@ -511,10 +511,12 @@ class UnifiedBuilder:
             merged_main,
         )
 
-    def ensure_tag(self, category: str, name: str) -> Optional[int]:
+    def ensure_tag(
+        self, category: str, name: str, key: Optional[str] = None
+    ) -> Optional[int]:
         if not name:
             return None
-        key = slugify(name)
+        key = key or slugify(name)
         cache_key = (category, key)
         if cache_key in self.tag_cache:
             return self.tag_cache[cache_key]
@@ -557,8 +559,10 @@ class UnifiedBuilder:
             counter += 1
         return slug_value
 
-    def add_dish_tag(self, dish_id: int, category: str, name: str) -> None:
-        tag_id = self.ensure_tag(category, name)
+    def add_dish_tag(
+        self, dish_id: int, category: str, name: str, key: Optional[str] = None
+    ) -> None:
+        tag_id = self.ensure_tag(category, name, key=key)
         if not tag_id:
             return
         self.conn.execute(
@@ -1360,7 +1364,12 @@ def build_from_howtocook(builder: UnifiedBuilder) -> None:
                 labels,
             )
             builder.add_dish_tag(dish_id, "howtocook_category", cuisine)
-            builder.add_dish_tag(dish_id, "howtocook_source_category", raw_category)
+            builder.add_dish_tag(
+                dish_id,
+                "howtocook_source_category",
+                cuisine,
+                key=raw_category,
+            )
             if subcategory and subcategory != name:
                 builder.add_dish_tag(dish_id, "howtocook_subcategory", subcategory)
             builder.add_standard_dish_tags(

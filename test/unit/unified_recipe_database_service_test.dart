@@ -49,6 +49,24 @@ void main() {
       expect(pairings.first.source, 'rule');
     });
 
+    test('HowToCook 来源分类标签全部本地化为中文', () async {
+      final tags = await UnifiedRecipeDatabaseService.instance
+          .fetchTagCatalog(limit: 1000);
+      final sourceCategories = tags.where(
+        (tag) => tag['category'] == 'howtocook_source_category',
+      );
+
+      expect(sourceCategories, isNotEmpty);
+      final chinese = RegExp(r'[\u4e00-\u9fa5]');
+      for (final tag in sourceCategories) {
+        expect(
+          chinese.hasMatch('${tag['name_cn']}'),
+          isTrue,
+          reason: '${tag['key']} 仍然是英文标签：${tag['name_cn']}',
+        );
+      }
+    });
+
     test('runtime database copy stays byte-identical to the bundled asset',
         () async {
       await UnifiedRecipeDatabaseService.instance.ensureInitialized();
