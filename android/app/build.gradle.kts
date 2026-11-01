@@ -38,7 +38,8 @@ android {
     defaultConfig {
         applicationId = "com.eatwhat.eatwhat_app"
         minSdk = 23
-        targetSdk = flutter.targetSdkVersion
+        // Google Play 自 2026-08-31 起要求新应用与更新 targetSdk >= 36。
+        targetSdk = 36
         versionCode = flutter.versionCode
         versionName = flutter.versionName
     }

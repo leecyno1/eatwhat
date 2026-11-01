@@ -31,6 +31,8 @@
 	</array>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>用于长按语音输入今天想吃的口味和要求。</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsLocalNetworking</key>
