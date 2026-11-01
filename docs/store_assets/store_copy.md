@@ -79,7 +79,8 @@ Google Play（1080×1920，9:16）：
 - `play_cooking.png`：做菜模式（分步引导）
 
 其他：
-- 图标：docs/store_assets/play_icon_512.png（Play 512×512）——目前仍是 Flutter 默认图标，提审前需换品牌图标
+- 图标：docs/store_assets/play_icon_512.png（Play 512×512）
+- 图标母版：docs/store_assets/app_icon_master_1024.png（金色碗＋问号蒸汽＋筷子，黑金底；各平台尺寸已从母版生成）
 - 头图：docs/store_assets/play_feature_graphic_1024x500.png（Play 1024×500）
 - 不可用旧图归档：docs/store_assets/_unusable/（破图/占位/空状态）
 - 隐私政策：docs/privacy_policy.html（GitHub Pages 托管后 URL：https://leecyno1.github.io/eatwhat/privacy_policy.html）
