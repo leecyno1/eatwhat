@@ -355,9 +355,9 @@ class _TutorialScrim extends StatelessWidget {
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
           colors: [
-            GoldPalette.nightDeep.withValues(alpha: 0.90),
-            GoldPalette.nightDeep.withValues(alpha: 0.76),
             GoldPalette.nightDeep.withValues(alpha: 0.95),
+            GoldPalette.nightDeep.withValues(alpha: 0.91),
+            GoldPalette.nightDeep.withValues(alpha: 0.97),
           ],
           stops: const [0, 0.48, 1],
         ),
@@ -367,7 +367,7 @@ class _TutorialScrim extends StatelessWidget {
           gradient: RadialGradient(
             center: Alignment(0, -0.1),
             radius: 0.8,
-            colors: [Color(0x1634D277), Color(0x00000000)],
+            colors: [Color(0x14E8C97D), Color(0x00000000)],
           ),
         ),
       ),

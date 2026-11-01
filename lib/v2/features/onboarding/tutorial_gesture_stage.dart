@@ -156,22 +156,20 @@ class _TutorialGestureStageState extends State<TutorialGestureStage>
         alignment: Alignment.center,
         children: [
           _ambientOrb(width, height),
-          _dropZone(
-            alignment: Alignment.topCenter,
-            color: _leafGreen,
-            label: '顶部 · 收下',
-            opacity: widget.gesture == TutorialGesture.drag
-                ? 0.24 + topGlow * 0.76
-                : 0.12,
-          ),
-          _dropZone(
-            alignment: Alignment.bottomCenter,
-            color: AppPalette.tomato,
-            label: '底部 · 拉黑',
-            opacity: widget.gesture == TutorialGesture.drag
-                ? 0.24 + bottomGlow * 0.76
-                : 0.12,
-          ),
+          if (widget.gesture == TutorialGesture.drag) ...[
+            _dropZone(
+              alignment: Alignment.topCenter,
+              color: _leafGreen,
+              label: '顶部 · 收下',
+              opacity: 0.24 + topGlow * 0.76,
+            ),
+            _dropZone(
+              alignment: Alignment.bottomCenter,
+              color: AppPalette.tomato,
+              label: '底部 · 拉黑',
+              opacity: 0.24 + bottomGlow * 0.76,
+            ),
+          ],
           if (widget.gesture == TutorialGesture.tap && ripple > 0)
             IgnorePointer(
               child: Container(
