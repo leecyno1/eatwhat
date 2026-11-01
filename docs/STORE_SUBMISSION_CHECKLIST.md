@@ -11,6 +11,7 @@
 | 16 KB 页对齐 | APK `zipalign -c -P 16` 通过；arm64 `libflutter.so`/`libapp.so` 的 PT_LOAD 对齐 0x10000 |
 | Play targetSdk | manifest `targetSdkVersion=36`、`minSdkVersion=23`，符合 2026-08-31 起的新规 |
 | iOS 构建环境 | Xcode 26.6 / iOS 26.5 SDK；`flutter build ios --release --no-codesign` 可产出 Release |
+| iOS IPA | `build/ios/ipa_manual/EatWhat.ipa`（146.9MB，SHA-256 `4c44216f…67b0`），公司 Distribution 签名，`codesign --verify --deep --strict` 通过 |
 | iOS 合规 | `PrivacyInfo.xcprivacy` 随包；`ITSAppUsesNonExemptEncryption=false`；麦克风/定位/语音用途文案齐全 |
 | 账号删除 | 账号面板底部「注销账号」→ 密码确认；说明页 `docs/account_deletion.html` |
 | 商店图形 | App Store 6.7" 1290×2796 ×3；Play 1080×1920 ×4、1024×500 头图、512×512 图标；1024 图标无 alpha |
