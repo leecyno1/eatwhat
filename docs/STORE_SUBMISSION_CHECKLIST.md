@@ -21,25 +21,29 @@
 
 ## 二、需要账号操作的阻塞项
 
-### 1. Apple 团队与 App 记录
+### 1. Apple 团队与 App 记录（公司团队已配置）
 
-- 当前本机只有个人签名身份：`Apple Distribution: chengyin li (4CP692A9GB)`。
-- 公司团队 `LS66SWVCG2` 已有 Distribution 证书 `C77WZB6C97` 与配套私钥，但**未导入钥匙串、未创建描述文件**；公司团队也**没有** `com.eatwhat.eatwhat_app` 的 Bundle ID 与 App 记录。
-- 建议：按总控归属用**公司团队**发布（除南小投外的项目迁入公司）。新应用未上架前无法走 App 转让，因此需要在公司团队重新注册 Bundle ID、创建 App 记录。
-- App Store Connect **不支持用 API 创建 App 记录**，需在网页完成；创建后可用公司 API 密钥上传构建。
-- 待你确认后执行：公司 Bundle ID 注册 → 导入证书/描述文件 → 切换 `DEVELOPMENT_TEAM=LS66SWVCG2` → Archive → 上传。
+- 已注册公司 Bundle ID：`com.eatwhat.eatwhatApp`，资源 ID `F82JFDS5MG`，Seed `LS66SWVCG2`。
+- 已导入公司 Distribution 证书 `C77WZB6C97` 到专用钥匙串 `~/Library/Keychains/eatwhat-signing.keychain-db`；钥匙串密码存于登录钥匙串条目 `eatwhat-signing-keychain`，不写入仓库。
+- 已创建并安装 App Store 描述文件 `EatWhat App Store 2026-11`，UUID `6379a3b4-2b77-44aa-a4c1-5adcf242b576`。
+- Release/Profile 已切公司团队手动签名；Archive 成功，IPA 已生成并通过 `codesign --verify --deep --strict`。
+- **仍缺 App Store Connect App 记录**：API 不支持创建 App，需登录网页创建（平台 iOS、Bundle ID `com.eatwhat.eatwhatApp`、SKU 可用 `EATWHAT-IOS-2026`、主要语言简体中文）。创建后即可上传 IPA。
+- 上传命令：`xcrun altool --upload-app -f build/ios/ipa_manual/EatWhat.ipa -t ios --apiKey 225ZN37C2H --apiIssuer e79e0f6f-5e22-4a9f-a6d4-0db64049825b`（需先把 `.p8` 放到 `~/.appstoreconnect/private_keys/`）。
 
-### 2. Google Play 开发者账号
+### 2. Google Play 开发者账号（需要新注册）
 
-- 总控与项目内没有 Google Play 账号记录，需登录确认账号类型与状态。
-- 若为 **2023-11-13 后注册的个人账号**：正式发布前必须完成封闭测试，**12 名测试员连续 14 天**保持参与，再申请生产权限。
-- 若为**组织账号**：需完成组织与 D-U-N-S 验证。
-- 登录后操作：创建应用 → 商店信息 → 数据安全 → 内容分级 → 广告声明 → 应用访问 → 账号删除 URL → 上传 AAB（内部测试 → 封闭测试 → 正式版）。
+- 建议注册**组织账号**并使用公司 D-U-N-S `443805134`，卖方显示公司主体；组织验证通常需要数天。
+- 若注册**个人账号**：正式发布前必须完成封闭测试，**12 名测试员连续 14 天**保持参与，再申请生产权限。
+- 注册入口：https://play.google.com/console/signup（Google 账号、25 美元注册费、身份/组织材料）。
+- 注册后操作：创建应用 → 商店信息 → 数据安全 → 内容分级 → 广告声明 → 应用访问 → 账号删除 URL → 上传 AAB（内部测试 → 封闭测试 → 正式版）。
 
-### 3. 中国大陆 availability 与 App 备案
+### 3. 中国大陆 availability 与 App 备案（现在办理）
 
 - App Store 中国大陆分发需要工信部 **App 备案号**；总控未登记任何 ICP/App 备案信息。
-- 当前建议：先上架其他区域，备案完成后再勾选中国大陆；或在 App Store Connect 先不选择中国区。
+- 备案必须通过 **App 的网络接入服务提供者**（阿里云/腾讯云/华为云等）提交，由主体所在省通信管理局审核；需要域名、国内服务器/云资源与主体材料。
+- 当前生产配置为 `http://154.194.253.179`（明文、境外 IP），**不能直接用于备案**，也不满足 release 的 HTTPS 约束。备案前需要：域名（如 `eatwhat.app`）+ 国内云服务器/接入商 + HTTPS 证书 + 反向代理。
+- 备案常见材料：营业执照、法人身份证、法人手机号/邮箱、App 负责人信息、App 名称与包名（`com.eatwhat.eatwhatApp` / `com.eatwhat.eatwhat_app`）、App 图标与签名信息、域名与服务器信息、服务内容说明、承诺书。
+- 备案号下来后填入 App Store Connect「China mainland ICP filing」，再勾选中国大陆。
 - Google Play 不覆盖中国大陆，无此要求。
 - 另：欧盟 DSA 交易商身份（Apple 与 Google 都要填）尚未在总控确认，影响欧盟分发。
 
