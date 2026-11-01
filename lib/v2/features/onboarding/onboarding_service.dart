@@ -5,43 +5,56 @@ import 'package:shared_preferences/shared_preferences.dart';
 class OnboardingService {
   factory OnboardingService() => _instance;
   OnboardingService._internal();
-  static const String _hasSeenOnboardingKey = 'has_seen_onboarding_v2';
+
+  static const String handfeelTutorialSeenKey = 'handfeel_tutorial_v1_seen';
+  static const List<String> _legacySeenKeys = [
+    'has_seen_onboarding_v2',
+    'v2_home_generation_guide_seen',
+  ];
 
   /// 单例模式
   static final OnboardingService _instance = OnboardingService._internal();
 
-  /// 检查是否应该显示新手引导
-  Future<bool> shouldShowOnboarding() async {
+  /// 新版“开席三式”教学是否应该显示；任一旧标记为真时视为已看过。
+  Future<bool> shouldShowHandfeelTutorial() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final hasSeen = prefs.getBool(_hasSeenOnboardingKey) ?? false;
-      debugPrint('OnboardingService: 检查引导状态 - hasSeenOnboarding = $hasSeen');
-      return !hasSeen;
-    } catch (e) {
-      debugPrint('OnboardingService: 检查引导状态失败 - $e');
+      if (prefs.getBool(handfeelTutorialSeenKey) ?? false) return false;
+      for (final key in _legacySeenKeys) {
+        if (prefs.getBool(key) ?? false) return false;
+      }
+      return true;
+    } catch (error) {
+      debugPrint('OnboardingService: 读取教学状态失败 - $error');
       return false;
     }
   }
 
-  /// 标记已看过引导
-  Future<void> markOnboardingAsSeen() async {
+  Future<void> markHandfeelTutorialSeen() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setBool(_hasSeenOnboardingKey, true);
-      debugPrint('OnboardingService: 已标记引导为已看过');
-    } catch (e) {
-      debugPrint('OnboardingService: 标记引导状态失败 - $e');
+      await prefs.setBool(handfeelTutorialSeenKey, true);
+    } catch (error) {
+      debugPrint('OnboardingService: 写入教学状态失败 - $error');
     }
   }
 
-  /// 重置引导状态（用于测试或重新显示引导）
-  Future<void> resetOnboardingStatus() async {
+  Future<void> resetHandfeelTutorial() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      await prefs.remove(_hasSeenOnboardingKey);
-      debugPrint('OnboardingService: 已重置引导状态');
-    } catch (e) {
-      debugPrint('OnboardingService: 重置引导状态失败 - $e');
+      await prefs.remove(handfeelTutorialSeenKey);
+      for (final key in _legacySeenKeys) {
+        await prefs.remove(key);
+      }
+    } catch (error) {
+      debugPrint('OnboardingService: 重置教学状态失败 - $error');
     }
   }
+
+  // 旧接口暂留到旧 overlay 删除，行为已指向新标记。
+  Future<bool> shouldShowOnboarding() => shouldShowHandfeelTutorial();
+
+  Future<void> markOnboardingAsSeen() => markHandfeelTutorialSeen();
+
+  Future<void> resetOnboardingStatus() => resetHandfeelTutorial();
 }
