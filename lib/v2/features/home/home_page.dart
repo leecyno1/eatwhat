@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:eatwhat_app/core/config/env_config.dart';
 import 'package:eatwhat_app/core/services/auth_service.dart';
 import 'package:eatwhat_app/core/services/unified_recipe_database_service.dart';
 import 'package:eatwhat_app/v2/core/data/models/meal_planning_direction.dart';
@@ -24,9 +23,10 @@ import 'package:eatwhat_app/v2/features/home/widgets/home_overlays.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/pantry_ingredient_sheet.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/taste_signature_panel.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/weekly_report_sheet.dart';
+import 'package:eatwhat_app/v2/features/onboarding/handfeel_tutorial.dart';
+import 'package:eatwhat_app/v2/features/onboarding/onboarding_service.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../core/theme/app_tokens.dart';
 
@@ -61,8 +61,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  static const _guideSeenKey = 'v2_home_generation_guide_seen';
-
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   final HomeTasteDeckBuilder _deckBuilder = const HomeTasteDeckBuilder();
@@ -81,6 +79,7 @@ class _HomePageState extends State<HomePage> {
   bool _isLoadingDeck = true;
   bool _isListening = false;
   bool _hasChosenPlanningDirection = false;
+  bool _showHandfeelTutorial = false;
   String _liveTranscript = '';
   String? _tasteCategory;
   TasteDeckSessionState? _session;
@@ -107,7 +106,7 @@ class _HomePageState extends State<HomePage> {
       _prepareDeck();
     }
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showFirstUseGuideIfNeeded();
+      _maybeShowHandfeelTutorial();
     });
   }
 
@@ -247,33 +246,17 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  Future<void> _showFirstUseGuideIfNeeded() async {
-    if (EnvConfig.debugMode) return;
-    final prefs = await SharedPreferences.getInstance();
-    final hasSeenGuide = prefs.getBool(_guideSeenKey) ?? false;
-    if (hasSeenGuide || !mounted) return;
+  Future<void> _maybeShowHandfeelTutorial() async {
+    if (!mounted) return;
+    final shouldShow = await OnboardingService().shouldShowHandfeelTutorial();
+    if (!mounted || !shouldShow) return;
+    setState(() => _showHandfeelTutorial = true);
+  }
 
-    await showGeneralDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      barrierLabel: '首页引导',
-      // Night scrim so the guide card floats focused above the dark stage.
-      barrierColor: AppPalette.night.withValues(alpha: 0.72),
-      pageBuilder: (context, _, __) {
-        return SafeArea(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xl),
-              child: HomeFirstUseGuideCard(
-                onDismiss: () => Navigator.of(context).pop(),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-
-    await prefs.setBool(_guideSeenKey, true);
+  Future<void> _finishHandfeelTutorial() async {
+    await OnboardingService().markHandfeelTutorialSeen();
+    if (!mounted) return;
+    setState(() => _showHandfeelTutorial = false);
   }
 
   void _handleBubbleSelectionChanged(BubbleSelectionState selection) {
@@ -661,6 +644,12 @@ class _HomePageState extends State<HomePage> {
           if (_isTransitioning)
             const Positioned.fill(
               child: HomeGenerationTransitionOverlay(),
+            ),
+          if (_showHandfeelTutorial)
+            Positioned.fill(
+              child: HandfeelTutorial(
+                onFinished: _finishHandfeelTutorial,
+              ),
             ),
         ],
       ),

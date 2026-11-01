@@ -50,11 +50,4 @@ class OnboardingService {
       debugPrint('OnboardingService: 重置教学状态失败 - $error');
     }
   }
-
-  // 旧接口暂留到旧 overlay 删除，行为已指向新标记。
-  Future<bool> shouldShowOnboarding() => shouldShowHandfeelTutorial();
-
-  Future<void> markOnboardingAsSeen() => markHandfeelTutorialSeen();
-
-  Future<void> resetOnboardingStatus() => resetHandfeelTutorial();
 }
