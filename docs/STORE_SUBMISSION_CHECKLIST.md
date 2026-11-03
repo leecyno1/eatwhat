@@ -45,6 +45,19 @@
 | 16 KB 页对齐 | APK `zipalign -c -P 16` 通过；arm64 `libflutter.so`/`libapp.so` PT_LOAD 对齐 `0x10000` |
 | targetSdk | 36（满足 2026-08-31 起的新规），minSdk 23 |
 
+## 三点五、蒲公英内测分发（2026-11-03 已上传）
+
+| 端 | 短链 | 版本 | 包 |
+| --- | --- | --- | --- |
+| Android | https://www.pgyer.com/chishenme-android-9 | 1.0.0 (versionCode 1) | `build/pgyer/eatwhat-android-1.0.0.apk`，SHA-256 `68ca0bd5…2df3b` |
+| iOS Ad Hoc | https://www.pgyer.com/chishenme-ios-5 | 1.0.0 (CFBundleVersion 2) | `build/ios/adhoc/EatWhat-AdHoc.ipa`，SHA-256 `834b82a7…d396` |
+
+- iOS 包由 App Store Archive 的 `Runner.app` 用公司 Distribution 证书 `C77WZB6C97` 重签，嵌入 eatwhat 专用 Ad Hoc 描述文件 `EatWhat Ad Hoc 2026-11`（profile id `J3Z58WMD94`，UUID `b792bd48-425c-4f5b-a6c4-73ee4d96e730`，有效期至 2027-10-23），**未复用其他 App 的描述文件**。
+- Ad Hoc 只能装到已登记 UDID 的设备；当前公司团队有 3 台设备（1 台 iPhone、2 台 iPad）。新增设备：ASC API `POST /v1/devices` 登记 → 把设备加入该 profile → 重新下载 profile 并重签 IPA → 重新上传蒲公英。
+- 蒲公英页面显示的「build 1」是蒲公英自己的上传序号，不是 CFBundleVersion。
+- API Key 只从 macOS 钥匙串读取（`uk.newma.pgyer.api-key`），不写入仓库或文档。
+- macOS / Windows / Linux / Web 不在蒲公英支持范围；需要分发时另走 GitHub Releases 或自建网页。
+
 ## 四、App Store 后台字段速填
 
 | 字段 | 值 |
