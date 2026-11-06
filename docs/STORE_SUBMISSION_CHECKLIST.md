@@ -58,6 +58,21 @@
 - API Key 只从 macOS 钥匙串读取（`uk.newma.pgyer.api-key`），不写入仓库或文档。
 - macOS / Windows / Linux / Web 不在蒲公英支持范围；需要分发时另走 GitHub Releases 或自建网页。
 
+## 三点六、官网与服务器域名（2026-11-06 已迁移）
+
+| 项 | 值 |
+| --- | --- |
+| 会员官网 | https://eatwhat.monkeykingfury.com（原裸 IP `http://154.194.253.179`，release 包会因非 HTTPS 判定不可用） |
+| 认证 / 会员 API | https://eatwhat.monkeykingfury.com/api/v1/... |
+| 执行代理 | https://eatwhat.monkeykingfury.com/eatwhat/ |
+| 美团 OAuth 回调 | https://eatwhat.monkeykingfury.com/eatwhat/api/v1/delivery/oauth/callback |
+| 证书 | Let's Encrypt，`eatwhat.monkeykingfury.com`，至 2027-02-04，certbot 自动续期 |
+| 服务 | systemd `eatwhat-auth` (8789)、`eatwhat-proxy` (8787)、`eatwhat-adapter` (8788)，开机自启 |
+| 权限归属 | Cloudflare zone `monkeykingfury.com`，A 记录 DNS only |
+| drlemon.cc | 保持原样，个人档案站，与本 App 无关 |
+
+- 客户端 `.env` 已切换到上述域名；已提审的 build 2 仍是旧 IP 构建，AI/外卖/会员入口在 release 下按降级隐藏。要启用需要重新构建并重新提审。
+
 ## 四、App Store 后台字段速填
 
 | 字段 | 值 |

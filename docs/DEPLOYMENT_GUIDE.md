@@ -43,7 +43,7 @@ AI_CACHE_DURATION=24
 #### `.env.staging` / `.env.production`
 ```bash
 # 客户端不含任何 AI/平台/支付密钥
-EXECUTION_PROXY_BASE_URL=https://staging-api.eatwhat.app
+EXECUTION_PROXY_BASE_URL=https://eatwhat.monkeykingfury.com/eatwhat
 EXECUTION_PROXY_AUTH_TOKEN=your_proxy_token
 ENABLE_AI_RECOMMENDATIONS=true
 DEBUG_MODE=false
