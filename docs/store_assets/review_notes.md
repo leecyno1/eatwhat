@@ -20,7 +20,7 @@
 ## Google Play「账号删除」
 
 - 应用内路径：首页右上角账号入口 → 账号面板底部「注销账号」→ 输入密码确认。
-- 删除说明页：https://leecyno1.github.io/eatwhat/account_deletion.html
+- 删除说明页：https://eatwhat.monkeykingfury.com/account_deletion.html
 
 ## App Store「App 审核信息 / 备注」
 
@@ -40,6 +40,6 @@
 
 ## 商店链接
 
-- 隐私政策：https://leecyno1.github.io/eatwhat/privacy_policy.html
-- 账号删除：https://leecyno1.github.io/eatwhat/account_deletion.html
-- 支持页面：https://leecyno1.github.io/eatwhat/support.html
+- 隐私政策：https://eatwhat.monkeykingfury.com/privacy_policy.html
+- 账号删除：https://eatwhat.monkeykingfury.com/account_deletion.html
+- 支持页面：https://eatwhat.monkeykingfury.com/support.html

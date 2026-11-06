@@ -75,7 +75,7 @@ flutter build ios --release --no-codesign   # 需自有证书签名后上传 App
 flutter build web --release
 ```
 
-商店材料（图标/头图/截图/双店文案/审核备注）见 `docs/store_assets/`；提审清单见 `docs/STORE_SUBMISSION_CHECKLIST.md`。隐私政策：https://leecyno1.github.io/eatwhat/privacy_policy.html；账号删除：https://leecyno1.github.io/eatwhat/account_deletion.html；支持页：https://leecyno1.github.io/eatwhat/support.html
+商店材料（图标/头图/截图/双店文案/审核备注）见 `docs/store_assets/`；提审清单见 `docs/STORE_SUBMISSION_CHECKLIST.md`。隐私政策：https://eatwhat.monkeykingfury.com/privacy_policy.html；账号删除：https://eatwhat.monkeykingfury.com/account_deletion.html；支持页：https://eatwhat.monkeykingfury.com/support.html
 
 ## 数据规模
 

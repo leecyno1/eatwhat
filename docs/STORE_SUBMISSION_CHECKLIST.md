@@ -20,7 +20,7 @@
 | 内容版权 | `USES_THIRD_PARTY_CONTENT`（HowToCook 上游 Unlicense，菜品图为项目预构建/AI 生成） |
 | App 隐私 | 已发布：精确位置（App 功能）、其他用户内容（产品个性化、App 功能）；均不关联身份、不用于追踪 |
 | 审核信息 | 演示账号、账号删除路径、外卖降级说明、位置/麦克风触发说明、无 App 内购说明；联系方式盛恬子 / +86 18810660112 / apple@monkeykingfury.com |
-| 隐私/支持网页 | `https://leecyno1.github.io/eatwhat/privacy_policy.html`、`support.html`、`account_deletion.html` |
+| 隐私/支持网页 | `https://eatwhat.monkeykingfury.com/privacy_policy.html`、`support.html`、`account_deletion.html` |
 
 ### 本次修复
 
@@ -80,9 +80,9 @@
 | 应用名 | 吃什么-今天吃啥一摇就有答案 |
 | 副标题 | 口味气泡摇一摇，秒出菜品推荐 |
 | 分类 | Food & Drink（主）、Lifestyle（次） |
-| 支持 URL | https://leecyno1.github.io/eatwhat/support.html |
-| 隐私政策 | https://leecyno1.github.io/eatwhat/privacy_policy.html |
-| 账号删除 | https://leecyno1.github.io/eatwhat/account_deletion.html |
+| 支持 URL | https://eatwhat.monkeykingfury.com/support.html |
+| 隐私政策 | https://eatwhat.monkeykingfury.com/privacy_policy.html |
+| 账号删除 | https://eatwhat.monkeykingfury.com/account_deletion.html |
 | 客服邮箱 | leecyno1@hotmail.com |
 | 审核联系方式 | 盛恬子 / +86 18810660112 / apple@monkeykingfury.com |
 | 演示账号 | 17600806220 / Iv19whot@123（应用内置本地账号） |
