@@ -22,14 +22,41 @@
 - 应用内路径：首页右上角账号入口 → 账号面板底部「注销账号」→ 输入密码确认。
 - 删除说明页：https://eatwhat.monkeykingfury.com/account_deletion.html
 
-## App Store「App 审核信息 / 备注」
+## App Store「App 审核信息 / 备注」（2026-11-06 2.1 被拒后重写）
 
-1. 演示账号：17600806220 / Iv19whot@123（内置本地账号）。核心功能无需登录。
-2. 账号删除：登录后进入首页右上角账号入口，面板底部提供「注销账号」，输入密码即可删除本机账号与登录状态。
-3. 外卖下单入口当前显示「外卖服务尚未开通」为预期降级态：该能力依赖美团开放平台资质审批，审批通过前不开放，审核时不会发生真实下单或支付。
-4. 位置权限仅在用户主动搜索附近门店时触发；麦克风与语音识别仅在长按语音输入时触发；两者均可拒绝且不影响核心推荐流程。
-5. 移动端不提供应用内数字商品购买入口；会员购买仅在 Web 端通过支付宝官方渠道完成，审核过程中不会触发支付流程。
-6. 应用无广告、无第三方统计 SDK；账号与偏好数据仅存设备本地。
+> 2026-11-02 Apple 以 Guideline 2.1 - Information Needed 拒绝，要求补充录屏与六项说明。以下为提交到 App Store Connect「App 审核信息 → 备注」的英文正文，录屏链接待补。
+
+```text
+Guideline 2.1 - Information Provided
+
+1. Screen recording
+https://eatwhat.monkeykingfury.com/review/eatwhat-review.mp4
+Recorded with the submitted build (1.0, build 2) on an iPhone 17 simulator running the latest iOS. It starts at the Home Screen with the app launch and shows: first-launch tutorial, taste-bubble tap/hold/drag, shake-to-generate, result page with reasons, recipe detail with steps and shopping list, fridge-ingredient search, favorites and weekly report, account registration/login, and the account-deletion confirmation flow.
+
+2. Purpose and target audience
+"EatWhat" (吃什么) helps people decide what to eat today. Target users are students and office workers who cook at home or order takeout and often face decision fatigue. The app turns taste preferences into a physical bubble pot; shaking generates dishes ranked by time of day, recent meals and nutrition. It also turns the ingredients already in the fridge into cookable dishes, with step-by-step recipes and shopping lists. Value: fewer decisions, less food waste, more home cooking.
+
+3. Setup and access
+No server, registration or configuration is required; all data is stored on the device. A demo account is seeded on first launch: 17600806220 / Iv19whot@123. If it is deleted, relaunching the app recreates it. All core features (bubbles, recommendation, recipes, fridge search, favorites, weekly report) work without login; login only opens the account/membership panel.
+
+4. External services, tools and platforms
+- Core app: none. The recipe library and step images are bundled in the app.
+- Optional AI enhancement: a self-hosted proxy to MiniMax's chat API. This build has no proxy configured, so AI enhancement is disabled and the app uses its local recommendation engine.
+- Delivery: Meituan Open Platform integration is implemented but disabled in this build ("service not yet available") pending platform approval. No order or payment can occur.
+- Voice input: Apple's system Speech framework; audio is not recorded, stored or uploaded.
+- Location: requested only when the user searches nearby stores; not used in this build.
+- No ads, no third-party analytics SDK, no payment SDK and no in-app purchases.
+
+5. Regional differences
+None. The app behaves identically in all regions. The delivery entry is shown as unavailable everywhere until platform approval is completed.
+
+6. Regulated industry / third-party material
+Not a regulated industry. Recipe texts and step photos come from the open-source HowToCook project (MIT License); UI, branding, icons and generated dish images are original works owned by us.
+
+Support: https://eatwhat.monkeykingfury.com/support.html
+Privacy: https://eatwhat.monkeykingfury.com/privacy_policy.html
+Account deletion: https://eatwhat.monkeykingfury.com/account_deletion.html
+```
 
 ## 数据安全 / 隐私标签申报口径（两店通用）
 
