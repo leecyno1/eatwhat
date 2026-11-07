@@ -20,6 +20,7 @@
 | 内容版权 | `USES_THIRD_PARTY_CONTENT`（HowToCook 上游 Unlicense，菜品图为项目预构建/AI 生成） |
 | App 隐私 | 已发布：精确位置（App 功能）、其他用户内容（产品个性化、App 功能）；均不关联身份、不用于追踪 |
 | 审核信息 | 演示账号、账号删除路径、外卖降级说明、位置/麦克风触发说明、无 App 内购说明；联系方式盛恬子 / +86 18810660112 / apple@monkeykingfury.com |
+| 开发者协议 | 2026-11-07 已接受更新版《Apple Developer Program License Agreement》（截止 2026-11-14） |
 | 2.1 被拒与重提 | 2026-11-02 被拒（2.1 Information Needed）；已补英文六项说明与 69 秒录屏 https://eatwhat.monkeykingfury.com/review/eatwhat-review.mp4；2026-11-07 14:05 UTC 重新提交，当前 `WAITING_FOR_REVIEW` |
 | 隐私/支持网页 | `https://eatwhat.monkeykingfury.com/privacy_policy.html`、`support.html`、`account_deletion.html` |
 
