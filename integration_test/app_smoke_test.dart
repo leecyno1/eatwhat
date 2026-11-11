@@ -85,12 +85,21 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('home-start-inference-button')));
     await pumpUntilVisible(tester, find.text('先收下几个口味气泡，或写一句今天想吃的'));
 
+    await tester.tap(find.byKey(const ValueKey('home-overflow-menu')));
+    await tester.pump(const Duration(milliseconds: 400));
     await tester.tap(find.byKey(const ValueKey('home-theme-toggle')));
     await tester.pump(const Duration(milliseconds: 400));
+    expect(find.byKey(const ValueKey('app-theme-sheet')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('theme-option-cream')));
+    await tester.pump(const Duration(milliseconds: 300));
     expect(AppThemeController.mode.value, AppThemeMode.cream);
     expect(tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
         ThemeMode.light);
+    await tester.tap(find.text('完成'));
+    await tester.pump(const Duration(milliseconds: 400));
 
+    await tester.tap(find.byKey(const ValueKey('home-overflow-menu')));
+    await tester.pump(const Duration(milliseconds: 400));
     await tester.tap(find.byKey(const ValueKey('home-favorites-button')));
     await pumpUntilVisible(tester, find.text('还没有收藏偏好'));
     await tester.tap(find.text('菜品'));

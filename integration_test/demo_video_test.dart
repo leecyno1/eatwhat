@@ -86,7 +86,8 @@ void main() {
 
     // 进入菜谱详情与做菜模式。
     await tester.tap(find.text('就吃这个'));
-    await _waitFor(tester, find.byKey(const ValueKey('recipe-cooking-mode-page')));
+    await _waitFor(
+        tester, find.byKey(const ValueKey('recipe-cooking-mode-page')));
     await _hold(tester, 2500);
     final nextStep =
         find.byKey(const ValueKey('recipe-cooking-next-step-button'));
@@ -94,17 +95,18 @@ void main() {
       await tester.tap(nextStep);
       await _hold(tester, 2000);
     }
-    final close =
-        find.byKey(const ValueKey('recipe-cooking-close-button'));
+    final close = find.byKey(const ValueKey('recipe-cooking-close-button'));
     if (close.evaluate().isNotEmpty) {
       await tester.tap(close);
       await _hold(tester, 1200);
     }
-    final navigator = Navigator.of(tester.element(find.byType(Scaffold).first));
-    navigator.popUntil((route) => route.isFirst);
+    Navigator.of(tester.element(find.byType(Scaffold).first))
+        .popUntil((route) => route.isFirst);
     await _hold(tester, 2000);
 
     // 登录演示账号。
+    await tester.tap(find.byKey(const ValueKey('home-overflow-menu')));
+    await _hold(tester, 500);
     await tester.tap(find.byKey(const ValueKey('home-account-button')));
     await _waitFor(tester, find.byKey(const ValueKey('eatwhat-auth-sheet')));
     await _hold(tester, 1200);
@@ -127,8 +129,21 @@ void main() {
 
     // 账号面板与注销入口（展示确认弹窗后取消）。
     for (var i = 0; i < 4; i++) {
-      if (find.byKey(const ValueKey('eatwhat-account-sheet')).evaluate().isNotEmpty) {
+      if (find
+          .byKey(const ValueKey('eatwhat-account-sheet'))
+          .evaluate()
+          .isNotEmpty) {
         break;
+      }
+      if (find
+          .byKey(const ValueKey('home-account-button'))
+          .evaluate()
+          .isEmpty) {
+        await tester.tap(
+          find.byKey(const ValueKey('home-overflow-menu')),
+          warnIfMissed: false,
+        );
+        await _hold(tester, 500);
       }
       await tester.tap(find.byKey(const ValueKey('home-account-button')),
           warnIfMissed: false);
