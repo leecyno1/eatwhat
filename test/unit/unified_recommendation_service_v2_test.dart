@@ -10,6 +10,339 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('UnifiedRecommendationServiceV2', () {
+    group('餐食候选边界', () {
+      test('仅非餐或占位的直召回会进入默认池，默认池再次过滤且不凑数', () async {
+        var defaultCalls = 0;
+        final service = UnifiedRecommendationServiceV2(
+          tagCatalogService: _StaticCatalogService(const []),
+          tagRecipeLoader: (_, __) async => const [],
+          searchRecipeLoader: (_, __) async => [
+            {
+              ..._row(
+                  dishId: 1, recipeId: 1, name: '新酱料配方', tags: ['主食', '夜宵']),
+              'cuisine': '调料',
+            },
+            _row(dishId: 2, recipeId: 2, name: 'soup_example', tags: ['汤羹']),
+          ],
+          defaultRecipeLoader: (_) async {
+            defaultCalls++;
+            return [
+              _row(dishId: 3, recipeId: 3, name: 'B52轰炸机', tags: ['饮品']),
+              _row(dishId: 4, recipeId: 4, name: '番茄红酱', tags: ['荤菜']),
+              _row(dishId: 5, recipeId: 5, name: '酱牛肉', tags: ['荤菜', '调味蘸料']),
+            ];
+          },
+          tagScoreLoader: () async => const {},
+          favoriteTagLoader: () async => const {},
+          favoriteDishLoader: () async => const {},
+          recentRecipeLoader: () async => const [],
+        );
+        final bundle = await service.buildRecommendationBundle(
+          input: _input().copyWith(likedTagLabels: []),
+          recallLabels: [],
+          limit: 5,
+        );
+        expect(defaultCalls, 1);
+        expect(bundle.recipes.map((recipe) => recipe.id), ['5']);
+        expect(bundle.summary, contains('餐食'));
+      });
+
+      test('直召回和默认池都是非餐时返回可解释空包', () async {
+        final bundle = await _serviceWithRows([
+          _row(dishId: 1, recipeId: 1, name: '炸串酱料', tags: ['调料']),
+        ]).buildRecommendationBundle(input: _input(), recallLabels: []);
+        expect(bundle.recipes, isEmpty);
+        expect(bundle.fallbackReason, 'candidate_constraints_rejected');
+        expect(bundle.summary, contains('餐食'));
+      });
+
+      test('显式甜品饮品标签才开放对应种类，召回标签不代表用户授权', () async {
+        final service = _serviceWithRows([
+          _row(dishId: 1, recipeId: 1, name: '提拉米苏', tags: ['甜品']),
+          _row(dishId: 2, recipeId: 2, name: '奶茶', tags: ['饮品']),
+          _row(dishId: 3, recipeId: 3, name: 'B52轰炸机', tags: ['饮品']),
+        ]);
+        for (final (labels, expected) in <(List<String>, List<String>)>[
+          ([], []),
+          (['甜品'], ['1']),
+          (['饮品'], ['2']),
+        ]) {
+          final bundle = await service.buildRecommendationBundle(
+            input: _input().copyWith(likedTagLabels: labels),
+            recallLabels: ['甜品', '饮品'],
+            limit: 5,
+          );
+          expect(bundle.recipes.map((recipe) => recipe.id), expected);
+        }
+      });
+    });
+
+    group('任务171', () {
+      test('skip 不排除候选也不推导时间或忌口约束', () async {
+        final bundle = await _serviceWithRows([
+          _row(
+              dishId: 1,
+              recipeId: 1,
+              name: '虾仁蒸蛋',
+              tags: ['聚会'],
+              ingredients: ['虾仁', '鸡蛋']),
+        ]).buildRecommendationBundle(
+          input: _input().copyWith(
+            skippedTagLabels: ['聚会', '海鲜过敏', '素食', '15分钟'],
+          ),
+          recallLabels: const [],
+        );
+        expect(bundle.recipes.map((recipe) => recipe.id), ['1']);
+      });
+
+      for (final entry in <String, String>{
+        '海鲜': '蚝油',
+        '坚果': '腰果',
+        '花生': '花生油',
+        '奶': '芝士',
+        '鸡蛋': '蛋黄',
+        '猪肉': '培根',
+        '素食': '鸡腿',
+        '纯素': '牛奶',
+      }.entries) {
+        test('structured ${entry.key} 排除常见同义食材', () async {
+          final bundle = await _serviceWithRows([
+            _row(
+                dishId: 1,
+                recipeId: 1,
+                name: '创意炒饭',
+                tags: [],
+                ingredients: [entry.value]),
+            _row(
+                dishId: 2,
+                recipeId: 2,
+                name: '清炒青菜',
+                tags: [],
+                ingredients: ['青菜']),
+          ]).buildRecommendationBundle(
+            input: _input().copyWith(
+              structuredConstraints: TasteStructuredConstraints(
+                dietaryRestrictions: [entry.key],
+              ),
+            ),
+            recallLabels: const [],
+          );
+          expect(bundle.recipes.map((recipe) => recipe.id), ['2']);
+          expect(bundle.summary, contains('忌口'));
+        });
+      }
+
+      test('普通素食允许蛋奶和非肉类同字食材', () async {
+        final bundle = await _serviceWithRows([
+          _row(
+              dishId: 1,
+              recipeId: 1,
+              name: '牛奶蒸鸡蛋',
+              tags: [],
+              ingredients: ['鸡蛋', '牛奶']),
+          _row(
+              dishId: 2,
+              recipeId: 2,
+              name: '菌菇炒饭',
+              tags: [],
+              ingredients: ['鸡腿菇', '牛肝菌', '羊肚菌']),
+        ]).buildRecommendationBundle(
+          input: _input().copyWith(
+            structuredConstraints: const TasteStructuredConstraints(
+              dietaryRestrictions: ['素食'],
+            ),
+          ),
+          recallLabels: const [],
+        );
+        expect(bundle.recipes, hasLength(2));
+      });
+
+      test('正向喜欢素食不成为硬性禁肉', () async {
+        final bundle = await _serviceWithRows([
+          _row(dishId: 1, recipeId: 1, name: '鸡腿饭', tags: []),
+        ]).buildRecommendationBundle(
+          input: _input().copyWith(likedTagLabels: ['素食']),
+          recallLabels: const [],
+        );
+        expect(bundle.recipes, hasLength(1));
+      });
+
+      test('自由文本不要不吃常见项但保留正向喜欢', () async {
+        final bundle = await _serviceWithRows([
+          _row(
+              dishId: 1,
+              recipeId: 1,
+              name: '蒸蛋',
+              tags: [],
+              ingredients: ['鸡蛋']),
+          _row(
+              dishId: 2,
+              recipeId: 2,
+              name: '花生拌菜',
+              tags: [],
+              ingredients: ['花生']),
+          _row(
+              dishId: 3,
+              recipeId: 3,
+              name: '牛奶燕麦',
+              tags: [],
+              ingredients: ['牛奶', '燕麦']),
+        ]).buildRecommendationBundle(
+          input: _input().copyWith(
+            freeformRequirement: '不吃花生、鸡蛋，喜欢牛奶',
+          ),
+          recallLabels: const [],
+        );
+        expect(bundle.recipes.map((recipe) => recipe.id), ['3']);
+      });
+
+      test('未知限制按字面排除并回默认池，dislike 行为保持一致', () async {
+        final service = UnifiedRecommendationServiceV2(
+          tagCatalogService: _StaticCatalogService(const []),
+          tagRecipeLoader: (_, __) async => const [],
+          searchRecipeLoader: (_, __) async => [
+            _row(dishId: 1, recipeId: 1, name: '家常饭', tags: ['星际轻盈']),
+          ],
+          defaultRecipeLoader: (_) async => [
+            _row(dishId: 2, recipeId: 2, name: '备用饭', tags: []),
+          ],
+          tagScoreLoader: () async => const {},
+          favoriteTagLoader: () async => const {},
+          favoriteDishLoader: () async => const {},
+          recentRecipeLoader: () async => const [],
+        );
+        final input = _input().copyWith(
+          structuredConstraints: const TasteStructuredConstraints(
+            dietaryRestrictions: ['星际轻盈'],
+          ),
+        );
+        final unknown = await service.buildRecommendationBundle(
+          input: input,
+          recallLabels: const [],
+        );
+        expect(unknown.recipes.single.id, '2');
+        final disliked = await service.buildRecommendationBundle(
+          input: input.copyWith(dislikedTagLabels: ['星际轻盈']),
+          recallLabels: const [],
+        );
+        expect(disliked.recipes.single.id, '2');
+        expect(disliked.summary, contains('过滤'));
+      });
+
+      test('耗时缺失允许保留但明确未核验而非满足时限', () async {
+        final bundle = await _serviceWithRows([
+          {
+            ..._row(dishId: 1, recipeId: 1, name: '家常饭', tags: []),
+            'total_time_minutes': null
+          },
+          _row(
+              dishId: 2,
+              recipeId: 2,
+              name: '慢炖锅',
+              tags: [],
+              totalTimeMinutes: 60),
+        ]).buildRecommendationBundle(
+          input: _input().copyWith(
+            structuredConstraints: const TasteStructuredConstraints(
+              maxTimeMinutes: 15,
+            ),
+          ),
+          recallLabels: const [],
+        );
+        expect(bundle.recipes.single.id, '1');
+        expect(bundle.reasonsByRecipeId['1'], contains('耗时未核验'));
+        expect(bundle.reasonsByRecipeId['1'], isNot(contains('分钟内可完成')));
+      });
+
+      test('食材列表超过展示上限也不能隐藏忌口', () async {
+        final result = await _serviceWithRows([
+          _row(
+              dishId: 1,
+              recipeId: 1,
+              name: '杂蔬饭',
+              tags: [],
+              ingredients: [...List.filled(10, '青菜'), '花生']),
+          _row(
+              dishId: 2,
+              recipeId: 2,
+              name: '青菜饭',
+              tags: [],
+              ingredients: ['青菜']),
+        ]).recommendRecipes(
+          input: _input().copyWith(
+              structuredConstraints: const TasteStructuredConstraints(
+                  dietaryRestrictions: ['花生'])),
+          recallLabels: [],
+        );
+        expect(result.map((recipe) => recipe.id), ['2']);
+      });
+
+      for (final hasRows in [true, false]) {
+        test('空包区分约束拒绝与未召回（有召回=$hasRows）', () async {
+          final bundle = await _serviceWithRows([
+            if (hasRows)
+              _row(
+                  dishId: 1,
+                  recipeId: 1,
+                  name: '拌饭',
+                  tags: [],
+                  ingredients: ['花生油']),
+          ]).buildRecommendationBundle(
+            input: _input().copyWith(
+              structuredConstraints: const TasteStructuredConstraints(
+                dietaryRestrictions: ['花生'],
+              ),
+            ),
+            recallLabels: [],
+          );
+          expect(bundle.recipes, isEmpty);
+          expect(bundle.fallbackReason,
+              hasRows ? 'candidate_constraints_rejected' : 'local_empty');
+          expect(bundle.summary, contains(hasRows ? '忌口过滤' : '没有命中'));
+        });
+      }
+
+      test('预算解释仍是估算而非真实报价', () async {
+        final result = await _serviceWithRows([
+          _row(
+              dishId: 1,
+              recipeId: 1,
+              name: '青菜豆腐汤',
+              tags: [],
+              ingredients: ['豆腐']),
+        ]).buildRecommendationBundle(
+          input: _input().copyWith(
+              structuredConstraints:
+                  const TasteStructuredConstraints(maxBudgetYuan: 30)),
+          recallLabels: [],
+        );
+        expect(result.reasonsByRecipeId['1'], contains('估算'));
+      });
+
+      test('零输入从默认池返回三候选且显式 limit 保留', () async {
+        final service = UnifiedRecommendationServiceV2(
+          tagCatalogService: _StaticCatalogService(const []),
+          tagRecipeLoader: (_, __) async => const [],
+          searchRecipeLoader: (_, __) async => const [],
+          defaultRecipeLoader: (_) async => [
+            for (var id = 1; id <= 6; id++)
+              _row(dishId: id, recipeId: id, name: '本地菜$id', tags: []),
+          ],
+          tagScoreLoader: () async => const {},
+          favoriteTagLoader: () async => const {},
+          favoriteDishLoader: () async => const {},
+          recentRecipeLoader: () async => const [],
+        );
+        final input = _input().copyWith(likedTagLabels: []);
+        expect(await service.recommendRecipes(input: input, recallLabels: []),
+            hasLength(3));
+        expect(
+            await service.recommendRecipes(
+                input: input, recallLabels: [], limit: 5),
+            hasLength(5));
+      });
+    });
+
     test('优先使用 dish_tag 标签召回，FTS 为空时仍能推荐', () async {
       var capturedTagIds = <String>[];
       var searchCalled = false;
@@ -223,7 +556,6 @@ void main() {
           historyPreferenceSummary: {},
         ),
         recallLabels: const ['家常菜'],
-        limit: 3,
       );
 
       expect(bundle.recipes.map((recipe) => recipe.id), ['101', '102', '103']);
@@ -294,7 +626,6 @@ void main() {
         ).buildRecommendationBundle(
           input: _input(),
           recallLabels: const ['家常菜'],
-          limit: 3,
         );
 
         expect(
@@ -318,7 +649,6 @@ void main() {
       ).buildRecommendationBundle(
         input: _input(),
         recallLabels: const ['家常菜'],
-        limit: 3,
       );
 
       expect(bundle.recipes.map((recipe) => recipe.id), ['103', '102', '101']);
@@ -349,7 +679,6 @@ void main() {
         final bundle = await service.buildRecommendationBundle(
           input: _input(),
           recallLabels: const ['家常菜'],
-          limit: 3,
         );
         expect(
             bundle.recipes.map((recipe) => recipe.id), ['101', '102', '103']);
@@ -392,7 +721,6 @@ void main() {
           final bundle = await service.buildRecommendationBundle(
             input: _input(),
             recallLabels: const ['家常菜'],
-            limit: 3,
           );
 
           expect(
@@ -429,7 +757,6 @@ void main() {
       ).buildRecommendationBundle(
         input: _input(),
         recallLabels: const ['家常菜'],
-        limit: 3,
       );
 
       expect(bundle.recipes.map((recipe) => recipe.id), ['101', '102', '103']);
@@ -931,6 +1258,70 @@ void main() {
       expect(bundle.summary, contains('人数'));
     });
 
+    test('2 人场景不把 1 人份菜谱谎称为适合 2 人', () async {
+      final bundle = await _serviceWithRows([
+        _row(
+          dishId: 101,
+          recipeId: 201,
+          name: '一人份番茄豆腐面',
+          tags: const ['家常菜'],
+          ingredients: const ['番茄', '豆腐', '面'],
+          servings: 1,
+        ),
+      ]).buildRecommendationBundle(
+        input: const TasteInferenceInput(
+          likedTagIds: [],
+          likedTagLabels: ['家常菜'],
+          dislikedTagIds: [],
+          dislikedTagLabels: [],
+          skippedTagIds: [],
+          skippedTagLabels: [],
+          freeformRequirement: '',
+          structuredConstraints: TasteStructuredConstraints(partySize: 2),
+          historyPreferenceSummary: {},
+        ),
+        recallLabels: const ['家常菜'],
+        limit: 1,
+      );
+
+      final reason = bundle.reasonsByRecipeId['101']!;
+      expect(reason, contains('1 人份'));
+      expect(reason, contains('2 人建议加量'));
+      expect(reason, isNot(contains('适合 2 人')));
+    });
+
+    test('4 人场景按标注份量提示加量', () async {
+      final bundle = await _serviceWithRows([
+        _row(
+          dishId: 101,
+          recipeId: 201,
+          name: '一人份番茄豆腐面',
+          tags: const ['家常菜'],
+          ingredients: const ['番茄', '豆腐', '面'],
+          servings: 1,
+        ),
+      ]).buildRecommendationBundle(
+        input: const TasteInferenceInput(
+          likedTagIds: [],
+          likedTagLabels: ['家常菜'],
+          dislikedTagIds: [],
+          dislikedTagLabels: [],
+          skippedTagIds: [],
+          skippedTagLabels: [],
+          freeformRequirement: '',
+          structuredConstraints: TasteStructuredConstraints(partySize: 4),
+          historyPreferenceSummary: {},
+        ),
+        recallLabels: const ['家常菜'],
+        limit: 1,
+      );
+
+      final reason = bundle.reasonsByRecipeId['101']!;
+      expect(reason, contains('1 人份'));
+      expect(reason, contains('4 人需加量'));
+      expect(reason, isNot(contains('适合 4 人')));
+    });
+
     test('偏好分只提升命中该口味的候选', () async {
       final service = _serviceWithRows(
         [
@@ -1166,6 +1557,463 @@ void main() {
       expect(balancedBundle.recipes.first.name, '铁板牛柳');
     });
 
+    group('做饭实用性排序', () {
+      for (final mode in [
+        TasteExecutionPreference.cook,
+        TasteExecutionPreference.any,
+      ]) {
+        test('$mode：同等相关性按数值难度优先简单菜且重复结果确定', () async {
+          final service = _serviceWithRows(
+            [
+              for (final difficulty in [5, 4, 3, 2, 1])
+                _row(
+                  dishId: difficulty,
+                  recipeId: difficulty,
+                  name: '家常炒菜$difficulty',
+                  tags: const ['家常菜'],
+                  difficulty: difficulty,
+                  totalTimeMinutes: null,
+                ),
+            ],
+            mealPeriodClock: () => DateTime(2026, 9, 30, 15),
+          );
+          for (var attempt = 0; attempt < 3; attempt++) {
+            final recipes = await service.recommendRecipes(
+              input: _input().copyWith(
+                structuredConstraints:
+                    TasteStructuredConstraints(executionPreference: mode),
+              ),
+              recallLabels: const ['家常菜'],
+              limit: 5,
+            );
+            expect(
+                recipes.map((recipe) => recipe.id), ['1', '2', '3', '4', '5']);
+          }
+        });
+
+        test('$mode：23点简单面条优先于同等相关性的复杂小龙虾', () async {
+          final service = _serviceWithRows(
+            [
+              _row(
+                dishId: 1,
+                recipeId: 1,
+                name: '蒜蓉小龙虾',
+                tags: const ['家常菜', '夜宵'],
+                ingredients: const ['小龙虾'],
+                difficulty: 5,
+                totalTimeMinutes: null,
+              ),
+              _row(
+                dishId: 2,
+                recipeId: 2,
+                name: '番茄鸡蛋面',
+                tags: const ['家常菜'],
+                ingredients: const ['番茄', '鸡蛋', '面条'],
+                difficulty: 1,
+                totalTimeMinutes: null,
+              ),
+            ],
+            mealPeriodClock: () => DateTime(2026, 9, 30, 23),
+          );
+          final bundle = await service.buildRecommendationBundle(
+            input: _input().copyWith(
+              structuredConstraints:
+                  TasteStructuredConstraints(executionPreference: mode),
+            ),
+            recallLabels: const ['家常菜'],
+            limit: 2,
+          );
+          expect(bundle.recipes.map((recipe) => recipe.id), ['2', '1']);
+          expect(bundle.reasonsByRecipeId.values.join(), isNot(contains('分钟')));
+        });
+      }
+
+      for (final mode in [
+        TasteExecutionPreference.delivery,
+        TasteExecutionPreference.dineIn,
+      ]) {
+        test('$mode：难度和耗时不改变原有人气排序', () async {
+          for (final swapEffort in [false, true]) {
+            final recipes = await _serviceWithRows(
+              [
+                _row(
+                  dishId: 1,
+                  recipeId: 1,
+                  name: '清炒时蔬',
+                  tags: const ['家常菜'],
+                  difficulty: swapEffort ? 5 : 1,
+                  totalTimeMinutes: swapEffort ? 120 : 10,
+                ),
+                _row(
+                  dishId: 2,
+                  recipeId: 2,
+                  name: '蒜苔炒肉',
+                  tags: const ['家常菜'],
+                  popularity: 60,
+                  difficulty: swapEffort ? 1 : 5,
+                  totalTimeMinutes: swapEffort ? 10 : 120,
+                ),
+              ],
+              mealPeriodClock: () => DateTime(2026, 9, 30, 23),
+            ).recommendRecipes(
+              input: _input().copyWith(
+                structuredConstraints:
+                    TasteStructuredConstraints(executionPreference: mode),
+              ),
+              recallLabels: const ['家常菜'],
+            );
+            expect(recipes.map((recipe) => recipe.id), ['2', '1']);
+          }
+        });
+      }
+
+      test('已知正耗时小幅参与排序，未知耗时不视为最快', () async {
+        final recipes = await _serviceWithRows(
+          [
+            for (final (id, time) in <(int, int?)>[(1, 90), (2, null), (3, 10)])
+              _row(
+                dishId: id,
+                recipeId: id,
+                name: '清炒时蔬',
+                tags: const ['家常菜'],
+                popularity: 54 - id,
+                difficulty: 3,
+                totalTimeMinutes: time,
+              ),
+          ],
+          mealPeriodClock: () => DateTime(2026, 9, 30, 15),
+        ).recommendRecipes(input: _input(), recallLabels: const ['家常菜']);
+        expect(recipes.map((recipe) => recipe.id), ['3', '2', '1']);
+      });
+
+      test('缺失和非正耗时保持中性，不从菜名或快手标签虚构分钟', () async {
+        for (final time in <int?>[null, 0, -5]) {
+          final recipes = await _serviceWithRows(
+            [
+              for (final id in [1, 2, 3])
+                _row(
+                  dishId: id,
+                  recipeId: id,
+                  name: '快手小米粥',
+                  tags: const ['家常菜', '快手', '10分钟'],
+                  popularity: 54 - id,
+                  totalTimeMinutes: id == 2 ? 30 : time,
+                ),
+            ],
+            mealPeriodClock: () => DateTime(2026, 9, 30, 15),
+          ).recommendRecipes(input: _input(), recallLabels: const ['家常菜']);
+          expect(recipes.map((recipe) => recipe.id), ['1', '2', '3']);
+        }
+      });
+
+      test('缺失或超出1到5的难度不推断为简单或复杂', () async {
+        for (final difficulty in <int?>[null, 0, -1, 6]) {
+          final recipes = await _serviceWithRows(
+            [
+              for (final id in [1, 2, 3])
+                _row(
+                  dishId: id,
+                  recipeId: id,
+                  name: '家常炒菜',
+                  tags: const ['家常菜'],
+                  popularity: 54 - id,
+                  difficulty: id == 2 ? 3 : difficulty,
+                  totalTimeMinutes: null,
+                ),
+            ],
+            mealPeriodClock: () => DateTime(2026, 9, 30, 15),
+          ).recommendRecipes(input: _input(), recallLabels: const ['家常菜']);
+          expect(recipes.map((recipe) => recipe.id), ['1', '2', '3']);
+        }
+      });
+
+      for (final name in ['番茄鸡蛋面', '小米粥', '蒸蛋']) {
+        test('23点按真实菜名偏好$name，无关夜宵标签不能堆分', () async {
+          final recipes = await _serviceWithRows(
+            [
+              _row(
+                dishId: 1,
+                recipeId: 1,
+                name: '红烧排骨',
+                tags: const [
+                  '家常菜',
+                  '夜宵',
+                  '烧烤',
+                  '小龙虾',
+                  '串',
+                  '炸鸡',
+                  '泡面',
+                  '卤味',
+                  '啤酒',
+                  '烤鱼',
+                  '面',
+                  '粥',
+                  '蒸蛋',
+                ],
+                totalTimeMinutes: null,
+              ),
+              _row(
+                dishId: 2,
+                recipeId: 2,
+                name: name,
+                tags: const ['家常菜'],
+                totalTimeMinutes: null,
+              ),
+            ],
+            mealPeriodClock: () => DateTime(2026, 9, 30, 23),
+          ).recommendRecipes(input: _input(), recallLabels: const ['家常菜']);
+          expect(recipes.map((recipe) => recipe.id), ['2', '1']);
+        });
+      }
+
+      test('否定自由文本不会变成正向做饭偏好', () async {
+        final service = _serviceWithRows(
+          [
+            _row(
+              dishId: 1,
+              recipeId: 1,
+              name: '番茄鸡蛋面',
+              tags: const ['家常菜'],
+              difficulty: 1,
+              totalTimeMinutes: null,
+            ),
+            _row(
+              dishId: 2,
+              recipeId: 2,
+              name: '蒜蓉小龙虾',
+              tags: const ['家常菜'],
+              difficulty: 5,
+              totalTimeMinutes: null,
+            ),
+          ],
+          mealPeriodClock: () => DateTime(2026, 9, 30, 23),
+        );
+        final recipes = await service.recommendRecipes(
+          input: _input().copyWith(freeformRequirement: '今晚不想吃小龙虾'),
+          recallLabels: const ['家常菜'],
+        );
+        expect(recipes.first.id, '1');
+      });
+
+      test('外卖和堂食不增加新的自由文本做饭加分', () async {
+        for (final mode in [
+          TasteExecutionPreference.delivery,
+          TasteExecutionPreference.dineIn,
+        ]) {
+          final recipes = await _serviceWithRows(
+            [
+              _row(
+                dishId: 1,
+                recipeId: 1,
+                name: '番茄鸡蛋面',
+                tags: const ['家常菜'],
+                popularity: 60,
+              ),
+              _row(
+                dishId: 2,
+                recipeId: 2,
+                name: '蒜蓉小龙虾',
+                tags: const ['家常菜'],
+              ),
+            ],
+            mealPeriodClock: () => DateTime(2026, 9, 30, 15),
+          ).recommendRecipes(
+            input: _input().copyWith(
+              freeformRequirement: '今晚想吃小龙虾',
+              structuredConstraints:
+                  TasteStructuredConstraints(executionPreference: mode),
+            ),
+            recallLabels: const ['家常菜'],
+          );
+          expect(recipes.map((recipe) => recipe.id), ['1', '2']);
+        }
+      });
+
+      test('明确喜欢和自由文本请求仍不能越过忌口过滤', () async {
+        final bundle = await _serviceWithRows(
+          [
+            _row(
+              dishId: 1,
+              recipeId: 1,
+              name: '蒜蓉小龙虾',
+              tags: const ['家常菜'],
+              ingredients: const ['小龙虾'],
+              totalTimeMinutes: null,
+            ),
+            _row(
+              dishId: 2,
+              recipeId: 2,
+              name: '番茄鸡蛋面',
+              tags: const ['家常菜'],
+              ingredients: const ['番茄', '鸡蛋', '面条'],
+              totalTimeMinutes: null,
+            ),
+          ],
+          mealPeriodClock: () => DateTime(2026, 9, 30, 23),
+        ).buildRecommendationBundle(
+          input: _input().copyWith(
+            likedTagLabels: ['小龙虾'],
+            freeformRequirement: '今晚想吃小龙虾',
+            structuredConstraints: const TasteStructuredConstraints(
+              dietaryRestrictions: ['海鲜'],
+            ),
+          ),
+          recallLabels: const ['家常菜'],
+        );
+        expect(bundle.recipes.map((recipe) => recipe.id), ['2']);
+        expect(bundle.summary, contains('忌口'));
+      });
+
+      for (final choice in ['小龙虾', '烧烤']) {
+        for (final useFreeform in [false, true]) {
+          test('23点明确${useFreeform ? '自由文本' : '喜欢'}$choice仍可胜过省事菜', () async {
+            final recipes = await _serviceWithRows(
+              [
+                _row(
+                  dishId: 1,
+                  recipeId: 1,
+                  name: '番茄鸡蛋面',
+                  tags: const ['家常菜'],
+                  difficulty: 1,
+                  totalTimeMinutes: 10,
+                ),
+                _row(
+                  dishId: 2,
+                  recipeId: 2,
+                  name: choice == '小龙虾' ? '蒜蓉小龙虾' : '炭火烧烤拼盘',
+                  tags: const ['家常菜'],
+                  ingredients: [choice == '小龙虾' ? '小龙虾' : '羊肉'],
+                  difficulty: 5,
+                  totalTimeMinutes: 120,
+                ),
+              ],
+              mealPeriodClock: () => DateTime(2026, 9, 30, 23),
+            ).recommendRecipes(
+              input: _input().copyWith(
+                likedTagLabels: ['家常菜', if (!useFreeform) choice],
+                freeformRequirement: useFreeform ? '今晚想吃$choice' : '',
+                structuredConstraints: const TasteStructuredConstraints(
+                  executionPreference: TasteExecutionPreference.cook,
+                ),
+              ),
+              recallLabels: const ['家常菜'],
+            );
+            expect(recipes.map((recipe) => recipe.id), ['2', '1']);
+          });
+        }
+      }
+    });
+
+    group('偏好学习键一致性', () {
+      test('历史分数按口味文本写入时仍提升同名标签的候选', () async {
+        final service = _serviceWithRows(
+          [
+            _row(
+              dishId: 1,
+              recipeId: 1,
+              name: '清炒时蔬',
+              tags: const ['家常菜'],
+            ),
+            _row(
+              dishId: 2,
+              recipeId: 2,
+              name: '香辣鸡腿',
+              tags: const ['家常菜', '辣'],
+              popularity: 20,
+            ),
+          ],
+          tagCatalogService: _StaticCatalogService([
+            _tag(id: 1, label: '辣', category: 'taste'),
+          ]),
+          tagScores: const {'辣': 200},
+        );
+
+        final recipes = await service.recommendRecipes(
+          input: _input(),
+          recallLabels: const ['家常菜'],
+          limit: 2,
+        );
+
+        expect(recipes.map((recipe) => recipe.name), ['香辣鸡腿', '清炒时蔬']);
+      });
+
+      test('产品收藏 ID 通过同名标签提升本地候选', () async {
+        final service = _serviceWithRows(
+          [
+            _row(
+              dishId: 1,
+              recipeId: 1,
+              name: '清炒时蔬',
+              tags: const ['家常菜'],
+              popularity: 60,
+            ),
+            _row(
+              dishId: 2,
+              recipeId: 2,
+              name: '香辣鸡腿',
+              tags: const ['家常菜', '辣'],
+              popularity: 20,
+            ),
+          ],
+          tagCatalogService: _StaticCatalogService([
+            _tag(id: 1, label: '辣', category: 'taste'),
+          ]),
+          favoriteTagIds: const {'f_spicy'},
+        );
+
+        final recipes = await service.recommendRecipes(
+          input: _input(),
+          recallLabels: const ['家常菜'],
+          limit: 2,
+        );
+
+        expect(recipes.map((recipe) => recipe.name), ['香辣鸡腿', '清炒时蔬']);
+      });
+
+      test('没选当轮偏好时，长期口味仍能改变首推', () async {
+        final service = _serviceWithRows(
+          [
+            _row(
+              dishId: 1,
+              recipeId: 1,
+              name: '清炒时蔬',
+              tags: const ['家常菜'],
+              popularity: 500,
+            ),
+            _row(
+              dishId: 2,
+              recipeId: 2,
+              name: '香辣鸡腿',
+              tags: const ['家常菜', '辣'],
+              popularity: 20,
+            ),
+          ],
+          tagCatalogService: _StaticCatalogService([
+            _tag(id: 1, label: '辣', category: 'taste'),
+          ]),
+          tagScores: const {'辣': 200},
+        );
+
+        final bundle = await service.buildRecommendationBundle(
+          input: _input().copyWith(
+            likedTagLabels: const [],
+            historyPreferenceSummary: const {'辣': 200},
+          ),
+          recallLabels: const ['家常菜'],
+          limit: 2,
+        );
+
+        expect(
+          bundle.recipes.map((recipe) => recipe.name),
+          ['香辣鸡腿', '清炒时蔬'],
+        );
+        expect(
+          bundle.reasonsByRecipeId['2'],
+          contains('贴合你的历史偏好'),
+        );
+      });
+    });
+
     test('早餐时段：清淡早食排到重口火锅前', () async {
       final rows = [
         _row(
@@ -1198,7 +2046,7 @@ void main() {
       expect(bundle.recipes.last.name, '麻辣火锅');
     });
 
-    test('夜宵时段：烧烤串串获得加成', () async {
+    test('夜宵时段：外卖和堂食烧烤串串仍获得加成', () async {
       final rows = [
         _row(
           dishId: 101,
@@ -1220,13 +2068,21 @@ void main() {
         mealPeriodClock: () => DateTime(2026, 9, 30, 23),
       );
 
-      final bundle = await service.buildRecommendationBundle(
-        input: _input(),
-        recallLabels: const ['家常菜'],
-        limit: 2,
-      );
+      for (final mode in [
+        TasteExecutionPreference.delivery,
+        TasteExecutionPreference.dineIn,
+      ]) {
+        final bundle = await service.buildRecommendationBundle(
+          input: _input().copyWith(
+            structuredConstraints:
+                TasteStructuredConstraints(executionPreference: mode),
+          ),
+          recallLabels: const ['家常菜'],
+          limit: 2,
+        );
 
-      expect(bundle.recipes.first.name, '炭火羊肉串');
+        expect(bundle.recipes.first.name, '炭火羊肉串');
+      }
     });
 
     test('非敏感时段不干预排序', () async {
@@ -1288,6 +2144,7 @@ UnifiedRecommendationServiceV2 _serviceWithRows(
     tagCatalogService: tagCatalogService ?? _StaticCatalogService(const []),
     tagRecipeLoader: (tagIds, limit) async => rows,
     searchRecipeLoader: (query, limit) async => rows,
+    defaultRecipeLoader: (_) async => const [],
     tagScoreLoader: () async => tagScores,
     favoriteTagLoader: () async => favoriteTagIds,
     favoriteDishLoader: () async => const {},
@@ -1295,7 +2152,9 @@ UnifiedRecommendationServiceV2 _serviceWithRows(
     shadowScoringService: shadowScoringService,
     canaryDecisionLoader: canaryDecisionLoader,
     experimentalRanker: experimentalRanker,
-    mealPeriodClock: mealPeriodClock,
+    // Keep ranking tests independent of the wall clock; tests that exercise a
+    // specific meal period inject their own clock explicitly.
+    mealPeriodClock: mealPeriodClock ?? () => DateTime(2026, 9, 30, 15),
   );
 }
 
@@ -1348,7 +2207,8 @@ Map<String, dynamic> _row({
   List<String> ingredients = const ['鸡腿'],
   int popularity = 50,
   double rating = 4.5,
-  int totalTimeMinutes = 30,
+  int? totalTimeMinutes = 30,
+  int? difficulty = 2,
   int servings = 2,
 }) {
   return {
@@ -1367,7 +2227,7 @@ Map<String, dynamic> _row({
     'source_recipe_id': '$recipeId',
     'recipe_title': name,
     'recipe_description': '适合今晚的一道热菜。',
-    'difficulty': 2,
+    'difficulty': difficulty,
     'total_time_minutes': totalTimeMinutes,
     'servings': servings,
     'cover_image_url': '',

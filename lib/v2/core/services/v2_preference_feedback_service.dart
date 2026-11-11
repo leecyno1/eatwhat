@@ -18,6 +18,29 @@ class V2PreferenceFeedbackService {
   static const _keyTagScoresJson = 'v2_tag_scores_json';
   static const _keyExecutionPathScoresJson = 'v2_execution_path_scores_json';
   static const _keyRecentRecipeIds = 'v2_recent_recipe_ids';
+  static const _keyCompletedRecipeIds = 'v2_completed_recipe_ids';
+
+  // Serialize completion writes, including all their learning signals.
+  Future<void>? _completionWrites;
+
+  Future<void> _queueCompletionWrite(Future<void> Function() write) {
+    final previous = _completionWrites;
+    final result = previous == null
+        ? Future<void>.sync(write)
+        : previous.then((_) => write());
+    late final Future<void> settled;
+    void clearIfIdle() {
+      if (identical(_completionWrites, settled)) _completionWrites = null;
+    }
+
+    settled = result.then<void>(
+      (_) => clearIfIdle(),
+      onError: (Object _) => clearIfIdle(),
+    );
+    _completionWrites = settled;
+    return result;
+  }
+
   static const _blockedFeedbackSignals = {
     'HowToCook',
     'AI',
@@ -254,15 +277,55 @@ class V2PreferenceFeedbackService {
     required String recipeId,
     required ExecutionPath path,
     List<String> positiveTagIds = const [],
+  }) {
+    return _queueCompletionWrite(() async {
+      await _writeCompletedRecipe(recipeId, limit: 30);
+      await recordExecutionPathChosen(path, delta: 2);
+      await recordPositiveTasteSignals(positiveTagIds, delta: 2);
+    });
+  }
+
+  /// Explicit positive feedback only; source/platform labels are not tastes.
+  Future<void> recordPositiveTasteSignals(
+    Iterable<String> signals, {
+    int delta = 1,
   }) async {
-    final operations = <Future<void>>[
-      recordRecipeChosen(recipeId),
-      recordExecutionPathChosen(path, delta: 2),
-      for (final tagId in positiveTagIds)
-        if (_isLearnableTasteSignal(tagId))
-          recordPositiveTag(tagId.trim(), delta: 2),
-    ];
-    await Future.wait(operations);
+    for (final signal in signals.map((value) => value.trim()).toSet()) {
+      if (_isLearnableTasteSignal(signal)) {
+        await recordPositiveTag(signal, delta: delta);
+      }
+    }
+  }
+
+  /// Only explicitly completed meals. Never migrates legacy choices.
+  Future<List<String>> getCompletedRecipeIds({int limit = 30}) async {
+    if (limit <= 0) return const [];
+    final prefs = await SharedPreferences.getInstance();
+    return (prefs.getStringList(_keyCompletedRecipeIds) ?? const <String>[])
+        .take(limit)
+        .toList();
+  }
+
+  /// Records an explicit completion without inferring taste or channel signals.
+  Future<void> recordCompletedRecipe(String recipeId, {int limit = 30}) {
+    return _queueCompletionWrite(
+      () => _writeCompletedRecipe(recipeId, limit: limit),
+    );
+  }
+
+  Future<void> _writeCompletedRecipe(
+    String recipeId, {
+    required int limit,
+  }) async {
+    final id = recipeId.trim();
+    if (id.isEmpty || limit <= 0) return;
+    final prefs = await SharedPreferences.getInstance();
+    final current = prefs.getStringList(_keyCompletedRecipeIds) ?? const [];
+    final next = <String>[id, ...current.where((e) => e.isNotEmpty && e != id)];
+    await prefs.setStringList(
+      _keyCompletedRecipeIds,
+      next.take(limit).toList(),
+    );
   }
 
   bool _isLearnableTasteSignal(String raw) {

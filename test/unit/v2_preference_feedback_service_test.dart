@@ -29,7 +29,9 @@ void main() {
       positiveTagIds: ['f_spicy', 'scene_lazy'],
     );
 
-    expect(await service.getRecentRecipeIds(), contains('r-finish'));
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getStringList('v2_completed_recipe_ids'), ['r-finish']);
+    expect(await service.getRecentRecipeIds(), isEmpty);
     expect(await service.getExecutionPathScore(ExecutionPath.delivery), 2);
     expect(await service.getTagScore('f_spicy'), 2);
     expect(await service.getTagScore('scene_lazy'), 2);
@@ -48,6 +50,55 @@ void main() {
     expect(await service.getTagScore('db_flavor_12'), 2);
     expect(await service.getTagScore('HowToCook'), 0);
     expect(await service.getTagScore('酸梅汤'), 0);
+  });
+
+  test('旧选择不迁移为已吃，新选择不学习长期偏好', () async {
+    SharedPreferences.setMockInitialValues({
+      'v2_recent_recipe_ids': ['old-choice'],
+    });
+    final service = V2PreferenceFeedbackService.instance;
+    expect(await service.getCompletedRecipeIds(), isEmpty);
+    await service.recordRecipeChosen('new-choice');
+    expect(await service.getRecentRecipeIds(), ['new-choice', 'old-choice']);
+    expect(await service.getCompletedRecipeIds(), isEmpty);
+    expect(await service.getTagScores(), isEmpty);
+    expect(await service.getExecutionPathScores(), isEmpty);
+  });
+
+  test('独立完成记录去重置顶限量，且不污染选择记录', () async {
+    final service = V2PreferenceFeedbackService.instance;
+    await service.recordCompletedRecipe('a', limit: 2);
+    await service.recordCompletedRecipe('b', limit: 2);
+    await service.recordCompletedRecipe('a', limit: 2);
+    expect(await service.getCompletedRecipeIds(), ['a', 'b']);
+    await service.recordCompletedRecipe('c', limit: 2);
+    expect(await service.getCompletedRecipeIds(), ['c', 'a']);
+    expect(await service.getCompletedRecipeIds(limit: 1), ['c']);
+    expect(await service.getCompletedRecipeIds(limit: 0), isEmpty);
+    expect(await service.getRecentRecipeIds(), isEmpty);
+  });
+
+  test('并发完成不会丢失菜品、渠道或长期口味分数', () async {
+    final service = V2PreferenceFeedbackService.instance;
+    await Future.wait([
+      for (var i = 0; i < 8; i++)
+        service.recordExecutionCompleted(
+          recipeId: 'r-$i',
+          path: ExecutionPath.cook,
+          positiveTagIds: ['f_spicy', 'db_flavor_12'],
+        ),
+      service.recordPositiveTag('c_sichuan'),
+    ]);
+
+    expect(await service.getExecutionPathScore(ExecutionPath.cook), 16);
+    expect(await service.getTagScores(), {
+      'f_spicy': 16,
+      'db_flavor_12': 16,
+      'c_sichuan': 1,
+    });
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getStringList('v2_completed_recipe_ids'),
+        List.generate(8, (i) => 'r-${7 - i}'));
   });
 
   group('偏好分数时间衰减', () {

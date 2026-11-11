@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:eatwhat_app/core/services/pantry_ingredient_matcher.dart';
 import 'package:eatwhat_app/core/services/web_recipe_database.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_pairing_model.dart';
 import 'package:flutter/foundation.dart';
@@ -513,11 +514,7 @@ class UnifiedRecipeDatabaseService {
     List<String> pantry, {
     int limit = 30,
   }) async {
-    final items = pantry
-        .map((item) => item.trim())
-        .where((item) => item.isNotEmpty)
-        .toSet()
-        .toList();
+    final items = PantryIngredientMatcher.searchTerms(pantry);
     if (items.isEmpty) return [];
 
     final matches = items

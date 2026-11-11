@@ -5,7 +5,10 @@ import 'package:eatwhat_app/core/services/unified_recipe_database_service.dart';
 import 'package:eatwhat_app/v2/core/data/models/meal_planning_direction.dart';
 import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
+import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_signal.dart';
+import 'package:eatwhat_app/v2/core/services/preference_recall_bridge.dart';
+import 'package:eatwhat_app/v2/core/services/recipe_eligibility.dart';
 import 'package:eatwhat_app/v2/core/services/v2_favorites_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_recommendation_canary_service.dart';
@@ -25,6 +28,9 @@ typedef DefaultRecipeRowLoader = Future<List<Map<String, dynamic>>> Function(
 );
 typedef TagScoreLoader = Future<Map<String, int>> Function();
 typedef FavoriteTagLoader = Future<Set<String>> Function();
+typedef FavoriteTagLabelLoader = Future<Set<String>> Function(
+  Set<String> tagIds,
+);
 typedef FavoriteDishLoader = Future<Set<String>> Function();
 typedef RecentRecipeLoader = Future<List<String>> Function();
 typedef V2RecommendationCanaryDecisionLoader
@@ -37,11 +43,13 @@ class LocalRecommendationBundle {
     required this.summary,
     this.rankingVersion = 'local_rank_v2',
     this.algorithmVersion = 'hybrid_v3_0',
+    this.fallbackReason,
   });
 
   final List<RecipeModel> recipes;
   final Map<String, String> reasonsByRecipeId;
   final String summary;
+  final String? fallbackReason;
   final String rankingVersion;
   final String algorithmVersion;
 }
@@ -63,6 +71,7 @@ class UnifiedRecommendationServiceV2 {
     DefaultRecipeRowLoader? defaultRecipeLoader,
     TagScoreLoader? tagScoreLoader,
     FavoriteTagLoader? favoriteTagLoader,
+    FavoriteTagLabelLoader? favoriteTagLabelLoader,
     FavoriteDishLoader? favoriteDishLoader,
     RecentRecipeLoader? recentRecipeLoader,
     V2RecommendationShadowScoringService? shadowScoringService,
@@ -79,6 +88,9 @@ class UnifiedRecommendationServiceV2 {
             tagScoreLoader ?? V2PreferenceFeedbackService.instance.getTagScores,
         _favoriteTagLoader =
             favoriteTagLoader ?? V2FavoritesService.instance.getFavoriteTagIds,
+        _favoriteTagLabelLoader = favoriteTagLabelLoader ??
+            ((tagIds) => (tagCatalogService ?? V2TagCatalogService.instance)
+                .loadLabelsForTagIds(tagIds)),
         _favoriteDishLoader = favoriteDishLoader ??
             V2FavoritesService.instance.getFavoriteDishIds,
         _recentRecipeLoader = recentRecipeLoader ??
@@ -102,6 +114,7 @@ class UnifiedRecommendationServiceV2 {
   final DefaultRecipeRowLoader? _defaultRecipeLoader;
   final TagScoreLoader _tagScoreLoader;
   final FavoriteTagLoader _favoriteTagLoader;
+  final FavoriteTagLabelLoader _favoriteTagLabelLoader;
   final FavoriteDishLoader _favoriteDishLoader;
   final RecentRecipeLoader _recentRecipeLoader;
   final V2RecommendationShadowScoringService _shadowScoringService;
@@ -121,7 +134,7 @@ class UnifiedRecommendationServiceV2 {
   Future<List<RecipeModel>> recommendRecipes({
     required TasteInferenceInput input,
     required List<String> recallLabels,
-    int limit = 5,
+    int limit = 3,
   }) async {
     final bundle = await buildRecommendationBundle(
       input: input,
@@ -134,7 +147,7 @@ class UnifiedRecommendationServiceV2 {
   Future<LocalRecommendationBundle> buildRecommendationBundle({
     required TasteInferenceInput input,
     required List<String> recallLabels,
-    int limit = 5,
+    int limit = 3,
   }) async {
     if (_searchRecipeLoader == null || _tagRecipeLoader == null) {
       await _db.ensureInitialized();
@@ -150,12 +163,21 @@ class UnifiedRecommendationServiceV2 {
         .toList();
 
     final signalByLabel = await _signalByLabel();
+    final tagScores = await _tagScoreLoader();
+    final longTermTasteLabels = _longTermTasteLabels(input, tagScores);
     final expandedRecallLabels = _expandRecallLabels(
-      cleaned,
+      [...cleaned, ...longTermTasteLabels],
       signalByLabel,
     );
-    final tagScores = await _tagScoreLoader();
     final favoriteTagIds = await _favoriteTagLoader();
+    var favoriteTagLabels = const <String>{};
+    if (favoriteTagIds.isNotEmpty) {
+      try {
+        favoriteTagLabels = await _favoriteTagLabelLoader(favoriteTagIds);
+      } catch (_) {
+        // Favorites are a bonus; a catalog problem must not fail recall.
+      }
+    }
     final favoriteDishIds = await _favoriteDishLoader();
     final recentRecipeIds = (await _recentRecipeLoader()).toSet();
 
@@ -191,8 +213,12 @@ class UnifiedRecommendationServiceV2 {
       ...tagRows,
       for (final batch in searchBatches) ...batch,
     ]);
+    // 餐食/占位边界必须早于排序和默认池决策，不能只在最终展示前过滤。
+    bool allowsCandidate(Map<String, dynamic> row) =>
+        !_isPlaceholderRecipe(row['dish_name']?.toString() ?? '') &&
+        constraints.allows(row);
     var candidateRows = directRows;
-    var rows = candidateRows.where(constraints.allows).toList();
+    var rows = candidateRows.where(allowsCandidate).toList();
     var usedDefaultPool = false;
 
     // 精确召回为空，或所有精确候选都被硬约束过滤时，退回本地正式候选池。
@@ -200,7 +226,7 @@ class UnifiedRecommendationServiceV2 {
       final defaultRows =
           await (_defaultRecipeLoader?.call(80) ?? _db.fetchDefaultRecipes());
       candidateRows = _dedupeRowsByDishId([...directRows, ...defaultRows]);
-      rows = candidateRows.where(constraints.allows).toList();
+      rows = candidateRows.where(allowsCandidate).toList();
       usedDefaultPool = defaultRows.isNotEmpty;
     }
     if (rows.isEmpty) {
@@ -208,16 +234,41 @@ class UnifiedRecommendationServiceV2 {
         recipes: [],
         reasonsByRecipeId: {},
         summary: constraints.filteredSummary(candidateRows.length),
+        fallbackReason: candidateRows.isEmpty
+            ? 'local_empty'
+            : 'candidate_constraints_rejected',
       );
     }
 
     double scoreForLabel(String label) {
       final signal = signalByLabel[label];
-      if (signal == null) return 0;
-      return _calibratedFeedbackWeight(tagScores[signal.id] ?? 0);
+      // Feedback is written with display labels in some paths and signal IDs
+      // in others. Read both so existing user history keeps working.
+      final raw = signal == null
+          ? tagScores[label] ?? 0
+          : tagScores[signal.id] ?? tagScores[label] ?? 0;
+      return _calibratedFeedbackWeight(raw);
     }
 
     final mealPeriodNow = _mealPeriodClock?.call() ?? DateTime.now();
+    final cookingRequestLabels = constraints.isCooking
+        ? _cookingRequestLabels(input.freeformRequirement)
+        : const <String>[];
+    final explicitRequestLabels = <String>{
+      ...input.likedTagLabels,
+      // Explicit freeform requests must be able to beat meal-period judgment
+      // even when the chosen execution path is delivery or dine-in.
+      ..._cookingRequestLabels(input.freeformRequirement),
+    };
+    final wantsBreakfast = input.likedTagLabels.any(
+          (label) => label.contains('早餐') || label.contains('早饭'),
+        ) ||
+        RegExp(r'早餐|早饭').hasMatch(input.freeformRequirement);
+    final mealPeriodLabel = mealPeriodNow.hour >= 5 && mealPeriodNow.hour < 10
+        ? '早餐'
+        : (mealPeriodNow.hour >= 21 || mealPeriodNow.hour < 5)
+            ? '夜宵'
+            : '';
 
     // 2) 打分：匹配度 + 人气 + 评分 + 偏好学习/收藏/去重
     final scored = rows.map((row) {
@@ -264,13 +315,18 @@ class UnifiedRecommendationServiceV2 {
         preferenceBonus += scoreForLabel(i) * 0.06;
       }
 
-      // 收藏偏好：命中收藏标签额外加成
-      double favoriteTagBonus = 0.0;
+      // 收藏偏好：命中收藏标签额外加成。收藏可能在本次召回标签之外，
+      // 因此同时检查收藏标签本身和当前召回标签对应的 signal id。
+      final favoriteLabelsForScoring = <String>{...favoriteTagLabels};
       for (final label in expandedRecallLabels) {
         final id = signalByLabel[label]?.id;
-        if (id != null &&
-            favoriteTagIds.contains(id) &&
-            _matchesSignal(name, tags, ingredients, label)) {
+        if (id != null && favoriteTagIds.contains(id)) {
+          favoriteLabelsForScoring.add(label);
+        }
+      }
+      double favoriteTagBonus = 0.0;
+      for (final label in favoriteLabelsForScoring) {
+        if (_matchesSignal(name, tags, ingredients, label)) {
           favoriteTagBonus += 6.0;
         }
       }
@@ -287,6 +343,8 @@ class UnifiedRecommendationServiceV2 {
         tags: tags,
         ingredients: ingredients,
         name: name,
+        longTermLabels: longTermTasteLabels,
+        tagScores: tagScores,
       );
 
       final skipPenalty = _negativeSignalPenalty(
@@ -307,6 +365,10 @@ class UnifiedRecommendationServiceV2 {
         now: mealPeriodNow,
         name: name,
         tags: tags,
+        isCooking: constraints.isCooking,
+        difficulty: row['difficulty'] is num ? row['difficulty'] as num : null,
+        wantsBreakfast: wantsBreakfast,
+        explicitRequestLabels: explicitRequestLabels,
       );
       final planningDirectionBonus = _planningDirectionBonus(
         direction: input.planningDirection,
@@ -324,6 +386,14 @@ class UnifiedRecommendationServiceV2 {
               )
               .length *
           32.0;
+      // 多个或重复自由文本请求最多加一次，不与同名喜欢标签重复加分。
+      final cookingRequestBonus = cookingRequestLabels.any(
+        (label) =>
+            !input.likedTagLabels.contains(label) &&
+            _matchesSignal(name, tags, ingredients, label),
+      )
+          ? 32.0
+          : 0.0;
 
       final score = matchCount * 10.0 +
           popularity * 0.02 +
@@ -337,6 +407,7 @@ class UnifiedRecommendationServiceV2 {
           recentPenalty +
           planningDirectionBonus +
           explicitPreferenceBonus +
+          cookingRequestBonus +
           healthNutritionBonus +
           mealPeriodBonus +
           constraintAdjustment;
@@ -355,6 +426,8 @@ class UnifiedRecommendationServiceV2 {
         recentPenalty: recentPenalty,
         planningDirectionBonus: planningDirectionBonus,
         planningDirection: input.planningDirection,
+        mealPeriodBonus: mealPeriodBonus,
+        mealPeriodLabel: mealPeriodLabel,
       );
     }).toList()
       ..sort((a, b) => b.score.compareTo(a.score));
@@ -400,16 +473,7 @@ class UnifiedRecommendationServiceV2 {
 
     // 4) 输出映射到 V2 RecipeModel
     final finalRecipes = servedScored
-        .where(
-          (item) => !_isPlaceholderRecipe(
-            item.row['dish_name']?.toString() ?? '',
-          ),
-        )
         .map((e) => RecipeModel.fromUnifiedDbRow(e.row))
-        .where(
-            (recipe) => !_containsBlockedSignal(recipe, input.skippedTagLabels))
-        .where((recipe) =>
-            !_containsBlockedSignal(recipe, input.dislikedTagLabels))
         .take(limit)
         .toList();
     final finalRecipeIds = finalRecipes.map((recipe) => recipe.id).toSet();
@@ -440,7 +504,11 @@ class UnifiedRecommendationServiceV2 {
 
     void addLabel(String rawLabel) {
       final label = rawLabel.trim();
-      if (label.isEmpty || !_isSearchableLabel(label)) return;
+      if (label.isEmpty ||
+          !PreferenceRecallBridge.isFoodLabel(label) ||
+          !_isSearchableLabel(label)) {
+        return;
+      }
       expanded.add(label);
     }
 
@@ -464,6 +532,9 @@ class UnifiedRecommendationServiceV2 {
       for (final entry in _recallAliases.entries) {
         if (label.contains(entry.key)) entry.value.forEach(addLabel);
       }
+      // Product cards such as 川菜/西餐/晚餐 have no same-named database tag;
+      // bridge them to concrete taste, ingredient and dish-name vocabulary.
+      PreferenceRecallBridge.hintsFor(label).forEach(addLabel);
       addLabel(label);
     }
 
@@ -494,28 +565,87 @@ class UnifiedRecommendationServiceV2 {
     return deduped;
   }
 
+  List<String> _cookingRequestLabels(String requirement) {
+    // 仅识别完整的简短菜名/肯定句，不从「不想吃小龙虾」中截取正向词。
+    final request = RegExp(
+      r'^(?:我)?(?:今天|今晚|现在)?(?:想要|想|要|来|推荐|喜欢)?'
+      r'(?:吃|做)?(?:点|些|一份)?\s*'
+      r'([^\s，,。；;!！？?]{2,8}?)(?:吧|呀|啊)?$',
+    );
+    return requirement
+        .split(RegExp(r'[，,。；;!！？?\n]'))
+        .map((clause) => request.firstMatch(clause.trim())?.group(1))
+        .whereType<String>()
+        .where((label) => !RegExp(r'^(?:不|别|避免|忌)').hasMatch(label))
+        .toSet()
+        .toList();
+  }
+
   double _historyPreferenceBonus({
     required TasteInferenceInput input,
     required List<String> tags,
     required List<String> ingredients,
     required String name,
+    required List<String> longTermLabels,
+    required Map<String, int> tagScores,
   }) {
-    if (input.historyPreferenceSummary.isEmpty) return 0.0;
-
     var bonus = 0.0;
     for (var i = 0; i < input.likedTagIds.length; i++) {
       final id = input.likedTagIds[i];
       final label =
           i < input.likedTagLabels.length ? input.likedTagLabels[i] : '';
       final weight = _calibratedFeedbackWeight(
-        input.historyPreferenceSummary[id] ?? 0,
+        input.historyPreferenceSummary[id] ??
+            input.historyPreferenceSummary[label] ??
+            0,
       );
       if (weight == 0) continue;
       if (_matchesSignal(name, tags, ingredients, label)) {
         bonus += weight * 2.4;
       }
     }
-    return bonus;
+    // With no preference picked for this meal, the decaying long-term taste
+    // profile still shapes the first pick. Cap it below an explicit request.
+    var longTermBonus = 0.0;
+    for (final label in longTermLabels) {
+      if (!_matchesSignal(name, tags, ingredients, label)) continue;
+      longTermBonus += _calibratedFeedbackWeight(tagScores[label] ?? 0) * 1.6;
+    }
+    return bonus + math.min(longTermBonus, 32.0);
+  }
+
+  /// Strong, positive, food-like labels when the current session has no
+  /// explicit food intent. Weak and negative history is ignored.
+  List<String> _longTermTasteLabels(
+    TasteInferenceInput input,
+    Map<String, int> tagScores,
+  ) {
+    if (input.likedTagLabels.isNotEmpty ||
+        input.freeformRequirement.trim().isNotEmpty ||
+        input.skippedTagLabels.isNotEmpty ||
+        input.planningDirection != MealPlanningDirection.balanced) {
+      return const [];
+    }
+    final entries = tagScores.entries
+        .where((entry) => entry.value >= _longTermTasteThreshold)
+        .toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+    final labels = <String>[];
+    for (final entry in entries) {
+      final label = entry.key.trim();
+      if (label.isEmpty ||
+          !PreferenceRecallBridge.isFoodLabel(label) ||
+          RegExp(r'^[a-z]+_').hasMatch(label) ||
+          _nonTasteSourceLabels.contains(label) ||
+          label.contains('外卖') ||
+          label.contains('地图') ||
+          input.dislikedTagLabels.contains(label)) {
+        continue;
+      }
+      if (!labels.contains(label)) labels.add(label);
+      if (labels.length >= 3) break;
+    }
+    return labels;
   }
 
   double _negativeSignalPenalty({
@@ -537,7 +667,6 @@ class UnifiedRecommendationServiceV2 {
   /// 其余时段保持中性，避免过度干预。只匹配菜名与标签，不匹配食材，
   /// 防止「鸡蛋」这类常见食材在早餐时段大面积误触发。
   static const List<String> _morningPositiveTerms = [
-    '早餐',
     '粥',
     '豆浆',
     '包子',
@@ -550,15 +679,34 @@ class UnifiedRecommendationServiceV2 {
     '吐司',
     '馄饨',
     '蒸蛋',
+    '面包',
+    '三明治',
+    '煎饼',
+    '油条',
+    '花卷',
   ];
-  static const List<String> _morningNegativeTerms = [
+  static const List<String> _morningHeavyTerms = [
+    '红烧',
+    '排骨',
+    '猪蹄',
+    '扣肉',
+    '肥肠',
+    '水煮',
+    '干锅',
     '火锅',
     '烧烤',
     '麻辣',
+    '香辣',
     '油炸',
-    '重油',
-    '夜宵',
+    '炸鸡',
+    '铁板',
+    '孜然',
+    '烤鱼',
+    '小龙虾',
     '啤酒',
+    '夜宵',
+    '下饭',
+    '聚餐',
   ];
   static const List<String> _lateNightPositiveTerms = [
     '夜宵',
@@ -570,26 +718,85 @@ class UnifiedRecommendationServiceV2 {
     '卤味',
     '啤酒',
     '烤鱼',
+    '面',
+    '粉',
+    '粥',
+    '馄饨',
+    '饺子',
+    '汤羹',
+  ];
+  static const List<String> _lateNightHeavyTerms = [
+    '红烧',
+    '扣肉',
+    '猪蹄',
+    '肥肠',
+    '整鸡',
+    '烤鸭',
+    '水煮',
+    '干锅',
+    '下饭',
+    '聚餐',
   ];
 
   double _mealPeriodAdjustment({
     required DateTime now,
     required String name,
     required List<String> tags,
+    required bool isCooking,
+    required num? difficulty,
+    required bool wantsBreakfast,
+    required Set<String> explicitRequestLabels,
   }) {
     final hour = now.hour;
     final haystack = '$name|${tags.join('|')}';
     final isMorning = hour >= 5 && hour < 10;
     final isLateNight = hour >= 21 || hour < 5;
+    final breakfastMismatch = tags.contains('早餐') && !wantsBreakfast;
+
+    bool explicitlyAsked(String term) => explicitRequestLabels.any(
+          (label) =>
+              label.isNotEmpty &&
+              (label.contains(term) || term.contains(label)),
+        );
+
     if (isMorning) {
-      final pos = _morningPositiveTerms.where(haystack.contains).length;
-      final neg = _morningNegativeTerms.where(haystack.contains).length;
-      return pos * 10.0 - neg * 28.0;
+      var score = tags.contains('早餐') ? 30.0 : 0.0;
+      for (final term in _morningPositiveTerms) {
+        if (haystack.contains(term)) score += 8;
+      }
+      for (final term in _morningHeavyTerms) {
+        if (haystack.contains(term) && !explicitlyAsked(term)) {
+          score -= 26;
+        }
+      }
+      return score;
     }
     if (isLateNight) {
-      final pos = _lateNightPositiveTerms.where(haystack.contains).length;
-      return pos * 10.0;
+      var score = 0.0;
+      // 做饭时热的蒸蛋/粥可以是夜宵；外卖和堂食的早餐面包不是。
+      if (breakfastMismatch && !isCooking && !explicitlyAsked('早餐')) {
+        score -= 26;
+      }
+      for (final term in _lateNightHeavyTerms) {
+        if (haystack.contains(term) && !explicitlyAsked(term)) {
+          score -= 18;
+        }
+      }
+      if (isCooking) {
+        // 做饭只给低难度的实际简餐一次小加分，不让派生夜宵标签堆分。
+        // 菜名不用于推断耗时；粥、面等也可能有已知的较长制作时间。
+        final isSimple =
+            difficulty != null && difficulty >= 1 && difficulty <= 2;
+        final isSimpleDish = const ['面', '粥', '蒸蛋', '鸡蛋羹'].any(name.contains);
+        return score + (isSimple && isSimpleDish ? 6.0 : 0.0);
+      }
+      for (final term in _lateNightPositiveTerms) {
+        if (haystack.contains(term)) score += 10;
+      }
+      return score;
     }
+    // 午餐和晚餐不应被早餐场景的菜挤占，除非本轮明确要早餐。
+    if (breakfastMismatch && !explicitlyAsked('早餐')) return -14;
     return 0;
   }
 
@@ -685,14 +892,6 @@ class UnifiedRecommendationServiceV2 {
     return rawScore.isNegative ? -magnitude : magnitude;
   }
 
-  bool _containsBlockedSignal(RecipeModel recipe, List<String> blockedLabels) {
-    if (blockedLabels.isEmpty) return false;
-    final haystack =
-        '${recipe.name}|${recipe.description}|${recipe.ingredients.join('|')}|${recipe.tags.join('|')}';
-    return blockedLabels
-        .any((label) => label.trim().isNotEmpty && haystack.contains(label));
-  }
-
   bool _isPlaceholderRecipe(String name) {
     final compact = name.trim().toLowerCase();
     return compact.contains('示例菜谱') ||
@@ -750,6 +949,9 @@ class UnifiedRecommendationServiceV2 {
     if (item.planningDirectionBonus > 0) {
       pieces.add('符合${item.planningDirection.label}规划');
     }
+    if (item.mealPeriodBonus > 0 && item.mealPeriodLabel.isNotEmpty) {
+      pieces.add('按${item.mealPeriodLabel}时段优先');
+    }
     if (item.favoriteTagBonus > 0) {
       pieces.add('包含收藏口味');
     }
@@ -782,8 +984,11 @@ class UnifiedRecommendationServiceV2 {
         : '';
     final recallText = usedDefaultPool
         ? '精确标签未命中，HowToCook 已从本地正式菜谱池'
-        : 'HowToCook 已按偏好标签、评分、人气和近期反馈';
-    return '$recallText收束出 $finalCount 道候选$rankingText$filterText。';
+        : 'HowToCook 已按本轮偏好与本地菜谱信号';
+    final safetyText = constraints.eligibility.hasDietaryRestrictions
+        ? RecipeEligibility.safetyNotice
+        : '';
+    return '$recallText收束出 $finalCount 道候选$rankingText$filterText。$safetyText';
   }
 
   static const List<String> _defaultRecallLabels = [
@@ -795,6 +1000,15 @@ class UnifiedRecommendationServiceV2 {
   ];
 
   static const double _maximumFeedbackWeight = 8.0;
+  static const int _longTermTasteThreshold = 6;
+  static const Set<String> _nonTasteSourceLabels = {
+    'HowToCook',
+    'AI',
+    '美团外卖',
+    '饿了么',
+    '大众点评',
+    'Apple 地图',
+  };
 
   static const Map<String, List<String>> _recallAliases = {
     '家常': _defaultRecallLabels,
@@ -833,6 +1047,8 @@ class _ScoredRecipeRow {
     required this.recentPenalty,
     required this.planningDirectionBonus,
     required this.planningDirection,
+    required this.mealPeriodBonus,
+    required this.mealPeriodLabel,
   });
 
   final Map<String, dynamic> row;
@@ -849,44 +1065,48 @@ class _ScoredRecipeRow {
   final double recentPenalty;
   final double planningDirectionBonus;
   final MealPlanningDirection planningDirection;
+  final double mealPeriodBonus;
+  final String mealPeriodLabel;
 }
 
 class _RecommendationConstraints {
   const _RecommendationConstraints({
-    this.maxTimeMinutes,
+    required this.eligibility,
+    required this.isCooking,
     this.maxBudgetYuan,
     this.partySize,
-    this.blockedTerms = const [],
   });
 
   factory _RecommendationConstraints.fromInput(TasteInferenceInput input) {
     final signalText = [
       input.freeformRequirement,
-      ...input.dislikedTagLabels,
-      ...input.skippedTagLabels,
       ...input.likedTagLabels,
     ].join(' ');
     final structured = input.structuredConstraints;
     return _RecommendationConstraints(
-      maxTimeMinutes:
-          structured.maxTimeMinutes ?? _parseMaxTimeMinutes(signalText),
-      maxBudgetYuan:
-          structured.maxBudgetYuan ?? _parseMaxBudgetYuan(signalText),
+      eligibility: RecipeEligibility(
+        dietaryRestrictions: structured.dietaryRestrictions,
+        dislikedLabels: input.dislikedTagLabels,
+        freeformRequirement: input.freeformRequirement,
+        explicitRequestLabels: input.likedTagLabels,
+        maxTimeMinutes: structured.maxTimeMinutes ??
+            RecipeEligibility.parseMaxTimeMinutes(signalText),
+      ),
+      // App 未指定执行方式时默认做饭；外卖/堂食不承担烹饪成本。
+      isCooking:
+          structured.executionPreference == TasteExecutionPreference.cook ||
+              structured.executionPreference == TasteExecutionPreference.any,
+      maxBudgetYuan: structured.maxBudgetYuan ??
+          RecipeEligibility.parseMaxBudgetYuan(signalText),
       partySize: structured.partySize ?? _parsePartySize(signalText),
-      blockedTerms: _parseBlockedTerms(input, signalText),
     );
   }
 
-  final int? maxTimeMinutes;
+  final RecipeEligibility eligibility;
+  final bool isCooking;
+  int? get maxTimeMinutes => eligibility.maxTimeMinutes;
   final int? maxBudgetYuan;
   final int? partySize;
-  final List<String> blockedTerms;
-
-  bool get hasAny =>
-      maxTimeMinutes != null ||
-      maxBudgetYuan != null ||
-      partySize != null ||
-      blockedTerms.isNotEmpty;
 
   bool get hasRankingSignals => maxBudgetYuan != null || partySize != null;
 
@@ -894,7 +1114,7 @@ class _RecommendationConstraints {
         if (maxTimeMinutes != null) '$maxTimeMinutes 分钟内',
         if (maxBudgetYuan != null) '$maxBudgetYuan 元内',
         if (partySize != null) '$partySize 人',
-        if (blockedTerms.isNotEmpty) '忌口',
+        if (eligibility.hasExclusions) '忌口',
       ];
 
   String get summaryLabel {
@@ -902,9 +1122,9 @@ class _RecommendationConstraints {
       if (maxTimeMinutes != null) '时间约束',
       if (maxBudgetYuan != null) '预算',
       if (partySize != null) '人数',
-      if (blockedTerms.isNotEmpty) '忌口',
+      if (eligibility.hasExclusions) '忌口',
     ];
-    return labels.join('、');
+    return labels.isEmpty ? '餐食候选' : labels.join('、');
   }
 
   String get rankingSummaryLabel {
@@ -916,62 +1136,72 @@ class _RecommendationConstraints {
   }
 
   bool allows(Map<String, dynamic> row) {
-    if (!_allowsTime(row)) return false;
-    if (!_allowsBlockedTerms(row)) return false;
-    return true;
+    // 在 RecipeModel 截断食材/标签之前检查完整库配方。
+    return eligibility
+        .evaluate(
+          name: row['dish_name']?.toString() ?? '',
+          description: row['recipe_description']?.toString() ?? '',
+          category: row['cuisine']?.toString() ?? '',
+          ingredients: (row['ingredients'] as List<dynamic>? ?? const [])
+              .whereType<Map>()
+              .map((item) => item['name']?.toString() ?? ''),
+          tags: [
+            ...?row['tags'] as List<dynamic>?,
+            ...?row['scenes'] as List<dynamic>?,
+            ...?row['health_tags'] as List<dynamic>?,
+          ].map((item) => '$item'),
+          totalTimeMinutes: _timeFor(row),
+        )
+        .allowed;
   }
 
   List<String> notesFor(Map<String, dynamic> row) {
     return [
-      if (maxTimeMinutes != null) '$maxTimeMinutes 分钟内可完成',
+      ...eligibility.timeNotes(_timeFor(row)),
       ..._budgetNotesFor(row),
       ..._partyNotesFor(row),
     ];
   }
 
   double scoreAdjustment(Map<String, dynamic> row) {
-    return _budgetAdjustment(row) + _partyAdjustment(row);
+    return _budgetAdjustment(row) +
+        _partyAdjustment(row) +
+        _cookingPracticalityAdjustment(row);
+  }
+
+  double _cookingPracticalityAdjustment(Map<String, dynamic> row) {
+    if (!isCooking) return 0;
+    // 仅采用库中真实的 1..5 数值难度，未知值不推断为简单或复杂。
+    final difficulty = row['difficulty'];
+    final difficultyBonus =
+        difficulty is num && difficulty >= 1 && difficulty <= 5
+            ? (3 - difficulty) * 3.0
+            : 0.0;
+    // 总幅度 [-10, 10]，小于显式喜欢的 +32；缺失耗时始终中性。
+    final minutes = _timeFor(row);
+    if (minutes == null || minutes <= 0) return difficultyBonus;
+    if (minutes <= 20) return difficultyBonus + 4.0;
+    if (minutes >= 45) return difficultyBonus - 4.0;
+    return difficultyBonus;
   }
 
   String filteredSummary(int recalledCount) {
-    if (!hasAny) return 'HowToCook 暂时没有命中候选。';
     if (recalledCount <= 0) return 'HowToCook 暂时没有命中候选。';
     return 'HowToCook 已按$summaryLabel过滤 $recalledCount 道候选，但暂时没有剩余结果。';
   }
 
-  bool _allowsTime(Map<String, dynamic> row) {
-    final maxTime = maxTimeMinutes;
-    if (maxTime == null) return true;
+  int? _timeFor(Map<String, dynamic> row) {
     final raw = row['total_time_minutes'];
-    final minutes = raw is num ? raw.toInt() : int.tryParse('$raw');
-    if (minutes == null || minutes <= 0) return true;
-    return minutes <= maxTime;
-  }
-
-  bool _allowsBlockedTerms(Map<String, dynamic> row) {
-    if (blockedTerms.isEmpty) return true;
-    final ingredients = (row['ingredients'] as List<dynamic>? ?? const [])
-        .map((item) => (item as Map)['name']?.toString() ?? '')
-        .join('|');
-    final haystack = [
-      row['dish_name']?.toString() ?? '',
-      row['recipe_description']?.toString() ?? '',
-      ingredients,
-      ...(row['tags'] as List<dynamic>? ?? const []).map((item) => '$item'),
-      ...(row['scenes'] as List<dynamic>? ?? const []).map((item) => '$item'),
-      ...(row['health_tags'] as List<dynamic>? ?? const [])
-          .map((item) => '$item'),
-    ].join('|');
-    return !blockedTerms.any(haystack.contains);
+    return raw is num ? raw.toInt() : int.tryParse('$raw');
   }
 
   List<String> _budgetNotesFor(Map<String, dynamic> row) {
     final budget = maxBudgetYuan;
     if (budget == null) return const [];
     final cost = _estimatedCostLevel(row);
-    if (cost <= 1) return const ['预算友好'];
-    if (cost >= 3 && budget <= 60) return const ['预算略高，已下沉'];
-    return const ['预算可接受'];
+    if (cost <= 1) return const ['预算友好（食材成本估算，非实时报价）'];
+    if (cost >= 3 && budget <= 60) return const ['估算预算略高，已下沉'];
+    return const ['估算预算可接受'];
   }
 
   double _budgetAdjustment(Map<String, dynamic> row) {
@@ -999,12 +1229,18 @@ class _RecommendationConstraints {
     final target = partySize;
     if (target == null) return const [];
     final servings = _servingsFor(row);
-    if (servings == null) return const [];
-    final diff = (servings - target).abs();
-    if (diff <= (target <= 2 ? 1 : 2)) {
-      return ['适合 $target 人'];
+    if (servings == null || servings <= 0) return const [];
+    if (servings == target) {
+      return ['适合 $target 人（菜谱标注 $servings 人份）'];
     }
-    return ['分量与 $target 人不完全匹配，已下沉'];
+    if (servings < target) {
+      return [
+        target - servings <= 1
+            ? '菜谱标注 $servings 人份，$target 人建议加量'
+            : '菜谱标注 $servings 人份，$target 人需加量',
+      ];
+    }
+    return ['菜谱标注 $servings 人份，$target 人可减量'];
   }
 
   double _partyAdjustment(Map<String, dynamic> row) {
@@ -1045,30 +1281,6 @@ class _RecommendationConstraints {
     return raw is num ? raw.toInt() : int.tryParse('$raw');
   }
 
-  static int? _parseMaxTimeMinutes(String text) {
-    final normalized = text.replaceAll(' ', '');
-    final match = RegExp(r'(\d+)(?:分钟|分|min|m)(?:内|以内)?').firstMatch(
-      normalized,
-    );
-    if (match != null) {
-      return int.tryParse(match.group(1)!);
-    }
-    if (normalized.contains('快手') || normalized.contains('马上')) return 20;
-    if (normalized.contains('不着急')) return null;
-    return null;
-  }
-
-  static int? _parseMaxBudgetYuan(String text) {
-    final normalized = text.replaceAll(' ', '');
-    final match = RegExp(r'(\d+)(?:元|块|rmb|¥)(?:内|以内)?').firstMatch(
-      normalized.toLowerCase(),
-    );
-    if (match != null) return int.tryParse(match.group(1)!);
-    if (normalized.contains('经济') || normalized.contains('便宜')) return 30;
-    if (normalized.contains('想吃好一点')) return 100;
-    return null;
-  }
-
   static int? _parsePartySize(String text) {
     final normalized = text.replaceAll(' ', '');
     final range = RegExp(r'(\d+)-(\d+)人').firstMatch(normalized);
@@ -1081,44 +1293,5 @@ class _RecommendationConstraints {
     if (single != null) return int.tryParse(single.group(1)!);
     if (normalized.contains('一人食')) return 1;
     return null;
-  }
-
-  static List<String> _parseBlockedTerms(
-    TasteInferenceInput input,
-    String text,
-  ) {
-    final terms = <String>{};
-    void addAll(Iterable<String> items) {
-      for (final item in items) {
-        if (item.trim().isNotEmpty) terms.add(item.trim());
-      }
-    }
-
-    for (final label in [
-      ...input.dislikedTagLabels,
-      ...input.skippedTagLabels,
-      ...input.structuredConstraints.dietaryRestrictions,
-    ]) {
-      if (label.contains('无忌口')) continue;
-      if (label.contains('海鲜')) addAll(['海鲜', '虾', '鱼', '蟹', '贝']);
-      if (label.contains('芒果')) addAll(['芒果']);
-      if (label.contains('乳糖')) addAll(['奶', '奶油', '奶酪', '牛奶']);
-      if (label.contains('清真')) addAll(['猪肉', '猪', '五花肉']);
-      if (label.contains('素食')) addAll(['猪', '牛', '羊', '鸡', '鸭', '鱼', '虾']);
-    }
-
-    if (text.contains('不要海鲜') || text.contains('海鲜过敏')) {
-      addAll(['海鲜', '虾', '鱼', '蟹', '贝']);
-    }
-    if (text.contains('素食') || text.contains('吃素') || text.contains('素一点')) {
-      addAll(['猪', '牛', '羊', '鸡', '鸭', '鱼', '虾', '肉', '荤', '排骨', '五花肉']);
-    }
-    if (text.contains('清真') || text.contains('不吃猪肉')) {
-      addAll(['猪肉', '猪', '五花肉', '肥肉', '培根', '火腿']);
-    }
-    if (text.contains('不要辣') || text.contains('不吃辣')) {
-      addAll(['辣', '麻辣', '香辣']);
-    }
-    return terms.toList();
   }
 }

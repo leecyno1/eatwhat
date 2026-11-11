@@ -83,6 +83,40 @@ class V2TagCatalogService {
     return ids.toSet().toList();
   }
 
+  /// Resolves both database tag IDs and the product fallback IDs to labels.
+  ///
+  /// Feedback and favorites are written with display labels or product IDs
+  /// (`f_spicy`), while recommendations read database signal IDs. They must
+  /// agree on the same concept.
+  Future<Map<String, String>> loadTagIdToLabelMap() async {
+    final map = <String, String>{};
+    try {
+      for (final tag in await loadTags()) {
+        final id = tag.id.trim();
+        final label = tag.label.trim();
+        if (id.isNotEmpty && label.isNotEmpty) map[id] = label;
+      }
+    } catch (_) {
+      // An unavailable catalog must not erase product ID mappings.
+    }
+    for (final tag in _fallbackRepository.getAllTags()) {
+      final id = tag.id.trim();
+      final label = tag.label.trim();
+      if (id.isNotEmpty && label.isNotEmpty) {
+        map.putIfAbsent(id, () => label);
+      }
+    }
+    return map;
+  }
+
+  Future<Set<String>> loadLabelsForTagIds(Set<String> tagIds) async {
+    if (tagIds.isEmpty) return const {};
+    final map = await loadTagIdToLabelMap();
+    return {
+      for (final id in tagIds) map[id] ?? id,
+    };
+  }
+
   Future<List<UnifiedTagModel>> _loadDbTags() async {
     final rows = await _dbTagLoader();
     final tags = rows.map(_tagFromDbRow).whereType<UnifiedTagModel>().toList();

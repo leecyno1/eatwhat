@@ -28,7 +28,9 @@ mixin _$RecipeModel {
   String get difficulty => throw _privateConstructorUsedError;
   List<String> get tags => throw _privateConstructorUsedError;
   String get source => throw _privateConstructorUsedError;
-  String? get imageUrl => throw _privateConstructorUsedError;
+  String? get imageUrl => throw _privateConstructorUsedError; // AI生成的图片URL
+  int get totalTimeMinutes => throw _privateConstructorUsedError;
+  int get servings => throw _privateConstructorUsedError;
 
   /// Serializes this RecipeModel to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -55,7 +57,9 @@ abstract class $RecipeModelCopyWith<$Res> {
       String difficulty,
       List<String> tags,
       String source,
-      String? imageUrl});
+      String? imageUrl,
+      int totalTimeMinutes,
+      int servings});
 }
 
 /// @nodoc
@@ -82,6 +86,8 @@ class _$RecipeModelCopyWithImpl<$Res, $Val extends RecipeModel>
     Object? tags = null,
     Object? source = null,
     Object? imageUrl = freezed,
+    Object? totalTimeMinutes = null,
+    Object? servings = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -120,6 +126,14 @@ class _$RecipeModelCopyWithImpl<$Res, $Val extends RecipeModel>
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      totalTimeMinutes: null == totalTimeMinutes
+          ? _value.totalTimeMinutes
+          : totalTimeMinutes // ignore: cast_nullable_to_non_nullable
+              as int,
+      servings: null == servings
+          ? _value.servings
+          : servings // ignore: cast_nullable_to_non_nullable
+              as int,
     ) as $Val);
   }
 }
@@ -141,7 +155,9 @@ abstract class _$$RecipeModelImplCopyWith<$Res>
       String difficulty,
       List<String> tags,
       String source,
-      String? imageUrl});
+      String? imageUrl,
+      int totalTimeMinutes,
+      int servings});
 }
 
 /// @nodoc
@@ -166,6 +182,8 @@ class __$$RecipeModelImplCopyWithImpl<$Res>
     Object? tags = null,
     Object? source = null,
     Object? imageUrl = freezed,
+    Object? totalTimeMinutes = null,
+    Object? servings = null,
   }) {
     return _then(_$RecipeModelImpl(
       id: null == id
@@ -204,6 +222,14 @@ class __$$RecipeModelImplCopyWithImpl<$Res>
           ? _value.imageUrl
           : imageUrl // ignore: cast_nullable_to_non_nullable
               as String?,
+      totalTimeMinutes: null == totalTimeMinutes
+          ? _value.totalTimeMinutes
+          : totalTimeMinutes // ignore: cast_nullable_to_non_nullable
+              as int,
+      servings: null == servings
+          ? _value.servings
+          : servings // ignore: cast_nullable_to_non_nullable
+              as int,
     ));
   }
 }
@@ -220,7 +246,9 @@ class _$RecipeModelImpl implements _RecipeModel {
       this.difficulty = 'medium',
       final List<String> tags = const [],
       this.source = 'HowToCook',
-      this.imageUrl})
+      this.imageUrl,
+      this.totalTimeMinutes = 0,
+      this.servings = 1})
       : _ingredients = ingredients,
         _steps = steps,
         _tags = tags;
@@ -269,10 +297,17 @@ class _$RecipeModelImpl implements _RecipeModel {
   final String source;
   @override
   final String? imageUrl;
+// AI生成的图片URL
+  @override
+  @JsonKey()
+  final int totalTimeMinutes;
+  @override
+  @JsonKey()
+  final int servings;
 
   @override
   String toString() {
-    return 'RecipeModel(id: $id, name: $name, description: $description, ingredients: $ingredients, steps: $steps, difficulty: $difficulty, tags: $tags, source: $source, imageUrl: $imageUrl)';
+    return 'RecipeModel(id: $id, name: $name, description: $description, ingredients: $ingredients, steps: $steps, difficulty: $difficulty, tags: $tags, source: $source, imageUrl: $imageUrl, totalTimeMinutes: $totalTimeMinutes, servings: $servings)';
   }
 
   @override
@@ -292,7 +327,11 @@ class _$RecipeModelImpl implements _RecipeModel {
             const DeepCollectionEquality().equals(other._tags, _tags) &&
             (identical(other.source, source) || other.source == source) &&
             (identical(other.imageUrl, imageUrl) ||
-                other.imageUrl == imageUrl));
+                other.imageUrl == imageUrl) &&
+            (identical(other.totalTimeMinutes, totalTimeMinutes) ||
+                other.totalTimeMinutes == totalTimeMinutes) &&
+            (identical(other.servings, servings) ||
+                other.servings == servings));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -307,7 +346,9 @@ class _$RecipeModelImpl implements _RecipeModel {
       difficulty,
       const DeepCollectionEquality().hash(_tags),
       source,
-      imageUrl);
+      imageUrl,
+      totalTimeMinutes,
+      servings);
 
   /// Create a copy of RecipeModel
   /// with the given fields replaced by the non-null parameter values.
@@ -335,7 +376,9 @@ abstract class _RecipeModel implements RecipeModel {
       final String difficulty,
       final List<String> tags,
       final String source,
-      final String? imageUrl}) = _$RecipeModelImpl;
+      final String? imageUrl,
+      final int totalTimeMinutes,
+      final int servings}) = _$RecipeModelImpl;
 
   factory _RecipeModel.fromJson(Map<String, dynamic> json) =
       _$RecipeModelImpl.fromJson;
@@ -357,7 +400,11 @@ abstract class _RecipeModel implements RecipeModel {
   @override
   String get source;
   @override
-  String? get imageUrl;
+  String? get imageUrl; // AI生成的图片URL
+  @override
+  int get totalTimeMinutes;
+  @override
+  int get servings;
 
   /// Create a copy of RecipeModel
   /// with the given fields replaced by the non-null parameter values.
