@@ -444,7 +444,7 @@ void main() {
 
     expect(find.text('已记住这次开吃选择'), findsOneWidget);
     expect(
-      await V2PreferenceFeedbackService.instance.getRecentRecipeIds(),
+      await V2PreferenceFeedbackService.instance.getCompletedRecipeIds(),
       contains('r-done'),
     );
     expect(

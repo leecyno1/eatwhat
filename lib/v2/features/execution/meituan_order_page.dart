@@ -46,6 +46,8 @@ class _MeituanOrderPageState extends State<MeituanOrderPage> {
   bool _needsVerification = false;
   String? _errorMessage;
   MeituanOrderPreview? _preview;
+  String? _submittedOrderId;
+  String? _submittedPaymentUrl;
 
   @override
   void initState() {
@@ -150,7 +152,7 @@ class _MeituanOrderPageState extends State<MeituanOrderPage> {
   void _refreshProducts() {
     setState(() {
       _cart.clear();
-      _preview = null;
+      _clearPreview();
       _errorMessage = null;
       _productsFuture = _loadProducts();
     });
@@ -215,6 +217,8 @@ class _MeituanOrderPageState extends State<MeituanOrderPage> {
     _preview = null;
     _needsVerification = false;
     _verificationCodeController.clear();
+    _submittedOrderId = null;
+    _submittedPaymentUrl = null;
   }
 
   MeituanDeliveryOrderRequest? _buildOrderRequest() {
@@ -282,6 +286,8 @@ class _MeituanOrderPageState extends State<MeituanOrderPage> {
       setState(() {
         _preview = preview;
         _needsVerification = false;
+        _submittedOrderId = null;
+        _submittedPaymentUrl = null;
       });
     } catch (error) {
       if (mounted) _showError(_messageFrom(error));
@@ -314,20 +320,47 @@ class _MeituanOrderPageState extends State<MeituanOrderPage> {
         });
         return;
       }
-      final paymentUri = Uri.tryParse(order.paymentUrl);
-      if (paymentUri == null) {
+      if (order.paymentUrl.isEmpty) {
         _showError('美团没有返回可用的支付地址');
         return;
       }
-      final launched = await (widget.paymentLauncher ?? _launchPayment)(
-        paymentUri,
-      );
-      if (!launched && mounted) _showError('暂时无法打开美团收银台');
+      setState(() {
+        _submittedOrderId = order.orderId;
+        _submittedPaymentUrl = order.paymentUrl;
+      });
+      await _launchPaymentUrl(order.paymentUrl);
     } catch (error) {
       if (mounted) _showError(_messageFrom(error));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
+  }
+
+  Future<void> _reopenPayment() async {
+    final rawUrl = _submittedPaymentUrl;
+    if (rawUrl == null || rawUrl.isEmpty) return;
+    setState(() {
+      _submitting = true;
+      _errorMessage = null;
+    });
+    try {
+      await _launchPaymentUrl(rawUrl);
+    } catch (error) {
+      if (mounted) _showError(_messageFrom(error));
+    } finally {
+      if (mounted) setState(() => _submitting = false);
+    }
+  }
+
+  Future<void> _launchPaymentUrl(String rawUrl) async {
+    final paymentUri = Uri.tryParse(rawUrl);
+    if (paymentUri == null) {
+      _showError('美团没有返回可用的支付地址');
+      return;
+    }
+    final launched =
+        await (widget.paymentLauncher ?? _launchPayment)(paymentUri);
+    if (!launched && mounted) _showError('暂时无法打开美团收银台');
   }
 
   Future<bool> _launchPayment(Uri uri) {
@@ -443,9 +476,11 @@ class _MeituanOrderPageState extends State<MeituanOrderPage> {
                 ),
                 onPressed: _previewing || _submitting
                     ? null
-                    : _preview == null
-                        ? _previewOrder
-                        : _submitOrder,
+                    : _submittedPaymentUrl != null
+                        ? _reopenPayment
+                        : _preview == null
+                            ? _previewOrder
+                            : _submitOrder,
                 icon: _previewing || _submitting
                     ? const SizedBox.square(
                         dimension: 18,
@@ -457,7 +492,11 @@ class _MeituanOrderPageState extends State<MeituanOrderPage> {
                             : Icons.open_in_new_rounded,
                       ),
                 label: Text(
-                  _preview == null ? '预览订单金额' : '提交订单并去美团支付',
+                  _submittedPaymentUrl != null
+                      ? '再次打开美团收银台'
+                      : _preview == null
+                          ? '预览订单金额'
+                          : '提交订单并去美团支付',
                 ),
               ),
             ],
@@ -578,6 +617,20 @@ class _MeituanOrderPageState extends State<MeituanOrderPage> {
           Text('商品与优惠后合计：¥${preview.total.toStringAsFixed(2)}'),
           Text('配送费：¥${preview.shippingFee.toStringAsFixed(2)}'),
           Text('餐盒费：¥${preview.boxFee.toStringAsFixed(2)}'),
+          if (_submittedOrderId != null && _submittedOrderId!.isNotEmpty) ...[
+            const SizedBox(height: 6),
+            Text(
+              '订单已创建：$_submittedOrderId',
+              key: const ValueKey('meituan-submitted-order-id'),
+            ),
+            Text(
+              '如已完成支付请忽略；如未支付，可再次打开美团收银台。',
+              style: AppType.body.copyWith(
+                color: AppPalette.ink.withValues(alpha: 0.64),
+                fontSize: 13,
+              ),
+            ),
+          ],
           const SizedBox(height: 6),
           Text(
             '确认后创建美团订单，并进入美团收银台付款。',
