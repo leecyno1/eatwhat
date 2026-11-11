@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:ui';
 
 import 'package:eatwhat_app/v2/core/data/models/taste_selection_models.dart';
+import 'package:eatwhat_app/v2/core/theme/app_theme_controller.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
 import 'package:flutter/material.dart';
 
@@ -17,12 +18,17 @@ class FreshPhysicalPreferenceStage extends StatelessWidget {
     required this.isLoading,
     required this.category,
     required this.onSelectionChanged,
+    this.embedded = false,
   });
 
   final TasteDeckSessionState? session;
   final bool isLoading;
   final String? category;
   final ValueChanged<BubbleSelectionState> onSelectionChanged;
+
+  /// When embedded inside the home storefront card the stage leans on the
+  /// outer frame for its border and shadow; only the top corners stay round.
+  final bool embedded;
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +47,7 @@ class FreshPhysicalPreferenceStage extends StatelessWidget {
       initialLikedTags: likedTags,
       initialBlockedTags: blockedTags,
       onSelectionChanged: onSelectionChanged,
+      embedded: embedded,
     );
   }
 
@@ -59,6 +66,7 @@ class _PhysicalTasteHabitat extends StatefulWidget {
     required this.initialLikedTags,
     required this.initialBlockedTags,
     required this.onSelectionChanged,
+    this.embedded = false,
   });
 
   final bool isLoading;
@@ -66,6 +74,7 @@ class _PhysicalTasteHabitat extends StatefulWidget {
   final Map<String, String> initialLikedTags;
   final Map<String, String> initialBlockedTags;
   final ValueChanged<BubbleSelectionState> onSelectionChanged;
+  final bool embedded;
 
   @override
   State<_PhysicalTasteHabitat> createState() => _PhysicalTasteHabitatState();
@@ -75,30 +84,60 @@ class _PhysicalTasteHabitatState extends State<_PhysicalTasteHabitat> {
   bool _showGestureHint = true;
   TasteStageWallpaper _wallpaper = TasteStageWallpaper.night;
   bool _wallpaperBadgeVisible = false;
+  bool _wallpaperPinnedByUser = false;
   Timer? _wallpaperBadgeTimer;
 
   @override
   void initState() {
     super.initState();
     _loadStoredWallpaper();
+    AppThemeController.mode.addListener(_handleThemeModeChanged);
   }
 
   @override
   void dispose() {
+    AppThemeController.mode.removeListener(_handleThemeModeChanged);
     _wallpaperBadgeTimer?.cancel();
     super.dispose();
   }
 
+  void _handleThemeModeChanged() {
+    if (_wallpaperPinnedByUser) return;
+    final preferred = AppThemeController.isCream
+        ? TasteStageWallpaper.garden
+        : TasteStageWallpaper.night;
+    if (_wallpaper == preferred) return;
+    // Only auto-switch within the default light/dark pair; wallpapers the
+    // user cycled to (broth/matcha) stay untouched.
+    final isDefaultPair = _wallpaper == TasteStageWallpaper.garden ||
+        _wallpaper == TasteStageWallpaper.night;
+    if (!isDefaultPair) return;
+    if (!mounted) return;
+    setState(() => _wallpaper = preferred);
+  }
+
   Future<void> _loadStoredWallpaper() async {
     final stored = await TasteStageWallpaper.loadStored();
+    // Keep the stage in the same family as the page theme: a cream page
+    // should not open on a black stage (and vice versa). Wallpapers the user
+    // explicitly cycled to (broth/matcha) are always respected.
+    final preferred = AppThemeController.isCream
+        ? TasteStageWallpaper.garden
+        : TasteStageWallpaper.night;
+    final isDefaultPair = stored == TasteStageWallpaper.garden ||
+        stored == TasteStageWallpaper.night;
+    final resolved = !isDefaultPair || stored.isDark == preferred.isDark
+        ? stored
+        : preferred;
     if (!mounted) return;
-    setState(() => _wallpaper = stored);
+    setState(() => _wallpaper = resolved);
   }
 
   void _cycleWallpaper() {
     final next = _wallpaper.next;
     setState(() {
       _wallpaper = next;
+      _wallpaperPinnedByUser = true;
       _wallpaperBadgeVisible = true;
     });
     unawaited(next.persist());
@@ -123,7 +162,13 @@ class _PhysicalTasteHabitatState extends State<_PhysicalTasteHabitat> {
           key: const ValueKey('taste-physical-habitat'),
           duration: AppMotion.standard,
           curve: AppMotion.enter,
-          decoration: _wallpaper.buildStageDecoration(),
+          decoration: _wallpaper.buildStageDecoration(
+            borderRadius: widget.embedded
+                ? const BorderRadius.vertical(top: Radius.circular(30))
+                : null,
+            withBorder: !widget.embedded,
+            withShadow: !widget.embedded,
+          ),
           child: Stack(
             children: [
               Positioned.fill(
@@ -182,7 +227,7 @@ class _PhysicalTasteHabitatState extends State<_PhysicalTasteHabitat> {
               Positioned(
                 left: 56,
                 right: 56,
-                bottom: 16,
+                bottom: 132,
                 child: IgnorePointer(
                   child: AnimatedSlide(
                     offset:

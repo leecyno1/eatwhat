@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  test('dark gold stage keeps the surface language', () {
+  test('dark stage keeps the surface language', () {
     final theme = FluidTheme.darkTheme;
 
     expect(theme.scaffoldBackgroundColor, AppColors.darkBackground);
-    expect(theme.colorScheme.primary, GoldPalette.gold);
-    expect(theme.colorScheme.surface, GoldPalette.panel);
+    expect(theme.colorScheme.primary, AppPalette.accentDark);
+    expect(theme.colorScheme.surface, AppPalette.nightPanel);
     expect(AppSurfaces.glass.a, lessThan(1));
     expect(AppSurfaces.glassSoft.a, lessThan(1));
   });

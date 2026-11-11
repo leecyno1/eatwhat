@@ -40,9 +40,9 @@ void main() {
         find.byKey(const ValueKey('meal-planning-direction-selector')),
         findsOneWidget,
       );
-      expect(find.byKey(const ValueKey('filter-budget')), findsOneWidget);
-      expect(find.byKey(const ValueKey('filter-party')), findsOneWidget);
-      expect(find.byKey(const ValueKey('filter-execution')), findsOneWidget);
+      expect(find.byKey(const ValueKey('filter-conditions')), findsOneWidget);
+      expect(
+          find.byKey(const ValueKey('home-composer-dialog')), findsOneWidget);
       expect(
         find.byKey(const ValueKey('taste-entity-category-tabs')),
         findsOneWidget,
@@ -176,7 +176,7 @@ void main() {
       expect(captured?.planningDirection, MealPlanningDirection.health);
     });
 
-    testWidgets('快捷条件仍会写入结构化约束', (tester) async {
+    testWidgets('合并后的条件面板仍会写入结构化约束', (tester) async {
       TasteInferenceInput? captured;
       await tester.pumpWidget(
         MaterialApp(
@@ -192,87 +192,31 @@ void main() {
       );
       await _pumpFrames(tester);
 
-      tester
-          .widget<PopupMenuButton<int>>(
-            find.descendant(
-              of: find.byKey(const ValueKey('filter-budget')),
-              matching: find.byType(PopupMenuButton<int>),
-            ),
-          )
-          .onSelected
-          ?.call(30);
+      await tester.tap(find.byKey(const ValueKey('filter-conditions')));
+      await _pumpFrames(tester);
+      expect(
+          find.byKey(const ValueKey('home-conditions-sheet')), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('condition-budget-30')));
       await tester.pump();
-      expect(
-        tester
-            .widget<PopupMenuButton<int>>(
-              find.descendant(
-                of: find.byKey(const ValueKey('filter-budget')),
-                matching: find.byType(PopupMenuButton<int>),
-              ),
-            )
-            .initialValue,
-        30,
-      );
-      tester
-          .widget<PopupMenuButton<int>>(
-            find.descendant(
-              of: find.byKey(const ValueKey('filter-party')),
-              matching: find.byType(PopupMenuButton<int>),
-            ),
-          )
-          .onSelected
-          ?.call(1);
+      await tester.tap(find.byKey(const ValueKey('condition-party-2')));
       await tester.pump();
-      expect(
-        tester
-            .widget<PopupMenuButton<int>>(
-              find.descendant(
-                of: find.byKey(const ValueKey('filter-party')),
-                matching: find.byType(PopupMenuButton<int>),
-              ),
-            )
-            .initialValue,
-        1,
+      await tester.tap(
+        find.byKey(const ValueKey('condition-execution-delivery')),
       );
-      tester
-          .widget<PopupMenuButton<TasteExecutionPreference>>(
-            find.descendant(
-              of: find.byKey(const ValueKey('filter-execution')),
-              matching: find.byType(PopupMenuButton<TasteExecutionPreference>),
-            ),
-          )
-          .onSelected
-          ?.call(TasteExecutionPreference.delivery);
       await tester.pump();
-      expect(
-        tester
-            .widget<PopupMenuButton<int>>(
-              find.descendant(
-                of: find.byKey(const ValueKey('filter-budget')),
-                matching: find.byType(PopupMenuButton<int>),
-              ),
-            )
-            .initialValue,
-        30,
-      );
-      expect(
-        tester
-            .widget<PopupMenuButton<int>>(
-              find.descendant(
-                of: find.byKey(const ValueKey('filter-party')),
-                matching: find.byType(PopupMenuButton<int>),
-              ),
-            )
-            .initialValue,
-        1,
-      );
+      expect(find.text('条件 3'), findsOneWidget);
+
+      await tester.tap(find.text('完成'));
+      await _pumpFrames(tester);
+
       await tester.tap(
         find.byKey(const ValueKey('home-start-inference-button')),
       );
       await _pumpFrames(tester);
 
       expect(captured?.structuredConstraints.maxBudgetYuan, 30);
-      expect(captured?.structuredConstraints.partySize, 1);
+      expect(captured?.structuredConstraints.partySize, 2);
       expect(
         captured?.structuredConstraints.executionPreference,
         TasteExecutionPreference.delivery,
@@ -349,15 +293,26 @@ void main() {
       for (final (control, option) in const [
         ('meal-planning-direction-selector', 'meal-direction-experience'),
         ('filter-type', 'taste-category-菜系'),
-        ('filter-budget', 'filter-budget-30'),
-        ('filter-party', 'filter-party-2'),
-        ('filter-execution', 'filter-execution-cook'),
       ]) {
         await tester.tap(find.byKey(ValueKey(control)));
         await _pumpFrames(tester);
         await tester.tap(find.byKey(ValueKey(option)));
         await _pumpFrames(tester);
       }
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('filter-conditions')),
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('filter-conditions')));
+      await _pumpFrames(tester);
+      await tester.tap(find.byKey(const ValueKey('condition-budget-30')));
+      await _pumpFrames(tester);
+      await tester.tap(find.byKey(const ValueKey('condition-party-2')));
+      await _pumpFrames(tester);
+      await tester.tap(find.byKey(const ValueKey('condition-execution-cook')));
+      await _pumpFrames(tester);
+      await tester.tap(find.text('完成'));
+      await _pumpFrames(tester);
       expect(
         tester
             .widget<PopupMenuButton<String>>(
@@ -410,23 +365,48 @@ void main() {
           for (final key in const [
             'meal-planning-direction-selector',
             'filter-type',
-            'filter-budget',
-            'filter-party',
-            'filter-execution',
+            'filter-conditions',
+          ]) {
+            await tester.ensureVisible(find.byKey(ValueKey(key)));
+            await tester.pump();
+            final control = find.byKey(ValueKey(key));
+            expect(control.hitTestable(), findsOneWidget, reason: key);
+            final bounds = tester.getRect(control);
+            expect(bounds.height, greaterThanOrEqualTo(32), reason: key);
+          }
+          for (final key in const [
             'taste-signature-button',
-            'home-theme-toggle',
-            'home-account-button',
-            'home-favorites-button',
-            'home-recent-button',
+            'home-overflow-menu',
+            'home-start-inference-button',
           ]) {
             final control = find.byKey(ValueKey(key));
             expect(control.hitTestable(), findsOneWidget, reason: key);
             final bounds = tester.getRect(control);
+            expect(bounds.height, greaterThanOrEqualTo(32), reason: key);
+          }
+          for (final key in const [
+            'taste-signature-button',
+            'home-overflow-menu',
+          ]) {
+            final bounds = tester.getRect(find.byKey(ValueKey(key)));
             expect(bounds.left, greaterThanOrEqualTo(12), reason: key);
             expect(bounds.right, lessThanOrEqualTo(size.width - 12),
                 reason: key);
-            expect(bounds.height, greaterThanOrEqualTo(32), reason: key);
           }
+          await tester.tap(find.byKey(const ValueKey('home-overflow-menu')));
+          await _pumpFrames(tester);
+          for (final key in const [
+            'home-theme-toggle',
+            'home-account-button',
+            'home-favorites-button',
+            'home-recent-button',
+            'home-weekly-report-button',
+          ]) {
+            expect(find.byKey(ValueKey(key)).hitTestable(), findsOneWidget,
+                reason: key);
+          }
+          await tester.tapAt(const Offset(8, 8));
+          await _pumpFrames(tester);
           expect(find.byKey(const ValueKey('taste-physical-habitat')),
               findsOneWidget);
         });

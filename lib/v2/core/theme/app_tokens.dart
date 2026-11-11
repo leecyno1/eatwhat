@@ -1,4 +1,5 @@
 import 'package:eatwhat_app/v2/core/theme/app_theme_controller.dart';
+import 'package:eatwhat_app/v2/core/theme/theme_skins.dart';
 import 'package:flutter/material.dart';
 
 class AppSpacing {
@@ -82,7 +83,7 @@ class AppType {
 class AppPalette {
   const AppPalette._();
 
-  static bool get _isCream => AppThemeController.isCream;
+  static ThemeSkin get _skin => AppThemeController.skin;
 
   // ---- 点缀原色（两主题通用，不随主题分发） ----
   static const Color tomato = Color(0xFFE4513F);
@@ -93,65 +94,64 @@ class AppPalette {
   static const Color ocean = Color(0xFF45A6D8);
   static const Color negativeSurface = Color(0xFFFFE8E2);
 
-  // ---- 夜场原色 ----
-  static const Color _night = Color(0xFF0B0B0D);
-  static const Color _nightSurface = Color(0xFF242426);
-  static const Color _nightElevated = Color(0xFF2C2C2E);
-  static const Color _nightDivider = Color(0xFF3A3A3C);
-  static const Color _moonlight = Color(0xFFEDEBE8);
-  static const Color _moonMuted = Color(0xFF9B9691);
-  static const Color _leafDark = Color(0xFF7ABF88);
+  // ---- 夜场原色：炭黑 + 珊瑚，不再使用土绿 ----
+  static const Color nightBase = Color(0xFF121417);
+  static const Color nightPanel = Color(0xFF1B1E23);
+  static const Color nightElevatedBase = Color(0xFF252A30);
+  static const Color nightLine = Color(0xFF343A42);
+  static const Color nightText = Color(0xFFF4EFE6);
+  static const Color nightMuted = Color(0xFFA8A29A);
+  static const Color accentDark = Color(0xFFFF9270);
+  static const Color accentSoftDark = Color(0xFFFFB59A);
 
-  // ---- 米色纸感原色：warm rice canvas, cream cards, brown ink ----
-  static const Color _creamCanvas = Color(0xFFF5EFE3);
-  static const Color _creamSurface = Color(0xFFFCF8EF);
-  static const Color _creamElevated = Color(0xFFF0E8D8);
-  static const Color _creamDivider = Color(0xFFE2D8C4);
-  static const Color _inkBrown = Color(0xFF2E2924);
-  static const Color _mutedBrown = Color(0xFF8C8172);
-  static const Color _leafCream = Color(0xFF4A5D4E);
+  // ---- 米白原色：暖象牙 + 陶土 ----
+  static const Color creamBase = Color(0xFFF7F3EA);
+  static const Color creamPanel = Color(0xFFFFFDF8);
+  static const Color creamElevatedBase = Color(0xFFF0E8DB);
+  static const Color creamLine = Color(0xFFE3D8C6);
+  static const Color creamInk = Color(0xFF241F1A);
+  static const Color creamMutedInk = Color(0xFF7D7466);
+  static const Color accentCream = Color(0xFFC25B3D);
+  static const Color accentSoftCream = Color(0xFFE8B39E);
 
-  // ---- 主题分发的语义 token（夜场黑金 / 纸感米棕） ----
+  // ---- 主题分发的语义 token（由当前 ThemeSkin 统一驱动） ----
 
-  /// 品牌主强调：夜场香槟金 / 纸感印刷棕。
-  static Color get garden => _isCream ? _inkBrown : GoldPalette.gold;
-  static Color get gardenDeep =>
-      _isCream ? const Color(0xFF4A4238) : GoldPalette.goldSoft;
-  static Color get gardenInk => _isCream ? _inkBrown : GoldPalette.creamText;
-  static Color get gardenSoft => _isCream ? _creamSurface : GoldPalette.panel;
-  static Color get gardenMist =>
-      _isCream ? _creamCanvas : GoldPalette.nightDeep;
-  static Color get gardenBorder =>
-      _isCream ? _creamDivider : GoldPalette.goldHairline;
+  /// 品牌主强调：随皮肤 accent。
+  static Color get garden => _skin.accent;
+  static Color get gardenDeep => _skin.accentDeep;
+  static Color get gardenInk => _skin.ink;
+  static Color get gardenSoft => _skin.panel;
+  static Color get gardenMist => _skin.base;
+  static Color get gardenBorder => _skin.line;
   static Color get herb => garden;
 
-  /// Accent green — sage ink (墨绿) on the cream paper theme.
-  static Color get leaf => _isCream ? _leafCream : _leafDark;
+  /// Accent — same ramp as [garden].
+  static Color get leaf => _skin.accent;
 
   /// 页面底与面板。
-  static Color get broth => _isCream ? _creamCanvas : GoldPalette.nightDeep;
-  static Color get cream => _isCream ? _creamSurface : GoldPalette.panel;
-  static Color get rice => _isCream ? _creamSurface : GoldPalette.panel;
+  static Color get broth => _skin.base;
+  static Color get cream => _skin.panel;
+  static Color get rice => _skin.panel;
   static Color get canvas => gardenMist;
-  static Color get surface => _isCream ? _creamSurface : GoldPalette.panel;
-  static Color get surfaceMuted => _isCream ? _creamElevated : _nightElevated;
+  static Color get surface => _skin.panel;
+  static Color get surfaceMuted => _skin.elevated;
   static Color get divider => gardenBorder;
   static Color get positiveSurface =>
-      _isCream ? _creamElevated : GoldPalette.panel;
+      _skin.isLight ? _skin.elevated : _skin.panel;
 
   /// 深炭色：深色面板底 / 浅色底上的墨色文字。
-  static Color get char => _isCream ? _inkBrown : GoldPalette.panel;
-  static Color get ink => _isCream ? _inkBrown : GoldPalette.creamText;
-  static Color get inkSoft => _isCream ? _mutedBrown : GoldPalette.creamMuted;
-  static Color get inkMuted => _isCream ? _mutedBrown : GoldPalette.creamMuted;
+  static Color get char => _skin.isLight ? _skin.ink : _skin.panel;
+  static Color get ink => _skin.ink;
+  static Color get inkSoft => _skin.muted;
+  static Color get inkMuted => _skin.muted;
 
-  /// 夜场语义（米色模式下映射为纸感对应位）。
-  static Color get night => _isCream ? _creamCanvas : _night;
-  static Color get nightSurface => _isCream ? _creamSurface : _nightSurface;
-  static Color get nightElevated => _isCream ? _creamElevated : _nightElevated;
-  static Color get nightDivider => _isCream ? _creamDivider : _nightDivider;
-  static Color get moonlight => _isCream ? _inkBrown : _moonlight;
-  static Color get moonMuted => _isCream ? _mutedBrown : _moonMuted;
+  /// 夜场语义（浅色皮肤下映射为纸感对应位）。
+  static Color get night => _skin.base;
+  static Color get nightSurface => _skin.panel;
+  static Color get nightElevated => _skin.elevated;
+  static Color get nightDivider => _skin.line;
+  static Color get moonlight => _skin.ink;
+  static Color get moonMuted => _skin.muted;
 
   // ---- 渐变 ----
   static const LinearGradient appetiteGradient = LinearGradient(
@@ -161,17 +161,13 @@ class AppPalette {
   );
 
   static LinearGradient get warmSurfaceGradient => LinearGradient(
-        colors: _isCream
-            ? const [_creamSurface, _creamElevated]
-            : const [GoldPalette.panel, GoldPalette.nightDeep],
+        colors: [_skin.panel, _skin.isLight ? _skin.elevated : _skin.base],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       );
 
   static LinearGradient get gardenGradient => LinearGradient(
-        colors: _isCream
-            ? const [_inkBrown, Color(0xFF4A4238)]
-            : const [GoldPalette.gold, GoldPalette.goldSoft],
+        colors: [_skin.accent, _skin.accentDeep],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
       );

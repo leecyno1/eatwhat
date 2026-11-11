@@ -12,16 +12,18 @@ import 'package:eatwhat_app/v2/core/services/v2_favorites_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_meal_habit_learning_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_speech_input_service.dart';
-import 'package:eatwhat_app/v2/core/theme/app_theme_controller.dart';
 import 'package:eatwhat_app/v2/features/auth/auth_sheet.dart';
 import 'package:eatwhat_app/v2/features/favorites/favorites_page.dart';
 import 'package:eatwhat_app/v2/features/home/controllers/home_recent_success_controller.dart';
 import 'package:eatwhat_app/v2/features/home/controllers/home_taste_deck_builder.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/bubble_ocean.dart';
+import 'package:eatwhat_app/v2/features/home/widgets/conditions_sheet.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/fresh_physical_preference_stage.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/home_overlays.dart';
+import 'package:eatwhat_app/v2/features/home/widgets/home_storefront.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/pantry_ingredient_sheet.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/taste_signature_panel.dart';
+import 'package:eatwhat_app/v2/features/home/widgets/theme_sheet.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/weekly_report_sheet.dart';
 import 'package:eatwhat_app/v2/features/onboarding/handfeel_tutorial.dart';
 import 'package:eatwhat_app/v2/features/onboarding/onboarding_service.dart';
@@ -615,9 +617,8 @@ class _HomePageState extends State<HomePage> {
                         _handleStructuredConstraintsChanged,
                     onShowSignature: _showSignature,
                     onOpenAccount: _openAccount,
-                    onToggleTheme: () async {
-                      await AppThemeController.toggle();
-                      if (mounted) setState(() {});
+                    onToggleTheme: () {
+                      showAppThemeSheet(context);
                     },
                     onOpenFavorites: () {
                       Navigator.of(context).push(
@@ -629,14 +630,12 @@ class _HomePageState extends State<HomePage> {
                     onOpenRecent: _submitRecentSuccessRecommendation,
                     onOpenWeeklyReport: _openWeeklyReport,
                   ),
-                  const SizedBox(height: 7),
+                  const SizedBox(height: 6),
                   Expanded(
-                    child: _buildMainStage(session),
+                    child: session?.faceStage == TasteDeckFaceStage.signature
+                        ? _buildMainStage(session)
+                        : _buildStorefront(session),
                   ),
-                  if (session?.faceStage != TasteDeckFaceStage.signature) ...[
-                    const SizedBox(height: 7),
-                    _buildBottomControlPanel(),
-                  ],
                 ],
               ),
             ),
@@ -656,26 +655,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildBottomControlPanel() {
-    return Container(
-      height: 58,
-      padding: const EdgeInsets.all(6),
-      decoration: AppDecorations.floating(
-        color: AppPalette.nightSurface.withValues(alpha: 0.94),
-        borderColor: AppPalette.nightDivider,
-      ),
-      child: Row(
-        children: [
-          Expanded(child: _buildRequirementPanel()),
-          const SizedBox(width: 7),
-          _buildGenerateButton(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildGenerateButton() {
-    final session = _session;
+  Widget _buildStorefront(TasteDeckSessionState? session) {
     final canStart = session != null &&
         session
             .copyWith(freeformRequirement: _controller.text.trim())
@@ -683,119 +663,37 @@ class _HomePageState extends State<HomePage> {
     final selectionCount = session == null
         ? 0
         : session.likedTagIds.length + session.dislikedTagIds.length;
-    return SizedBox(
-      width: 124,
-      height: 46,
-      child: FilledButton.icon(
-        key: const ValueKey('home-start-inference-button'),
-        // 零选择时保持可点：点击弹出引导提示，比静默禁用更能让新用户
-        // 明白下一步该做什么。
-        onPressed: _isTransitioning
-            ? null
-            : () {
-                if (canStart) {
-                  _submitGeneration();
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('先收下几个口味气泡，或写一句今天想吃的'),
-                    ),
-                  );
-                }
-              },
-        icon: const Icon(Icons.auto_awesome_rounded, size: 17),
-        label: Text(
-          selectionCount == 0 ? '生成建议' : '生成 · $selectionCount',
-          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w800),
-        ),
-        style: FilledButton.styleFrom(
-          backgroundColor:
-              canStart ? AppPalette.leaf : AppPalette.nightElevated,
-          disabledBackgroundColor: AppPalette.nightElevated,
-          foregroundColor: canStart ? AppPalette.night : AppPalette.moonMuted,
-          disabledForegroundColor: AppPalette.moonMuted,
-          elevation: canStart ? 5 : 0,
-          shadowColor: AppPalette.leaf.withValues(alpha: 0.3),
-        ),
-      ),
+    return HomeStorefront(
+      stage: _buildMainStage(session, embedded: true),
+      selectionCount: selectionCount,
+      canGenerate: canStart && !_isTransitioning,
+      // 零选择时保持可点：点击弹出引导提示，比静默禁用更能让新用户
+      // 明白下一步该做什么。
+      onGenerate: () {
+        if (canStart) {
+          _submitGeneration();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('先收下几个口味气泡，或写一句今天想吃的'),
+            ),
+          );
+        }
+      },
+      requirementController: _controller,
+      requirementFocusNode: _focusNode,
+      isListening: _isListening,
+      onPantry: _openPantrySheet,
+      onVoiceStart: _startVoiceCapture,
+      onVoiceEnd: _finishVoiceCapture,
+      onSubmitted: _submitGeneration,
     );
   }
 
-  Widget _buildRequirementPanel() {
-    return Container(
-      height: 46,
-      padding: const EdgeInsets.symmetric(horizontal: 11),
-      decoration: AppDecorations.card(
-        color: AppPalette.nightElevated.withValues(alpha: 0.82),
-        borderColor: AppPalette.nightDivider,
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              key: const ValueKey('home-requirement-input'),
-              controller: _controller,
-              focusNode: _focusNode,
-              textInputAction: TextInputAction.done,
-              minLines: 1,
-              style: TextStyle(
-                color: AppPalette.moonlight,
-                fontSize: 13.5,
-                fontWeight: FontWeight.w600,
-                height: 1.2,
-              ),
-              decoration: InputDecoration(
-                isDense: true,
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.zero,
-                hintText: '补充忌口或今天特别想吃的',
-                hintStyle: TextStyle(
-                  color: AppPalette.moonMuted.withValues(alpha: 0.72),
-                  fontSize: 12.5,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              onSubmitted: (_) => _submitGeneration(),
-            ),
-          ),
-          const SizedBox(width: 7),
-          GestureDetector(
-            key: const ValueKey('home-pantry-entry'),
-            behavior: HitTestBehavior.opaque,
-            onTap: _openPantrySheet,
-            child: SizedBox(
-              width: 32,
-              height: 32,
-              child: Icon(
-                Icons.kitchen_rounded,
-                size: 18,
-                color: AppPalette.moonMuted,
-              ),
-            ),
-          ),
-          GestureDetector(
-            key: const ValueKey('home-requirement-mode-pill'),
-            behavior: HitTestBehavior.opaque,
-            onLongPressStart: (_) => _startVoiceCapture(),
-            onLongPressEnd: (_) => _finishVoiceCapture(),
-            child: SizedBox(
-              width: 32,
-              height: 32,
-              child: Icon(
-                _isListening
-                    ? Icons.graphic_eq_rounded
-                    : Icons.mic_none_rounded,
-                size: 18,
-                color: _isListening ? AppPalette.leaf : AppPalette.moonMuted,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMainStage(TasteDeckSessionState? session) {
+  Widget _buildMainStage(
+    TasteDeckSessionState? session, {
+    bool embedded = false,
+  }) {
     return SizedBox(
       key: const ValueKey('taste-card-stage-shell'),
       width: double.infinity,
@@ -844,6 +742,7 @@ class _HomePageState extends State<HomePage> {
                           isLoading: _isLoadingDeck,
                           category: _tasteCategory,
                           onSelectionChanged: _handleBubbleSelectionChanged,
+                          embedded: embedded,
                         ),
             ),
           ),
@@ -908,181 +807,268 @@ class _FreshCompactHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final matchesHistory =
         habitSnapshot?.recommendedDirection == planningDirection;
+    final conditionCount = <bool>[
+      constraints.maxBudgetYuan != null,
+      constraints.partySize != null,
+      constraints.executionPreference != TasteExecutionPreference.any,
+    ].where((active) => active).length;
+
     return SizedBox(
       key: const ValueKey('taste-entity-category-tabs'),
-      width: double.infinity,
-      child: Wrap(
-        spacing: 8,
-        runSpacing: 4,
-        alignment: WrapAlignment.spaceBetween,
-        crossAxisAlignment: WrapCrossAlignment.center,
+      height: 34,
+      child: Row(
         children: [
-          SizedBox(
-            height: 40,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _FilterIconPill<MealPlanningDirection>(
-                  key: const ValueKey('meal-planning-direction-selector'),
-                  icon: matchesHistory
-                      ? Icons.auto_awesome_rounded
-                      : Icons.psychology_alt_rounded,
-                  tooltip: '习惯方向',
-                  active: matchesHistory,
-                  value: planningDirection,
-                  options: [
-                    for (final direction in MealPlanningDirection.values)
-                      _FilterOption(
-                        key: 'meal-direction-${direction.name}',
-                        label: direction.label,
-                        value: direction,
-                      ),
-                  ],
-                  onSelected: onPlanningDirectionChanged,
-                ),
-                const SizedBox(width: 5),
-                _FilterIconPill<String>(
-                  key: const ValueKey('filter-type'),
-                  icon: Icons.category_rounded,
-                  tooltip: '类型',
-                  active: category != null && category!.isNotEmpty,
-                  value: category ?? '__all__',
-                  options: [
-                    for (final item in _categories)
-                      _FilterOption(
-                        key: 'taste-category-${item.label}',
-                        label: item.label,
-                        value: item.value ?? '__all__',
-                      ),
-                  ],
-                  onSelected: (value) =>
-                      onCategoryChanged(value == '__all__' ? null : value),
-                ),
-                const SizedBox(width: 5),
-                _FilterIconPill<int>(
-                  key: const ValueKey('filter-budget'),
-                  icon: Icons.payments_outlined,
-                  tooltip: '预算',
-                  active: constraints.maxBudgetYuan != null,
-                  value: constraints.maxBudgetYuan ?? 0,
-                  options: const [
-                    _FilterOption(
-                        key: 'filter-budget-any', label: '不限', value: 0),
-                    _FilterOption(
-                        key: 'filter-budget-30', label: '30 元内', value: 30),
-                    _FilterOption(
-                        key: 'filter-budget-60', label: '60 元内', value: 60),
-                    _FilterOption(
-                        key: 'filter-budget-100', label: '100 元内', value: 100),
-                  ],
-                  onSelected: (value) => onStructuredConstraintsChanged(
-                    constraints.copyWith(
-                      maxBudgetYuan: value == 0 ? null : value,
-                      clearMaxBudgetYuan: value == 0,
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _FilterIconPill<MealPlanningDirection>(
+                    key: const ValueKey('meal-planning-direction-selector'),
+                    icon: matchesHistory
+                        ? Icons.auto_awesome_rounded
+                        : Icons.psychology_alt_rounded,
+                    tooltip: '习惯方向',
+                    active: matchesHistory,
+                    value: planningDirection,
+                    options: [
+                      for (final direction in MealPlanningDirection.values)
+                        _FilterOption(
+                          key: 'meal-direction-${direction.name}',
+                          label: direction.label,
+                          value: direction,
+                        ),
+                    ],
+                    onSelected: onPlanningDirectionChanged,
+                  ),
+                  const SizedBox(width: 5),
+                  _FilterIconPill<String>(
+                    key: const ValueKey('filter-type'),
+                    icon: Icons.category_rounded,
+                    tooltip: '类型',
+                    active: category != null && category!.isNotEmpty,
+                    value: category ?? '__all__',
+                    options: [
+                      for (final item in _categories)
+                        _FilterOption(
+                          key: 'taste-category-${item.label}',
+                          label: item.label,
+                          value: item.value ?? '__all__',
+                        ),
+                    ],
+                    onSelected: (value) =>
+                        onCategoryChanged(value == '__all__' ? null : value),
+                  ),
+                  const SizedBox(width: 5),
+                  _ConditionEntryPill(
+                    activeCount: conditionCount,
+                    onTap: () => showHomeConditionsSheet(
+                      context: context,
+                      constraints: constraints,
+                      onChanged: onStructuredConstraintsChanged,
                     ),
                   ),
-                ),
-                const SizedBox(width: 5),
-                _FilterIconPill<int>(
-                  key: const ValueKey('filter-party'),
-                  icon: Icons.group_outlined,
-                  tooltip: '人数',
-                  active: constraints.partySize != null,
-                  value: constraints.partySize ?? 0,
-                  options: const [
-                    _FilterOption(
-                        key: 'filter-party-any', label: '不限', value: 0),
-                    _FilterOption(
-                        key: 'filter-party-1', label: '1 人', value: 1),
-                    _FilterOption(
-                        key: 'filter-party-2', label: '2 人', value: 2),
-                    _FilterOption(
-                        key: 'filter-party-4', label: '4 人', value: 4),
-                  ],
-                  onSelected: (value) => onStructuredConstraintsChanged(
-                    constraints.copyWith(
-                      partySize: value == 0 ? null : value,
-                      clearPartySize: value == 0,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 5),
-                _FilterIconPill<TasteExecutionPreference>(
-                  key: const ValueKey('filter-execution'),
-                  icon: Icons.restaurant_rounded,
-                  tooltip: '方式',
-                  active: constraints.executionPreference !=
-                      TasteExecutionPreference.any,
-                  value: constraints.executionPreference,
-                  options: [
-                    for (final preference in TasteExecutionPreference.values)
-                      _FilterOption(
-                        key: 'filter-execution-${preference.name}',
-                        label: preference.label,
-                        value: preference,
-                      ),
-                  ],
-                  onSelected: (value) => onStructuredConstraintsChanged(
-                    constraints.copyWith(executionPreference: value),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
-          SizedBox(
-            height: 40,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _HeaderSelectionSummary(
-                  likedCount: likedCount,
-                  blockedCount: blockedCount,
-                  onTap: onShowSignature,
-                ),
-                const SizedBox(width: 5),
-                _HeaderAction(
-                  key: const ValueKey('home-theme-toggle'),
-                  icon: AppThemeController.isCream
-                      ? Icons.dark_mode_outlined
-                      : Icons.light_mode_outlined,
-                  tooltip: AppThemeController.isCream ? '切到黑色主题' : '切到米色主题',
-                  onTap: onToggleTheme,
-                ),
-                const SizedBox(width: 4),
-                _HeaderAction(
-                  key: const ValueKey('home-account-button'),
-                  icon: AuthService.isLoggedIn
-                      ? Icons.person_rounded
-                      : Icons.person_outline_rounded,
-                  tooltip: AuthService.isLoggedIn ? '账号与会员' : '登录 / 注册',
-                  color: AuthService.isLoggedIn ? AppPalette.leaf : null,
-                  onTap: onOpenAccount,
-                ),
-                const SizedBox(width: 5),
-                _HeaderAction(
-                  key: const ValueKey('home-favorites-button'),
-                  icon: Icons.favorite_border_rounded,
-                  tooltip: '收藏',
-                  onTap: onOpenFavorites,
-                ),
-                const SizedBox(width: 5),
-                _HeaderAction(
-                  key: const ValueKey('home-recent-button'),
-                  icon: Icons.history_rounded,
-                  tooltip: '吃过',
-                  onTap: onOpenRecent,
-                ),
-                const SizedBox(width: 5),
-                _HeaderAction(
-                  key: const ValueKey('home-weekly-report-button'),
-                  icon: Icons.insights_rounded,
-                  tooltip: '一周报告',
-                  onTap: onOpenWeeklyReport,
-                ),
-              ],
+          const SizedBox(width: 6),
+          _HeaderSelectionSummary(
+            likedCount: likedCount,
+            blockedCount: blockedCount,
+            onTap: onShowSignature,
+          ),
+          const SizedBox(width: 4),
+          _HeaderOverflowMenu(
+            onToggleTheme: onToggleTheme,
+            onOpenAccount: onOpenAccount,
+            onOpenFavorites: onOpenFavorites,
+            onOpenRecent: onOpenRecent,
+            onOpenWeeklyReport: onOpenWeeklyReport,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+enum _HeaderMenuAction { theme, account, favorites, recent, weeklyReport }
+
+class _HeaderOverflowMenu extends StatelessWidget {
+  const _HeaderOverflowMenu({
+    required this.onToggleTheme,
+    required this.onOpenAccount,
+    required this.onOpenFavorites,
+    required this.onOpenRecent,
+    required this.onOpenWeeklyReport,
+  });
+
+  final VoidCallback onToggleTheme;
+  final VoidCallback onOpenAccount;
+  final VoidCallback onOpenFavorites;
+  final VoidCallback onOpenRecent;
+  final VoidCallback onOpenWeeklyReport;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopupMenuButton<_HeaderMenuAction>(
+      key: const ValueKey('home-overflow-menu'),
+      tooltip: '更多',
+      position: PopupMenuPosition.under,
+      offset: const Offset(0, 6),
+      color: AppPalette.nightElevated,
+      surfaceTintColor: Colors.transparent,
+      elevation: 8,
+      shape: RoundedRectangleBorder(borderRadius: AppRadii.card),
+      constraints: const BoxConstraints(minWidth: 188, maxWidth: 220),
+      onSelected: (action) {
+        switch (action) {
+          case _HeaderMenuAction.theme:
+            onToggleTheme();
+          case _HeaderMenuAction.account:
+            onOpenAccount();
+          case _HeaderMenuAction.favorites:
+            onOpenFavorites();
+          case _HeaderMenuAction.recent:
+            onOpenRecent();
+          case _HeaderMenuAction.weeklyReport:
+            onOpenWeeklyReport();
+        }
+      },
+      itemBuilder: (context) => [
+        _menuItem(
+          key: 'home-theme-toggle',
+          icon: Icons.palette_outlined,
+          label: '外观主题',
+          action: _HeaderMenuAction.theme,
+        ),
+        _menuItem(
+          key: 'home-account-button',
+          icon: AuthService.isLoggedIn
+              ? Icons.person_rounded
+              : Icons.person_outline_rounded,
+          label: AuthService.isLoggedIn ? '账号与会员' : '登录 / 注册',
+          action: _HeaderMenuAction.account,
+        ),
+        const PopupMenuDivider(height: 8),
+        _menuItem(
+          key: 'home-favorites-button',
+          icon: Icons.favorite_border_rounded,
+          label: '收藏',
+          action: _HeaderMenuAction.favorites,
+        ),
+        _menuItem(
+          key: 'home-recent-button',
+          icon: Icons.history_rounded,
+          label: '吃过',
+          action: _HeaderMenuAction.recent,
+        ),
+        _menuItem(
+          key: 'home-weekly-report-button',
+          icon: Icons.insights_rounded,
+          label: '一周报告',
+          action: _HeaderMenuAction.weeklyReport,
+        ),
+      ],
+      child: Container(
+        width: 34,
+        height: 34,
+        decoration: BoxDecoration(
+          color: AppPalette.nightSurface.withValues(alpha: 0.96),
+          shape: BoxShape.circle,
+          border: Border.all(color: AppPalette.nightDivider),
+        ),
+        child: Icon(
+          Icons.more_horiz_rounded,
+          size: 18,
+          color: AppPalette.inkSoft,
+        ),
+      ),
+    );
+  }
+
+  PopupMenuItem<_HeaderMenuAction> _menuItem({
+    required String key,
+    required IconData icon,
+    required String label,
+    required _HeaderMenuAction action,
+  }) {
+    return PopupMenuItem<_HeaderMenuAction>(
+      key: ValueKey(key),
+      value: action,
+      height: 44,
+      child: Row(
+        children: [
+          Icon(icon, size: 17, color: AppPalette.inkSoft),
+          const SizedBox(width: 10),
+          Text(
+            label,
+            style: TextStyle(
+              color: AppPalette.ink,
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ConditionEntryPill extends StatelessWidget {
+  const _ConditionEntryPill({
+    required this.activeCount,
+    required this.onTap,
+  });
+
+  final int activeCount;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final active = activeCount > 0;
+    final color = active ? AppPalette.night : AppPalette.ink;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        key: const ValueKey('filter-conditions'),
+        onTap: onTap,
+        borderRadius: AppRadii.capsule,
+        child: AnimatedContainer(
+          duration: AppMotion.fast,
+          height: 34,
+          padding: const EdgeInsets.symmetric(horizontal: 9),
+          decoration: BoxDecoration(
+            color: active
+                ? AppPalette.leaf
+                : AppPalette.nightSurface.withValues(alpha: 0.96),
+            borderRadius: AppRadii.capsule,
+            border: Border.all(
+              color: active ? AppPalette.leaf : AppPalette.nightDivider,
+              width: active ? 1.4 : 1,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(Icons.tune_rounded, size: 14, color: color),
+              const SizedBox(width: 4),
+              Text(
+                active ? '条件 $activeCount' : '条件',
+                style: TextStyle(
+                  color: color,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+              Icon(
+                Icons.expand_more_rounded,
+                size: 13,
+                color: color.withValues(alpha: .7),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -1120,6 +1106,11 @@ class _FilterIconPill<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final current = options.firstWhere(
+      (option) => option.value == value,
+      orElse: () => options.first,
+    );
+    final color = active ? AppPalette.night : AppPalette.ink;
     return PopupMenuButton<T>(
       initialValue: value,
       onSelected: onSelected,
@@ -1131,21 +1122,39 @@ class _FilterIconPill<T> extends StatelessWidget {
       elevation: 8,
       shape: RoundedRectangleBorder(borderRadius: AppRadii.card),
       tooltip: tooltip,
-      child: Container(
-        width: 32,
-        height: 32,
+      child: AnimatedContainer(
+        duration: AppMotion.fast,
+        height: 34,
+        padding: const EdgeInsets.symmetric(horizontal: 9),
         decoration: BoxDecoration(
-          color: AppPalette.nightSurface.withValues(alpha: 0.92),
+          color: active
+              ? AppPalette.leaf
+              : AppPalette.nightSurface.withValues(alpha: 0.96),
           borderRadius: AppRadii.capsule,
           border: Border.all(
             color: active ? AppPalette.leaf : AppPalette.nightDivider,
             width: active ? 1.4 : 1,
           ),
         ),
-        child: Icon(
-          icon,
-          size: 16,
-          color: active ? AppPalette.leaf : AppPalette.moonMuted,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 14, color: color),
+            const SizedBox(width: 4),
+            Text(
+              current.label,
+              style: TextStyle(
+                color: color,
+                fontSize: 11,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+            Icon(
+              Icons.expand_more_rounded,
+              size: 13,
+              color: color.withValues(alpha: .7),
+            ),
+          ],
         ),
       ),
       itemBuilder: (context) => [
@@ -1182,46 +1191,6 @@ class _FilterIconPill<T> extends StatelessWidget {
   }
 }
 
-class _HeaderAction extends StatelessWidget {
-  const _HeaderAction({
-    super.key,
-    required this.icon,
-    required this.tooltip,
-    required this.onTap,
-    this.color,
-  });
-
-  final IconData icon;
-  final String tooltip;
-  final VoidCallback onTap;
-
-  /// Overrides the default moonMuted icon color — the signed-in account
-  /// button lights up leaf green.
-  final Color? color;
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: tooltip,
-      child: Material(
-        color: AppPalette.nightSurface.withValues(alpha: 0.92),
-        shape: CircleBorder(
-          side: BorderSide(color: AppPalette.nightDivider),
-        ),
-        child: InkWell(
-          customBorder: const CircleBorder(),
-          onTap: onTap,
-          child: SizedBox(
-            width: 32,
-            height: 32,
-            child: Icon(icon, size: 16, color: color ?? AppPalette.moonMuted),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
 class _HeaderSelectionSummary extends StatelessWidget {
   const _HeaderSelectionSummary({
     required this.likedCount,
@@ -1235,23 +1204,17 @@ class _HeaderSelectionSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final total = likedCount + blockedCount;
     // The capsule pops whenever a sweep or tap changes the counts, so every
-    // collect lands with a visible pulse right where the tally lives. The
-    // Flexible+FittedBox combo keeps the header row overflow-free on narrow
-    // screens: the capsule scales down instead of pushing past the edge.
+    // collect lands with a visible pulse right where the tally lives.
     return TweenAnimationBuilder<double>(
       key: ValueKey('taste-summary-bounce-$likedCount-$blockedCount'),
-      tween: Tween<double>(begin: 1.22, end: 1),
+      tween: Tween<double>(begin: 1.16, end: 1),
       duration: AppMotion.standard,
       curve: AppMotion.enter,
-      builder: (context, scale, child) => Flexible(
-        child: FittedBox(
-          fit: BoxFit.scaleDown,
-          child: Transform.scale(
-            scale: scale,
-            child: child,
-          ),
-        ),
+      builder: (context, scale, child) => Transform.scale(
+        scale: scale,
+        child: child,
       ),
       child: Material(
         key: const ValueKey('taste-signature-button'),
@@ -1263,7 +1226,7 @@ class _HeaderSelectionSummary extends StatelessWidget {
           borderRadius: AppRadii.capsule,
           child: Container(
             height: 34,
-            padding: const EdgeInsets.symmetric(horizontal: 10),
+            padding: const EdgeInsets.symmetric(horizontal: 9),
             decoration: BoxDecoration(
               borderRadius: AppRadii.capsule,
               border: Border.all(color: AppPalette.nightDivider),
@@ -1273,33 +1236,26 @@ class _HeaderSelectionSummary extends StatelessWidget {
               children: [
                 Icon(
                   Icons.favorite_rounded,
-                  size: 14,
+                  size: 13,
                   color: AppPalette.leaf,
                 ),
-                const SizedBox(width: 3),
+                const SizedBox(width: 4),
                 Text(
-                  '$likedCount',
+                  '已选 $total',
                   style: TextStyle(
-                    color: AppPalette.moonlight,
+                    color: AppPalette.ink,
                     fontSize: 11,
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w800,
                   ),
                 ),
-                const SizedBox(width: 7),
-                const Icon(
-                  Icons.block_rounded,
-                  size: 13,
-                  color: AppPalette.tomato,
-                ),
-                const SizedBox(width: 3),
-                Text(
-                  '$blockedCount',
-                  style: TextStyle(
-                    color: AppPalette.moonlight,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w900,
+                if (blockedCount > 0) ...[
+                  const SizedBox(width: 5),
+                  const Icon(
+                    Icons.block_rounded,
+                    size: 11,
+                    color: AppPalette.tomato,
                   ),
-                ),
+                ],
               ],
             ),
           ),

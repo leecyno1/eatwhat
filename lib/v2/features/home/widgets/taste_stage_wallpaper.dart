@@ -9,19 +9,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 enum TasteStageWallpaper {
   night(
     label: '深夜食堂',
-    colors: [Color(0xFF161618), Color(0xFF1C1C1E), Color(0xFF202024)],
+    colors: [Color(0xFF141619), Color(0xFF191C20), Color(0xFF1E2227)],
     border: Color(0x66FFFFFF),
-    glow: Color(0x1F7ABF88),
+    glow: Color(0x1FFF9270),
   ),
   garden(
-    label: '菜园清晨',
+    label: '晨光米白',
     colors: [
-      Color(0xC2FFFFFF),
-      Color(0xB4EAF5E7),
-      Color(0x8CD9EED5),
+      Color(0xFFFCF3E6),
+      Color(0xFFF5E2D0),
+      Color(0xFFEFD2BC),
     ],
     border: Color(0xB8FFFFFF),
-    glow: Color(0x1F2F9B4F),
+    glow: Color(0x1FC25B3D),
   ),
   broth(
     label: '暖汤厨房',
@@ -67,22 +67,28 @@ enum TasteStageWallpaper {
     return order[(order.indexOf(this) + 1) % order.length];
   }
 
-  BoxDecoration buildStageDecoration() {
+  BoxDecoration buildStageDecoration({
+    BorderRadius? borderRadius,
+    bool withBorder = true,
+    bool withShadow = true,
+  }) {
     return BoxDecoration(
       gradient: LinearGradient(
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
         colors: colors,
       ),
-      borderRadius: BorderRadius.circular(30),
-      border: Border.all(color: border, width: 1.5),
-      boxShadow: [
-        BoxShadow(
-          color: glow,
-          blurRadius: 22,
-          offset: const Offset(0, 12),
-        ),
-      ],
+      borderRadius: borderRadius ?? BorderRadius.circular(30),
+      border: withBorder ? Border.all(color: border, width: 1.5) : null,
+      boxShadow: withShadow
+          ? [
+              BoxShadow(
+                color: glow,
+                blurRadius: 22,
+                offset: const Offset(0, 12),
+              ),
+            ]
+          : null,
     );
   }
 
