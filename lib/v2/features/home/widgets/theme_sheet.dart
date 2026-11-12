@@ -21,9 +21,16 @@ class _AppThemeSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder<AppThemeMode>(
-      valueListenable: AppThemeController.mode,
-      builder: (context, mode, _) {
+    return ListenableBuilder(
+      listenable: Listenable.merge([
+        AppThemeController.mode,
+        AppThemeController.autoEnabled,
+        AppThemeController.dayPreference,
+        AppThemeController.nightPreference,
+      ]),
+      builder: (context, _) {
+        final mode = AppThemeController.mode.value;
+        final auto = AppThemeController.autoEnabled.value;
         return Container(
           key: const ValueKey('app-theme-sheet'),
           decoration: BoxDecoration(
@@ -69,9 +76,16 @@ class _AppThemeSheet extends StatelessWidget {
               ),
               const SizedBox(height: 2),
               Text(
-                '选择看着舒服的底色；图标和强调色会一起切换。',
+                auto
+                    ? '自动已开启：点选下方主题会记为当前时段的偏好。'
+                    : '选择看着舒服的底色；图标和强调色会一起切换。',
                 style: AppTypeNight.body.copyWith(fontSize: 12.5),
               ),
+              const SizedBox(height: 12),
+              // Not const: the card reads controller state in build, so it
+              // must rebuild whenever the merged listenable above notifies.
+              // ignore: prefer_const_constructors
+              _AutoThemeCard(),
               const SizedBox(height: 16),
               Row(
                 children: [
@@ -129,6 +143,105 @@ class _AppThemeSheet extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+}
+
+/// Full-width opt-in card for day/night auto switching. The subtitle mirrors
+/// the remembered per-slot preferences so users see what auto will do, and
+/// the chip labels which slot a manual pick would land in right now.
+class _AutoThemeCard extends StatelessWidget {
+  const _AutoThemeCard();
+
+  @override
+  Widget build(BuildContext context) {
+    final auto = AppThemeController.autoEnabled.value;
+    final day = ThemeSkins.of(AppThemeController.dayPreference.value);
+    final night = ThemeSkins.of(AppThemeController.nightPreference.value);
+    final isDay = AppThemeController.systemBrightness == Brightness.light;
+    final accent = AppPalette.leaf;
+
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        key: const ValueKey('theme-option-auto'),
+        borderRadius: AppRadii.card,
+        onTap: () => AppThemeController.setAuto(!auto),
+        child: AnimatedContainer(
+          duration: AppMotion.fast,
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppPalette.surfaceMuted,
+            borderRadius: AppRadii.card,
+            border: Border.all(
+              color: auto ? accent : AppPalette.divider,
+              width: auto ? 2 : 1,
+            ),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                Icons.brightness_auto_rounded,
+                size: 22,
+                color: auto ? accent : AppPalette.inkSoft,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '自动 · 跟随昼夜',
+                      style: TextStyle(
+                        color: AppPalette.ink,
+                        fontSize: 12.5,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '白天 ${day.label} ｜ 夜晚 ${night.label}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: AppPalette.inkSoft,
+                        fontSize: 10,
+                        height: 1.35,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: AppPalette.surface,
+                  borderRadius: AppRadii.capsule,
+                  border: Border.all(color: AppPalette.divider),
+                ),
+                child: Text(
+                  isDay ? '当前：白天' : '当前：夜晚',
+                  style: TextStyle(
+                    color: AppPalette.inkSoft,
+                    fontSize: 9.5,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Icon(
+                auto ? Icons.check_circle_rounded : Icons.circle_outlined,
+                size: 17,
+                color: auto ? accent : AppPalette.inkSoft,
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

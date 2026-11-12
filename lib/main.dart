@@ -24,6 +24,13 @@ void main() async {
 
   await EnvConfig.init();
   await AuthService.initialize();
+  // Feed the system day/night signal before resolving the stored theme, then
+  // keep following it so auto mode flips with the platform appearance.
+  final dispatcher = WidgetsBinding.instance.platformDispatcher;
+  AppThemeController.applyBrightness(dispatcher.platformBrightness);
+  dispatcher.onPlatformBrightnessChanged = () {
+    AppThemeController.applyBrightness(dispatcher.platformBrightness);
+  };
   await AppThemeController.loadStored();
 
   // Set preferred orientations
