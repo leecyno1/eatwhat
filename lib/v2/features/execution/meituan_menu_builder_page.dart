@@ -3,6 +3,7 @@ import 'package:eatwhat_app/v2/core/external/platform/platform_exceptions.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
 import 'package:eatwhat_app/v2/core/services/v2_location_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
+import 'package:eatwhat_app/v2/core/theme/theme_aware_state.dart';
 import 'package:eatwhat_app/v2/features/auth/auth_sheet.dart';
 import 'package:eatwhat_app/v2/features/execution/meituan_order_page.dart';
 import 'package:eatwhat_app/v2/features/execution/widgets/execution_widgets.dart';
@@ -28,7 +29,7 @@ class MeituanMenuBuilderPage extends StatefulWidget {
 }
 
 class _MeituanMenuBuilderPageState extends State<MeituanMenuBuilderPage>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, ThemeAwareStateMixin<MeituanMenuBuilderPage> {
   late final MeituanDeliveryOrderClient _client;
   late Future<MeituanMerchantSearchResult> _future;
   late String _searchKeyword;

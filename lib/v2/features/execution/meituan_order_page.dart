@@ -3,6 +3,7 @@ import 'package:eatwhat_app/v2/core/external/platform/meituan_delivery_order_cli
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
 import 'package:eatwhat_app/v2/core/services/v2_location_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
+import 'package:eatwhat_app/v2/core/theme/theme_aware_state.dart';
 import 'package:eatwhat_app/v2/features/execution/widgets/execution_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -29,7 +30,8 @@ class MeituanOrderPage extends StatefulWidget {
   State<MeituanOrderPage> createState() => _MeituanOrderPageState();
 }
 
-class _MeituanOrderPageState extends State<MeituanOrderPage> {
+class _MeituanOrderPageState extends State<MeituanOrderPage>
+    with ThemeAwareStateMixin<MeituanOrderPage> {
   late final MeituanDeliveryOrderClient _client;
   late Future<MeituanProductSearchResult> _productsFuture;
   final Map<String, _CartLine> _cart = {};

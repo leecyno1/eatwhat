@@ -31,6 +31,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/theme/app_tokens.dart';
+import '../../core/theme/theme_aware_state.dart';
 
 typedef HomeDecisionPageBuilder = Widget Function(TasteInferenceInput input);
 
@@ -62,7 +63,8 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with ThemeAwareStateMixin<HomePage> {
   final TextEditingController _controller = TextEditingController();
   final FocusNode _focusNode = FocusNode();
   final HomeTasteDeckBuilder _deckBuilder = const HomeTasteDeckBuilder();

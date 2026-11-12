@@ -9,6 +9,7 @@ import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart
 import 'package:eatwhat_app/v2/core/services/v2_recommendation_telemetry_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
+import 'package:eatwhat_app/v2/core/theme/theme_aware_state.dart';
 import 'package:eatwhat_app/v2/features/auth/auth_sheet.dart';
 import 'package:eatwhat_app/v2/features/details/howtocook_library_page.dart';
 import 'package:eatwhat_app/v2/features/details/recipe_detail_page.dart';
@@ -35,7 +36,8 @@ class ExecutionHomePage extends StatefulWidget {
   State<ExecutionHomePage> createState() => _ExecutionHomePageState();
 }
 
-class _ExecutionHomePageState extends State<ExecutionHomePage> {
+class _ExecutionHomePageState extends State<ExecutionHomePage>
+    with ThemeAwareStateMixin<ExecutionHomePage> {
   static final V2PreferenceFeedbackService _feedback =
       V2PreferenceFeedbackService.instance;
   static final V2RecommendationTelemetryService _recommendationTelemetry =
@@ -368,7 +370,8 @@ class DeliveryExecutionPage extends StatefulWidget {
   State<DeliveryExecutionPage> createState() => _DeliveryExecutionPageState();
 }
 
-class _DeliveryExecutionPageState extends State<DeliveryExecutionPage> {
+class _DeliveryExecutionPageState extends State<DeliveryExecutionPage>
+    with ThemeAwareStateMixin<DeliveryExecutionPage> {
   final V2ExecutionService _service = V2ExecutionService.instance;
   late Future<DeliveryExecutionSnapshot> _future;
   DateTime? _lastRequestedAt;
@@ -545,7 +548,8 @@ class DineInExecutionPage extends StatefulWidget {
   State<DineInExecutionPage> createState() => _DineInExecutionPageState();
 }
 
-class _DineInExecutionPageState extends State<DineInExecutionPage> {
+class _DineInExecutionPageState extends State<DineInExecutionPage>
+    with ThemeAwareStateMixin<DineInExecutionPage> {
   final V2ExecutionService _service = V2ExecutionService.instance;
   late Future<DineInExecutionSnapshot> _future;
 

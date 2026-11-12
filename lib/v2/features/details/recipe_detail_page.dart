@@ -9,6 +9,7 @@ import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart
 import 'package:eatwhat_app/v2/core/services/v2_recipe_execution_progress_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
+import 'package:eatwhat_app/v2/core/theme/theme_aware_state.dart';
 import 'package:eatwhat_app/v2/features/details/howtocook_library_page.dart';
 import 'package:eatwhat_app/v2/features/details/widgets/recipe_ai_result_views.dart';
 import 'package:eatwhat_app/v2/features/details/widgets/recipe_detail_controls.dart';
@@ -38,7 +39,8 @@ class RecipeDetailPage extends StatefulWidget {
   State<RecipeDetailPage> createState() => _RecipeDetailPageState();
 }
 
-class _RecipeDetailPageState extends State<RecipeDetailPage> {
+class _RecipeDetailPageState extends State<RecipeDetailPage>
+    with ThemeAwareStateMixin<RecipeDetailPage> {
   late final GenerationService _generation;
   final V2RecipeExecutionProgressService _progressService =
       V2RecipeExecutionProgressService.instance;

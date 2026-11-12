@@ -7,6 +7,7 @@ import 'package:eatwhat_app/v2/core/navigation/app_v2_routes.dart';
 import 'package:eatwhat_app/v2/core/services/v2_favorites_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
+import 'package:eatwhat_app/v2/core/theme/theme_aware_state.dart';
 import 'package:eatwhat_app/v2/features/details/recipe_detail_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -19,7 +20,7 @@ class FavoritesPageV2 extends StatefulWidget {
 }
 
 class _FavoritesPageV2State extends State<FavoritesPageV2>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, ThemeAwareStateMixin<FavoritesPageV2> {
   final V2FavoritesService _favorites = V2FavoritesService.instance;
   final UnifiedRecipeDatabaseService _db =
       UnifiedRecipeDatabaseService.instance;
