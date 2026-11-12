@@ -160,6 +160,17 @@ void main() {
         );
       });
 
+      test('番茄与西红柿别名召回一致，不依赖鸡蛋顺带召回', () async {
+        final service = UnifiedRecipeDatabaseService.instance;
+        final tomato =
+            await service.searchByPantryIngredients(['番茄'], limit: 80);
+        final alias =
+            await service.searchByPantryIngredients(['西红柿'], limit: 80);
+        expect(tomato.map((row) => row['dish_id']).toSet(),
+            alias.map((row) => row['dish_id']).toSet());
+        expect(tomato.any((row) => row['dish_name'] == '西红柿炒鸡蛋'), isTrue);
+      });
+
       test('空食材列表返回空结果', () async {
         final rows = await UnifiedRecipeDatabaseService.instance
             .searchByPantryIngredients([], limit: 10);

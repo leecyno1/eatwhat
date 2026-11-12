@@ -45,7 +45,7 @@ void main() {
   });
 
   testWidgets('美团真实点餐页生成多商品菜单、预览并打开支付链接', (tester) async {
-    Uri? launchedUri;
+    final launchedUris = <Uri>[];
     final client = _FakeMeituanOrderClient();
 
     await tester.pumpWidget(
@@ -79,7 +79,7 @@ void main() {
           locationResolver: () async =>
               const GeoPoint(latitude: 39.9042, longitude: 116.4074),
           paymentLauncher: (uri) async {
-            launchedUri = uri;
+            launchedUris.add(uri);
             return true;
           },
         ),
@@ -131,12 +131,23 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('meituan-submit-order')));
     await tester.pumpAndSettle();
 
-    expect(launchedUri, Uri.parse('https://pay.meituan.test/order-1'));
+    expect(launchedUris, [Uri.parse('https://pay.meituan.test/order-1')]);
     expect(
       client.previewedRequest?.items.map((item) => item.skuId),
       ['sku-1', 'sku-side-1'],
     );
     expect(client.submittedPreviewToken, 'preview-token');
+
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('meituan-submit-order')),
+    );
+    expect(find.text('再次打开美团收银台'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('meituan-submit-order')));
+    await tester.pumpAndSettle();
+
+    expect(client.submitCount, 1);
+    expect(launchedUris.length, 2);
+    expect(launchedUris.last, Uri.parse('https://pay.meituan.test/order-1'));
   });
 
   testWidgets('修改购物车后必须重新预览订单', (tester) async {
@@ -220,6 +231,7 @@ void main() {
 class _FakeMeituanOrderClient extends MeituanDeliveryOrderClient {
   MeituanDeliveryOrderRequest? previewedRequest;
   String? submittedPreviewToken;
+  int submitCount = 0;
 
   @override
   Future<MeituanProductSearchResult> searchProducts({
@@ -283,6 +295,7 @@ class _FakeMeituanOrderClient extends MeituanDeliveryOrderClient {
     String? paymentSuccessUrl,
     String? paymentFailureUrl,
   }) async {
+    submitCount++;
     submittedPreviewToken = previewToken;
     return const MeituanSubmittedOrder(
       status: 'payment_required',

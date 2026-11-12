@@ -67,9 +67,31 @@ void main() {
     );
     expect(find.text('锅气食堂'), findsOneWidget);
   });
+
+  testWidgets('生成菜名搜不到门店时可换关键词搜索', (tester) async {
+    final client = _KeywordFallbackClient();
+    await tester.pumpWidget(_page(client));
+    await tester.pumpAndSettle();
+
+    expect(find.text('美团暂未返回可点餐门店'), findsOneWidget);
+    await tester.tap(find.text('换个关键词搜索'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.byKey(const ValueKey('meituan-search-keyword')),
+      '番茄炒蛋',
+    );
+    await tester.tap(find.byKey(const ValueKey('meituan-search-submit')));
+    await tester.pumpAndSettle();
+
+    expect(client.keywords, containsAll(['麻婆豆腐', '番茄炒蛋']));
+    await tester.pump(const Duration(milliseconds: 500));
+    await tester.pumpAndSettle();
+    expect(find.text('锅气食堂'), findsOneWidget);
+  });
 }
 
-Widget _page(_FakeMenuBuilderClient client) {
+Widget _page(MeituanDeliveryOrderClient client) {
   return MaterialApp(
     home: MeituanMenuBuilderPage(
       intent: const ExecutionIntent(
@@ -86,6 +108,42 @@ Widget _page(_FakeMenuBuilderClient client) {
           const GeoPoint(latitude: 39.9042, longitude: 116.4074),
     ),
   );
+}
+
+class _KeywordFallbackClient extends MeituanDeliveryOrderClient {
+  final keywords = <String>[];
+
+  @override
+  bool get isConfigured => true;
+
+  @override
+  Future<MeituanMerchantSearchResult> searchMerchantResults({
+    required String keyword,
+    required GeoPoint location,
+    int limit = 20,
+  }) async {
+    keywords.add(keyword);
+    if (keyword == '麻婆豆腐') {
+      return const MeituanMerchantSearchResult(
+        merchants: [],
+        hasNextPage: false,
+      );
+    }
+    return const MeituanMerchantSearchResult(
+      merchants: [
+        MeituanDeliveryMerchant(merchantId: 'm1', merchantName: '锅气食堂'),
+      ],
+      hasNextPage: false,
+    );
+  }
+
+  @override
+  Future<MeituanOAuthStatus> getOAuthStatus() async {
+    return const MeituanOAuthStatus(
+      connected: true,
+      requiresUserAuthorization: false,
+    );
+  }
 }
 
 class _FakeMenuBuilderClient extends MeituanDeliveryOrderClient {

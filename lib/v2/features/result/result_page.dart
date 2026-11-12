@@ -22,6 +22,7 @@ import 'package:eatwhat_app/v2/core/services/v2_platform_jump_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_preference_feedback_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_recommendation_telemetry_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
+import 'package:eatwhat_app/v2/core/theme/theme_aware_state.dart';
 import 'package:eatwhat_app/v2/features/auth/auth_sheet.dart';
 import 'package:eatwhat_app/v2/features/details/recipe_detail_page.dart';
 import 'package:eatwhat_app/v2/features/execution/meituan_menu_builder_page.dart';
@@ -120,7 +121,7 @@ class ResultPage extends StatefulWidget {
 }
 
 class _ResultPageState extends State<ResultPage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, ThemeAwareStateMixin<ResultPage> {
   late final ResultChoiceController _choiceController;
 
   /// One-shot entrance choreography: the full-bleed photography settles

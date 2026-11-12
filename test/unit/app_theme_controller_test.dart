@@ -9,20 +9,20 @@ void main() {
     AppThemeController.mode.value = AppThemeMode.dark;
   });
 
-  test('默认黑色主题，色板为夜色值', () {
+  test('夜场主题色板为炭黑珊瑚', () {
     expect(AppThemeController.isCream, isFalse);
-    expect(AppPalette.night.toARGB32(), 0xFF0B0B0D);
-    expect(AppPalette.moonlight.toARGB32(), 0xFFEDEBE8);
-    expect(AppPalette.leaf.toARGB32(), 0xFF7ABF88);
+    expect(AppPalette.night.toARGB32(), 0xFF121417);
+    expect(AppPalette.moonlight.toARGB32(), 0xFFF4EFE6);
+    expect(AppPalette.leaf.toARGB32(), 0xFFFF9270);
   });
 
   test('切换米色主题后色板代理为米色值', () async {
     await AppThemeController.setMode(AppThemeMode.cream);
     expect(AppThemeController.isCream, isTrue);
-    expect(AppPalette.night.toARGB32(), 0xFFF5EFE3);
-    expect(AppPalette.nightSurface.toARGB32(), 0xFFFCF8EF);
-    expect(AppPalette.moonlight.toARGB32(), 0xFF2E2924);
-    expect(AppPalette.leaf.toARGB32(), 0xFF4A5D4E);
+    expect(AppPalette.night.toARGB32(), 0xFFF7F3EA);
+    expect(AppPalette.nightSurface.toARGB32(), 0xFFFFFDF8);
+    expect(AppPalette.moonlight.toARGB32(), 0xFF241F1A);
+    expect(AppPalette.leaf.toARGB32(), 0xFFC25B3D);
   });
 
   test('主题持久化并可读回', () async {

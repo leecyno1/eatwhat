@@ -54,6 +54,43 @@ void main() {
       expect(telemetryEvents.single.properties['execution_path'], 'delivery');
     });
 
+    test('completed dish learns its own taste tags over session labels',
+        () async {
+      final completed = <_CompletedRecord>[];
+      final controller = ExecutionCompletionController(
+        recordExecutionCompleted: ({
+          required recipeId,
+          required path,
+          positiveTagIds = const [],
+        }) async {
+          completed.add(
+            _CompletedRecord(
+              recipeId: recipeId,
+              path: path,
+              positiveTagIds: positiveTagIds,
+            ),
+          );
+        },
+        recordRecipeChosen: (_) async {},
+        recommendationTelemetryService: _telemetry([]),
+      );
+
+      await controller.recordCompleted(
+        intent: _intent().copyWith(
+          recipe: const RecipeModel(
+            id: 'dish_1',
+            name: '麻婆豆腐',
+            description: '麻辣下饭',
+            tags: ['麻辣', '豆腐', '下饭'],
+          ),
+          sourceTags: const ['川菜'],
+        ),
+        platform: 'meituan',
+      );
+
+      expect(completed.single.positiveTagIds, ['麻辣', '豆腐', '下饭']);
+    });
+
     test('records not-now feedback as recipe chosen only', () async {
       final completed = <_CompletedRecord>[];
       final chosenRecipes = <String>[];

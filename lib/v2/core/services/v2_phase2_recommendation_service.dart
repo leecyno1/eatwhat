@@ -8,6 +8,8 @@ import 'package:eatwhat_app/v2/core/data/models/recipe_model.dart';
 import 'package:eatwhat_app/v2/core/data/models/recommendation_resolution.dart';
 import 'package:eatwhat_app/v2/core/data/models/taste_inference_input.dart';
 import 'package:eatwhat_app/v2/core/services/generation_service.dart';
+import 'package:eatwhat_app/v2/core/services/preference_recall_bridge.dart';
+import 'package:eatwhat_app/v2/core/services/recipe_eligibility.dart';
 import 'package:eatwhat_app/v2/core/services/unified_recommendation_service_v2.dart';
 import 'package:eatwhat_app/v2/core/services/v2_howtocook_recipe_service.dart';
 
@@ -91,10 +93,10 @@ class RecommendationSession {
 
 /// Reliable V2 recommendation orchestrator.
 ///
-/// The unified local database is the source of truth and always runs first.
-/// AI may only reorder those canonical candidates or add short reasons. Any AI
-/// timeout, malformed response, unknown dish id, or service error falls back to
-/// the local ranking without interrupting the user journey.
+/// The unified local database always runs first. AI may refine canonical
+/// candidates or propose fusion dishes; both paths share eligibility checks,
+/// including after library matching and enrichment. Rejected AI dishes, timeouts,
+/// and service errors leave eligible local candidates available.
 class V2Phase2RecommendationService {
   V2Phase2RecommendationService({
     LocalRecommendationLoader? localRecommendationLoader,
@@ -136,7 +138,7 @@ class V2Phase2RecommendationService {
   Future<Phase2RecommendationBundle> buildRecommendations({
     required TasteInferenceInput input,
     int recallLimit = 12,
-    int finalLimit = 5,
+    int finalLimit = 3,
     bool skipAiEnhancement = false,
   }) async {
     if (skipAiEnhancement) {
@@ -158,7 +160,7 @@ class V2Phase2RecommendationService {
   Future<RecommendationSession> startRecommendationSession({
     required TasteInferenceInput input,
     int recallLimit = 12,
-    int finalLimit = 5,
+    int finalLimit = 3,
     Duration? localTimeout,
   }) async {
     var localFuture = () async {
@@ -262,6 +264,11 @@ class V2Phase2RecommendationService {
       _sanitizeCandidates(localResult.recipes, input),
     ).take(candidateLimit).toList();
     if (localCandidates.isEmpty) {
+      final eligibility = _eligibility(input);
+      final rejections = localResult.recipes
+          .map((recipe) => _assess(recipe, eligibility).rejectionReason)
+          .whereType<String>()
+          .toList();
       return _RecommendationLocalStage.empty(
         input: input,
         stopwatch: stopwatch,
@@ -269,10 +276,14 @@ class V2Phase2RecommendationService {
         resultLimit: resultLimit,
         bundle: _emptyBundle(
           recallLabels: recallLabels,
-          summary: localResult.summary.trim().isNotEmpty
-              ? localResult.summary
-              : '本地菜谱库没有命中满足本轮约束的正式候选。',
-          fallbackReason: 'local_empty',
+          summary: rejections.isNotEmpty
+              ? '${_rejectionSummary(rejections)}本轮没有剩余候选。'
+              : localResult.summary.trim().isNotEmpty
+                  ? localResult.summary
+                  : '本地菜谱库没有命中满足本轮约束的正式候选。',
+          fallbackReason: rejections.isEmpty
+              ? localResult.fallbackReason ?? 'local_empty'
+              : 'candidate_constraints_rejected',
           latency: stopwatch.elapsed,
           input: input,
         ),
@@ -348,30 +359,112 @@ class V2Phase2RecommendationService {
       localCandidates: localCandidates,
       preferredIds: enhancement.orderedIds,
     );
-    // AI 融合菜优先入主榜；本地候选只补足数量，不再喧宾夺主。
-    final fused = enhancement.extraRecipes;
-    final List<RecipeModel> baseList;
-    if (fused.isNotEmpty) {
-      final fusedIds = fused.map((recipe) => recipe.id).toSet();
-      baseList = [
-        ...fused,
-        ..._diversify(ordered, stage.resultLimit)
-            .where((recipe) => !fusedIds.contains(recipe.id)),
-      ].take(stage.resultLimit).toList();
-    } else {
-      baseList = _diversify(ordered, stage.resultLimit);
+    final eligibility = _eligibility(stage.input);
+    final hasBudget = stage.input.structuredConstraints.maxBudgetYuan != null ||
+        RecipeEligibility.parseMaxBudgetYuan([
+              stage.input.freeformRequirement,
+              ...stage.input.likedTagLabels,
+            ].join(' ')) !=
+            null;
+    // 无价格依据时不转述 AI 核价文案，保留本地召回依据与估算说明。
+    final canUseAiCopy = eligibility.maxTimeMinutes == null && !hasBudget;
+    final rejections = <String>[
+      for (final recipe in localResult.recipes)
+        if (!_assess(recipe, eligibility).allowed)
+          _assess(recipe, eligibility).rejectionReason!,
+    ];
+    // 创意仍优先，但所有路径在最终候选边界共用约束；富化换料也要复核。
+    final fusedIds =
+        enhancement.extraRecipes.map((recipe) => recipe.id).toSet();
+    final pending = _dedupe([
+      ...enhancement.extraRecipes,
+      ..._diversify(ordered, stage.resultLimit),
+      ...ordered,
+    ]);
+    final finalRecommendations = <RecipeModel>[];
+    final rejectedIds = <String>{};
+    while (
+        pending.isNotEmpty && finalRecommendations.length < stage.resultLimit) {
+      final count = (stage.resultLimit - finalRecommendations.length)
+          .clamp(0, pending.length);
+      final batch = pending.take(count).toList();
+      pending.removeRange(0, count);
+      final safeBatch = <RecipeModel>[];
+      for (final recipe in batch) {
+        final assessment = _assess(recipe, eligibility,
+            requireIngredients: fusedIds.contains(recipe.id));
+        if (assessment.allowed) {
+          safeBatch.add(recipe);
+        } else {
+          rejections.add(assessment.rejectionReason!);
+          rejectedIds.add(recipe.id);
+        }
+      }
+      final enriched =
+          await _enrichWithHowToCook(safeBatch, cancelled: cancelled);
+      for (final recipe in enriched) {
+        final assessment = _assess(recipe, eligibility,
+            requireIngredients: fusedIds.contains(recipe.id));
+        if (assessment.allowed) {
+          finalRecommendations.add(recipe);
+        } else {
+          rejections.add(assessment.rejectionReason!);
+          rejectedIds.add(recipe.id);
+        }
+      }
     }
-    final finalRecommendations = await _enrichWithHowToCook(
-      baseList,
-      cancelled: cancelled,
-    );
+    String summaryWithConstraints(String summary) => [
+          summary,
+          if (rejections.isNotEmpty) _rejectionSummary(rejections),
+          if (eligibility.hasDietaryRestrictions)
+            RecipeEligibility.safetyNotice,
+          if (eligibility.maxTimeMinutes != null)
+            '未提供耗时的候选：${RecipeEligibility.unverifiedTimeNote}。',
+          if (hasBudget) RecipeEligibility.unverifiedBudgetNote,
+        ].join();
     final finalIds = finalRecommendations.map((recipe) => recipe.id).toSet();
+    final survivingFusion = finalRecommendations
+        .where((recipe) => fusedIds.contains(recipe.id))
+        .toList();
+    // refine 的本地排序也算有效贡献；不能仅以是否还有融合菜判断成功。
+    final enhancementSurvived =
+        enhancement.succeeded && enhancement.orderedIds.any(finalIds.contains);
+    final aiSelectionPruned =
+        enhancement.orderedIds.any((id) => !finalIds.contains(id));
+    final aiRejected = enhancement.orderedIds.any(rejectedIds.contains);
+    final fallbackReason = enhancement.fallbackReason ??
+        (aiRejected
+            ? 'ai_constraints_rejected'
+            : rejections.isEmpty
+                ? null
+                : 'candidate_constraints_rejected');
+    if (finalRecommendations.isEmpty) {
+      return _emptyBundle(
+        recallLabels: stage.recallLabels,
+        summary: summaryWithConstraints('本轮没有剩余的合适候选。'),
+        fallbackReason: fallbackReason ?? 'local_empty',
+        latency: stage.stopwatch.elapsed,
+        input: stage.input,
+      );
+    }
     final reasons = <String, String>{
       for (final entry in stage.localReasons.entries)
         if (finalIds.contains(entry.key)) entry.key: entry.value,
       for (final entry in enhancement.reasonsById.entries)
-        if (finalIds.contains(entry.key)) entry.key: entry.value,
+        if (finalIds.contains(entry.key) && canUseAiCopy && !aiSelectionPruned)
+          entry.key: entry.value,
     };
+    for (final recipe in finalRecommendations) {
+      final timeNotes = !fusedIds.contains(recipe.id) &&
+              localResult.reasonsByRecipeId.containsKey(recipe.id)
+          ? const <String>[]
+          : eligibility.timeNotes(null);
+      reasons[recipe.id] = [
+        reasons[recipe.id] ?? '按本轮偏好推荐。',
+        ...timeNotes,
+        if (hasBudget) RecipeEligibility.unverifiedBudgetNote,
+      ].join();
+    }
 
     if (!enhancement.attempted) {
       return Phase2RecommendationBundle(
@@ -382,7 +475,8 @@ class V2Phase2RecommendationService {
         // Say it out loud when the LLM never ran: the recommendation is a
         // pure local pick, not an AI one, so nobody mistakes speed for
         // intelligence.
-        aiSummary: '本地精选：由口味档案与本地菜谱库直接排序，AI 点菜师未启用。',
+        aiSummary: summaryWithConstraints('本地精选：由口味档案与本地菜谱库直接排序，AI 点菜师未启用。'),
+        fallbackReason: fallbackReason,
         isEstimated: false,
         resolutionStatus: RecommendationResolutionStatus.dbResolved,
         primarySource: 'unified_db',
@@ -393,17 +487,22 @@ class V2Phase2RecommendationService {
       );
     }
 
-    if (!enhancement.succeeded) {
+    if (!enhancementSurvived) {
+      final failureSummary = enhancement.succeeded
+          ? '智能增强候选未通过最终筛选。'
+          : enhancement.summary ?? '智能增强暂时不可用。';
       return Phase2RecommendationBundle(
         recallLabels: stage.recallLabels,
         recalledCount: localCandidates.length,
         finalRecommendations: finalRecommendations,
         aiReasonsByRecipeId: reasons,
-        aiSummary: '智能增强暂时不可用，已使用 ${finalRecommendations.length} 道稳定的本地候选。',
+        aiSummary: summaryWithConstraints(
+          '$failureSummary已使用 ${finalRecommendations.length} 道本地候选。',
+        ),
         isEstimated: true,
         resolutionStatus: RecommendationResolutionStatus.localFallback,
         primarySource: 'local_fallback',
-        fallbackReason: enhancement.fallbackReason,
+        fallbackReason: fallbackReason,
         latency: stage.stopwatch.elapsed,
         appliedConstraints: _appliedConstraints(stage.input),
         diversityScore: _calculateDiversityScore(finalRecommendations),
@@ -416,8 +515,19 @@ class V2Phase2RecommendationService {
       recalledCount: localCandidates.length,
       finalRecommendations: finalRecommendations,
       aiReasonsByRecipeId: reasons,
-      aiSummary:
-          enhancement.summary ?? '已从 ${localCandidates.length} 道本地正式候选中完成智能收束。',
+      aiSummary: summaryWithConstraints(
+        hasBudget ||
+                (eligibility.maxTimeMinutes != null &&
+                    enhancement.fallbackReason == null)
+            ? '已按本轮偏好完成智能收束。'
+            : aiSelectionPruned
+                ? survivingFusion.isNotEmpty
+                    ? 'AI 融合创意：${survivingFusion.map((recipe) => recipe.name).join('、')}。'
+                    : '已在最终保留的本地候选中完成智能收束。'
+                : enhancement.summary ??
+                    '已从 ${localCandidates.length} 道本地正式候选中完成智能收束。',
+      ),
+      fallbackReason: fallbackReason,
       isEstimated: enhancement.isEstimated,
       resolutionStatus: RecommendationResolutionStatus.hybridResolved,
       primarySource: 'hybrid',
@@ -456,6 +566,7 @@ class V2Phase2RecommendationService {
       reasonsByRecipeId: bundle.reasonsByRecipeId,
       summary: bundle.summary,
       algorithmVersion: bundle.algorithmVersion,
+      fallbackReason: bundle.fallbackReason,
     );
   }
 
@@ -506,7 +617,8 @@ class V2Phase2RecommendationService {
         if (cancelToken?.isCancelled == true) {
           return const _AiEnhancementResult.failed('cancelled');
         }
-        return _resolveLegacyAiCandidates(generated, localCandidates);
+        return _resolveLegacyAiCandidates(
+            generated, localCandidates, _eligibility(input));
       }
 
       if (!_generationService.isConfigured) {
@@ -559,39 +671,86 @@ class V2Phase2RecommendationService {
 
     final resolved = <RecipeModel>[];
     final reasonsById = <String, String>{};
+    final eligibility = _eligibility(input);
+    final rejections = <String>[];
     for (final dish in generated) {
       if (cancelToken?.isCancelled == true) {
         return const _AiEnhancementResult.failed('cancelled');
       }
-      final matched = await _matchLibraryDish(dish);
-      final recipe = matched ??
+      final generatedAssessment =
+          _assess(dish, eligibility, requireIngredients: true);
+      if (!generatedAssessment.allowed) {
+        rejections.add(generatedAssessment.rejectionReason!);
+        continue;
+      }
+      final matched = await _matchLibraryDish(dish, eligibility);
+      if (matched?.rejectionReason != null) {
+        rejections.add(matched!.rejectionReason!);
+        continue;
+      }
+      final recipe = matched?.recipe ??
           await _withLibraryCousinImage(dish, cancelToken: cancelToken);
+      final assessment = _assess(recipe, eligibility, requireIngredients: true);
+      if (!assessment.allowed) {
+        rejections.add(assessment.rejectionReason!);
+        continue;
+      }
       resolved.add(recipe);
       if (dish.description.trim().isNotEmpty) {
         reasonsById[recipe.id] = dish.description.trim();
       }
     }
+    if (resolved.isEmpty) {
+      return _AiEnhancementResult.failed('ai_constraints_rejected',
+          summary: _rejectionSummary(rejections));
+    }
     return _AiEnhancementResult.succeeded(
       orderedIds: resolved.map((recipe) => recipe.id).toList(),
       reasonsById: reasonsById,
       extraRecipes: resolved,
-      summary: 'AI 融合创意：${resolved.map((recipe) => recipe.name).join('、')}',
+      fallbackReason: rejections.isEmpty ? null : 'ai_constraints_rejected',
+      summary:
+          'AI 融合创意：${resolved.map((recipe) => recipe.name).join('、')}。${_rejectionSummary(rejections)}',
     );
   }
 
   /// 把 AI 生成的菜名回库匹配：命中则继承库菜品的 id/步骤/配图，
   /// 只保留 AI 写的融合推荐理由。
-  Future<RecipeModel?> _matchLibraryDish(RecipeModel dish) async {
+  Future<({RecipeModel recipe, String? rejectionReason})?> _matchLibraryDish(
+    RecipeModel dish,
+    RecipeEligibility eligibility,
+  ) async {
     try {
       final rows = await UnifiedRecipeDatabaseService.instance
           .searchRecipes(dish.name, limit: 3);
       for (final row in rows) {
         final candidate = RecipeModel.fromUnifiedDbRow(row);
         if (_namesMatch(dish.name, candidate.name)) {
-          return candidate.copyWith(
-            description: dish.description.trim().isNotEmpty
-                ? dish.description.trim()
-                : candidate.description,
+          // 检查完整库配方，不能只检查 RecipeModel 截断后的前十项食材。
+          final rawTime = row['total_time_minutes'];
+          final assessment = eligibility.evaluate(
+            name: candidate.name,
+            description: candidate.description,
+            category: row['cuisine']?.toString() ?? '',
+            ingredients: (row['ingredients'] as List<dynamic>? ?? const [])
+                .whereType<Map>()
+                .map((item) => item['name']?.toString() ?? ''),
+            tags: [
+              ...?row['tags'] as List<dynamic>?,
+              ...?row['scenes'] as List<dynamic>?,
+              ...?row['health_tags'] as List<dynamic>?,
+            ].map((item) => '$item'),
+            totalTimeMinutes:
+                rawTime is num ? rawTime.toInt() : int.tryParse('$rawTime'),
+            requireIngredients: true,
+          );
+          return (
+            recipe: candidate.copyWith(
+              description: dish.description.trim().isNotEmpty
+                  ? dish.description.trim()
+                  : candidate.description,
+            ),
+            rejectionReason: assessment.rejectionReason,
           );
         }
       }
@@ -730,6 +889,7 @@ class V2Phase2RecommendationService {
   _AiEnhancementResult _resolveLegacyAiCandidates(
     List<RecipeModel> generated,
     List<RecipeModel> localCandidates,
+    RecipeEligibility eligibility,
   ) {
     if (generated.isEmpty) {
       return const _AiEnhancementResult.failed('ai_empty');
@@ -741,23 +901,44 @@ class V2Phase2RecommendationService {
     };
     final orderedIds = <String>[];
     final reasonsById = <String, String>{};
+    final rejections = <String>[];
     for (final aiRecipe in _filterAiCandidates(generated)) {
+      final assessment =
+          _assess(aiRecipe, eligibility, requireIngredients: true);
+      if (!assessment.allowed) {
+        rejections.add(assessment.rejectionReason!);
+        continue;
+      }
       final canonical =
           byId[aiRecipe.id] ?? byName[_normalizeDishName(aiRecipe.name)];
       if (canonical == null || orderedIds.contains(canonical.id)) continue;
+      final canonicalAssessment =
+          _assess(canonical, eligibility, requireIngredients: true);
+      if (!canonicalAssessment.allowed) {
+        rejections.add(canonicalAssessment.rejectionReason!);
+        continue;
+      }
       orderedIds.add(canonical.id);
       final reason = aiRecipe.description.trim();
       if (reason.isNotEmpty) reasonsById[canonical.id] = reason;
     }
     if (orderedIds.isEmpty) {
-      return const _AiEnhancementResult.failed('ai_unresolved');
+      return rejections.isEmpty
+          ? const _AiEnhancementResult.failed('ai_unresolved')
+          : _AiEnhancementResult.failed('ai_constraints_rejected',
+              summary: _rejectionSummary(rejections));
     }
     return _AiEnhancementResult.succeeded(
       orderedIds: orderedIds,
       reasonsById: reasonsById,
-      summary: 'AI 已在本地正式候选中完成辅助收束。',
+      fallbackReason: rejections.isEmpty ? null : 'ai_constraints_rejected',
+      summary: 'AI 已在本地正式候选中完成辅助收束。${_rejectionSummary(rejections)}',
     );
   }
+
+  String _rejectionSummary(List<String> rejections) => rejections.isEmpty
+      ? ''
+      : '已排除 ${rejections.length} 道候选：${rejections.toSet().join('、')}。';
 
   Phase2RecommendationBundle _emptyBundle({
     required List<String> recallLabels,
@@ -785,11 +966,17 @@ class V2Phase2RecommendationService {
     final labels = <String>[
       ...input.likedTagLabels,
       ...input.planningDirection.recallLabels,
-      ...input.structuredConstraints.labels,
+      // Dietary restrictions are food signals; execution channel, location,
+      // time, budget and party size are hard constraints and must not narrow
+      // the candidate pool by being treated as dish labels.
+      ...input.structuredConstraints.dietaryRestrictions,
       ..._tokenize(input.freeformRequirement),
     ];
-    final cleaned =
-        labels.map((e) => e.trim()).where((e) => e.isNotEmpty).toSet().toList();
+    final cleaned = labels
+        .map((e) => e.trim())
+        .where(PreferenceRecallBridge.isFoodLabel)
+        .toSet()
+        .toList();
     return cleaned.isEmpty ? ['家常', '热菜'] : cleaned;
   }
 
@@ -836,21 +1023,45 @@ class V2Phase2RecommendationService {
     return '历史偏好：$topEntries。';
   }
 
+  RecipeEligibility _eligibility(TasteInferenceInput input) =>
+      RecipeEligibility(
+        dietaryRestrictions: input.structuredConstraints.dietaryRestrictions,
+        dislikedLabels: input.dislikedTagLabels,
+        freeformRequirement: input.freeformRequirement,
+        explicitRequestLabels: input.likedTagLabels,
+        maxTimeMinutes: input.structuredConstraints.maxTimeMinutes ??
+            RecipeEligibility.parseMaxTimeMinutes(
+              [input.freeformRequirement, ...input.likedTagLabels].join(' '),
+            ),
+      );
+
+  RecipeEligibilityResult _assess(
+    RecipeModel recipe,
+    RecipeEligibility eligibility, {
+    bool requireIngredients = false,
+  }) {
+    if (_isPlaceholderRecipe(recipe) ||
+        recipe.name.trim().isEmpty ||
+        recipe.id.trim().isEmpty) {
+      return const RecipeEligibilityResult('无效或占位菜品');
+    }
+    return eligibility.evaluate(
+      name: recipe.name,
+      description: recipe.description,
+      ingredients: recipe.ingredients,
+      tags: recipe.tags,
+      requireIngredients: requireIngredients,
+    );
+  }
+
   List<RecipeModel> _sanitizeCandidates(
     List<RecipeModel> candidates,
     TasteInferenceInput input,
   ) {
-    return candidates.where((recipe) {
-      final haystack =
-          '${recipe.name}|${recipe.description}|${recipe.ingredients.join('|')}|${recipe.tags.join('|')}';
-      final blockedLabels = [
-        ...input.dislikedTagLabels,
-        ...input.skippedTagLabels,
-      ].where((label) => label.trim().isNotEmpty);
-      if (blockedLabels.any(haystack.contains)) return false;
-      if (_isPlaceholderRecipe(recipe)) return false;
-      return recipe.name.trim().isNotEmpty && recipe.id.trim().isNotEmpty;
-    }).toList();
+    final eligibility = _eligibility(input);
+    return candidates
+        .where((recipe) => _assess(recipe, eligibility).allowed)
+        .toList();
   }
 
   bool _isPlaceholderRecipe(RecipeModel recipe) {
@@ -946,7 +1157,7 @@ class V2Phase2RecommendationService {
   ) {
     final signals = recallLabels.take(3).join('、');
     if (signals.isEmpty) return '来自本地正式菜谱库的稳定候选。';
-    return '本地菜谱命中 $signals，并通过本轮约束筛选。';
+    return '本地菜谱按 $signals 召回。';
   }
 
   List<String> _appliedConstraints(TasteInferenceInput input) {
@@ -1093,12 +1304,14 @@ class _LocalRecommendationResult {
     required this.reasonsByRecipeId,
     required this.summary,
     required this.algorithmVersion,
+    this.fallbackReason,
   });
 
   final List<RecipeModel> recipes;
   final Map<String, String> reasonsByRecipeId;
   final String summary;
   final String algorithmVersion;
+  final String? fallbackReason;
 }
 
 class _AiEnhancementResult {
@@ -1122,7 +1335,7 @@ class _AiEnhancementResult {
           isEstimated: false,
         );
 
-  const _AiEnhancementResult.failed(String reason)
+  const _AiEnhancementResult.failed(String reason, {String? summary})
       : this._(
           attempted: true,
           succeeded: false,
@@ -1130,6 +1343,7 @@ class _AiEnhancementResult {
           reasonsById: const {},
           isEstimated: true,
           fallbackReason: reason,
+          summary: summary,
         );
 
   factory _AiEnhancementResult.succeeded({
@@ -1138,6 +1352,7 @@ class _AiEnhancementResult {
     String? summary,
     bool isEstimated = false,
     List<RecipeModel> extraRecipes = const [],
+    String? fallbackReason,
   }) {
     return _AiEnhancementResult._(
       attempted: true,
@@ -1145,6 +1360,7 @@ class _AiEnhancementResult {
       orderedIds: orderedIds,
       reasonsById: reasonsById,
       extraRecipes: extraRecipes,
+      fallbackReason: fallbackReason,
       summary: summary,
       isEstimated: isEstimated,
     );

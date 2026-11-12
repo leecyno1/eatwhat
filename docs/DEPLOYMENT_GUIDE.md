@@ -330,11 +330,15 @@ jobs:
           
       - name: Build APK
         run: |
-          flutter build apk --release --split-per-abi
+          flutter build apk --release --split-per-abi \
+            --dart-define=EXECUTION_PROXY_BASE_URL=https://eatwhat.monkeykingfury.com/eatwhat \
+            --dart-define=EATWHAT_AUTH_BASE_URL=https://eatwhat.monkeykingfury.com
           
       - name: Build AAB
         run: |
-          flutter build appbundle --release
+          flutter build appbundle --release \
+            --dart-define=EXECUTION_PROXY_BASE_URL=https://eatwhat.monkeykingfury.com/eatwhat \
+            --dart-define=EATWHAT_AUTH_BASE_URL=https://eatwhat.monkeykingfury.com
           
       - name: Upload to Play Store
         if: startsWith(github.ref, 'refs/tags/')
@@ -364,7 +368,9 @@ jobs:
           
       - name: Build iOS
         run: |
-          flutter build ios --release --no-codesign
+          flutter build ios --release --no-codesign \
+            --dart-define=EXECUTION_PROXY_BASE_URL=https://eatwhat.monkeykingfury.com/eatwhat \
+            --dart-define=EATWHAT_AUTH_BASE_URL=https://eatwhat.monkeykingfury.com
           
       - name: Build and upload to App Store
         if: startsWith(github.ref, 'refs/tags/')

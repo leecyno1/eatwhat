@@ -3,6 +3,7 @@ import 'package:eatwhat_app/v2/core/navigation/app_v2_routes.dart';
 import 'package:eatwhat_app/v2/core/services/v2_howtocook_recipe_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_colors.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
+import 'package:eatwhat_app/v2/core/theme/theme_aware_state.dart';
 import 'package:eatwhat_app/v2/features/details/recipe_detail_page.dart';
 import 'package:eatwhat_app/v2/features/home/widgets/floating_editorial_background.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,8 @@ class HowToCookLibraryPage extends StatefulWidget {
   State<HowToCookLibraryPage> createState() => _HowToCookLibraryPageState();
 }
 
-class _HowToCookLibraryPageState extends State<HowToCookLibraryPage> {
+class _HowToCookLibraryPageState extends State<HowToCookLibraryPage>
+    with ThemeAwareStateMixin<HowToCookLibraryPage> {
   late final V2HowToCookRecipeService _service;
   final TextEditingController _controller = TextEditingController();
   late Future<List<HowToCookRecipeDetail>> _future;

@@ -151,3 +151,9 @@ flutter:
     - assets/icons/
     - assets/data/
     - assets/data/howtocook_complete_recipes.db
+    - assets/themes/
+
+  fonts:
+    - family: BrushLogo
+      fonts:
+        - asset: assets/fonts/MaShanZheng-Brush.ttf

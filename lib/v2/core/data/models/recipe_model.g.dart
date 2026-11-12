@@ -24,6 +24,8 @@ _$RecipeModelImpl _$$RecipeModelImplFromJson(Map<String, dynamic> json) =>
               const [],
       source: json['source'] as String? ?? 'HowToCook',
       imageUrl: json['imageUrl'] as String?,
+      totalTimeMinutes: (json['totalTimeMinutes'] as num?)?.toInt() ?? 0,
+      servings: (json['servings'] as num?)?.toInt() ?? 1,
     );
 
 Map<String, dynamic> _$$RecipeModelImplToJson(_$RecipeModelImpl instance) =>
@@ -37,4 +39,6 @@ Map<String, dynamic> _$$RecipeModelImplToJson(_$RecipeModelImpl instance) =>
       'tags': instance.tags,
       'source': instance.source,
       'imageUrl': instance.imageUrl,
+      'totalTimeMinutes': instance.totalTimeMinutes,
+      'servings': instance.servings,
     };

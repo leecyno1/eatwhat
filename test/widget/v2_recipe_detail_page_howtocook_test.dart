@@ -594,7 +594,7 @@ void main() {
 
     expect(find.text('已记住这次自制完成'), findsOneWidget);
     expect(
-      await V2PreferenceFeedbackService.instance.getRecentRecipeIds(),
+      await V2PreferenceFeedbackService.instance.getCompletedRecipeIds(),
       contains('19'),
     );
     expect(

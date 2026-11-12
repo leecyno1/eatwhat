@@ -3,6 +3,7 @@ import 'package:eatwhat_app/v2/core/external/platform/platform_exceptions.dart';
 import 'package:eatwhat_app/v2/core/external/platform/platform_types.dart';
 import 'package:eatwhat_app/v2/core/services/v2_location_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
+import 'package:eatwhat_app/v2/core/theme/theme_aware_state.dart';
 import 'package:eatwhat_app/v2/features/auth/auth_sheet.dart';
 import 'package:eatwhat_app/v2/features/execution/meituan_order_page.dart';
 import 'package:eatwhat_app/v2/features/execution/widgets/execution_widgets.dart';
@@ -28,9 +29,10 @@ class MeituanMenuBuilderPage extends StatefulWidget {
 }
 
 class _MeituanMenuBuilderPageState extends State<MeituanMenuBuilderPage>
-    with WidgetsBindingObserver {
+    with WidgetsBindingObserver, ThemeAwareStateMixin<MeituanMenuBuilderPage> {
   late final MeituanDeliveryOrderClient _client;
   late Future<MeituanMerchantSearchResult> _future;
+  late String _searchKeyword;
   GeoPoint? _location;
 
   /// 已跳去外部浏览器授权、等待回前台核验结果。
@@ -41,6 +43,7 @@ class _MeituanMenuBuilderPageState extends State<MeituanMenuBuilderPage>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _client = widget.client ?? MeituanDeliveryOrderClient();
+    _searchKeyword = widget.intent.recipe.name;
     _future = _search();
   }
 
@@ -83,9 +86,50 @@ class _MeituanMenuBuilderPageState extends State<MeituanMenuBuilderPage>
         V2LocationService.instance.getCurrentLocationOrFallback)();
     _location = location;
     return _client.searchMerchantResults(
-      keyword: widget.intent.recipe.name,
+      keyword: _searchKeyword,
       location: location,
     );
+  }
+
+  /// 生成的菜名不一定存在于美团菜单。允许用户换一个真实菜名/食材搜索，
+  /// 选到门店后再从真实菜单里加入相近菜品，避免「查无此菜」死路。
+  Future<void> _promptSearchKeyword() async {
+    var draft = _searchKeyword;
+    final keyword = await showDialog<String>(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
+        title: const Text('换个关键词找门店'),
+        content: TextFormField(
+          key: const ValueKey('meituan-search-keyword'),
+          initialValue: _searchKeyword,
+          autofocus: true,
+          textInputAction: TextInputAction.search,
+          decoration: const InputDecoration(
+            hintText: '例如：番茄炒蛋、牛肉面、附近的家常菜',
+          ),
+          onChanged: (value) => draft = value,
+          onFieldSubmitted: (value) => Navigator.of(dialogContext).pop(value),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            key: const ValueKey('meituan-search-submit'),
+            onPressed: () => Navigator.of(dialogContext).pop(draft),
+            child: const Text('搜索'),
+          ),
+        ],
+      ),
+    );
+    if (!mounted || keyword == null) return;
+    final trimmed = keyword.trim();
+    if (trimmed.isEmpty || trimmed == _searchKeyword) return;
+    setState(() {
+      _searchKeyword = trimmed;
+      _future = _search();
+    });
   }
 
   Future<void> _authorizeMeituanService() async {
@@ -198,9 +242,12 @@ class _MeituanMenuBuilderPageState extends State<MeituanMenuBuilderPage>
       onRefresh: _refresh,
       builder: (context, result) {
         if (result.merchants.isEmpty) {
-          return const ExecutionUnavailableState(
+          return ExecutionUnavailableState(
             title: '美团暂未返回可点餐门店',
-            description: '这里不会跳网页。请确认消费者点餐 API、OAuth 和门店搜索权限已经开通。',
+            description: '“$_searchKeyword”不一定在附近菜单里。可以换成相近菜名或食材再搜，'
+                '或确认消费者点餐 API、OAuth 和门店搜索权限已经开通。',
+            actionLabel: '换个关键词搜索',
+            onAction: _promptSearchKeyword,
           );
         }
         return ListView(
@@ -216,7 +263,7 @@ class _MeituanMenuBuilderPageState extends State<MeituanMenuBuilderPage>
                   Text('匹配到的门店', style: AppType.microLabel),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
-                    '${widget.intent.recipe.name} · ${result.merchants.length} 家可选',
+                    '$_searchKeyword · ${result.merchants.length} 家可选',
                     style: AppType.title,
                   ),
                   const SizedBox(height: AppSpacing.xs),

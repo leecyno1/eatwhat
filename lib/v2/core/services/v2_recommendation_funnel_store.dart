@@ -24,7 +24,7 @@ class V2RecommendationFunnelStore {
   final V2FunnelPreferencesLoader _preferencesLoader;
   final DateTime Function() _clock;
   final int retentionDays;
-  Future<void> _pendingOperation = Future<void>.value();
+  Future<void>? _pendingOperation;
 
   Future<void> record(
     AnalyticsEventType eventType,
@@ -96,11 +96,21 @@ class V2RecommendationFunnelStore {
   }
 
   Future<T> _enqueue<T>(Future<T> Function() operation) {
-    final result = _pendingOperation.then((_) => operation());
-    _pendingOperation = result.then<void>(
-      (_) {},
-      onError: (_, __) {},
+    final previous = _pendingOperation;
+    final result = previous == null
+        ? Future<T>.sync(operation)
+        : previous.then((_) => operation());
+    late final Future<void> settled;
+    void clearIfIdle() {
+      if (identical(_pendingOperation, settled)) _pendingOperation = null;
+    }
+
+    // Do not retain an idle caller's async zone between page lifecycles.
+    settled = result.then<void>(
+      (_) => clearIfIdle(),
+      onError: (Object _, StackTrace __) => clearIfIdle(),
     );
+    _pendingOperation = settled;
     return result;
   }
 

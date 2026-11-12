@@ -8,6 +8,7 @@ import 'package:eatwhat_app/v2/core/navigation/app_v2_routes.dart';
 import 'package:eatwhat_app/v2/core/services/v2_phase2_recommendation_service.dart';
 import 'package:eatwhat_app/v2/core/services/v2_recommendation_telemetry_service.dart';
 import 'package:eatwhat_app/v2/core/theme/app_tokens.dart';
+import 'package:eatwhat_app/v2/core/theme/theme_aware_state.dart';
 import 'package:eatwhat_app/v2/features/result/result_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -57,7 +58,8 @@ class DecisionPage extends StatefulWidget {
   State<DecisionPage> createState() => _DecisionPageState();
 }
 
-class _DecisionPageState extends State<DecisionPage> {
+class _DecisionPageState extends State<DecisionPage>
+    with ThemeAwareStateMixin<DecisionPage> {
   late final V2Phase2RecommendationService _recommendationFlowService;
   late final V2RecommendationTelemetryService _recommendationTelemetryService;
 

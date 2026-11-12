@@ -129,20 +129,41 @@ class MeituanOAuthService {
   }
 
   Future<Map<String, dynamic>> _loadUserInfo(String accessToken) {
-    return _getJson(
-      config.apiBaseUrl.resolve('/oauth/userinfo').replace(
-        queryParameters: {
-          'app_id': config.appId,
-          'secret': config.appSecret,
-          'access_token': accessToken,
-        },
-      ),
+    // 美团 /oauth/userinfo 只接受 POST 表单，GET 会返回 405。
+    return _postFormJson(
+      config.apiBaseUrl.resolve('/oauth/userinfo'),
+      {
+        'app_id': config.appId,
+        'secret': config.appSecret,
+        'access_token': accessToken,
+      },
     );
   }
 
   Future<Map<String, dynamic>> _getJson(Uri uri) async {
     final request = await _httpClient.getUrl(uri).timeout(config.timeout);
     final response = await request.close().timeout(config.timeout);
+    return _decodeJsonResponse(response);
+  }
+
+  Future<Map<String, dynamic>> _postFormJson(
+    Uri uri,
+    Map<String, String> form,
+  ) async {
+    final request = await _httpClient.postUrl(uri).timeout(config.timeout);
+    request.headers.contentType = ContentType(
+      'application',
+      'x-www-form-urlencoded',
+      charset: 'utf-8',
+    );
+    request.write(Uri(queryParameters: form).query);
+    final response = await request.close().timeout(config.timeout);
+    return _decodeJsonResponse(response);
+  }
+
+  Future<Map<String, dynamic>> _decodeJsonResponse(
+    HttpClientResponse response,
+  ) async {
     final raw =
         await utf8.decoder.bind(response).join().timeout(config.timeout);
     if (response.statusCode < 200 || response.statusCode >= 300) {

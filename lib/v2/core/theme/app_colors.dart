@@ -11,43 +11,30 @@ import 'app_tokens.dart';
 /// legacy 命名保留给既有调用方，但取值按主题分发，保证结果页之后的
 /// 所有流程页面（详情/执行/菜库/收藏/美团）与当前舞台视觉统一。
 class AppColors {
-  static bool get _isCream => AppThemeController.isCream;
+  /// 主强调：夜场珊瑚 / 纸感陶土。
+  static Color get sunsetOrange => AppPalette.leaf;
 
-  /// 主强调：夜场香槟金 / 纸感深棕。
-  static Color get sunsetOrange =>
-      _isCream ? const Color(0xFF2E2924) : GoldPalette.gold;
+  /// 次强调：同色系浅一档。
+  static Color get goldenHour => AppThemeController.skin.accentSoft;
 
-  /// 次强调：夜场柔金 / 纸感灰棕。
-  static Color get goldenHour =>
-      _isCream ? const Color(0xFF8C8172) : GoldPalette.goldSoft;
+  static LinearGradient get primaryGradient => AppPalette.gardenGradient;
 
-  static LinearGradient get primaryGradient => LinearGradient(
-        colors: _isCream
-            ? const [Color(0xFF2E2924), Color(0xFF4A4238)]
-            : const [GoldPalette.gold, GoldPalette.goldSoft],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      );
-
-  /// 点缀：夜场柔金 / 纸感苔绿。
-  static Color get freshLime =>
-      _isCream ? const Color(0xFF4A5D4E) : GoldPalette.goldSoft;
+  /// 点缀：与主强调同源，避免再引入苔绿。
+  static Color get freshLime => AppPalette.leaf;
 
   static const Color berryPop = Color(0xFFE94A6A);
 
-  /// 页面底：夜场纯黑 / 纸感暖米。
-  static Color get lightBackground =>
-      _isCream ? const Color(0xFFF5EFE3) : GoldPalette.nightDeep;
+  /// 页面底：跟随当前舞台（夜场炭黑 / 纸感暖白 / 各美学底色）。
+  static Color get lightBackground => AppPalette.night;
 
-  static Color get darkBackground => lightBackground;
+  /// 夜场底：始终取夜间主题所用皮肤的底色，与当前模式无关。
+  static Color get darkBackground => AppThemeController.darkSkin.base;
 
-  /// 主文字：夜场暖白 / 纸感深棕。
-  static Color get textPrimary =>
-      _isCream ? const Color(0xFF2E2924) : GoldPalette.creamText;
+  /// 主文字：夜场暖白 / 纸感墨黑。
+  static Color get textPrimary => AppPalette.ink;
 
   /// 次文字：夜场暖灰 / 纸感灰棕。
-  static Color get textSecondary =>
-      _isCream ? const Color(0xFF8C8172) : GoldPalette.creamMuted;
+  static Color get textSecondary => AppPalette.inkSoft;
 
   // Glass
   static const Color glassWhite = Color(0x4DFFFFFF);

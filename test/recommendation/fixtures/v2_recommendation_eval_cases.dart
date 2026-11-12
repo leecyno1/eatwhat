@@ -33,6 +33,10 @@ const v2RecommendationEvalCases = <V2RecommendationEvalCase>[
       structuredConstraints: TasteStructuredConstraints(maxTimeMinutes: 15),
       historyPreferenceSummary: {},
     ),
+    // 随包库“快手”只有蛋炒饭(269)、清炒花菜(303)和饮品冰粉(81)。
+    // 保留两道真实餐食，不为覆盖率补回冰粉；耗时缺失仍按未核验解释。
+    minResults: 2,
+    forbiddenTerms: ['冰粉'],
     relevantTerms: ['快手', '15分钟', '15 分钟'],
     expectedConstraints: ['15 分钟内'],
   ),

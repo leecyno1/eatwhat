@@ -251,7 +251,11 @@ void main() {
     const route = '/api/v1/delivery/oauth/authorize';
     final upstream = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     servers.add(upstream);
+    final forwardedUserId = Completer<String?>();
     upstream.listen((request) async {
+      forwardedUserId.complete(
+        request.headers.value('x-eatwhat-user-id'),
+      );
       await utf8.decoder.bind(request).join();
       request.response
         ..headers.contentType = ContentType.json
@@ -282,6 +286,7 @@ void main() {
 
     expect(response.statusCode, HttpStatus.ok);
     expect((await _readResponse(response))['authorizationUrl'], isNotEmpty);
+    expect(await forwardedUserId.future, 'local-eatwhat-user');
   });
 
   test('未配置平台适配器时返回可识别的 503', () async {

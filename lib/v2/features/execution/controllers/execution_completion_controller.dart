@@ -76,8 +76,10 @@ ExecutionPath executionPathForPlatform(String platform) {
 }
 
 List<String> completionPositiveSignals(ExecutionIntent intent) {
-  return intent.sourceTags
-      .take(3)
-      .where((tag) => tag.trim().isNotEmpty)
-      .toList();
+  // A completed dish teaches its own taste tags. Session recall labels are
+  // only a fallback for recipes without tags; learning "川菜" from a dish
+  // that was actually 麻辣/豆腐 loses the grounded signal.
+  final tags =
+      intent.recipe.tags.isNotEmpty ? intent.recipe.tags : intent.sourceTags;
+  return tags.take(3).where((tag) => tag.trim().isNotEmpty).toList();
 }

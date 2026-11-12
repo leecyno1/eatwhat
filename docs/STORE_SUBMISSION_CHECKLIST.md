@@ -74,6 +74,8 @@
 | drlemon.cc | 保持原样，个人档案站，与本 App 无关 |
 
 - 客户端 `.env` 已切换到上述域名；已提审的 build 2 仍是旧 IP 构建，AI/外卖/会员入口在 release 下按降级隐藏。要启用需要重新构建并重新提审。
+- 2026-11-08 复核：美团 OAuth 正确 app_id 为 `5717908574741776`（旧 `2617865019071017` 未注册，授权页会 10005 白屏）；OAuth 回调已在平台配置。生产客户端必须用 `scripts/build_release_client.sh` 构建，否则 `EXECUTION_PROXY_BASE_URL`/`EATWHAT_AUTH_BASE_URL` 不会编译进包，外卖入口仍会隐藏。
+- 2026-11-08 晚：build 3（1.0.0(3)）已生成但未上传，且不含下单页防重复提交修复。已用当前代码重打 build 4：`build/ios/ipa/EatWhat-1.0.0-build4-proxy.ipa`，1.0.0(4)，EatWhat App Store 2026-11 描述文件，签名校验通过，包含生产代理地址、关键词兜底和「再次打开美团收银台」文案；尚未上传。
 
 ## 四、App Store 后台字段速填
 
